@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sasmodels.sasview_model &mdash; SasView 4.2.0 documentation</title>
+    <title>sasmodels.sasview_model &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
       </ul>
@@ -75,11 +75,13 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">core</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">custom</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kernelcl</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">generate</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">weights</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">modelinfo</span>
 <span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">make_kernel_args</span><span class="p">,</span> <span class="n">dispersion_mesh</span>
+<span class="kn">from</span> <span class="nn">.kernelcl</span> <span class="kn">import</span> <span class="n">reset_environment</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
@@ -118,6 +120,18 @@
 <span class="c1">#: Track modules that we have loaded so we can determine whether the model</span>
 <span class="c1">#: has changed since we last reloaded.</span>
 <span class="n">_CACHED_MODULE</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, &quot;module&quot;]</span>
+
+<div class="viewcode-block" id="reset_environment"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.sasview_model.reset_environment">[docs]</a><span class="k">def</span> <span class="nf">reset_environment</span><span class="p">():</span>
+    <span class="c1"># type: () -&gt; None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clear the compute engine context so that the GUI can change devices.</span>
+
+<span class="sd">    This removes all compiled kernels, even those that are active on fit</span>
+<span class="sd">    pages, but they will be restored the next time they are needed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kernelcl</span><span class="o">.</span><span class="n">reset_environment</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="bp">None</span></div>
 
 <div class="viewcode-block" id="find_model"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.sasview_model.find_model">[docs]</a><span class="k">def</span> <span class="nf">find_model</span><span class="p">(</span><span class="n">modelname</span><span class="p">):</span>
     <span class="c1"># type: (str) -&gt; SasviewModelType</span>
@@ -730,7 +744,11 @@
 
     <span class="k">def</span> <span class="nf">_calculate_Iq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
+            <span class="c1"># Only need one copy of the compiled kernel regardless of how many</span>
+            <span class="c1"># times it is used, so store it in the class.  Also, to reset the</span>
+            <span class="c1"># compute engine, need to clear out all existing compiled kernels,</span>
+            <span class="c1"># which is much easier to do if we store them in the class.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">qy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">q_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qx</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qy</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -851,7 +869,17 @@
             <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">dispersity</span><span class="p">,</span> <span class="n">weight</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SasviewModel.runTests"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.sasview_model.SasviewModel.runTests">[docs]</a>    <span class="k">def</span> <span class="nf">runTests</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run any tests built into the model and captures the test output.</span>
+
+<span class="sd">        Returns success flag and output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.model_test</span> <span class="kn">import</span> <span class="n">check_model</span>
+        <span class="k">return</span> <span class="n">check_model</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="test_cylinder"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.sasview_model.test_cylinder">[docs]</a><span class="k">def</span> <span class="nf">test_cylinder</span><span class="p">():</span>
     <span class="c1"># type: () -&gt; float</span>
@@ -987,13 +1015,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

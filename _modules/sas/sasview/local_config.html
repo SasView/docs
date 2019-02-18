@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sasview.local_config &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sasview.local_config &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../index.html" />
     <link rel="up" title="sas" href="../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -66,6 +66,8 @@
 <span class="c1"># Version of the application</span>
 <span class="n">__appname__</span> <span class="o">=</span> <span class="s2">&quot;SasView&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">sas</span><span class="o">.</span><span class="n">sasview</span><span class="o">.</span><span class="n">__version__</span>
+<span class="n">__DOI__</span> <span class="o">=</span> <span class="n">sas</span><span class="o">.</span><span class="n">sasview</span><span class="o">.</span><span class="n">__DOI__</span>
+<span class="n">__release_date__</span> <span class="o">=</span> <span class="n">sas</span><span class="o">.</span><span class="n">sasview</span><span class="o">.</span><span class="n">__release_date__</span>
 <span class="n">__build__</span> <span class="o">=</span> <span class="n">sas</span><span class="o">.</span><span class="n">sasview</span><span class="o">.</span><span class="n">__build__</span>
 <span class="n">__download_page__</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/SasView/sasview/releases&#39;</span>
 <span class="n">__update_URL__</span> <span class="o">=</span> <span class="s1">&#39;http://www.sasview.org/latestversion.json&#39;</span>
@@ -86,8 +88,8 @@
 <span class="n">_do_release</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="n">_do_tutorial</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="n">_acknowledgement_preamble</span> <span class="o">=</span>\
-<span class="sd">&#39;&#39;&#39;To ensure the long term support and development of this software please&#39;&#39;&#39;</span> <span class="o">+</span>\
-<span class="sd">&#39;&#39;&#39; remember to:&#39;&#39;&#39;</span>
+<span class="sd">&#39;&#39;&#39;To ensure the long term support and development of this software please</span>
+<span class="sd">remember to:&#39;&#39;&#39;</span>
 <span class="n">_acknowledgement_preamble_bullet1</span> <span class="o">=</span>\
 <span class="sd">&#39;&#39;&#39;Acknowledge its use in your publications as :&#39;&#39;&#39;</span>
 <span class="n">_acknowledgement_preamble_bullet2</span> <span class="o">=</span>\
@@ -97,12 +99,20 @@
 <span class="n">_acknowledgement_preamble_bullet4</span> <span class="o">=</span>\
 <span class="sd">&#39;&#39;&#39;Send us your reference for our records: developers@sasview.org&#39;&#39;&#39;</span>
 <span class="n">_acknowledgement_publications</span> <span class="o">=</span> \
-<span class="sd">&#39;&#39;&#39;This work benefited from the use of the SasView application, originally developed under NSF Award DMR-0520547. SasView also contains code developed with funding from the EU Horizon 2020 programme under the SINE2020 project Grant No 654000.&#39;&#39;&#39;</span>
+<span class="p">(</span><span class="s2">&quot;This work benefited from the use of the SasView application, originally&quot;</span>
+<span class="s2">&quot;developed under NSF Award DMR-0520547. SasView also contains code developed&quot;</span>
+<span class="s2">&quot;with funding from the EU Horizon 2020 programme under the SINE2020 project&quot;</span>
+<span class="s2">&quot;Grant No 654000.&quot;</span><span class="p">)</span>
 <span class="n">_acknowledgement_citation</span> <span class="o">=</span> \
-<span class="sd">&#39;&#39;&#39;M. Doucet et al. SasView Version 4.2, Zenodo, 10.5281/zenodo.1412041&#39;&#39;&#39;</span>
+<span class="sd">&#39;&#39;&#39;M. Doucet et al. SasView Version %s, %s&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">__version__</span><span class="p">,</span> <span class="n">__DOI__</span><span class="p">)</span>
 <span class="n">_acknowledgement</span> <span class="o">=</span>  \
-<span class="sd">&#39;&#39;&#39;This work was originally developed as part of the DANSE project funded by the US NSF under Award DMR-0520547,\n but is currently maintained by a collaboration between UTK, UMD, NIST, ORNL, ISIS, ESS, ILL, ANSTO, TU Delft, DLS, BAM and the scattering community.\n\n SasView also contains code developed with funding from the EU Horizon 2020 programme under the SINE2020 project (Grant No 654000).\nA list of individual contributors can be found at: http://www.sasview.org/contact.html</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="p">(</span><span class="s2">&quot;This work was originally developed as part of the DANSE project funded by&quot;</span>
+<span class="s2">&quot;the US NSF under Award DMR-0520547,</span><span class="se">\n</span><span class="s2"> but is currently maintained by a&quot;</span>
+<span class="s2">&quot;collaboration between UTK, UMD, NIST, ORNL, ISIS, ESS, ILL, ANSTO, TU Delft,&quot;</span>
+<span class="s2">&quot;DLS, BAM and the scattering community.</span><span class="se">\n\n</span><span class="s2"> SasView also contains code&quot;</span>
+<span class="s2">&quot;developed with funding from the EU Horizon 2020 programme under the SINE2020&quot;</span>
+<span class="s2">&quot;project (Grant No 654000).</span><span class="se">\n</span><span class="s2">A list of individual contributors can be found&quot;</span>
+<span class="s2">&quot;at: http://www.sasview.org/contact.html&quot;</span><span class="p">)</span>
 
 <span class="n">_homepage</span> <span class="o">=</span> <span class="s2">&quot;http://www.sasview.org&quot;</span>
 <span class="n">_download</span> <span class="o">=</span> <span class="n">__download_page__</span>
@@ -145,7 +155,8 @@
 <span class="n">_inst_url</span> <span class="o">=</span> <span class="s2">&quot;http://www.utk.edu&quot;</span>
 <span class="n">_corner_image</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">icon_path</span><span class="p">,</span> <span class="s2">&quot;angles_flat.png&quot;</span><span class="p">)</span>
 <span class="n">_welcome_image</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">icon_path</span><span class="p">,</span> <span class="s2">&quot;SVwelcome.png&quot;</span><span class="p">)</span>
-<span class="n">_copyright</span> <span class="o">=</span> <span class="s2">&quot;(c) 2009 - 2018, UTK, UMD, NIST, ORNL, ISIS, ESS, ILL, ANSTO, TU Delft, DLS and BAM&quot;</span>
+<span class="n">_copyright</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;(c) 2009 - </span><span class="si">%s</span><span class="s2">, UTK, UMD, NIST, ORNL, ISIS, ESS, ILL, ANSTO,&quot;</span>
+              <span class="s2">&quot;TU Delft, DLS and BAM&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="n">__release_date__</span>
 <span class="n">marketplace_url</span> <span class="o">=</span> <span class="s2">&quot;http://marketplace.sasview.org/&quot;</span>
 
 <span class="c1">#edit the list of file state your plugin can read</span>
@@ -240,13 +251,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

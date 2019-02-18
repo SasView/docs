@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.pr package &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.pr package &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sas.sascalc package" href="sas.sascalc.html" />
-    <link rel="next" title="sas.sascalc.pr.core package" href="sas.sascalc.pr.core.html" />
+    <link rel="next" title="sas.sasgui package" href="sas.sasgui.html" />
     <link rel="prev" title="sas.sascalc.invariant package" href="sas.sascalc.invariant.html" /> 
   </head>
   <body role="document">
@@ -40,12 +40,12 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sas.sascalc.pr.core.html" title="sas.sascalc.pr.core package"
+          <a href="sas.sasgui.html" title="sas.sasgui package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="sas.sascalc.invariant.html" title="sas.sascalc.invariant package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &raquo;</li>
@@ -60,17 +60,6 @@
             
   <div class="section" id="sas-sascalc-pr-package">
 <h1>sas.sascalc.pr package</h1>
-<div class="section" id="subpackages">
-<h2>Subpackages</h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="sas.sascalc.pr.core.html">sas.sascalc.pr.core package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sas.sascalc.pr.core.html#module-sas.sascalc.pr.core">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 <div class="section" id="submodules">
 <h2>Submodules</h2>
 </div>
@@ -114,7 +103,7 @@ The matrix has its entries j in its first Npts rows set to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Fourier</span> <span class="n">transformed</span> <span class="n">base</span> <span class="n">function</span> <span class="k">for</span> <span class="n">point</span> <span class="n">j</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We them choose a number of r-points, n_r, to evaluate the second
+<p>We then choose a number of r-points, n_r, to evaluate the second
 derivative of P(r) at. This is used as our regularization term.
 For a vector r of length n_r, the following n_r rows are set to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="n">Npts</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="n">nd</span> <span class="n">derivative</span> <span class="n">of</span> <span class="n">P</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">/</span><span class="n">d</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
@@ -232,7 +221,7 @@ The matrix has its entries j in its first Npts rows set to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Fourier</span> <span class="n">transformed</span> <span class="n">base</span> <span class="n">function</span> <span class="k">for</span> <span class="n">point</span> <span class="n">j</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We them choose a number of r-points, n_r, to evaluate the second
+<p>We then choose a number of r-points, n_r, to evaluate the second
 derivative of P(r) at. This is used as our regularization term.
 For a vector r of length n_r, the following n_r rows are set to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">Npts</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="n">nd</span> <span class="n">derivative</span> <span class="n">of</span> <span class="n">P</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">/</span><span class="n">d</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">evaluated</span> <span class="n">at</span> <span class="n">r</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
@@ -317,7 +306,7 @@ The matrix has its entries j in its first Npts rows set to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Fourier</span> <span class="n">transformed</span> <span class="n">base</span> <span class="n">function</span> <span class="k">for</span> <span class="n">point</span> <span class="n">j</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We them choose a number of r-points, n_r, to evaluate the second
+<p>We then choose a number of r-points, n_r, to evaluate the second
 derivative of P(r) at. This is used as our regularization term.
 For a vector r of length n_r, the following n_r rows are set to</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">Npts</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="n">nd</span> <span class="n">derivative</span> <span class="n">of</span> <span class="n">P</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">(</span><span class="n">P</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="o">/</span><span class="n">d</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
@@ -487,7 +476,6 @@ Future work: extend this function to allow topic selection</p>
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sas.sascalc.pr package</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.pr.distance_explorer">sas.sascalc.pr.distance_explorer module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.pr.invertor">sas.sascalc.pr.invertor module</a></li>
@@ -501,8 +489,8 @@ Future work: extend this function to allow topic selection</p>
   <p class="topless"><a href="sas.sascalc.invariant.html"
                         title="previous chapter">sas.sascalc.invariant package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="sas.sascalc.pr.core.html"
-                        title="next chapter">sas.sascalc.pr.core package</a></p>
+  <p class="topless"><a href="sas.sasgui.html"
+                        title="next chapter">sas.sasgui package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -534,12 +522,12 @@ Future work: extend this function to allow topic selection</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sas.sascalc.pr.core.html" title="sas.sascalc.pr.core package"
+          <a href="sas.sasgui.html" title="sas.sasgui package"
              >next</a> |</li>
         <li class="right" >
           <a href="sas.sascalc.invariant.html" title="sas.sascalc.invariant package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &raquo;</li>
@@ -547,7 +535,7 @@ Future work: extend this function to allow topic selection</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

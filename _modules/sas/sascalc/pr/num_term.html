@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.pr.num_term &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.pr.num_term &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../index.html" />
     <link rel="up" title="sas" href="../../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -49,7 +49,7 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.sascalc.pr.num_term</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -101,7 +101,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">osc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_osc</span><span class="p">()</span>
         <span class="n">dv</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">osc</span><span class="p">)</span>
-        <span class="n">med</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">med</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">dv</span>
         <span class="n">odd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_odd</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
         <span class="n">medi</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dv</span><span class="p">):</span>
@@ -190,7 +190,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">isquit_func</span> <span class="o">=</span> <span class="n">isquit_func</span>
             <span class="n">nts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare_err</span><span class="p">()</span>
             <span class="n">div</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nts</span><span class="p">)</span>
-            <span class="n">tem</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">div</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">tem</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">div</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_odd</span><span class="p">(</span><span class="n">div</span><span class="p">):</span>
                 <span class="n">nt</span> <span class="o">=</span> <span class="n">nts</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tem</span><span class="p">)]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -279,13 +279,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

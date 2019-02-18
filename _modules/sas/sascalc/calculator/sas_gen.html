@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.calculator.sas_gen &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.calculator.sas_gen &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../index.html" />
     <link rel="up" title="sas" href="../../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -64,7 +64,7 @@
 <span class="kn">from</span> <span class="nn">periodictable</span> <span class="kn">import</span> <span class="n">nsf</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">sld2i</span> <span class="k">as</span> <span class="n">mod</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_sld2i</span>
 <span class="kn">from</span> <span class="nn">.BaseComponent</span> <span class="kn">import</span> <span class="n">BaseComponent</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -195,17 +195,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_frac_in&#39;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_frac_out&#39;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_theta&#39;</span><span class="p">])</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">new_GenI</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_sld2i</span><span class="o">.</span><span class="n">new_GenI</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qy</span><span class="p">):</span>
             <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="n">_vec</span><span class="p">(</span><span class="n">qx</span><span class="p">),</span> <span class="n">_vec</span><span class="p">(</span><span class="n">qy</span><span class="p">)</span>
             <span class="n">I_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span>
             <span class="c1">#print(&quot;npoints&quot;, qx.shape, &quot;npixels&quot;, pos_x.shape)</span>
-            <span class="n">mod</span><span class="o">.</span><span class="n">genicomXY</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">I_out</span><span class="p">)</span>
+            <span class="n">_sld2i</span><span class="o">.</span><span class="n">genicomXY</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">I_out</span><span class="p">)</span>
             <span class="c1">#print(&quot;I_out after&quot;, I_out)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">qx</span> <span class="o">=</span> <span class="n">_vec</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span>
             <span class="n">I_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span>
-            <span class="n">mod</span><span class="o">.</span><span class="n">genicom</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">I_out</span><span class="p">)</span>
+            <span class="n">_sld2i</span><span class="o">.</span><span class="n">genicom</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">I_out</span><span class="p">)</span>
         <span class="n">vol_correction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_total_volume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;total_volume&#39;</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">vol_correction</span> <span class="o">*</span> <span class="n">I_out</span>
                   <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">])</span>
@@ -354,8 +354,8 @@
                 <span class="n">z_dir2</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span> <span class="o">-</span> <span class="n">z_c</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">z_r</span><span class="p">)</span>
                 <span class="n">z_dir2</span> <span class="o">*=</span> <span class="n">z_dir2</span>
                 <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_dir2</span> <span class="o">+</span> <span class="n">y_dir2</span> <span class="o">+</span> <span class="n">z_dir2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">MagSLD</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pos_x</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_y</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                              <span class="bp">self</span><span class="o">.</span><span class="n">pos_z</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_n</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
                              <span class="bp">self</span><span class="o">.</span><span class="n">mx</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">my</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
@@ -650,8 +650,8 @@
                         <span class="n">x_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_line</span><span class="p">)</span>
                         <span class="n">y_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_line</span><span class="p">)</span>
                         <span class="n">z_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_line</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
             <span class="n">output</span> <span class="o">=</span> <span class="n">MagSLD</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">pos_z</span><span class="p">,</span> <span class="n">sld_n</span><span class="p">,</span> <span class="n">sld_mx</span><span class="p">,</span> <span class="n">sld_my</span><span class="p">,</span> <span class="n">sld_mz</span><span class="p">)</span>
             <span class="n">output</span><span class="o">.</span><span class="n">set_conect_lines</span><span class="p">(</span><span class="n">x_line</span><span class="p">,</span> <span class="n">y_line</span><span class="p">,</span> <span class="n">z_line</span><span class="p">)</span>
@@ -741,11 +741,11 @@
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">_vol_pix</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">toks</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
                             <span class="n">vol_pix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vol_pix</span><span class="p">,</span> <span class="n">_vol_pix</span><span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                             <span class="n">vol_pix</span> <span class="o">=</span> <span class="bp">None</span>
-                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                         <span class="c1"># Skip non-data lines</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">MagSLD</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">pos_z</span><span class="p">,</span> <span class="n">sld_n</span><span class="p">,</span>
                             <span class="n">sld_mx</span><span class="p">,</span> <span class="n">sld_my</span><span class="p">,</span> <span class="n">sld_mz</span><span class="p">)</span>
             <span class="n">output</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1207,13 +1207,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

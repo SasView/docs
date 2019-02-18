@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.dataloader.readers.cansas_reader &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.dataloader.readers.cansas_reader &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../../index.html" />
     <link rel="up" title="sas" href="../../../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -862,22 +862,22 @@
             <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span><span class="s2">&quot;Idata&quot;</span><span class="p">)</span>
             <span class="n">node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                            <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">x_unit</span><span class="p">})</span>
+                            <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_xunit</span><span class="p">})</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datainfo</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">y_unit</span><span class="p">})</span>
+                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_yunit</span><span class="p">})</span>
             <span class="k">if</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">datainfo</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;Idev&quot;</span><span class="p">,</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">y_unit</span><span class="p">})</span>
+                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_yunit</span><span class="p">})</span>
             <span class="k">if</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">datainfo</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;Qdev&quot;</span><span class="p">,</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">x_unit</span><span class="p">})</span>
+                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_xunit</span><span class="p">})</span>
             <span class="k">if</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dxw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">datainfo</span><span class="o">.</span><span class="n">dxw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;dQw&quot;</span><span class="p">,</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dxw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">x_unit</span><span class="p">})</span>
+                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_xunit</span><span class="p">})</span>
             <span class="k">if</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dxl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">datainfo</span><span class="o">.</span><span class="n">dxl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;dQl&quot;</span><span class="p">,</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">dxl</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">x_unit</span><span class="p">})</span>
+                                <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_xunit</span><span class="p">})</span>
         <span class="k">if</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
             <span class="n">sesans_attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x_axis&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">,</span>
                              <span class="s1">&#39;y_axis&#39;</span><span class="p">:</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">,</span>
@@ -1413,13 +1413,13 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

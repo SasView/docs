@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.dataloader.readers package &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.dataloader.readers package &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sas.sascalc.dataloader package" href="sas.sascalc.dataloader.html" />
     <link rel="next" title="sas.sascalc.file_converter package" href="sas.sascalc.file_converter.html" />
     <link rel="prev" title="sas.sascalc.dataloader package" href="sas.sascalc.dataloader.html" /> 
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="sas.sascalc.dataloader.html" title="sas.sascalc.dataloader package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &raquo;</li>
@@ -234,7 +234,7 @@ The module reads an xml file to get the readers for each file extension.
 The readers are tried in order they appear when reading a file.</p>
 <dl class="function">
 <dt id="sas.sascalc.dataloader.readers.associations.read_associations">
-<code class="descclassname">sas.sascalc.dataloader.readers.associations.</code><code class="descname">read_associations</code><span class="sig-paren">(</span><em>loader</em>, <em>settings={'.h5': 'cansas_reader_HDF5'</em>, <em>'.dat': 'red2d_reader'</em>, <em>'.pdh': 'anton_paar_saxs_reader'</em>, <em>'.sans': 'danse_reader'</em>, <em>'.txt': 'ascii_reader'</em>, <em>'.xml': 'cansas_reader'</em>, <em>'.cor': 'abs_reader'</em>, <em>'.ses': 'sesans_reader'</em>, <em>'.abs': 'abs_reader'}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/associations.html#read_associations"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descclassname">sas.sascalc.dataloader.readers.associations.</code><code class="descname">read_associations</code><span class="sig-paren">(</span><em>loader</em>, <em>settings={'.h5': 'cansas_reader_HDF5'</em>, <em>'.dat': 'red2d_reader'</em>, <em>'.pdh': 'anton_paar_saxs_reader'</em>, <em>'.sans': 'danse_reader'</em>, <em>'.txt': 'ascii_reader'</em>, <em>'.xml': 'cansas_reader'</em>, <em>'.cor': 'abs_reader'</em>, <em>'.nxs': 'cansas_reader_HDF5'</em>, <em>'.ses': 'sesans_reader'</em>, <em>'.abs': 'abs_reader'}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/associations.html#read_associations"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Read the specified settings file to associate
 default readers to file extension.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -948,24 +948,25 @@ data files do not appear a second time</p>
 </div>
 <div class="section" id="module-sas.sascalc.dataloader.readers.cansas_reader_HDF5">
 <span id="sas-sascalc-dataloader-readers-cansas-reader-hdf5-module"></span><h2>sas.sascalc.dataloader.readers.cansas_reader_HDF5 module</h2>
-<p>CanSAS 2D data reader for reading HDF5 formatted CanSAS files.</p>
+<p>NXcanSAS data reader for reading HDF5 formatted CanSAS files.</p>
 <dl class="class">
 <dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader">
 <em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.readers.cansas_reader_HDF5.</code><code class="descname">Reader</code><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader" title="sas.sascalc.dataloader.file_reader_base_class.FileReader"><code class="xref py py-class docutils literal"><span class="pre">sas.sascalc.dataloader.file_reader_base_class.FileReader</span></code></a></p>
-<p>A class for reading in CanSAS v2.0 data files. The existing iteration opens
-Mantid generated HDF5 formatted files with file extension .h5/.H5. Any
-number of data sets may be present within the file and any dimensionality
-of data may be used. Currently 1D and 2D SAS data sets are supported, but
-future implementations will include 1D and 2D SESANS data.</p>
-<p>Any number of SASdata sets may be present in a SASentry and the data within
-can be either 1D I(Q) or 2D I(Qx, Qy).</p>
-<p>Also supports reading NXcanSAS formatted HDF5 files</p>
+<p>A class for reading in NXcanSAS data files. The current implementation has
+been tested to load data generated by multiple facilities, all of which are
+known to produce NXcanSAS standards compliant data. Any number of data sets
+may be present within the file and any dimensionality of data may be used.
+Currently 1D and 2D SAS data sets are supported, but should be immediately
+extensible to SESANS data.</p>
+<p>Any number of SASdata groups  may be present in a SASentry and the data
+within each SASdata group can be a single 1D I(Q), multi-framed 1D I(Q),
+2D I(Qx, Qy) or multi-framed 2D I(Qx, Qy).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body">The CanSAS HDF5 reader requires h5py =&gt; v2.5.0 or later.</td>
+<tr class="field-odd field"><th class="field-name">Dependencies:</th><td class="field-body">The NXcanSAS HDF5 reader requires h5py =&gt; v2.5.0 or later.</td>
 </tr>
 </tbody>
 </table>
@@ -1006,24 +1007,17 @@ finished being processed</td>
 <code class="descname">allow_all</code><em class="property"> = True</em></dt>
 <dd></dd></dl>
 
+<dl class="staticmethod">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.as_list_or_array">
+<em class="property">static </em><code class="descname">as_list_or_array</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.as_list_or_array"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return value as a list if not already a list or array.
+:param iterable:
+:return:</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.cansas_version">
 <code class="descname">cansas_version</code><em class="property"> = 2.0</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.data1d">
-<code class="descname">data1d</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.data2d">
-<code class="descname">data2d</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.errors">
-<code class="descname">errors</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1055,15 +1049,78 @@ Data1D and Data2D objects</p>
 </table>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.logging">
-<code class="descname">logging</code><em class="property"> = None</em></dt>
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_1d_data_object">
+<code class="descname">process_1d_data_object</code><span class="sig-paren">(</span><em>data_set</em>, <em>key</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_1d_data_object"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SASdata processor method for 1d data items
+:param data_set: data from HDF5 file
+:param key: canSAS_class attribute
+:param unit: unit attribute</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_2d_data_object">
+<code class="descname">process_2d_data_object</code><span class="sig-paren">(</span><em>data_set</em>, <em>key</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_2d_data_object"><span class="viewcode-link">[source]</span></a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.raw_data">
-<code class="descname">raw_data</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_aperture">
+<code class="descname">process_aperture</code><span class="sig-paren">(</span><em>data_point</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_aperture"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SASaperture processor
+:param data_point: Single point from an HDF5 data file
+:param key: class name data_point was taken from</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_collimation">
+<code class="descname">process_collimation</code><span class="sig-paren">(</span><em>data_point</em>, <em>key</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_collimation"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SAScollimation processor
+:param data_point: Single point from an HDF5 data file
+:param key: class name data_point was taken from
+:param unit: unit attribute from data set</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_detector">
+<code class="descname">process_detector</code><span class="sig-paren">(</span><em>data_point</em>, <em>key</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_detector"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SASdetector processor
+:param data_point: Single point from an HDF5 data file
+:param key: class name data_point was taken from
+:param unit: unit attribute from data set</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_process">
+<code class="descname">process_process</code><span class="sig-paren">(</span><em>data_point</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_process"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SASprocess processor
+:param data_point: Single point from an HDF5 data file
+:param key: class name data_point was taken from</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_sample">
+<code class="descname">process_sample</code><span class="sig-paren">(</span><em>data_point</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_sample"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SASsample processor
+:param data_point: Single point from an HDF5 data file
+:param key: class name data_point was taken from</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_source">
+<code class="descname">process_source</code><span class="sig-paren">(</span><em>data_point</em>, <em>key</em>, <em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_source"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SASsource processor
+:param data_point: Single point from an HDF5 data file
+:param key: class name data_point was taken from
+:param unit: unit attribute from data set</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_trans_spectrum">
+<code class="descname">process_trans_spectrum</code><span class="sig-paren">(</span><em>data_set</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/readers/cansas_reader_HDF5.html#Reader.process_trans_spectrum"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>SAStransmission_spectrum processor
+:param data_set: data from HDF5 file
+:param key: canSAS_class attribute</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.read_children">
@@ -1091,12 +1148,12 @@ Data1D and Data2D objects</p>
 
 <dl class="attribute">
 <dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.type">
-<code class="descname">type</code><em class="property"> = ['CanSAS 2.0 HDF5 Files (*.h5)|*.h5']</em></dt>
+<code class="descname">type</code><em class="property"> = ['NXcanSAS HDF5 Files (*.h5)|*.h5|']</em></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.type_name">
-<code class="descname">type_name</code><em class="property"> = 'CanSAS 2.0'</em></dt>
+<code class="descname">type_name</code><em class="property"> = 'NXcanSAS'</em></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1627,7 +1684,7 @@ If there is a default encoding, the value is also saved</p>
         <li class="right" >
           <a href="sas.sascalc.dataloader.html" title="sas.sascalc.dataloader package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &raquo;</li>
@@ -1636,7 +1693,7 @@ If there is a default encoding, the value is also saved</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

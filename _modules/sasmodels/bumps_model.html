@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sasmodels.bumps_model &mdash; SasView 4.2.0 documentation</title>
+    <title>sasmodels.bumps_model &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
       </ul>
@@ -85,6 +85,7 @@
     <span class="c1"># Optional import. This allows the doc builder and nosetests to run even</span>
     <span class="c1"># when bumps is not on the path.</span>
     <span class="kn">from</span> <span class="nn">bumps.names</span> <span class="kn">import</span> <span class="n">Parameter</span> <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">bumps.parameter</span> <span class="kn">import</span> <span class="n">Reference</span> <span class="c1"># type: ignore</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
@@ -189,12 +190,27 @@
     <span class="n">_cache</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># type: Dict[str, np.ndarray]</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">extra_pars</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="c1"># type: (Data, Model, float) -&gt; None</span>
+        <span class="c1"># Allow resolution function to define fittable parameters.  We do this</span>
+        <span class="c1"># by creating reference parameters within the resolution object rather</span>
+        <span class="c1"># than modifying the object itself to use bumps parameters.  We need</span>
+        <span class="c1"># to reset the parameters each time the object has changed.  These</span>
+        <span class="c1"># additional parameters need to be returned from the fitting engine.</span>
+        <span class="c1"># To make them available to the user, they are added as top-level</span>
+        <span class="c1"># attributes to the experiment object.  The only change to the</span>
+        <span class="c1"># resolution function is that it needs an optional &#39;fittable&#39; attribute</span>
+        <span class="c1"># which maps the internal name to the user visible name for the</span>
+        <span class="c1"># for the parameter.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution_pars</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># remember inputs so we can inspect from outside</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filename</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cutoff</span> <span class="o">=</span> <span class="n">cutoff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpret_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">sasmodel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># CRUFT: no longer need extra parameters</span>
+        <span class="c1"># Multiple scattering probability is now retrieved directly from the</span>
+        <span class="c1"># multiple scattering resolution function.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extra_pars</span> <span class="o">=</span> <span class="n">extra_pars</span>
 
 <div class="viewcode-block" id="Experiment.update"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Experiment.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -212,14 +228,38 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span></div>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
+
+    <span class="nd">@resolution.setter</span>
+    <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c1"># Remove old resolution fitting parameters from experiment</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution_pars</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Create new resolution fitting parameters</span>
+        <span class="n">res_pars</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">,</span> <span class="s1">&#39;fittable&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution_pars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">Reference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span><span class="p">,</span> <span class="n">refname</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">refname</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">res_pars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Add new resolution fitting parameters as experiment attributes</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ref</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution_pars</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Experiment.parameters"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Experiment.parameters">[docs]</a>    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; Dict[str, Parameter]</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a dictionary of parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_pars</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_pars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">pars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_pars</span><span class="p">)</span>
+        <span class="n">pars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolution_pars</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pars</span></div>
 
 <div class="viewcode-block" id="Experiment.theory"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Experiment.theory">[docs]</a>    <span class="k">def</span> <span class="nf">theory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -326,13 +366,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

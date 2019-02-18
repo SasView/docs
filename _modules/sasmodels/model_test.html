@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sasmodels.model_test &mdash; SasView 4.2.0 documentation</title>
+    <title>sasmodels.model_test &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
       </ul>
@@ -97,6 +97,7 @@
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
@@ -124,7 +125,6 @@
     <span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
-
 <div class="viewcode-block" id="make_suite"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.model_test.make_suite">[docs]</a><span class="k">def</span> <span class="nf">make_suite</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
     <span class="c1"># type: (List[str], List[str]) -&gt; unittest.TestSuite</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -136,7 +136,6 @@
 
 <span class="sd">    *models* is the list of models to test, or *[&quot;all&quot;]* to test all models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ModelTestCase</span> <span class="o">=</span> <span class="n">_hide_model_case_from_nose</span><span class="p">()</span>
     <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">core</span><span class="o">.</span><span class="n">KINDS</span><span class="p">:</span>
@@ -145,72 +144,76 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">skip</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="n">skip</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-
-        <span class="c1">#print(&#39;------&#39;)</span>
-        <span class="c1">#print(&#39;found tests in&#39;, model_name)</span>
-        <span class="c1">#print(&#39;------&#39;)</span>
-
-        <span class="c1"># if ispy then use the dll loader to call pykernel</span>
-        <span class="c1"># don&#39;t try to call cl kernel since it will not be</span>
-        <span class="c1"># available in some environmentes.</span>
-        <span class="n">is_py</span> <span class="o">=</span> <span class="nb">callable</span><span class="p">(</span><span class="n">model_info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span>
-
-        <span class="c1"># Some OpenCL drivers seem to be flaky, and are not producing the</span>
-        <span class="c1"># expected result.  Since we don&#39;t have known test values yet for</span>
-        <span class="c1"># all of our models, we are instead going to compare the results</span>
-        <span class="c1"># for the &#39;smoke test&#39; (that is, evaluation at q=0.1 for the default</span>
-        <span class="c1"># parameters just to see that the model runs to completion) between</span>
-        <span class="c1"># the OpenCL and the DLL.  To do this, we define a &#39;stash&#39; which is</span>
-        <span class="c1"># shared between OpenCL and DLL tests.  This is just a list.  If the</span>
-        <span class="c1"># list is empty (which it will be when DLL runs, if the DLL runs</span>
-        <span class="c1"># first), then the results are appended to the list.  If the list</span>
-        <span class="c1"># is not empty (which it will be when OpenCL runs second), the results</span>
-        <span class="c1"># are compared to the results stored in the first element of the list.</span>
-        <span class="c1"># This is a horrible stateful hack which only makes sense because the</span>
-        <span class="c1"># test suite is thrown away after being run once.</span>
-        <span class="n">stash</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">if</span> <span class="n">is_py</span><span class="p">:</span>  <span class="c1"># kernel implemented in python</span>
-            <span class="n">test_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-python&quot;</span><span class="o">%</span><span class="n">model_name</span>
-            <span class="n">test_method_name</span> <span class="o">=</span> <span class="s2">&quot;test_</span><span class="si">%s</span><span class="s2">_python&quot;</span> <span class="o">%</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
-            <span class="n">test</span> <span class="o">=</span> <span class="n">ModelTestCase</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span>
-                                 <span class="n">test_method_name</span><span class="p">,</span>
-                                 <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;dll&quot;</span><span class="p">,</span>  <span class="c1"># so that</span>
-                                 <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
-                                 <span class="n">stash</span><span class="o">=</span><span class="n">stash</span><span class="p">)</span>
-            <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>   <span class="c1"># kernel implemented in C</span>
-
-            <span class="c1"># test using dll if desired</span>
-            <span class="k">if</span> <span class="s1">&#39;dll&#39;</span> <span class="ow">in</span> <span class="n">loaders</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">use_opencl</span><span class="p">():</span>
-                <span class="n">test_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-dll&quot;</span><span class="o">%</span><span class="n">model_name</span>
-                <span class="n">test_method_name</span> <span class="o">=</span> <span class="s2">&quot;test_</span><span class="si">%s</span><span class="s2">_dll&quot;</span> <span class="o">%</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="n">ModelTestCase</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span>
-                                     <span class="n">test_method_name</span><span class="p">,</span>
-                                     <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;dll&quot;</span><span class="p">,</span>
-                                     <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
-                                     <span class="n">stash</span><span class="o">=</span><span class="n">stash</span><span class="p">)</span>
-                <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
-
-            <span class="c1"># test using opencl if desired and available</span>
-            <span class="k">if</span> <span class="s1">&#39;opencl&#39;</span> <span class="ow">in</span> <span class="n">loaders</span> <span class="ow">and</span> <span class="n">use_opencl</span><span class="p">():</span>
-                <span class="n">test_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-opencl&quot;</span><span class="o">%</span><span class="n">model_name</span>
-                <span class="n">test_method_name</span> <span class="o">=</span> <span class="s2">&quot;test_</span><span class="si">%s</span><span class="s2">_opencl&quot;</span> <span class="o">%</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
-                <span class="c1"># Using dtype=None so that the models that are only</span>
-                <span class="c1"># correct for double precision are not tested using</span>
-                <span class="c1"># single precision.  The choice is determined by the</span>
-                <span class="c1"># presence of *single=False* in the model file.</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="n">ModelTestCase</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span>
-                                     <span class="n">test_method_name</span><span class="p">,</span>
-                                     <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;ocl&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                                     <span class="n">stash</span><span class="o">=</span><span class="n">stash</span><span class="p">)</span>
-                <span class="c1">#print(&quot;defining&quot;, test_name)</span>
-                <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip</span><span class="p">:</span>
+            <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+            <span class="n">_add_model_to_suite</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="n">model_info</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">suite</span></div>
+
+<span class="k">def</span> <span class="nf">_add_model_to_suite</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="n">model_info</span><span class="p">):</span>
+    <span class="n">ModelTestCase</span> <span class="o">=</span> <span class="n">_hide_model_case_from_nose</span><span class="p">()</span>
+
+    <span class="c1">#print(&#39;------&#39;)</span>
+    <span class="c1">#print(&#39;found tests in&#39;, model_name)</span>
+    <span class="c1">#print(&#39;------&#39;)</span>
+
+    <span class="c1"># if ispy then use the dll loader to call pykernel</span>
+    <span class="c1"># don&#39;t try to call cl kernel since it will not be</span>
+    <span class="c1"># available in some environmentes.</span>
+    <span class="n">is_py</span> <span class="o">=</span> <span class="nb">callable</span><span class="p">(</span><span class="n">model_info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span>
+
+    <span class="c1"># Some OpenCL drivers seem to be flaky, and are not producing the</span>
+    <span class="c1"># expected result.  Since we don&#39;t have known test values yet for</span>
+    <span class="c1"># all of our models, we are instead going to compare the results</span>
+    <span class="c1"># for the &#39;smoke test&#39; (that is, evaluation at q=0.1 for the default</span>
+    <span class="c1"># parameters just to see that the model runs to completion) between</span>
+    <span class="c1"># the OpenCL and the DLL.  To do this, we define a &#39;stash&#39; which is</span>
+    <span class="c1"># shared between OpenCL and DLL tests.  This is just a list.  If the</span>
+    <span class="c1"># list is empty (which it will be when DLL runs, if the DLL runs</span>
+    <span class="c1"># first), then the results are appended to the list.  If the list</span>
+    <span class="c1"># is not empty (which it will be when OpenCL runs second), the results</span>
+    <span class="c1"># are compared to the results stored in the first element of the list.</span>
+    <span class="c1"># This is a horrible stateful hack which only makes sense because the</span>
+    <span class="c1"># test suite is thrown away after being run once.</span>
+    <span class="n">stash</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">is_py</span><span class="p">:</span>  <span class="c1"># kernel implemented in python</span>
+        <span class="n">test_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-python&quot;</span><span class="o">%</span><span class="n">model_info</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">test_method_name</span> <span class="o">=</span> <span class="s2">&quot;test_</span><span class="si">%s</span><span class="s2">_python&quot;</span> <span class="o">%</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">ModelTestCase</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span>
+                                <span class="n">test_method_name</span><span class="p">,</span>
+                                <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;dll&quot;</span><span class="p">,</span>  <span class="c1"># so that</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                                <span class="n">stash</span><span class="o">=</span><span class="n">stash</span><span class="p">)</span>
+        <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>   <span class="c1"># kernel implemented in C</span>
+
+        <span class="c1"># test using dll if desired</span>
+        <span class="k">if</span> <span class="s1">&#39;dll&#39;</span> <span class="ow">in</span> <span class="n">loaders</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">use_opencl</span><span class="p">():</span>
+            <span class="n">test_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-dll&quot;</span><span class="o">%</span><span class="n">model_info</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">test_method_name</span> <span class="o">=</span> <span class="s2">&quot;test_</span><span class="si">%s</span><span class="s2">_dll&quot;</span> <span class="o">%</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">ModelTestCase</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span>
+                                    <span class="n">test_method_name</span><span class="p">,</span>
+                                    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;dll&quot;</span><span class="p">,</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+                                    <span class="n">stash</span><span class="o">=</span><span class="n">stash</span><span class="p">)</span>
+            <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+        <span class="c1"># test using opencl if desired and available</span>
+        <span class="k">if</span> <span class="s1">&#39;opencl&#39;</span> <span class="ow">in</span> <span class="n">loaders</span> <span class="ow">and</span> <span class="n">use_opencl</span><span class="p">():</span>
+            <span class="n">test_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-opencl&quot;</span><span class="o">%</span><span class="n">model_info</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">test_method_name</span> <span class="o">=</span> <span class="s2">&quot;test_</span><span class="si">%s</span><span class="s2">_opencl&quot;</span> <span class="o">%</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
+            <span class="c1"># Using dtype=None so that the models that are only</span>
+            <span class="c1"># correct for double precision are not tested using</span>
+            <span class="c1"># single precision.  The choice is determined by the</span>
+            <span class="c1"># presence of *single=False* in the model file.</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">ModelTestCase</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span>
+                                    <span class="n">test_method_name</span><span class="p">,</span>
+                                    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;ocl&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                    <span class="n">stash</span><span class="o">=</span><span class="n">stash</span><span class="p">)</span>
+            <span class="c1">#print(&quot;defining&quot;, test_name)</span>
+            <span class="n">suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">_hide_model_case_from_nose</span><span class="p">():</span>
     <span class="c1"># type: () -&gt; type</span>
@@ -398,13 +401,25 @@
     <span class="n">shift</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">target</span><span class="p">)))</span>
     <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">target</span><span class="o">-</span><span class="n">actual</span><span class="p">)</span><span class="o">/</span><span class="n">shift</span> <span class="o">&lt;</span> <span class="mf">1.5</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="n">digits</span></div>
 
-<div class="viewcode-block" id="run_one"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.model_test.run_one">[docs]</a><span class="k">def</span> <span class="nf">run_one</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-    <span class="c1"># type: (str) -&gt; str</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Run the tests for a single model, printing the results to stdout.</span>
+<span class="c1"># CRUFT: old interface; should be deprecated and removed</span>
+<div class="viewcode-block" id="run_one"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.model_test.run_one">[docs]</a><span class="k">def</span> <span class="nf">run_one</span><span class="p">(</span><span class="n">model_name</span><span class="p">):</span>
+    <span class="c1"># msg = &quot;use check_model(model_info) rather than run_one(model_name)&quot;</span>
+    <span class="c1"># warnings.warn(msg, category=DeprecationWarning, stacklevel=2)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">output</span>
 
-<span class="sd">    *model* can by a python file, which is handy for checking user defined</span>
-<span class="sd">    plugin models.</span>
+    <span class="n">success</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="n">check_model</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="check_model"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.model_test.check_model">[docs]</a><span class="k">def</span> <span class="nf">check_model</span><span class="p">(</span><span class="n">model_info</span><span class="p">):</span>
+    <span class="c1"># type: (ModelInfo) -&gt; str</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the tests for a single model, capturing the output.</span>
+
+<span class="sd">    Returns success status and the output string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Note that running main() directly did not work from within the</span>
     <span class="c1"># wxPython pycrust console.  Instead of the results appearing in the</span>
@@ -419,13 +434,8 @@
 
     <span class="c1"># Build a test suite containing just the model</span>
     <span class="n">loaders</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;opencl&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_opencl</span><span class="p">()</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;dll&#39;</span><span class="p">]</span>
-    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="p">]</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">suite</span> <span class="o">=</span> <span class="n">make_suite</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="n">models</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">traceback</span>
-        <span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
-        <span class="k">return</span>
+    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestSuite</span><span class="p">()</span>
+    <span class="n">_add_model_to_suite</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="n">suite</span><span class="p">,</span> <span class="n">model_info</span><span class="p">)</span>
 
     <span class="c1"># Warn if there are no user defined tests.</span>
     <span class="c1"># Note: the test suite constructed above only has one test in it, which</span>
@@ -440,7 +450,7 @@
     <span class="c1"># for user tests before running the suite.</span>
     <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">suite</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
-            <span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="s2">&quot;Note: </span><span class="si">%s</span><span class="s2"> has no user defined tests.&quot;</span><span class="o">%</span><span class="n">model</span><span class="p">)</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="s2">&quot;Note: </span><span class="si">%s</span><span class="s2"> has no user defined tests.&quot;</span><span class="o">%</span><span class="n">model_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">break</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">writeln</span><span class="p">(</span><span class="s2">&quot;Note: no test suite created --- this should never happen&quot;</span><span class="p">)</span>
@@ -456,7 +466,7 @@
 
     <span class="n">output</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
     <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">output</span></div>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">wasSuccessful</span><span class="p">(),</span> <span class="n">output</span></div>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.model_test.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="o">*</span><span class="n">models</span><span class="p">):</span>
@@ -576,13 +586,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

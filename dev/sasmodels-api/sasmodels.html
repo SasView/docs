@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sasmodels package &mdash; SasView 4.2.0 documentation</title>
+    <title>sasmodels package &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sasmodels" href="modules.html" />
     <link rel="next" title="sasmodels.custom package" href="sasmodels.custom.html" />
     <link rel="prev" title="sasmodels" href="modules.html" /> 
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="modules.html" title="sasmodels"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" accesskey="U">sasmodels</a> &raquo;</li> 
       </ul>
@@ -179,6 +179,11 @@ uncertainty.</p>
 <code class="descname">residuals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/bumps_model.html#Experiment.residuals"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return theory minus data normalized by uncertainty.</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="sasmodels.bumps_model.Experiment.resolution">
+<code class="descname">resolution</code></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="sasmodels.bumps_model.Experiment.save">
@@ -1808,7 +1813,7 @@ or the top of the range, depending on whether <em>mode</em> is &#8216;central&#8
 
 <dl class="function">
 <dt id="sasmodels.jitter.draw_jitter">
-<code class="descclassname">sasmodels.jitter.</code><code class="descname">draw_jitter</code><span class="sig-paren">(</span><em>axes</em>, <em>view</em>, <em>jitter</em>, <em>dist='gaussian'</em>, <em>size=(0.1</em>, <em>0.4</em>, <em>1.0)</em>, <em>draw_shape=&lt;function draw_parallelepiped at 0x000000000C9296D8&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/jitter.html#draw_jitter"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descclassname">sasmodels.jitter.</code><code class="descname">draw_jitter</code><span class="sig-paren">(</span><em>axes</em>, <em>view</em>, <em>jitter</em>, <em>dist='gaussian'</em>, <em>size=(0.1</em>, <em>0.4</em>, <em>1.0)</em>, <em>draw_shape=&lt;function draw_parallelepiped at 0x000000000C7F0DD8&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/jitter.html#draw_jitter"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Represent jitter as a set of shapes at different orientations.</p>
 </dd></dl>
 
@@ -2587,6 +2592,13 @@ model and value is the value to use for the test.  Any parameters not given
 in the parameter list will take on the default parameter value.</p>
 <p>Precision defaults to 5 digits (relative).</p>
 <dl class="function">
+<dt id="sasmodels.model_test.check_model">
+<code class="descclassname">sasmodels.model_test.</code><code class="descname">check_model</code><span class="sig-paren">(</span><em>model_info</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/model_test.html#check_model"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Run the tests for a single model, capturing the output.</p>
+<p>Returns success status and the output string.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="sasmodels.model_test.invalid_pars">
 <code class="descclassname">sasmodels.model_test.</code><code class="descname">invalid_pars</code><span class="sig-paren">(</span><em>partable</em>, <em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/model_test.html#invalid_pars"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return a list of parameter names that are not part of the model.</p>
@@ -2624,11 +2636,8 @@ the python driver is always used.</p>
 
 <dl class="function">
 <dt id="sasmodels.model_test.run_one">
-<code class="descclassname">sasmodels.model_test.</code><code class="descname">run_one</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/model_test.html#run_one"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Run the tests for a single model, printing the results to stdout.</p>
-<p><em>model</em> can by a python file, which is handy for checking user defined
-plugin models.</p>
-</dd></dl>
+<code class="descclassname">sasmodels.model_test.</code><code class="descname">run_one</code><span class="sig-paren">(</span><em>model_name</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/model_test.html#run_one"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-sasmodels.modelinfo">
@@ -3292,12 +3301,10 @@ of padding around the circular convolution.  The <span class="math">\(q\)</span>
 will be <span class="math">\(\Delta q = 2 q_\mathrm{max} w / n_q\)</span>.  If <em>nq</em> is not
 given it will use <span class="math">\(n_q = 2^k\)</span> such that <span class="math">\(\Delta q &lt; q_\mathrm{min}\)</span>.</p>
 <p><em>probability</em> is related to the expected number of scattering
-events in the sample <span class="math">\(\lambda\)</span> as <span class="math">\(p = 1 = e^{-\lambda}\)</span>.  As a
-hack to allow probability to be a fitted parameter, the &#8220;value&#8221;
-can be a function that takes no parameters and returns the current
-value of the probability.  <em>coverage</em> determines how many scattering
-steps to consider.  The default is 0.99, which sets <span class="math">\(n\)</span> such that
-<span class="math">\(1 \ldots n\)</span> covers 99% of the Poisson probability mass function.</p>
+events in the sample <span class="math">\(\lambda\)</span> as <span class="math">\(p = 1 - e^{-\lambda}\)</span>.
+<em>coverage</em> determines how many scattering steps to consider.  The
+default is 0.99, which sets <span class="math">\(n\)</span> such that <span class="math">\(1 \ldots n\)</span> covers 99%
+of the Poisson probability mass function.</p>
 <p><em>is2d</em> is True then 2D scattering is used, otherwise it accepts
 and returns 1D scattering.</p>
 <p><em>resolution</em> is the resolution function to apply after multiple
@@ -4264,6 +4271,13 @@ to the card for each evaluation.</p>
 <p><strong>DEPRECATED</strong>: use calculate_Iq instead</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="sasmodels.sasview_model.SasviewModel.runTests">
+<em class="property">classmethod </em><code class="descname">runTests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/sasview_model.html#SasviewModel.runTests"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Run any tests built into the model and captures the test output.</p>
+<p>Returns success flag and output</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="sasmodels.sasview_model.SasviewModel.runXY">
 <code class="descname">runXY</code><span class="sig-paren">(</span><em>x=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/sasview_model.html#SasviewModel.runXY"><span class="viewcode-link">[source]</span></a></dt>
@@ -4349,6 +4363,14 @@ model is not returned.</p>
 <dt id="sasmodels.sasview_model.make_model_from_info">
 <code class="descclassname">sasmodels.sasview_model.</code><code class="descname">make_model_from_info</code><span class="sig-paren">(</span><em>model_info</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/sasview_model.html#make_model_from_info"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Convert <em>model_info</em> into a SasView model wrapper.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sasmodels.sasview_model.reset_environment">
+<code class="descclassname">sasmodels.sasview_model.</code><code class="descname">reset_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/sasview_model.html#reset_environment"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Clear the compute engine context so that the GUI can change devices.</p>
+<p>This removes all compiled kernels, even those that are active on fit
+pages, but they will be restored the next time they are needed.</p>
 </dd></dl>
 
 <dl class="function">
@@ -4538,6 +4560,16 @@ sorted from highest to lowest.</p>
 <p class="last">The standard math function, tgamma(x) is unstable for <span class="math">\(x &lt; 1\)</span>
 on some platforms.</p>
 </dd>
+<dt>sas_gammaln(x):</dt>
+<dd><p class="first">log gamma function sas_gammaln<span class="math">\((x) = \log \Gamma(|x|)\)</span>.</p>
+<p class="last">The standard math function, lgamma(x), is incorrect for single
+precision on some platforms.</p>
+</dd>
+<dt>sas_gammainc(a, x), sas_gammaincc(a, x):</dt>
+<dd>Incomplete gamma function
+sas_gammainc<span class="math">\((a, x) = \int_0^x t^{a-1}e^{-t}\,dt / \Gamma(a)\)</span>
+and complementary incomplete gamma function
+sas_gammaincc<span class="math">\((a, x) = \int_x^\infty t^{a-1}e^{-t}\,dt / \Gamma(a)\)</span></dd>
 <dt>sas_erf(x), sas_erfc(x):</dt>
 <dd><p class="first">Error function
 <span class="math">\(\text{sas_erf}(x) = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,dt\)</span>
@@ -5042,13 +5074,13 @@ used directly in setup(...,data_files=...) for setup.py.</p>
         <li class="right" >
           <a href="modules.html" title="sasmodels"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >sasmodels</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

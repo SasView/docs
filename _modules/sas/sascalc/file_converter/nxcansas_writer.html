@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.file_converter.nxcansas_writer &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.file_converter.nxcansas_writer &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../index.html" />
     <link rel="up" title="sas" href="../../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -58,10 +58,10 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader_HDF5</span> <span class="kn">import</span> <span class="n">Reader</span> <span class="k">as</span> <span class="n">Cansas2Reader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader_HDF5</span> <span class="kn">import</span> <span class="n">Reader</span>
 <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span>
 
-<div class="viewcode-block" id="NXcanSASWriter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.nxcansas_writer.NXcanSASWriter">[docs]</a><span class="k">class</span> <span class="nc">NXcanSASWriter</span><span class="p">(</span><span class="n">Cansas2Reader</span><span class="p">):</span>
+<div class="viewcode-block" id="NXcanSASWriter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.nxcansas_writer.NXcanSASWriter">[docs]</a><span class="k">class</span> <span class="nc">NXcanSASWriter</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for writing in NXcanSAS data files. Any number of data sets may be</span>
 <span class="sd">    written to the file. Currently 1D and 2D SAS data sets are supported</span>
@@ -137,9 +137,10 @@
                 <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">entry</span><span class="p">[</span><span class="n">names</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span>
 
-        <span class="n">valid_data</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="nb">issubclass</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="p">(</span><span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">])</span>
+        <span class="n">valid_data</span> <span class="o">=</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="p">(</span><span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_data</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All entries of dataset must be Data1D or Data2D objects&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All entries of dataset must be Data1D or Data2D&quot;</span>
+                             <span class="s2">&quot;objects&quot;</span><span class="p">)</span>
 
         <span class="c1"># Get run name and number from first Data object</span>
         <span class="n">data_info</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -159,16 +160,13 @@
         <span class="n">sasentry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASentry&#39;</span>
         <span class="n">sasentry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
 
-        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-
-        <span class="k">for</span> <span class="n">data_obj</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
-            <span class="n">data_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;sasdata{0:0=2d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data_obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+            <span class="n">data_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;sasdata{0:0=2d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
             <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASdata&#39;</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_obj</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_write_1d_data</span><span class="p">(</span><span class="n">data_obj</span><span class="p">,</span> <span class="n">data_entry</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_obj</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_write_2d_data</span><span class="p">(</span><span class="n">data_obj</span><span class="p">,</span> <span class="n">data_entry</span><span class="p">)</span>
-            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">data_info</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># Sample metadata</span>
@@ -198,7 +196,7 @@
             <span class="k">if</span> <span class="n">details</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">sample_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;details&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">details</span><span class="p">)</span>
 
-        <span class="c1"># Instrumment metadata</span>
+        <span class="c1"># Instrument metadata</span>
         <span class="n">instrument_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sasinstrument&#39;</span><span class="p">)</span>
         <span class="n">instrument_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASinstrument&#39;</span>
         <span class="n">instrument_entry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">instrument</span><span class="p">)</span>
@@ -226,41 +224,42 @@
             <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;beam_size_x&#39;</span><span class="p">,</span> <span class="s1">&#39;beam_size_y&#39;</span><span class="p">],</span>
             <span class="n">units</span><span class="o">=</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">beam_size_unit</span><span class="p">,</span> <span class="n">write_fn</span><span class="o">=</span><span class="n">_write_h5_float</span><span class="p">)</span>
 
-
         <span class="c1"># Collimation metadata</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">collimation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">for</span> <span class="n">coll_info</span> <span class="ow">in</span> <span class="n">data_info</span><span class="o">.</span><span class="n">collimation</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coll_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">collimation</span><span class="p">):</span>
                 <span class="n">collimation_entry</span> <span class="o">=</span> <span class="n">instrument_entry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span>
-                    <span class="s1">&#39;sascollimation{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                    <span class="s1">&#39;sascollimation{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="n">collimation_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SAScollimation&#39;</span>
                 <span class="k">if</span> <span class="n">coll_info</span><span class="o">.</span><span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">_write_h5_float</span><span class="p">(</span><span class="n">collimation_entry</span><span class="p">,</span> <span class="n">coll_info</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="s1">&#39;SDD&#39;</span><span class="p">)</span>
-                    <span class="n">collimation_entry</span><span class="p">[</span><span class="s1">&#39;SDD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll_info</span><span class="o">.</span><span class="n">length_unit</span>
+                    <span class="n">collimation_entry</span><span class="p">[</span><span class="s1">&#39;SDD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span>\
+                        <span class="n">coll_info</span><span class="o">.</span><span class="n">length_unit</span>
                 <span class="k">if</span> <span class="n">coll_info</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">collimation_entry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">coll_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Create a blank one - at least 1 set of collimation metadata</span>
-            <span class="c1"># required by format</span>
-            <span class="n">collimation_entry</span> <span class="o">=</span> <span class="n">instrument_entry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sascollimation01&#39;</span><span class="p">)</span>
+            <span class="c1"># Create a blank one - at least 1 collimation required by format</span>
+            <span class="n">instrument_entry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sascollimation01&#39;</span><span class="p">)</span>
 
         <span class="c1"># Detector metadata</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">detector</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">for</span> <span class="n">det_info</span> <span class="ow">in</span> <span class="n">data_info</span><span class="o">.</span><span class="n">detector</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">det_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">detector</span><span class="p">):</span>
                 <span class="n">detector_entry</span> <span class="o">=</span> <span class="n">instrument_entry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span>
-                    <span class="s1">&#39;sasdetector{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                    <span class="s1">&#39;sasdetector{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="n">detector_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASdetector&#39;</span>
                 <span class="k">if</span> <span class="n">det_info</span><span class="o">.</span><span class="n">distance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">_write_h5_float</span><span class="p">(</span><span class="n">detector_entry</span><span class="p">,</span> <span class="n">det_info</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="s1">&#39;SDD&#39;</span><span class="p">)</span>
-                    <span class="n">detector_entry</span><span class="p">[</span><span class="s1">&#39;SDD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_info</span><span class="o">.</span><span class="n">distance_unit</span>
+                    <span class="n">detector_entry</span><span class="p">[</span><span class="s1">&#39;SDD&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span>\
+                        <span class="n">det_info</span><span class="o">.</span><span class="n">distance_unit</span>
                 <span class="k">if</span> <span class="n">det_info</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">detector_entry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">det_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">detector_entry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">det_info</span><span class="o">.</span><span class="n">slit_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">_write_h5_float</span><span class="p">(</span><span class="n">detector_entry</span><span class="p">,</span> <span class="n">det_info</span><span class="o">.</span><span class="n">slit_length</span><span class="p">,</span> <span class="s1">&#39;slit_length&#39;</span><span class="p">)</span>
-                    <span class="n">detector_entry</span><span class="p">[</span><span class="s1">&#39;slit_length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">det_info</span><span class="o">.</span><span class="n">slit_length_unit</span>
+                    <span class="n">_write_h5_float</span><span class="p">(</span><span class="n">detector_entry</span><span class="p">,</span> <span class="n">det_info</span><span class="o">.</span><span class="n">slit_length</span><span class="p">,</span>
+                                    <span class="s1">&#39;slit_length&#39;</span><span class="p">)</span>
+                    <span class="n">detector_entry</span><span class="p">[</span><span class="s1">&#39;slit_length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span>\
+                        <span class="n">det_info</span><span class="o">.</span><span class="n">slit_length_unit</span>
                 <span class="n">_write_h5_vector</span><span class="p">(</span><span class="n">detector_entry</span><span class="p">,</span> <span class="n">det_info</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
                 <span class="c1"># NXcanSAS doesn&#39;t save information about pitch, only roll</span>
                 <span class="c1"># and yaw. The _write_h5_vector method writes vector.y, but we</span>
@@ -274,13 +273,55 @@
                 <span class="n">_write_h5_vector</span><span class="p">(</span><span class="n">detector_entry</span><span class="p">,</span> <span class="n">det_info</span><span class="o">.</span><span class="n">pixel_size</span><span class="p">,</span>
                     <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x_pixel_size&#39;</span><span class="p">,</span> <span class="s1">&#39;y_pixel_size&#39;</span><span class="p">],</span>
                     <span class="n">write_fn</span><span class="o">=</span><span class="n">_write_h5_float</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">det_info</span><span class="o">.</span><span class="n">pixel_size_unit</span><span class="p">)</span>
-
-                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Create a blank one - at least 1 detector required by format</span>
             <span class="n">detector_entry</span> <span class="o">=</span> <span class="n">instrument_entry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sasdetector01&#39;</span><span class="p">)</span>
             <span class="n">detector_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASdetector&#39;</span>
             <span class="n">detector_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># Process meta data</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">process</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">process</span><span class="p">):</span>
+            <span class="n">process_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sasprocess{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">process_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASprocess&#39;</span>
+            <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">process_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">date</span><span class="p">:</span>
+                <span class="n">date</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+                <span class="n">process_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+                <span class="n">desc</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+                <span class="n">process_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">term</span><span class="p">):</span>
+                <span class="c1"># Don&#39;t save empty terms</span>
+                <span class="k">if</span> <span class="n">term</span><span class="p">:</span>
+                    <span class="n">h5_term</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">term</span><span class="p">)</span>
+                    <span class="n">process_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;term{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">h5_term</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">note</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">notes</span><span class="p">):</span>
+                <span class="c1"># Don&#39;t save empty notes</span>
+                <span class="k">if</span> <span class="n">note</span><span class="p">:</span>
+                    <span class="n">h5_note</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+                    <span class="n">process_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;note{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">h5_note</span><span class="p">)</span>
+
+        <span class="c1"># Transmission Spectrum</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">trans</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">trans_spectrum</span><span class="p">):</span>
+            <span class="n">trans_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span>
+                <span class="s1">&#39;sastransmission_spectrum{0:0=2d}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">trans_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SAStransmission_spectrum&#39;</span>
+            <span class="n">trans_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;T&#39;</span>
+            <span class="n">trans_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;T_axes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;T&#39;</span>
+            <span class="n">trans_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="n">trans</span><span class="o">.</span><span class="n">timestamp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">trans_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">timestamp</span>
+            <span class="n">transmission</span> <span class="o">=</span> <span class="n">trans_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span>
+                                                      <span class="n">data</span><span class="o">=</span><span class="n">trans</span><span class="o">.</span><span class="n">transmission</span><span class="p">)</span>
+            <span class="n">transmission</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;unertainties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Tdev&#39;</span>
+            <span class="n">trans_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Tdev&#39;</span><span class="p">,</span>
+                                       <span class="n">data</span><span class="o">=</span><span class="n">trans</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">)</span>
+            <span class="n">trans_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">trans</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span>
 
         <span class="n">note_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sasnote&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
         <span class="n">note_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASnote&#39;</span>
@@ -304,16 +345,25 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
         <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;I_axes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Q&#39;</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;I_uncertainties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Idev&#39;</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Q_indicies&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="n">dI</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">dy</span>
-        <span class="k">if</span> <span class="n">dI</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">dI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">data_obj</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Idev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dI</span><span class="p">)</span>
+        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Q_indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">q_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">q_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">x_unit</span>
+        <span class="n">i_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">i_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">y_unit</span>
+        <span class="k">if</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">dy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">i_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Idev&#39;</span>
+            <span class="n">i_dev_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Idev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+            <span class="n">i_dev_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">y_unit</span>
+        <span class="k">if</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">q_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolutions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dQ&#39;</span>
+            <span class="n">dq_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dQ&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+            <span class="n">dq_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">x_unit</span>
+        <span class="k">elif</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">dxl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">q_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolutions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dQl&#39;</span><span class="p">,</span><span class="s1">&#39;dQw&#39;</span><span class="p">]</span>
+            <span class="n">dql_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dQl&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">dxl</span><span class="p">)</span>
+            <span class="n">dql_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">x_unit</span>
+            <span class="n">dqw_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dQw&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_obj</span><span class="o">.</span><span class="n">dxw</span><span class="p">)</span>
+            <span class="n">dqw_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">x_unit</span>
 
     <span class="k">def</span> <span class="nf">_write_2d_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data_entry</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -323,13 +373,12 @@
 <span class="sd">        :param data_entry: A h5py Group object representing the SASdata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;I&#39;</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;I_axes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Q,Q&#39;</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;I_uncertainties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Idev&#39;</span>
-        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Q_indicies&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;I_axes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Qx,Qy&#39;</span>
+        <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;Q_indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y_bins</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x_bins</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">n_rows</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n_rows</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_cols</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n_cols</span><span class="o">*</span><span class="n">n_rows</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
             <span class="c1"># Calculate rows and columns, assuming detector is square</span>
             <span class="c1"># Same logic as used in PlotPanel.py _get_bins</span>
             <span class="n">n_cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">))))</span>
@@ -338,21 +387,36 @@
             <span class="k">if</span> <span class="n">n_rows</span> <span class="o">*</span> <span class="n">n_cols</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to calculate dimensions of 2D data&quot;</span><span class="p">)</span>
 
-        <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
-        <span class="n">dI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">err_data</span> <span class="o">==</span> <span class="p">[</span><span class="bp">None</span><span class="p">]):</span>
-            <span class="n">dI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">err_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
-        <span class="n">qx</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
+        <span class="n">intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
+        <span class="n">qx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
         <span class="n">qy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
 
-        <span class="n">I_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
-        <span class="n">I_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">I_unit</span>
-        <span class="n">Qx_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Qx&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">qx</span><span class="p">)</span>
-        <span class="n">Qx_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
-        <span class="n">Qy_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Qy&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">qy</span><span class="p">)</span>
-        <span class="n">Qy_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
-        <span class="n">Idev_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Idev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dI</span><span class="p">)</span>
-        <span class="n">Idev_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">I_unit</span></div>
+        <span class="n">i_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">intensity</span><span class="p">)</span>
+        <span class="n">i_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">I_unit</span>
+        <span class="n">qx_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Qx&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">qx</span><span class="p">)</span>
+        <span class="n">qx_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
+        <span class="n">qy_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Qy&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">qy</span><span class="p">)</span>
+        <span class="n">qy_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">err_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">err_data</span><span class="p">)):</span>
+            <span class="n">d_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">err_data</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">))</span>
+            <span class="n">i_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;uncertainties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Idev&#39;</span>
+            <span class="n">i_dev_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;Idev&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">d_i</span><span class="p">)</span>
+            <span class="n">i_dev_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">I_unit</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span><span class="p">)):</span>
+            <span class="n">qx_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolutions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dQx&#39;</span>
+            <span class="n">dqx_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dQx&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span><span class="p">)</span>
+            <span class="n">dqx_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span><span class="p">)):</span>
+            <span class="n">qy_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;resolutions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;dQy&#39;</span>
+            <span class="n">dqy_entry</span> <span class="o">=</span> <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;dQy&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span><span class="p">)</span>
+            <span class="n">dqy_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">):</span>
+            <span class="n">data_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;mask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mask&quot;</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+            <span class="n">data_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -383,13 +447,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

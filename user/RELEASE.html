@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Release Notes &mdash; SasView 4.2.0 documentation</title>
+    <title>Release Notes &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../index.html" />
     <link rel="prev" title="sasmodels.custom package" href="../dev/sasmodels-api/sasmodels.custom.html" /> 
   </head>
   <body role="document">
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="../dev/sasmodels-api/sasmodels.custom.html" title="sasmodels.custom package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">SasView 4.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">SasView 4.2.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,6 +62,37 @@
 </div>
 <div class="section" id="features">
 <h1>Features</h1>
+<div class="section" id="new-in-version-4-2-1">
+<h2>New in Version 4.2.1</h2>
+<p>The major changes for this point release were to fix several problems with using
+the built in editor to create new models and to bring the NXcanSAS reader into
+compliance with the final published specification.  The orignal reader was
+based on a draft version of the specification.  As an early adopter,
+interpretation and implementation of the spec was iterated with all producers
+of NXcanSAS reduced data known to the SasView team in order to ensure
+compatibility and verify the implementation.  A few other enhancements and bug
+fixed were also introduced such as cleaning up the resolution section of the
+fitting page GUI, increasing the max size range allowed in the corfunc
+analysis, and adding the incomplete gamma function to the python library.</p>
+<div class="section" id="resolved-issues">
+<h3>Resolved Issues</h3>
+<ul class="simple">
+<li>Fixes #  976: CanSas HDF reader will not read all valid CanSas HDF (NXcanSAS) files</li>
+<li>Fixes # 1074: Add incomplete gamma function to sasmodels</li>
+<li>Fixes # 1111: Convert all input Q units to 1/A</li>
+<li>Fixes # 1129: NXcanSAS writer not writing all meta data</li>
+<li>Fixes # 1142: Plugin framework is broken</li>
+<li>Fixes # 1183: Test from creating new model reset all parameters to default in all open FitPages</li>
+<li>Fixes # 1188:   Colons removed from magnetic parameter names to address Python variable issue - done in 4.2. but documented in 4.2.1</li>
+<li>Fixes # 1205: 4.2 set weighting choice seems to be ignored.</li>
+<li>Fixes # 1206: Incorrect (and confusing) presentation of dQ from data in instrumental smearing section</li>
+<li>Fixes # 1212: Bug in Iqxqy plotting non rectangular / square matrices?</li>
+<li>Fixes # 1221: ABS reader does not read in USANS data properly GitHub</li>
+<li>Fixes # 1222: smearing options incorrect on show2D and show1D in fitpage14: Loading a saved project is really really slow</li>
+<li>Fixes # 1223: Expand permitted range of transformed data in Corfunc implementation</li>
+</ul>
+</div>
+</div>
 <div class="section" id="new-in-version-4-2-0">
 <h2>New in Version 4.2.0</h2>
 <p>This release heralds many improvements and a host of bug fixes, along with
@@ -114,6 +145,8 @@ objects have been rectified. Some questions remain however.</li>
 <li>The known issue with the core_shell_parallelepiped model is now fixed.</li>
 <li>An error in the be_polyelectrolyte model was identified and rectified, but
 the fix is yet to be validated.</li>
+<li>(Added post-release) An error with the reporting of the scale parameter
+from the spinodal model was rectified.</li>
 <li>A number of issues and inconsistencies with the creation of
 sum|multiply models have been rectified.</li>
 <li>A Boltzmann distribution has been added for polydispersity/orientational
@@ -180,7 +213,7 @@ available in a future SasView 4.x release.</li>
 <li>Fixes # 776: angular dispersity</li>
 <li>Fixes # 784: Add 3D integral to Correlation Function analysis</li>
 <li>Fixes # 786: core_shell_parallelepiped 1-D model is incorrect</li>
-<li>Fixes # 818: ?report button? followed by ?save? makes an empty pdf file???</li>
+<li>Fixes # 818: “report button” followed by “save” makes an empty pdf file???</li>
 <li>Fixes # 830: Check compliance of loader against NXcanSAS-1.0 release</li>
 <li>Fixes # 838: Fix model download from marketplace</li>
 <li>Fixes # 848: can&#8217;t save analysis when only one fit page</li>
@@ -289,6 +322,7 @@ available in a future SasView 4.x release.</li>
 <li>Fixes #1179: PDF Report should contain SasView Version Number</li>
 <li>Fixes #1183: Test from creating new model reset all parameters to default in all open FitPages</li>
 <li>Fixes #1188: fitpage hangs if change model while magnetism is on</li>
+<li>Fixes #1191: Correct erroneous Scale reported by Spinodal model</li>
 </ul>
 <p><strong>It is recommended that all users upgrade to this version, but your
 attention is drawn to the Changes section above.</strong></p>
@@ -978,6 +1012,8 @@ at 0 (noted in documentation) while the triaxial ellipsoid does not seem
 to reproduce the limit of the oblate or prolate ellipsoid. If errors are
 found and corrected, corrected versions will be uploaded to the
 marketplace.</li>
+<li>(Added after Release 4.2.0) The scale parameter reported from the spinodal
+model is the square root of the true value.</li>
 </ul>
 </div>
 <div class="section" id="id10">
@@ -1067,6 +1103,10 @@ to all developer and user information, tools and resources.</p>
   <ul>
 <li><a class="reference internal" href="#">Release Notes</a></li>
 <li><a class="reference internal" href="#features">Features</a><ul>
+<li><a class="reference internal" href="#new-in-version-4-2-1">New in Version 4.2.1</a><ul>
+<li><a class="reference internal" href="#resolved-issues">Resolved Issues</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#new-in-version-4-2-0">New in Version 4.2.0</a><ul>
 <li><a class="reference internal" href="#changes">Changes</a></li>
 <li><a class="reference internal" href="#improvements">Improvements</a></li>
@@ -1182,11 +1222,11 @@ to all developer and user information, tools and resources.</p>
         <li class="right" >
           <a href="../dev/sasmodels-api/sasmodels.custom.html" title="sasmodels.custom package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">SasView 4.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">SasView 4.2.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

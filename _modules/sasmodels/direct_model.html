@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sasmodels.direct_model &mdash; SasView 4.2.0 documentation</title>
+    <title>sasmodels.direct_model &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
       </ul>
@@ -292,8 +292,6 @@
                 <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">dy</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
-            <span class="c1">#self._theory = np.zeros_like(q)</span>
-            <span class="n">q_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">q_calc</span><span class="p">]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;Iqxy&#39;</span><span class="p">:</span>
             <span class="c1">#if not model.info.parameters.has_2d:</span>
             <span class="c1">#    raise ValueError(&quot;not 2D without orientation or magnetic parameters&quot;)</span>
@@ -310,8 +308,6 @@
                 <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">resolution2d</span><span class="o">.</span><span class="n">Pinhole2D</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
                                          <span class="n">nsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
-            <span class="c1">#self._theory = np.zeros_like(self.Iq)</span>
-            <span class="n">q_vectors</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">q_calc</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;Iq&#39;</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">qmin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">qmax</span><span class="p">)</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
@@ -336,9 +332,6 @@
                                         <span class="n">qy_width</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dxw</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">resolution</span><span class="o">.</span><span class="n">Perfect1D</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-
-            <span class="c1">#self._theory = np.zeros_like(self.Iq)</span>
-            <span class="n">q_vectors</span> <span class="o">=</span> <span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">q_calc</span><span class="p">]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;Iq-oriented&#39;</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">qmin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">qmax</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -354,13 +347,11 @@
             <span class="n">res</span> <span class="o">=</span> <span class="n">resolution2d</span><span class="o">.</span><span class="n">Slit2D</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
                                       <span class="n">qx_width</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dxw</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
                                       <span class="n">qy_width</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dxl</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-            <span class="n">q_vectors</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">q_calc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown data type&quot;</span><span class="p">)</span> <span class="c1"># never gets here</span>
 
         <span class="c1"># Remember function inputs so we can delay loading the function and</span>
         <span class="c1"># so we can save/restore state</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_inputs</span> <span class="o">=</span> <span class="n">q_vectors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Iq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dIq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span><span class="p">,</span> <span class="n">index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">res</span>
@@ -397,7 +388,13 @@
     <span class="k">def</span> <span class="nf">_calc_theory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="c1"># type: (ParameterSet, float) -&gt; np.ndarray</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernel_inputs</span><span class="p">)</span>
+            <span class="c1"># TODO: change interfaces so that resolution returns kernel inputs</span>
+            <span class="c1"># Maybe have resolution always return a tuple, or maybe have</span>
+            <span class="c1"># make_kernel accept either an ndarray or a pair of ndarrays.</span>
+            <span class="n">kernel_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="o">.</span><span class="n">q_calc</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel_inputs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">kernel_inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">kernel_inputs</span><span class="p">,)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">kernel_inputs</span><span class="p">)</span>
 
         <span class="c1"># Need to pull background out of resolution for multiple scattering</span>
         <span class="n">background</span> <span class="o">=</span> <span class="n">pars</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;background&#39;</span><span class="p">,</span> <span class="n">DEFAULT_BACKGROUND</span><span class="p">)</span>
@@ -532,13 +529,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

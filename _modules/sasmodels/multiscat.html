@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sasmodels.multiscat &mdash; SasView 4.2.0 documentation</title>
+    <title>sasmodels.multiscat &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
       </ul>
@@ -392,12 +392,10 @@
 <span class="sd">    given it will use $n_q = 2^k$ such that $\Delta q &lt; q_\mathrm{min}$.</span>
 
 <span class="sd">    *probability* is related to the expected number of scattering</span>
-<span class="sd">    events in the sample $\lambda$ as $p = 1 = e^{-\lambda}$.  As a</span>
-<span class="sd">    hack to allow probability to be a fitted parameter, the &quot;value&quot;</span>
-<span class="sd">    can be a function that takes no parameters and returns the current</span>
-<span class="sd">    value of the probability.  *coverage* determines how many scattering</span>
-<span class="sd">    steps to consider.  The default is 0.99, which sets $n$ such that</span>
-<span class="sd">    $1 \ldots n$ covers 99% of the Poisson probability mass function.</span>
+<span class="sd">    events in the sample $\lambda$ as $p = 1 - e^{-\lambda}$.</span>
+<span class="sd">    *coverage* determines how many scattering steps to consider.  The</span>
+<span class="sd">    default is 0.99, which sets $n$ such that $1 \ldots n$ covers 99%</span>
+<span class="sd">    of the Poisson probability mass function.</span>
 
 <span class="sd">    *is2d* is True then 2D scattering is used, otherwise it accepts</span>
 <span class="sd">    and returns 1D scattering.</span>
@@ -449,7 +447,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="n">qmax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qmin</span> <span class="o">=</span> <span class="n">qmin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nq</span> <span class="o">=</span> <span class="n">nq</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">probability</span> <span class="o">=</span> <span class="n">probability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probability</span> <span class="o">=</span> <span class="mf">0.</span> <span class="k">if</span> <span class="n">probability</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">probability</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">=</span> <span class="n">coverage</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is2d</span> <span class="o">=</span> <span class="n">is2d</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">window</span>
@@ -506,6 +504,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">Iq</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># type: np.ndarray</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Iqxy</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># type: np.ndarray</span>
 
+        <span class="c1"># Label probability as a fittable parameter, and give its external name</span>
+        <span class="c1"># Note that the external name must be a valid python identifier, since</span>
+        <span class="c1"># is will be set as an experiment attribute.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fittable</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;probability&#39;</span><span class="p">:</span> <span class="s1">&#39;scattering_probability&#39;</span><span class="p">}</span>
+
 <div class="viewcode-block" id="MultipleScattering.apply"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.multiscat.MultipleScattering.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theory</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is2d</span><span class="p">:</span>
             <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">theory</span>
@@ -513,6 +516,7 @@
             <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theory</span><span class="p">)</span>
         <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">Iq_calc</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nq</span><span class="p">)</span>
 
+        <span class="c1"># CRUFT: don&#39;t need probability as a function anymore</span>
         <span class="n">probability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">probability</span>
         <span class="n">coverage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span>
         <span class="c1">#t0 = time.time()</span>
@@ -765,13 +769,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

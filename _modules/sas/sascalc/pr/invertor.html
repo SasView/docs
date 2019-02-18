@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.pr.invertor &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.pr.invertor &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../index.html" />
     <link rel="up" title="sas" href="../../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -56,6 +56,7 @@
 
 <span class="sd">FIXME: The way the Invertor interacts with its C component should be cleaned up</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -67,7 +68,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">lstsq</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.pr.core.pr_inversion</span> <span class="kn">import</span> <span class="n">Cinvertor</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.pr._pr_inversion</span> <span class="kn">import</span> <span class="n">Cinvertor</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -121,7 +122,7 @@
 
 <span class="sd">        A[j][i] = (Fourier transformed base function for point j)</span>
 
-<span class="sd">    We them choose a number of r-points, n_r, to evaluate the second</span>
+<span class="sd">    We then choose a number of r-points, n_r, to evaluate the second</span>
 <span class="sd">    derivative of P(r) at. This is used as our regularization term.</span>
 <span class="sd">    For a vector r of length n_r, the following n_r rows are set to ::</span>
 
@@ -194,7 +195,7 @@
 <span class="sd">        Access the parent class methods for</span>
 <span class="sd">        x, y, err, d_max, q_min, q_max and alpha</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span>   <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="mf">0.0</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invertor: one of your q-values is zero. &quot;</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Delete that entry before proceeding&quot;</span>
@@ -318,7 +319,7 @@
 
 <span class="sd">            A[i][j] = (Fourier transformed base function for point j)</span>
 
-<span class="sd">        We them choose a number of r-points, n_r, to evaluate the second</span>
+<span class="sd">        We then choose a number of r-points, n_r, to evaluate the second</span>
 <span class="sd">        derivative of P(r) at. This is used as our regularization term.</span>
 <span class="sd">        For a vector r of length n_r, the following n_r rows are set to ::</span>
 
@@ -466,7 +467,7 @@
 
 <span class="sd">            A[i][j] = (Fourier transformed base function for point j)</span>
 
-<span class="sd">        We them choose a number of r-points, n_r, to evaluate the second</span>
+<span class="sd">        We then choose a number of r-points, n_r, to evaluate the second</span>
 <span class="sd">        derivative of P(r) at. This is used as our regularization term.</span>
 <span class="sd">        For a vector r of length n_r, the following n_r rows are set to ::</span>
 
@@ -523,7 +524,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Invertor: could not invert I(Q)</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
 
         <span class="c1"># Perform the inversion (least square fit)</span>
-        <span class="n">c</span><span class="p">,</span> <span class="n">chi2</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">c</span><span class="p">,</span> <span class="n">chi2</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Sanity check</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">float</span><span class="p">(</span><span class="n">chi2</span><span class="p">)</span>
@@ -546,11 +547,11 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">inv_cov</span><span class="p">)</span>
-            <span class="n">err</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">chi2</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">npts</span> <span class="o">-</span> <span class="n">nfunc</span><span class="p">))</span> <span class="o">*</span> <span class="n">cov</span>
-        <span class="k">except</span><span class="p">:</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">chi2</span> <span class="o">/</span> <span class="p">(</span><span class="n">npts</span> <span class="o">-</span> <span class="n">nfunc</span><span class="p">))</span> <span class="o">*</span> <span class="n">cov</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="c1"># We were not able to estimate the errors</span>
             <span class="c1"># Return an empty error matrix</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
         <span class="c1"># Keep a copy of the last output</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">est_bck</span><span class="p">:</span>
@@ -587,15 +588,15 @@
 <span class="sd">        :return: number of terms, alpha, message</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">num_term</span> <span class="kn">import</span> <span class="n">NTermEstimator</span>
+        <span class="kn">from</span> <span class="nn">.num_term</span> <span class="kn">import</span> <span class="n">NTermEstimator</span>
         <span class="n">estimator</span> <span class="o">=</span> <span class="n">NTermEstimator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">estimator</span><span class="o">.</span><span class="n">num_terms</span><span class="p">(</span><span class="n">isquit_func</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="c1"># If we fail, estimate alpha and return the default</span>
             <span class="c1"># number of terms</span>
             <span class="n">best_alpha</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_alpha</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nfunc</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Invertor.estimate_numterms: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Invertor.estimate_numterms: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">exc</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nfunc</span><span class="p">,</span> <span class="n">best_alpha</span><span class="p">,</span> <span class="s2">&quot;Could not estimate number of terms&quot;</span></div>
 
 <div class="viewcode-block" id="Invertor.estimate_alpha"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.invertor.Invertor.estimate_alpha">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">):</span>
@@ -681,8 +682,8 @@
 
                 <span class="k">return</span> <span class="n">best_alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span>
 
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Invertor.estimate_alpha: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Invertor.estimate_alpha: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">exc</span>
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span></div>
 
 <div class="viewcode-block" id="Invertor.to_file"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.invertor.Invertor.to_file">[docs]</a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">npts</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
@@ -798,8 +799,8 @@
 
                         <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">toks2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invertor.from_file: corrupted file</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invertor.from_file: corrupted file</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">exc</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invertor.from_file: &#39;</span><span class="si">%s</span><span class="s2">&#39; is not a file&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -834,13 +835,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

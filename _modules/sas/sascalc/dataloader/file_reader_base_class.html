@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.dataloader.file_reader_base_class &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.dataloader.file_reader_base_class &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../index.html" />
     <link rel="up" title="sas" href="../../../sas.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
       </ul>
@@ -66,6 +66,7 @@
     <span class="n">DataReaderException</span><span class="p">,</span> <span class="n">DefaultReaderException</span>
 <span class="kn">from</span> <span class="nn">.data_info</span> <span class="kn">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">DataInfo</span><span class="p">,</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span>\
     <span class="n">combine_data_info_with_plottable</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="kn">import</span> <span class="n">Converter</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -87,6 +88,7 @@
                        <span class="s2">&quot;load the file was made, but, should it be successful, &quot;</span>
                        <span class="s2">&quot;SasView cannot guarantee the accuracy of the data.&quot;</span><span class="p">)</span>
 
+
 <div class="viewcode-block" id="FileReader"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader">[docs]</a><span class="k">class</span> <span class="nc">FileReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="c1"># String to describe the type of data this reader can load</span>
     <span class="n">type_name</span> <span class="o">=</span> <span class="s2">&quot;ASCII&quot;</span>
@@ -95,7 +97,7 @@
     <span class="c1"># List of allowed extensions</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.txt&#39;</span><span class="p">]</span>
     <span class="c1"># Deprecated extensions</span>
-    <span class="n">deprecated_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.asc&#39;</span><span class="p">,</span> <span class="s1">&#39;.nxs&#39;</span><span class="p">]</span>
+    <span class="n">deprecated_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.asc&#39;</span><span class="p">]</span>
     <span class="c1"># Bypass extension check and try to load anyway</span>
     <span class="n">allow_all</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="c1"># Able to import the unit converter</span>
@@ -148,8 +150,8 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">handle_error_message</span><span class="p">(</span><span class="n">DEPRECATION_MESSAGE</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="c1"># Sort the data that&#39;s been loaded</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">sort_one_d_data</span><span class="p">()</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">sort_two_d_data</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">convert_data_units</span><span class="p">()</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sort_data</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find file at: {}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Please check your file path and try again.&quot;</span>
@@ -190,7 +192,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the entire file as a string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#return self.f_open.read()</span>
         <span class="k">return</span> <span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f_open</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="FileReader.handle_error_message"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.handle_error_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_error_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
@@ -216,7 +217,7 @@
                                                     <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_obj</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FileReader.sort_one_d_data"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.sort_one_d_data">[docs]</a>    <span class="k">def</span> <span class="nf">sort_one_d_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileReader.sort_data"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.sort_data">[docs]</a>    <span class="k">def</span> <span class="nf">sort_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sort 1D data along the X axis for consistency</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -224,7 +225,9 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
                 <span class="c1"># Normalize the units for</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">x_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unit</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x_unit</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x_unit</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">y_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unit</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y_unit</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">_yunit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">y_unit</span>
                 <span class="c1"># Sort data by increasing x and remove 1st point</span>
                 <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">lexsort</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reorder_1d_array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span>
@@ -252,7 +255,43 @@
                     <span class="n">data</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span></div>
+                    <span class="n">data</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+                <span class="c1"># Normalize the units for</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unit</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">I_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unit</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">I_unit</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">_yunit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Q_unit</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">_zunit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">I_unit</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">q_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">qx_data</span>
+                                         <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">err_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">err_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="nb">int</span><span class="p">(</span><span class="n">n_cols</span><span class="p">)]</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">x_bins</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="n">n_cols</span><span class="p">)]</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_nans_in_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_reorder_1d_array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
@@ -292,41 +331,88 @@
                     <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">array</span><span class="p">[</span><span class="n">good</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">data</span>
 
-<div class="viewcode-block" id="FileReader.sort_two_d_data"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.sort_two_d_data">[docs]</a>    <span class="k">def</span> <span class="nf">sort_two_d_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
-                <span class="c1"># Normalize the units for</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">x_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unit</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">Q_unit</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">y_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unit</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">I_unit</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">q_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">*</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span>
-                                         <span class="o">+</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">*</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">err_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">err_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">dqx_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">dqy_data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="FileReader.set_default_1d_units"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.set_default_1d_units">[docs]</a>    <span class="k">def</span> <span class="nf">set_default_1d_units</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the x and y axes to the default 1D units</span>
+<span class="sd">        :param data: 1D data set</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="s2">r&quot;\rm{Q}&quot;</span><span class="p">,</span> <span class="s1">&#39;1/A&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s2">r&quot;\rm{Intensity}&quot;</span><span class="p">,</span> <span class="s2">&quot;1/cm&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="nb">int</span><span class="p">(</span><span class="n">n_cols</span><span class="p">)]</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">x_bins</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="n">n_cols</span><span class="p">)]</span>
-                <span class="n">dataset</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-                <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_nans_in_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
-                    <span class="n">dataset</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span></div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="FileReader.set_default_2d_units"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.set_default_2d_units">[docs]</a>    <span class="k">def</span> <span class="nf">set_default_2d_units</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the x and y axes to the default 2D units</span>
+<span class="sd">        :param data: 2D data set</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm{Q_{x}}&quot;</span><span class="p">,</span> <span class="s1">&#39;1/A&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm{Q_{y}}&quot;</span><span class="p">,</span> <span class="s1">&#39;1/A&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">zaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm{Intensity}&quot;</span><span class="p">,</span> <span class="s2">&quot;1/cm&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FileReader.convert_data_units"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.convert_data_units">[docs]</a>    <span class="k">def</span> <span class="nf">convert_data_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_q_unit</span><span class="o">=</span><span class="s2">&quot;1/A&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts al; data to the sasview default of units of A^{-1} for Q and</span>
+<span class="sd">        cm^{-1} for I.</span>
+<span class="sd">        :param default_q_unit: The default Q unit used by Sasview</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">convert_q</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">new_output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
+                <span class="n">new_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">file_x_unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_xunit</span>
+                <span class="n">data_conv_x</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">file_x_unit</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Unrecognized Q units in data file. No data &quot;</span>
+                            <span class="s2">&quot;conversion attempted&quot;</span><span class="p">)</span>
+                <span class="n">convert_q</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">convert_q</span><span class="p">:</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">data_conv_x</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="n">default_q_unit</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">x_unit</span> <span class="o">=</span> <span class="n">default_q_unit</span>
+                            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">data_conv_x</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span>
+                                                      <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="n">data_conv_x</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dxl</span><span class="p">,</span>
+                                                       <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="n">data_conv_x</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dxw</span><span class="p">,</span>
+                                                       <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">convert_q</span><span class="p">:</span>
+                        <span class="n">data</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">data_conv_x</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span>
+                                                   <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data_conv_x</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span><span class="p">,</span>
+                                                        <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">file_y_unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_yunit</span>
+                            <span class="n">data_conv_y</span> <span class="o">=</span> <span class="n">Converter</span><span class="p">(</span><span class="n">file_y_unit</span><span class="p">)</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">data_conv_y</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span>
+                                                       <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_conv_y</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span><span class="p">,</span>
+                                                            <span class="n">units</span><span class="o">=</span><span class="n">default_q_unit</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Unrecognized Qy units in data file. No&quot;</span>
+                                        <span class="s2">&quot; data conversion attempted&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Unable to convert Q units from {0} to 1/A.&quot;</span>
+                <span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">default_q_unit</span><span class="p">)</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">new_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">new_output</span></div>
 
 <div class="viewcode-block" id="FileReader.format_unit"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.file_reader_base_class.FileReader.format_unit">[docs]</a>    <span class="k">def</span> <span class="nf">format_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -417,11 +503,14 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">qy_data</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">has_error_dy</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">err_data</span><span class="p">[</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">err_data</span><span class="p">[</span>
+                    <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">has_error_dqx</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span><span class="p">[</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span><span class="p">[</span>
+                    <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">has_error_dqy</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span><span class="p">[</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span><span class="p">[</span>
+                    <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">has_mask</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span></div>
 
@@ -490,13 +579,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

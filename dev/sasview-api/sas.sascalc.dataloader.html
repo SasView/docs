@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sascalc.dataloader package &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sascalc.dataloader package &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../index.html" />
     <link rel="up" title="sas.sascalc package" href="sas.sascalc.html" />
     <link rel="next" title="sas.sascalc.dataloader.readers package" href="sas.sascalc.dataloader.readers.html" />
     <link rel="prev" title="sas.sascalc.data_util package" href="sas.sascalc.data_util.html" /> 
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="sas.sascalc.data_util.html" title="sas.sascalc.data_util package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &raquo;</li>
@@ -688,7 +688,8 @@ for white beams and spallation sources.</p>
 <dl class="function">
 <dt id="sas.sascalc.dataloader.data_info.combine_data_info_with_plottable">
 <code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">combine_data_info_with_plottable</code><span class="sig-paren">(</span><em>data</em>, <em>datainfo</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#combine_data_info_with_plottable"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>A function that combines the DataInfo data in self.current_datainto with a plottable_1D or 2D data object.</p>
+<dd><p>A function that combines the DataInfo data in self.current_datainto with a
+plottable_1D or 2D data object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -861,6 +862,14 @@ class</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.convert_data_units">
+<code class="descname">convert_data_units</code><span class="sig-paren">(</span><em>default_q_unit='1/A'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.convert_data_units"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Converts al; data to the sasview default of units of A^{-1} for Q and
+cm^{-1} for I.
+:param default_q_unit: The default Q unit used by Sasview</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.data_cleanup">
 <code class="descname">data_cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.data_cleanup"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Clean up the data sets and refresh everything
@@ -869,7 +878,7 @@ class</p>
 
 <dl class="attribute">
 <dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.deprecated_extensions">
-<code class="descname">deprecated_extensions</code><em class="property"> = ['.asc', '.nxs']</em></dt>
+<code class="descname">deprecated_extensions</code><em class="property"> = ['.asc']</em></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -969,16 +978,27 @@ to output</p>
 <dd><p>Set all mutable values to None for error handling purposes</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.sort_one_d_data">
-<code class="descname">sort_one_d_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.sort_one_d_data"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Sort 1D data along the X axis for consistency</p>
+<dl class="staticmethod">
+<dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.set_default_1d_units">
+<em class="property">static </em><code class="descname">set_default_1d_units</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.set_default_1d_units"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set the x and y axes to the default 1D units
+:param data: 1D data set
+:return:</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.set_default_2d_units">
+<em class="property">static </em><code class="descname">set_default_2d_units</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.set_default_2d_units"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set the x and y axes to the default 2D units
+:param data: 2D data set
+:return:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.sort_two_d_data">
-<code class="descname">sort_two_d_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.sort_two_d_data"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
+<dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.sort_data">
+<code class="descname">sort_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/file_reader_base_class.html#FileReader.sort_data"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sort 1D data along the X axis for consistency</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="sas.sascalc.dataloader.file_reader_base_class.FileReader.splitline">
@@ -1584,7 +1604,7 @@ This is mainly used by the Readers</p>
         <li class="right" >
           <a href="sas.sascalc.data_util.html" title="sas.sascalc.data_util package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &raquo;</li>
@@ -1592,7 +1612,7 @@ This is mainly used by the Readers</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

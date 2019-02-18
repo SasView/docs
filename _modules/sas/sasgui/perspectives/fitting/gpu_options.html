@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>sas.sasgui.perspectives.fitting.gpu_options &mdash; SasView 4.2.0 documentation</title>
+    <title>sas.sasgui.perspectives.fitting.gpu_options &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../../index.html" />
     <link rel="up" title="sas.sasgui.perspectives.fitting" href="../fitting.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="../fitting.html" accesskey="U">sas.sasgui.perspectives.fitting</a> &raquo;</li> 
@@ -59,11 +59,23 @@
 <span class="sd">@author: wpotrzebowski</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+
 <span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="kn">as</span> <span class="nn">cl</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">cl</span> <span class="o">=</span> <span class="bp">None</span>
+
 <span class="kn">import</span> <span class="nn">sasmodels</span>
+<span class="kn">import</span> <span class="nn">sasmodels.model_test</span>
+<span class="kn">import</span> <span class="nn">sasmodels.sasview_model</span>
+
 <span class="kn">from</span> <span class="nn">sas.sasgui.guiframe.documentation_window</span> <span class="kn">import</span> <span class="n">DocumentationWindow</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -220,18 +232,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">clinfo</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">platforms</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="kn">as</span> <span class="nn">cl</span>
-            <span class="n">platforms</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">cl</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to import the pyopencl package.  It may not &quot;</span>
                         <span class="s2">&quot;have been installed.  If you wish to use OpenCL, try &quot;</span>
                         <span class="s2">&quot;running pip install --user pyopencl&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">cl</span><span class="o">.</span><span class="n">LogicError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to fetch the OpenCL platforms.  This likely &quot;</span>
-                        <span class="s2">&quot;means that the opencl drivers for your system are &quot;</span>
-                        <span class="s2">&quot;not installed.&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">platforms</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">cl</span><span class="o">.</span><span class="n">LogicError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to fetch the OpenCL platforms.  This likely &quot;</span>
+                            <span class="s2">&quot;means that the opencl drivers for your system are &quot;</span>
+                            <span class="s2">&quot;not installed.&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
 
         <span class="n">p_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">platform</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
@@ -277,12 +290,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;SAS_OPENCL&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
                 <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SAS_OPENCL&quot;</span><span class="p">]</span>
-
-        <span class="c1">#Sasmodels kernelcl doesn&#39;t exist when initiated with None</span>
-        <span class="k">if</span> <span class="s1">&#39;sasmodels.kernelcl&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
-            <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
-
-        <span class="nb">reload</span><span class="p">(</span><span class="n">sasmodels</span><span class="o">.</span><span class="n">core</span><span class="p">)</span>
+        <span class="n">sasmodels</span><span class="o">.</span><span class="n">sasview_model</span><span class="o">.</span><span class="n">reset_environment</span><span class="p">()</span>
         <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="GpuOptions.on_reset"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.sasgui.perspectives.fitting.html#sas.sasgui.perspectives.fitting.gpu_options.GpuOptions.on_reset">[docs]</a>    <span class="k">def</span> <span class="nf">on_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -298,10 +306,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run sasmodels check from here and report results from</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">json</span>
-        <span class="kn">import</span> <span class="nn">platform</span>
-        <span class="c1">#import sasmodels</span>
-
         <span class="c1">#The same block of code as for OK but it is needed if we want to have</span>
         <span class="c1">#active response to Test button</span>
         <span class="n">no_opencl_msg</span> <span class="o">=</span> <span class="bp">False</span>
@@ -312,33 +316,22 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;SAS_OPENCL&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
                 <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SAS_OPENCL&quot;</span><span class="p">]</span>
-
-        <span class="c1">#Sasmodels kernelcl doesn&#39;t exist when initiated with None</span>
-        <span class="k">if</span> <span class="s1">&#39;sasmodels.kernelcl&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
-            <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
-
-
-        <span class="c1">#Need to reload sasmodels.core module to account SAS_OPENCL = &quot;None&quot;</span>
-        <span class="nb">reload</span><span class="p">(</span><span class="n">sasmodels</span><span class="o">.</span><span class="n">core</span><span class="p">)</span>
-
-
-        <span class="kn">from</span> <span class="nn">sasmodels.model_test</span> <span class="kn">import</span> <span class="n">model_tests</span>
+        <span class="n">sasmodels</span><span class="o">.</span><span class="n">sasview_model</span><span class="o">.</span><span class="n">reset_environment</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">sasmodels.kernelcl</span> <span class="kn">import</span> <span class="n">environment</span>
-            <span class="n">env</span> <span class="o">=</span> <span class="n">environment</span><span class="p">()</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">environment</span><span class="p">()</span>
             <span class="n">clinfo</span> <span class="o">=</span> <span class="p">[(</span><span class="n">ctx</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">vendor</span><span class="p">,</span>
                        <span class="n">ctx</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
                        <span class="n">ctx</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">vendor</span><span class="p">,</span>
                        <span class="n">ctx</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                        <span class="n">ctx</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
                       <span class="k">for</span> <span class="n">ctx</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">clinfo</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="n">failures</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">tests_completed</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">model_tests</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">model_test</span><span class="o">.</span><span class="n">model_tests</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">test</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
@@ -415,14 +408,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="../fitting.html" >sas.sasgui.perspectives.fitting</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>

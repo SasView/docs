@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Writing a Plugin Model &mdash; SasView 4.2.0 documentation</title>
+    <title>Writing a Plugin Model &mdash; SasView 4.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '4.2.0',
+        VERSION:     '4.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.0 documentation" href="../../../../index.html" />
+    <link rel="top" title="SasView 4.2.1 documentation" href="../../../../index.html" />
     <link rel="up" title="Fitting Documentation" href="fitting.html" />
     <link rel="next" title="GPU Setup" href="gpu_setup.html" />
     <link rel="prev" title="Fitting SESANS Data" href="sesans/sesans_fitting.html" /> 
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="sesans/sesans_fitting.html" title="Fitting SESANS Data"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &raquo;</li> 
@@ -360,6 +360,16 @@ streamlined so this flag was not necessary.</p>
 <p><strong>structure_factor = True</strong> indicates that the model can be used as a
 structure factor to account for interactions between particles.  See
 <a class="reference internal" href="#form-factors">Form_Factors</a> for more details.</p>
+<p><strong>model_info = ...</strong> lets you define a model directly, for example, by
+loading and modifying existing models.  This is done implicitly by
+<a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.load_model_info" title="sasmodels.core.load_model_info"><code class="xref py py-func docutils literal"><span class="pre">sasmodels.core.load_model_info()</span></code></a>, which can create a mixture model
+from a pair of existing models.  For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">load_model_info</span>
+<span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;sphere+cylinder&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ModelInfo" title="sasmodels.modelinfo.ModelInfo"><code class="xref py py-class docutils literal"><span class="pre">sasmodels.modelinfo.ModelInfo</span></code></a> for details about the model
+attributes that are defined.</p>
 </div>
 <div class="section" id="model-parameters">
 <h3>Model Parameters</h3>
@@ -754,8 +764,8 @@ will always return false.  NAN does not equal NAN!  The alternative,
 to test for finite and not NaN.</dd>
 <dt>erf, erfc, tgamma, lgamma:  <strong>do not use</strong></dt>
 <dd>Special functions that should be part of the standard, but are missing
-or inaccurate on some platforms. Use sas_erf, sas_erfc and sas_gamma
-instead (see below). Note: lgamma(x) has not yet been tested.</dd>
+or inaccurate on some platforms. Use sas_erf, sas_erfc, sas_gamma
+and sas_lgamma instead (see below).</dd>
 </dl>
 </div></blockquote>
 <p>Some non-standard constants and functions are also provided:</p>
@@ -823,10 +833,25 @@ sorted from highest to lowest.</p>
 </dd>
 <dt>sas_gamma(x):</dt>
 <dd><p class="first">Gamma function sas_gamma<span class="math">\((x) = \Gamma(x)\)</span>.</p>
-<p>The standard math function, tgamma(x) is unstable for <span class="math">\(x &lt; 1\)</span>
+<p>The standard math function, tgamma(x), is unstable for <span class="math">\(x &lt; 1\)</span>
 on some platforms.</p>
 <p class="last"><code class="code docutils literal"><span class="pre">source</span> <span class="pre">=</span> <span class="pre">[&quot;lib/sas_gamma.c&quot;,</span> <span class="pre">...]</span></code>
 (<a class="reference external" href="https://github.com/SasView/sasmodels/tree/master/sasmodels/models/lib/sas_gamma.c">sas_gamma.c</a>)</p>
+</dd>
+<dt>sas_gammaln(x):</dt>
+<dd><p class="first">log gamma function sas_gammaln<span class="math">\((x) = \log \Gamma(|x|)\)</span>.</p>
+<p>The standard math function, lgamma(x), is incorrect for single
+precision on some platforms.</p>
+<p class="last"><code class="code docutils literal"><span class="pre">source</span> <span class="pre">=</span> <span class="pre">[&quot;lib/sas_gammainc.c&quot;,</span> <span class="pre">...]</span></code>
+(<a class="reference external" href="https://github.com/SasView/sasmodels/tree/master/sasmodels/models/lib/sas_gammainc.c">sas_gammainc.c</a>)</p>
+</dd>
+<dt>sas_gammainc(a, x), sas_gammaincc(a, x):</dt>
+<dd><p class="first">Incomplete gamma function
+sas_gammainc<span class="math">\((a, x) = \int_0^x t^{a-1}e^{-t}\,dt / \Gamma(a)\)</span>
+and complementary incomplete gamma function
+sas_gammaincc<span class="math">\((a, x) = \int_x^\infty t^{a-1}e^{-t}\,dt / \Gamma(a)\)</span></p>
+<p class="last"><code class="code docutils literal"><span class="pre">source</span> <span class="pre">=</span> <span class="pre">[&quot;lib/sas_gammainc.c&quot;,</span> <span class="pre">...]</span></code>
+(<a class="reference external" href="https://github.com/SasView/sasmodels/tree/master/sasmodels/models/lib/sas_gammainc.c">sas_gammainc.c</a>)</p>
 </dd>
 <dt>sas_erf(x), sas_erfc(x):</dt>
 <dd><p class="first">Error function
@@ -857,14 +882,16 @@ on some platforms.</p>
 sas_JN<span class="math">\((n, x) =J_n(x)\)</span> where
 <span class="math">\(J_n(x) = \frac{1}{\pi}\int_0^\pi \cos(n\tau - x\sin(\tau))\,d\tau\)</span>.
 If <span class="math">\(n\)</span> = 0 or 1, it uses sas_J0(<span class="math">\(x\)</span>) or sas_J1(<span class="math">\(x\)</span>), respectively.</p>
+<p>Warning: JN(n,x) can be very inaccurate (0.1%) for x not in [0.1, 100].</p>
 <p>The standard math function jn(n, x) is not available on all platforms.</p>
 <p class="last"><code class="code docutils literal"><span class="pre">source</span> <span class="pre">=</span> <span class="pre">[&quot;lib/polevl.c&quot;,</span> <span class="pre">&quot;lib/sas_J0.c&quot;,</span> <span class="pre">&quot;lib/sas_J1.c&quot;,</span> <span class="pre">&quot;lib/sas_JN.c&quot;,</span> <span class="pre">...]</span></code>
 (<a class="reference external" href="https://github.com/SasView/sasmodels/tree/master/sasmodels/models/lib/sas_JN.c">sas_JN.c</a>)</p>
 </dd>
 <dt>sas_Si(x):</dt>
 <dd><p class="first">Sine integral Si<span class="math">\((x) = \int_0^x \tfrac{\sin t}{t}\,dt\)</span>.</p>
+<p>Warning: Si(x) can be very inaccurate (0.1%) for x in [0.1, 100].</p>
 <p>This function uses Taylor series for small and large arguments:</p>
-<p>For large arguments,</p>
+<p>For large arguments use the following Taylor series,</p>
 <div class="math">
 \[\text{Si}(x) \sim \frac{\pi}{2}
 - \frac{\cos(x)}{x}\left(1 - \frac{2!}{x^2} + \frac{4!}{x^4} - \frac{6!}{x^6} \right)
@@ -957,7 +984,7 @@ can be a model that runs 1000x faster on a good card.  Even your laptop may
 show a 50x improvement or more over the equivalent pure python model.</p>
 </div>
 <div class="section" id="form-factors">
-<span id="id2"></span><h3>Form Factors</h3>
+<span id="id3"></span><h3>Form Factors</h3>
 <p>Away from the dilute limit you can estimate scattering including
 particle-particle interactions using <span class="math">\(I(q) = P(q)*S(q)\)</span> where <span class="math">\(P(q)\)</span>
 is the form factor and <span class="math">\(S(q)\)</span> is the structure factor.  The simplest
@@ -1029,7 +1056,7 @@ sphere and shell values.</li>
 </div>
 </div>
 <div class="section" id="test-your-new-model">
-<span id="id3"></span><h2>Test Your New Model</h2>
+<span id="id4"></span><h2>Test Your New Model</h2>
 <div class="section" id="minimal-testing">
 <h3>Minimal Testing</h3>
 <p>From SasView either open the Python shell (<em>Tools</em> &gt; <em>Python Shell/Editor</em>)
@@ -1247,14 +1274,14 @@ consider adding your model to the
         <li class="right" >
           <a href="sesans/sesans_fitting.html" title="Fitting SESANS Data"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.0 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.1 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2018, The SasView Project.
+        &copy; Copyright 2019, The SasView Project.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
