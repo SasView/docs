@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Fitting &mdash; SasView 4.2.2 documentation</title>
+    <title>Fitting &#8212; SasView 4.2.2 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="top" title="SasView 4.2.2 documentation" href="../../../../index.html" />
     <link rel="up" title="Fitting Documentation" href="fitting.html" />
     <link rel="next" title="Assessing Fit Quality" href="residuals_help.html" />
@@ -37,18 +39,15 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="residuals_help.html" title="Assessing Fit Quality"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="fitting.html" title="Fitting Documentation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -86,8 +85,8 @@ a kinetic or time-resolved experiment and have <em>lots</em> of data sets!)</li>
 <li><em>Cylinder</em> - cylindrical shapes (disc, right cylinder, cylinder with endcaps
 etc)</li>
 <li><em>Ellipsoid</em> - ellipsoidal shapes (oblate,prolate, core shell, etc)</li>
-<li><em>Parellelepiped</em> - as the name implies</li>
-<li><em>Sphere</em> - sheroidal shapes (sphere, core multishell, vesicle, etc)</li>
+<li><em>Parallelepiped</em> - as the name implies</li>
+<li><em>Sphere</em> - spheroidal shapes (sphere, core multishell, vesicle, etc)</li>
 <li><em>Lamellae</em> - lamellar shapes (lamellar, core shell lamellar, stacked
 lamellar, etc)</li>
 <li><em>Shape-Independent</em> - models describing structure in terms of density
@@ -103,6 +102,48 @@ as the parameter values are changed.</p>
 <p>You can decide your own model categorizations using the <a class="reference internal" href="#category-manager"><span class="std std-ref">Category Manager</span></a>.</p>
 <p>Once you have selected a model you can read its help documentation by clicking
 on the <em>Description</em> button to the right.</p>
+<div class="section" id="interaction-models">
+<span id="interaction-and-mixture-models"></span><h3>Interaction Models</h3>
+<p>Structure factor S(Q) models can be combined with many form factor P(Q) models
+in the other categories to generate what SasView calls &#8220;interaction models&#8221;
+(previously &#8220;product models&#8221;). The combination can be done by one of two
+methods, but how they behave is slightly different.</p>
+<p>The first, most straightforward, method is simply to use the S(Q) drop-down in
+the FitPage:</p>
+<div class="figure">
+<img alt="../../../../_images/p_and_s_buttons.png" src="../../../../_images/p_and_s_buttons.png" />
+</div>
+<p>This example would then generate an interaction model with the following
+parameters:</p>
+<div class="figure">
+<img alt="../../../../_images/p_and_s_buttons_parameters.png" src="../../../../_images/p_and_s_buttons_parameters.png" />
+</div>
+<p>The other method is to use the <a class="reference internal" href="#sum-multi-p1-p2"><span class="std std-ref">Sum|Multi(p1,p2)</span></a> tool under Fitting &gt;
+Plugin Model Operations:</p>
+<div class="figure">
+<img alt="../../../../_images/p_and_s_sum_model.png" src="../../../../_images/p_and_s_sum_model.png" />
+</div>
+<p>This creates an interaction model with the following parameters:</p>
+<div class="figure">
+<img alt="../../../../_images/p_and_s_sum_model_parameters.png" src="../../../../_images/p_and_s_sum_model_parameters.png" />
+</div>
+<p>As can be seen, the second method has produced an interaction model with an
+extra parameter: <em>radius_effective</em>. This is the radial distance determining the
+range of the <span class="math">\(S(Q)\)</span> interaction and may, or may not, be the same as the
+<em>radius</em>, in this example, depending on the concentration of the system. In
+other systems, <em>radius_effective</em> may depend on the particle form (shape).
+SasView offers the flexibility to automatically constrain (tie) some of these
+parameters together so that, for example, <em>radius_effective</em> = <em>radius</em>. See
+<a class="reference internal" href="#sum-multi-p1-p2"><span class="std std-ref">Sum|Multi(p1,p2)</span></a>.</p>
+<p>Also see <a class="reference internal" href="fitting_sq.html#interaction-models"><span class="std std-ref">Fitting Models with Structure Factors</span></a> for further information.</p>
+</div>
+<div class="section" id="mixture-models">
+<h3>Mixture Models</h3>
+<p>SasView &#8220;mixture models&#8221; (previously called &#8220;sum models&#8221;) are summations of
+form factor models, or even of form factor models and an &#8220;interaction model&#8221;
+(see above), and are used to describe mixed-phase systems where the scattering
+is proportional to the volume fraction of each contributing phase.</p>
+</div>
 <div class="section" id="show-1d-2d">
 <h3>Show 1D/2D</h3>
 <p>Models are normally fitted to 1D (ie, I(Q) vs Q) data sets, but some models in
@@ -143,22 +184,26 @@ click <em>Cancel</em>.</p>
 <div class="section" id="model-functions">
 <h2>Model Functions</h2>
 <p>For a complete list of all the library models available in SasView, see
-the <a class="reference external" href="../../../index.html">Model Documentation</a> .</p>
+the <a class="reference external" href="../../../sasgui/perspectives/fitting/models/index.html">Model Documentation</a> .</p>
 <p>It is also possible to add your own models.</p>
 </div>
 <div class="section" id="adding-your-own-models">
 <span id="id2"></span><h2>Adding your own Models</h2>
-<p>There are essentially three ways to generate new fitting models for SasView:</p>
+<p>There are essentially four ways to generate new fitting models for SasView:</p>
 <ul class="simple">
-<li>Using the SasView <a class="reference internal" href="#new-plugin-model"><span class="std std-ref">New Plugin Model</span></a> helper dialog (best for beginners
-and/or relatively simple models)</li>
+<li>Using the SasView <a class="reference internal" href="#sum-multi-p1-p2"><span class="std std-ref">Sum|Multi(p1,p2)</span></a> dialog to sum/multiply
+together <em>two existing models</em> in the model library (best for
+beginners - provided the required models are in the model library!)</li>
+<li>Using the SasView <a class="reference internal" href="#new-plugin-model"><span class="std std-ref">New Plugin Model</span></a> helper dialog (aimed at those with
+little programming experience but works best for relatively simple models)</li>
 <li>By copying/editing an existing model (this can include models generated by
-the New Plugin Model* dialog) in the <a class="reference internal" href="../calculator/python_shell_help.html#python-shell"><span class="std std-ref">Python Shell-Editor Tool</span></a> or
+the <em>New Plugin Model</em> dialog) in the <a class="reference internal" href="../calculator/python_shell_help.html#python-shell"><span class="std std-ref">Python Shell-Editor Tool</span></a> or
 <a class="reference internal" href="#advanced-plugin-editor"><span class="std std-ref">Advanced Plugin Editor</span></a> (suitable for all use cases)</li>
-<li>By writing a model from scratch outside of SasView (only recommended for code
-monkeys!)</li>
+<li>By writing a model from scratch outside of SasView (only recommended for
+experienced Python users)</li>
 </ul>
-<p>Please read the guidance on <a class="reference internal" href="plugin.html#writing-a-plugin"><span class="std std-ref">Writing a Plugin Model</span></a> before proceeding.</p>
+<p>In the last two cases, please read the guidance on <a class="reference internal" href="plugin.html#writing-a-plugin"><span class="std std-ref">Writing a Plugin Model</span></a>
+before proceeding.</p>
 <p><strong>To be found by SasView your model must reside in the *~\.sasview\plugin_models* folder.</strong></p>
 </div>
 <div class="section" id="plugin-model-operations">
@@ -168,7 +213,8 @@ monkeys!)</li>
 <p>and then one of the sub-options</p>
 <ul class="simple">
 <li><em>New Plugin Model</em> - to create a plugin model template with a helper dialog</li>
-<li><em>Sum|Multi(p1,p2)</em> - to create a plugin model by summing/multiplying <em>existing models</em> in the model library</li>
+<li><em>Sum|Multi(p1,p2)</em> - to create a plugin model by summing/multiplying <em>two
+existing models</em> in the model library</li>
 <li><em>Advanced Plugin Editor</em> - to create/edit a plugin model in a Python shell</li>
 <li><em>Delete Plugin Models</em> - to delete a plugin model</li>
 <li><em>Load Plugin Models</em> - to (re-)load plugin models</li>
@@ -218,7 +264,7 @@ to the parameter list:</p>
 a P(Q) model has been selected).</p>
 </div>
 <div class="section" id="sum-multi-p1-p2">
-<h3>Sum|Multi(p1,p2)</h3>
+<span id="id5"></span><h3>Sum|Multi(p1,p2)</h3>
 <img alt="../../../../_images/sum_model.png" src="../../../../_images/sum_model.png" />
 <p>This option creates a custom Plugin Model of the form:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Plugin</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="p">{(</span><span class="n">scale_1</span> <span class="o">*</span> <span class="n">model_1</span><span class="p">)</span> <span class="o">+/-</span> <span class="p">(</span><span class="n">scale_2</span> <span class="o">*</span> <span class="n">model_2</span><span class="p">)}</span> <span class="o">+</span> <span class="n">background</span>
@@ -228,16 +274,37 @@ a P(Q) model has been selected).</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Plugin</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="o">*</span> <span class="p">(</span><span class="n">model1</span> <span class="o">*</span> <span class="n">model2</span><span class="p">)</span> <span class="o">+</span> <span class="n">background</span>
 </pre></div>
 </div>
-<p>In the <em>Easy Sum/Multi Editor</em> give the new model a function name and brief
-description (to appear under the <em>Details</em> button on the <em>FitPage</em>). Then select
-two existing models, as p1 and p2, and the required operator, &#8216;+&#8217; or &#8216;*&#8217; between
-them. Finally, click the <em>Apply</em> button to generate and test the model and then click <em>Close</em>.</p>
-<p>Any changes to a plugin model generated in this way only become effective <em>after</em> it is re-selected
-from the plugin models drop-down menu on the FitPage. If the model is not listed you can force a
-recompilation of the plugins by selecting <em>Fitting</em> &gt; <em>Plugin Model Operations</em> &gt; <em>Load Plugin Models</em>.</p>
-<p><strong>SasView version 4.2</strong> introduced a much simplified and more extensible structure for plugin models
-generated through the Easy Sum/Multi Editor. For example, the code for a combination of a sphere model
-with a power law model now looks like this:</p>
+<p>In the <em>Easy Sum/Multi Editor</em> give the new model a function name (which will
+appear in the list of plugin models on the <em>FitPage</em>) and brief description (to
+appear under the <em>Details</em> button on the <em>FitPage</em>). The model name must not
+contain spaces (use underscores to separate words if necessary) and if it is
+longer than ~40 characters the name will not display in full in the list of
+models. Now select two built-in models, as Model1 (p1) and Model2 (p2), and the
+required operator, &#8216;+&#8217; or &#8216;*&#8217; between them. Finally, click the <em>Apply</em> button
+to generate and test the model, and then click <em>Close</em>.</p>
+<p>Any changes to a plugin model generated in this way only become effective <em>after</em>
+it is re-selected from the plugin models drop-down menu on the FitPage. If the
+model is not listed you can force a recompilation of the plugins by selecting
+<em>Fitting</em> &gt; <em>Plugin Model Operations</em> &gt; <em>Load Plugin Models</em>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p><strong>SasView versions 4.2.x, 5.0.0 and 5.0.1</strong>
+The <em>Easy Sum/Multi Editor</em> dialog should <em>not</em> be used to combine a
+plugin model with a built-in model, or to combine two plugin models. The
+operation will appear to work in 4.2.x but may generate a faulty plugin
+model. In 5.0.0 the operation will fail (generating an error message in the
+Log Explorer). Whilst in 5.0.1 the operation has been blocked.</p>
+<p class="last">If you need to generate a plugin model from more than two built-in models,
+please read the sub-sections <a class="reference internal" href="#model-structure"><span class="std std-ref">Model Structure</span></a> and <a class="reference internal" href="#combining-multiple-models"><span class="std std-ref">Combining more than two models</span></a>
+below.</p>
+</div>
+</div>
+<div class="section" id="model-structure">
+<span id="id6"></span><h3>Model Structure</h3>
+<p><strong>SasView version 4.2</strong> introduced a much simplified and more extensible
+structure for plugin models generated through the Easy Sum/Multi Editor. For
+example, the code for a combination of a sphere model with a power law model
+now looks like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">load_model_info</span>
 <span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">make_model_from_info</span>
 
@@ -247,30 +314,88 @@ with a power law model now looks like this:</p>
 <span class="n">Model</span> <span class="o">=</span> <span class="n">make_model_from_info</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>To change the models or operators contributing to this plugin it is only necessary to edit the string
-in the brackets after <em>load_model_info</em>, though it would also be a good idea to update the model name
-and description too!!!</p>
-<p>The model specification string can handle multiple models and combinations of operators (+ or <em>) which
-are processed according to normal conventions. Thus &#8216;model1+model2*model3&#8217; would be valid and would
-multiply model2 by model3 before adding model1. In this example, parameters in the *FitPage</em> would be
-prefixed A (for model2), B (for model3) and C (for model1). Whilst this might appear a little
-confusing, unless you were creating a plugin model from multiple instances of the same model the parameter
-assignments ought to be obvious when you load the plugin.</p>
-<p>If you need to include another plugin model in the model specification string, just prefix the name of
-that model with <em>custom</em>. For instance:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sphere</span><span class="o">+</span><span class="n">custom</span><span class="o">.</span><span class="n">MyPluginModel</span>
+<p>To change the models or operators contributing to this plugin it is only
+necessary to edit the string in the brackets after <em>load_model_info</em>, though
+it would also be a good idea to update the model name and description too!!!</p>
+<p>The model specification string can handle multiple models and combinations of
+operators (&#8216;+&#8217; or &#8216;*&#8217;) which are processed according to normal conventions. Thus
+&#8216;model1+model2*model3&#8217; would be valid and would multiply model2 by model3
+before adding model1. In this example, parameters in the <em>FitPage</em> would be
+prefixed A (for model2), B (for model3) and C (for model1). Whilst this might
+appear a little confusing, unless you were creating a plugin model from
+multiple instances of the same model the parameter assignments ought to be
+obvious when you load the plugin.</p>
+<p>This streamlined approach to building complex plugin models from existing
+library models, or models available on the <em>Model Marketplace</em>, also permits
+the creation of P(Q)*S(Q) plugin models, something that was not possible in
+earlier versions of SasView. Also see <a class="reference internal" href="#interaction-and-mixture-models"><span class="std std-ref">Interaction Models</span></a>
+above.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Interaction Models</strong></p>
+<p>When the <em>Easy Sum/Multi Editor</em> creates a P(Q)*S(Q) model it will use
+the * symbol like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sphere</span><span class="o">*</span><span class="n">hardsphere</span>
 </pre></div>
 </div>
-<p>To create a P(Q)*S(Q) model use the &#64; symbol instead of * like this:</p>
+<p>However, it is probably advisable to edit the model file and use the &#64;
+symbol instead, for example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sphere</span><span class="nd">@hardsphere</span>
 </pre></div>
 </div>
-<p>This streamlined approach to building complex plugin models from existing library models, or models
-available on the <em>Model Marketplace</em>, also permits the creation of P(Q)*S(Q) plugin models, something
-that was not possible in earlier versions of SasView.</p>
+<p>This is because * and &#64; confer different behaviour on the model</p>
+<ul class="last simple">
+<li><em>with &#64;</em> - the radius and volume fraction in the S(Q) model are
+constrained to have the <em>same</em> values as the radius and volume fraction
+in the P(Q) model.</li>
+<li><em>with *</em> - the radii and volume fractions in the P(Q) and S(Q) models are
+unconstrained.</li>
+</ul>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If combining P(Q) models with S(Q) models, <em>particularly if combining
+multiple instances of such models</em> (eg, <span class="math">\((P(Q)_1\)</span> * <span class="math">\(S(Q)_1\)</span>) + <span class="math">\((P(Q)_2\)</span> * <span class="math">\(S(Q)_2)\)</span>
+or similar), pay careful attention to the behaviour of the scale and volume
+fraction parameters and test your model thoroughly, preferably on
+well-characterised data.</p>
+</div>
+</div>
+<div class="section" id="combining-more-than-two-models">
+<span id="combining-multiple-models"></span><h3>Combining more than two models</h3>
+<p>If you need generate a plugin model from more than two other models, it is
+tempting to think that the way to do so is simply to use the
+<em>Easy Sum/Multi Editor</em> dialog to combine the first two models into a
+plugin, then generate a new plugin using that first plugin as one of the
+selected models, combine it with the third model, and repeat as required.</p>
+<p>This does not currently work properly (although it <em>may appear to</em> in SasView
+4.2.x).</p>
+<p>Instead, use the <em>Easy Sum/Multi Editor</em> dialog to combine the first two
+models, then navigate to the plugin folder (~\.sasview\plugin_models on
+Windows) and open the plugin Python file (eg, MyPluginModel.py) in a text
+editor.</p>
+<p>Now edit the Python to specify all the models to contribute to the expanded
+plugin (the text string in the brackets after <em>load_model_info</em>). Make sure you
+specify the model names correctly, including any capitalisation (if in doubt
+use the model name dropdown on a <em>FitPage</em>)! Finally, update the model name and
+description, and save the file.</p>
+<p>So, as an example, one could take the MyPluginModel example in the preceding
+section, change it to:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">load_model_info</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">make_model_from_info</span>
+
+<span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;power_law + fractal + gaussian_peak + gaussian_peak&#39;</span><span class="p">)</span>
+<span class="n">model_info</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;MyBigPluginModel&#39;</span>
+<span class="n">model_info</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;For fitting pores in crystalline framework&#39;</span>
+<span class="n">Model</span> <span class="o">=</span> <span class="n">make_model_from_info</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and re-save it as MyBigPluginModel.py. When loaded into a <em>FitPage</em>, the
+parameters for the four models in the <em>load_model_info</em> string are then all
+present and prefixed by A_, B_, C_, and D_, respectively.</p>
 </div>
 <div class="section" id="advanced-plugin-editor">
-<span id="id5"></span><h3>Advanced Plugin Editor</h3>
+<span id="id7"></span><h3>Advanced Plugin Editor</h3>
 <p>Selecting this option shows all the plugin models in the plugin model folder, on Windows this is</p>
 <blockquote>
 <div><em>C:\Users\{username}\.sasview\plugin_models</em></div></blockquote>
@@ -299,7 +424,7 @@ category and then select the model from the drop-down menu.</p>
 </div>
 </div>
 <div class="section" id="fitting-options">
-<span id="id6"></span><h2>Fitting Options</h2>
+<span id="id8"></span><h2>Fitting Options</h2>
 <p>It is possible to specify which optimiser SasView should use to fit the data, and
 to modify some of the configurational parameters for each optimiser.</p>
 <p>From <em>Fitting</em> in the menu bar select <em>Fit Options</em>, then select one of the following
@@ -316,6 +441,29 @@ option for fitting simple models. If uncertain, try the Levenberg-Marquardt opti
 initially.</p>
 <p>These optimisers form the <em>Bumps</em> package written by P Kienzle. For more information
 on each optimiser, see the <a class="reference internal" href="fitting.html#fitting-documentation"><span class="std std-ref">Fitting Documentation</span></a>.</p>
+</div>
+<div class="section" id="fitting-integer-parameters">
+<h2>Fitting Integer Parameters</h2>
+<p>Most of the parameters in SasView models will naturally take floating point (decimal)
+values, but there are some parameters which can only have integer values. Examples
+include, but are not limited to, the number of shells in a multilayer vesicle, the
+number of beads in a pearl necklace, the number of arms of a star polymer, and so on.
+Wherever possible/recognised, the integer nature of a parameter is specified in the
+respective model documentation and/or parameter table, so read the documentation
+carefully!</p>
+<p>Integer parameters must be fitted with care.</p>
+<p>Start with your best possible guess for the value of the parameter. And using
+<em>a priori</em> knowledge, fix as many of the other parameters as possible.</p>
+<p>The SasView optimizers treat integer parameters internally as floating point
+numbers, but the values presented to the user are truncated or rounded, as
+appropriate.</p>
+<p>In most instances integer parameters will probably be greater than zero. A good
+policy in such cases is to use a constraint to enforce this.</p>
+<p>Because an integer parameter should, by definition, only move in integer steps,
+problems may be encountered if the optimizer step size is too small. Similarly,
+be <strong>very careful</strong> about applying polydispersity to integer parameters.</p>
+<p>The Levenberg-Marquardt and Quasi-Newton BFGS (and other derivative-based)
+optimizers are probably best avoided for fitting models with integer parameters.</p>
 </div>
 <div class="section" id="fitting-limits">
 <h2>Fitting Limits</h2>
@@ -364,7 +512,7 @@ displays available message history and some run-time traceback information.</p>
 <p>During a long task the <em>Console</em> can also be used to monitor the progress.</p>
 </div>
 <div class="section" id="single-fit-mode">
-<span id="id7"></span><h2>Single Fit Mode</h2>
+<span id="id9"></span><h2>Single Fit Mode</h2>
 <p><em>NB: Before proceeding, ensure that the Single Mode radio button at the bottom of</em>
 <em>the Data Explorer is checked (see the section</em> <a class="reference internal" href="../../guiframe/data_explorer_help.html#loading-data"><span class="std std-ref">Loading Data</span></a> <em>).</em></p>
 <p>This mode fits one data set.</p>
@@ -468,7 +616,7 @@ degrees of freedom are less than one might think due to those constraints.</p>
 </div>
 </div>
 <div class="section" id="batch-fit-mode">
-<span id="id8"></span><h2>Batch Fit Mode</h2>
+<span id="id10"></span><h2>Batch Fit Mode</h2>
 <p><em>NB: Before proceeding, ensure that the Single Mode radio button at the bottom of</em>
 <em>the Data Explorer is checked (see the section</em> <a class="reference internal" href="../../guiframe/data_explorer_help.html#loading-data"><span class="std std-ref">Loading Data</span></a> <em>). The Batch</em>
 <em>Mode button will be used later on!</em></p>
@@ -481,7 +629,7 @@ select a single initial data set to be fitted. Fit that selected data set as des
 above under <a class="reference internal" href="#single-fit-mode"><span class="std std-ref">Single Fit Mode</span></a>.</p>
 <p><em>NB: If you need to use a custom Plugin Model, you must ensure that model is
 available first (see</em> <a class="reference internal" href="#adding-your-own-models"><span class="std std-ref">Adding your own Models</span></a> <em>).</em></p>
-<div class="section" id="id9">
+<div class="section" id="id11">
 <h3>Method</h3>
 <p>Now <em>Select All Data</em> in the <em>Data Explorer</em>, check the <em>Batch Mode</em> radio button
 at the bottom of that panel and <em>Send To Fitting</em>. A <em>BatchPage</em> will be created.</p>
@@ -524,7 +672,7 @@ are gradually changing. Do not use chain fitting on disparate data sets.</p>
 toggles on/off, so selecting it again will switch back to normal batch fitting.</p>
 </div>
 <div class="section" id="grid-window">
-<span id="id10"></span><h3>Grid Window</h3>
+<span id="id12"></span><h3>Grid Window</h3>
 <p>The <em>Grid Window</em> provides an easy way to view the results from batch fitting.
 It will be displayed automatically when a batch fit completes, but may be
 opened at any time by selecting <em>Show Grid Window</em> under <em>View</em> in the menu
@@ -601,7 +749,7 @@ model two (and/or model three etc), doing so will overwrite the table of
 outputs from the previous batch fit(s).  This may not be desirable if one is
 interested in comparing the parameters: for example the sphere radius of set
 one and the cylinder radius of set two.</p>
-<div class="section" id="id11">
+<div class="section" id="id13">
 <h3>Method</h3>
 <p>In order to use the <em>Combined Batch Fit</em>, first load all the data needed as
 described in <a class="reference internal" href="../../guiframe/data_explorer_help.html#loading-data"><span class="std std-ref">Loading Data</span></a>. Next start up two or more <em>BatchPage</em> fits
@@ -647,6 +795,7 @@ finding the peak.</p>
 <div class="line">2017-09-10 Paul Butler</div>
 <div class="line">2017-09-15 Steve King</div>
 <div class="line">2018-03-05 Paul Butler</div>
+<div class="line">2020-02-05 Steve King</div>
 </div>
 </div>
 </div>
@@ -663,6 +812,8 @@ finding the peak.</p>
 <li><a class="reference internal" href="#">Fitting</a><ul>
 <li><a class="reference internal" href="#preparing-to-fit-data">Preparing to fit data</a></li>
 <li><a class="reference internal" href="#selecting-a-model">Selecting a model</a><ul>
+<li><a class="reference internal" href="#interaction-models">Interaction Models</a></li>
+<li><a class="reference internal" href="#mixture-models">Mixture Models</a></li>
 <li><a class="reference internal" href="#show-1d-2d">Show 1D/2D</a></li>
 </ul>
 </li>
@@ -676,12 +827,15 @@ finding the peak.</p>
 <li><a class="reference internal" href="#plugin-model-operations">Plugin Model Operations</a><ul>
 <li><a class="reference internal" href="#new-plugin-model">New Plugin Model</a></li>
 <li><a class="reference internal" href="#sum-multi-p1-p2">Sum|Multi(p1,p2)</a></li>
+<li><a class="reference internal" href="#model-structure">Model Structure</a></li>
+<li><a class="reference internal" href="#combining-more-than-two-models">Combining more than two models</a></li>
 <li><a class="reference internal" href="#advanced-plugin-editor">Advanced Plugin Editor</a></li>
 <li><a class="reference internal" href="#delete-plugin-models">Delete Plugin Models</a></li>
 <li><a class="reference internal" href="#load-plugin-models">Load Plugin Models</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#fitting-options">Fitting Options</a></li>
+<li><a class="reference internal" href="#fitting-integer-parameters">Fitting Integer Parameters</a></li>
 <li><a class="reference internal" href="#fitting-limits">Fitting Limits</a></li>
 <li><a class="reference internal" href="#shortcuts">Shortcuts</a><ul>
 <li><a class="reference internal" href="#copy-paste-parameters">Copy/Paste Parameters</a></li>
@@ -695,14 +849,14 @@ finding the peak.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#batch-fit-mode">Batch Fit Mode</a><ul>
-<li><a class="reference internal" href="#id9">Method</a></li>
+<li><a class="reference internal" href="#id11">Method</a></li>
 <li><a class="reference internal" href="#chain-fitting">Chain Fitting</a></li>
 <li><a class="reference internal" href="#grid-window">Grid Window</a></li>
 <li><a class="reference internal" href="#parameter-plots">Parameter Plots</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#combined-batch-fit-mode">Combined Batch Fit Mode</a><ul>
-<li><a class="reference internal" href="#id11">Method</a></li>
+<li><a class="reference internal" href="#id13">Method</a></li>
 </ul>
 </li>
 </ul>
@@ -725,8 +879,8 @@ finding the peak.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -743,23 +897,20 @@ finding the peak.</p>
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="residuals_help.html" title="Assessing Fit Quality"
              >next</a> |</li>
         <li class="right" >
           <a href="fitting.html" title="Fitting Documentation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>
