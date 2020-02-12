@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>2. Calculator Interface &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>2. Calculator Interface &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Sasmodels Developers Guide" href="index.html" />
-    <link rel="next" title="sasmodels" href="../sasmodels-api/modules.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Release Notes" href="../../user/RELEASE.html" />
     <link rel="prev" title="1. Code Overview" href="overview.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -40,14 +32,14 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../sasmodels-api/modules.html" title="sasmodels"
+          <a href="../../user/RELEASE.html" title="Release Notes"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Code Overview"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Sasmodels Developers Guide</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Sasmodels Developers Guide</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -61,15 +53,15 @@
 <p>This document describes the layer between the form factor kernels and the
 model calculator which implements the dispersity and magnetic SLD
 calculations.  There are three separate implementations of this layer,
-<code class="xref py py-mod docutils literal"><span class="pre">kernelcl</span></code> for OpenCL, which operates on a single Q value at a time,
-<code class="xref py py-mod docutils literal"><span class="pre">kerneldll</span></code> for the DLL, which loops over a vector of Q values, and
-<code class="xref py py-mod docutils literal"><span class="pre">kernelpy</span></code> for python models which operates on vector Q values.</p>
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">kernelcl</span></code> for OpenCL, which operates on a single Q value at a time,
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">kerneldll</span></code> for the DLL, which loops over a vector of Q values, and
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">kernelpy</span></code> for python models which operates on vector Q values.</p>
 <p>Each implementation provides three different calls <em>Iq</em>, <em>Iqxy</em> and <em>Imagnetic</em>
 for 1-D, 2-D and 2-D magnetic kernels respectively. The C code is defined
 in <em>kernel_iq.c</em>, with the minor differences between OpenCL and DLL handled
 by #ifdef statements.</p>
 <p>The kernel call looks as follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kernel</span> <span class="n">void</span> <span class="n">KERNEL_NAME</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kernel</span> <span class="n">void</span> <span class="n">KERNEL_NAME</span><span class="p">(</span>
     <span class="nb">int</span> <span class="n">nq</span><span class="p">,</span>                  <span class="o">//</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">q</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">q</span> <span class="n">vector</span>
     <span class="nb">int</span> <span class="n">pd_start</span><span class="p">,</span>            <span class="o">//</span> <span class="n">Starting</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">dispersity</span> <span class="n">loop</span>
     <span class="nb">int</span> <span class="n">pd_stop</span><span class="p">,</span>             <span class="o">//</span> <span class="n">Ending</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">dispersity</span> <span class="n">loop</span>
@@ -97,11 +89,11 @@ kernel in a reasonable time; because the GPU is used by the operating
 system to show its windows, if a GPU kernel runs too long then it will be
 automatically killed and no results will be returned to the caller.</p>
 <p>The <em>ProblemDetails</em> structure is a direct map of the
-<a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.details.CallDetails" title="sasmodels.details.CallDetails"><code class="xref py py-class docutils literal"><span class="pre">details.CallDetails</span></code></a> buffer.  This indicates which parameters have
+<code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code> buffer.  This indicates which parameters have
 dispersity, and where in the values vector the values and weights can be
 found.  For each parameter with dispersity there is a parameter id, the length
 of the dispersity loop for that parameter, the offset of the parameter
-values in the pd value and pd weight vectors and the &#8216;stride&#8217; from one index
+values in the pd value and pd weight vectors and the ‘stride’ from one index
 to the next, which is used to translate between the position in the
 dispersity loop and the particular parameter indices.  The <em>num_eval</em>
 field is the total size of the dispersity loop.  <em>num_weights</em> is the
@@ -109,7 +101,7 @@ number of elements in the pd value and pd weight vectors.  <em>num_active</em> i
 the number of non-trivial pd loops (parameters with dispersity should be ordered
 by decreasing pd vector length, with a length of 1 meaning no dispersity).
 Oriented objects in 2-D need a cos(theta) spherical correction on the angular
-variation in order to preserve the &#8216;surface area&#8217; of the weight distribution.
+variation in order to preserve the ‘surface area’ of the weight distribution.
 <em>theta_par</em> is the id of the polar coordinate parameter if there is one.</p>
 <p>The <em>values</em> vector consists of the fixed values for the model plus pd value
 and pd weight vectors.  There are <em>NUM_VALUES</em> fixed values for the model,
@@ -119,12 +111,12 @@ three slots for each of the SLD parameters for the sample magnetiziation
 <em>(Mx, My, Mz)</em>.  Sample magnetization is translated from <em>(M, theta, phi)</em>
 to <em>(Mx, My, Mz)</em> before the kernel is called.   After the fixed values comes
 the pd value vector, with the dispersity values for each parameter
-stacked one after the other.  The order isn&#8217;t important since the location
+stacked one after the other.  The order isn’t important since the location
 for each parameter is stored in the <em>pd_offset</em> field of the <em>ProblemDetails</em>
 structure, but the values do need to be contiguous.  After <em>num_weights</em>
 values, the pd weight vector is stored, with the same configuration as the
 pd value vector.  Note that the pd vectors can contain values that are not
-in the dispersity loop; this is used by <a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureKernel" title="sasmodels.mixture.MixtureKernel"><code class="xref py py-class docutils literal"><span class="pre">mixture.MixtureKernel</span></code></a>
+in the dispersity loop; this is used by <code class="xref py py-class docutils literal notranslate"><span class="pre">mixture.MixtureKernel</span></code>
 to make it easier to call the various component kernels.</p>
 <p>The <em>q</em> vector contains one value for each q for <em>Iq</em> kernels, or a pair
 of <em>(qx,qy)</em> values for each q for <em>Iqxy</em> and <em>Imagnetic</em> kernels.  OpenCL
@@ -136,7 +128,7 @@ all points in the dispersity mesh.  This is required when the dispersity
 loop is broken across several kernel calls.</p>
 <p><em>cutoff</em> is a importance cutoff so that points which contribute negligibly
 to the total scattering can be skipped without calculating them.</p>
-<p><a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal"><span class="pre">generate.make_source()</span></code></a> defines the following C macros:</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code> defines the following C macros:</p>
 <ul>
 <li><p class="first">USE_OPENCL is defined if running in opencl</p>
 </li>
@@ -159,7 +151,7 @@ their locations in the values vector.</p>
 <li><p class="first">PARAMETER_TABLE is the declaration of the parameters to the kernel:</p>
 <blockquote>
 <div><p>Cylinder:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define PARAMETER_TABLE \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define PARAMETER_TABLE \</span>
 <span class="n">double</span> <span class="n">length</span><span class="p">;</span> \
 <span class="n">double</span> <span class="n">radius</span><span class="p">;</span> \
 <span class="n">double</span> <span class="n">sld</span><span class="p">;</span> \
@@ -168,7 +160,7 @@ their locations in the values vector.</p>
 </div>
 <p>Note: scale and background are never included</p>
 <p>Multi-shell cylinder (10 shell max):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define PARAMETER_TABLE \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define PARAMETER_TABLE \</span>
 <span class="n">double</span> <span class="n">num_shells</span><span class="p">;</span> \
 <span class="n">double</span> <span class="n">length</span><span class="p">;</span> \
 <span class="n">double</span> <span class="n">radius</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span> \
@@ -181,7 +173,7 @@ their locations in the values vector.</p>
 <li><p class="first">CALL_IQ(q, i, var) is the declaration of a call to the kernel:</p>
 <blockquote>
 <div><p>Cylinder:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define CALL_IQ(q, i, var) Iq(q[i], \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define CALL_IQ(q, i, var) Iq(q[i], \</span>
 <span class="n">var</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> \
 <span class="n">var</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> \
 <span class="n">var</span><span class="o">.</span><span class="n">sld</span><span class="p">,</span> \
@@ -189,7 +181,7 @@ their locations in the values vector.</p>
 </pre></div>
 </div>
 <p>Multi-shell cylinder:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define CALL_IQ(q, i, var) Iq(q[i], \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define CALL_IQ(q, i, var) Iq(q[i], \</span>
 <span class="n">var</span><span class="o">.</span><span class="n">num_shells</span><span class="p">,</span> \
 <span class="n">var</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> \
 <span class="n">var</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> \
@@ -198,7 +190,7 @@ their locations in the values vector.</p>
 </pre></div>
 </div>
 <p>Cylinder2D:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define CALL_IQ(q, i, var) Iqxy(qa, qc, \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define CALL_IQ(q, i, var) Iqxy(qa, qc, \</span>
 <span class="n">var</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> \
 <span class="n">var</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> \
 <span class="n">var</span><span class="o">.</span><span class="n">sld</span><span class="p">,</span> \
@@ -208,7 +200,7 @@ their locations in the values vector.</p>
 </div></blockquote>
 </li>
 <li><p class="first">CALL_VOLUME(var) is similar, but for calling the form volume:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define CALL_VOLUME(var) \</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define CALL_VOLUME(var) \</span>
 <span class="n">form_volume</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -219,15 +211,15 @@ their locations in the values vector.</p>
 <li><p class="first">INVALID(var) is a test for model parameters in the correct range:</p>
 <blockquote>
 <div><p>Cylinder:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define INVALID(var) 0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define INVALID(var) 0</span>
 </pre></div>
 </div>
 <p>BarBell:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#define INVALID(var) (var.bell_radius &lt; var.radius)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define INVALID(var) (var.bell_radius &lt; var.radius)</span>
 </pre></div>
 </div>
 <p>Model with complicated constraints:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">inline</span> <span class="nb">bool</span> <span class="n">constrained</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">expression</span><span class="p">;</span> <span class="p">}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inline</span> <span class="nb">bool</span> <span class="n">constrained</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">expression</span><span class="p">;</span> <span class="p">}</span>
 <span class="c1">#define INVALID(var) constrained(var.p1, var.p2, var.p3)</span>
 </pre></div>
 </div>
@@ -240,9 +232,9 @@ the I(q, p) for each combination of parameters, and perform a normalized
 weighted sum across all the weights.  Parameters may be passed to the
 underlying calculation engine as scalars or vectors, but the dispersity
 calculator treats the parameter set as one long vector.</p>
-<p>Let&#8217;s assume we have 8 parameters in the model, two of which allow dispersity.
-Since this is a 1-D model the orientation parameters won&#8217;t be used:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">:</span> <span class="n">scale</span>        <span class="p">{</span><span class="n">scl</span> <span class="o">=</span> <span class="n">constant</span><span class="p">}</span>
+<p>Let’s assume we have 8 parameters in the model, two of which allow dispersity.
+Since this is a 1-D model the orientation parameters won’t be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span><span class="p">:</span> <span class="n">scale</span>        <span class="p">{</span><span class="n">scl</span> <span class="o">=</span> <span class="n">constant</span><span class="p">}</span>
 <span class="mi">1</span><span class="p">:</span> <span class="n">background</span>   <span class="p">{</span><span class="n">bkg</span> <span class="o">=</span> <span class="n">constant</span><span class="p">}</span>
 <span class="mi">2</span><span class="p">:</span> <span class="n">radius</span>       <span class="p">{</span><span class="n">r</span> <span class="o">=</span> <span class="n">vector</span> <span class="n">of</span> <span class="mi">10</span><span class="n">pts</span><span class="p">}</span>
 <span class="mi">3</span><span class="p">:</span> <span class="n">length</span>       <span class="p">{</span><span class="n">l</span> <span class="o">=</span> <span class="n">vector</span> <span class="n">of</span> <span class="mi">30</span><span class="n">pts</span><span class="p">}</span>
@@ -253,9 +245,9 @@ Since this is a 1-D model the orientation parameters won&#8217;t be used:</p>
 </pre></div>
 </div>
 <p>This generates the following call to the kernel.  Note that parameters 4 and
-5 are treated as having dispersity even though they don&#8217;t &#8212; this is because
+5 are treated as having dispersity even though they don’t — this is because
 it is harmless to do so and simplifies the looping code:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MAX_PD</span> <span class="o">=</span> <span class="mi">4</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MAX_PD</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">NUM_PARS</span> <span class="o">=</span> <span class="mi">6</span>          <span class="o">//</span> <span class="n">kernel</span> <span class="n">parameters</span> <span class="n">only</span>
 <span class="n">NUM_VALUES</span> <span class="o">=</span> <span class="mi">17</span>       <span class="o">//</span> <span class="nb">all</span> <span class="n">values</span><span class="p">,</span> <span class="n">including</span> <span class="n">scale</span> <span class="ow">and</span> <span class="n">background</span>
 <span class="n">NUM_MAGNETIC</span> <span class="o">=</span> <span class="mi">2</span>      <span class="o">//</span> <span class="n">two</span> <span class="n">parameters</span> <span class="n">might</span> <span class="n">be</span> <span class="n">magnetic</span>
@@ -304,7 +296,7 @@ performance for high-dimensional integrals.</p>
 <p>Constraints between parameters are not supported.  Instead users will
 have to define a new model with the constraints built in by making a
 copy of the existing model.  Mac provides OpenCL and we are supplying
-the tinycc compiler for Windows so this won&#8217;t be a complete limitation,
+the tinycc compiler for Windows so this won’t be a complete limitation,
 but it is rather inconvenient.  The process could perhaps be automated
 so that there is no code copying required, just an alternate CALL_IQ
 macro that implements the constraints.  Think carefully about constraining
@@ -315,10 +307,10 @@ pd_start=0 and pd_stop=1.</p>
 <p>The problem details structure could be allocated and sent in as an integer
 array using the read-only flag.  This would allow us to copy it once per fit
 along with the weights vector, since features such as the number of
-disperity points per pd parameter won&#8217;t change between function evaluations.
+disperity points per pd parameter won’t change between function evaluations.
 A new parameter vector must be sent for each I(q) evaluation.  This is
 not currently implemented, and would require some resturcturing of
-the <a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.sasview_model.SasviewModel" title="sasmodels.sasview_model.SasviewModel"><code class="xref py py-class docutils literal"><span class="pre">sasview_model.SasviewModel</span></code></a> interface.</p>
+the <code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code> interface.</p>
 <p>The results array will be initialized to zero for dispersity loop
 entry zero, and preserved between calls to [start, stop] so that the
 results accumulate by the time the loop has completed.  Background and
@@ -326,7 +318,7 @@ scale will be applied when the loop reaches the end.  This does require
 that the results array be allocated read-write, which is less efficient
 for the GPU, but it makes the calling sequence much more manageable.</p>
 <p>For accuracy we may want to introduce Kahan summation into the integration:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">double</span> <span class="n">accumulated_error</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">double</span> <span class="n">accumulated_error</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
 <span class="o">...</span>
 <span class="c1">#if USE_KAHAN_SUMMATION</span>
     <span class="n">const</span> <span class="n">double</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">next</span> <span class="o">-</span> <span class="n">accumulated_error</span><span class="p">;</span>
@@ -354,23 +346,25 @@ the accumulation vector.</p>
   <p class="topless"><a href="overview.html"
                         title="previous chapter">1. Code Overview</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../sasmodels-api/modules.html"
-                        title="next chapter">sasmodels</a></p>
+  <p class="topless"><a href="../../user/RELEASE.html"
+                        title="next chapter">Release Notes</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/dev/sasmodels-dev/calculator.txt"
+      <li><a href="../../_sources/dev/sasmodels-dev/calculator.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -387,19 +381,19 @@ the accumulation vector.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../sasmodels-api/modules.html" title="sasmodels"
+          <a href="../../user/RELEASE.html" title="Release Notes"
              >next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Code Overview"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="index.html" >Sasmodels Developers Guide</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Sasmodels Developers Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

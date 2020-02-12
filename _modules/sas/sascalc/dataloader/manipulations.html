@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sas.sascalc.dataloader.manipulations &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sas.sascalc.dataloader.manipulations &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../../../index.html" />
-    <link rel="up" title="sas" href="../../../sas.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -72,7 +64,7 @@
 
 <span class="c1"># TODO: copy the meta data from the 2D object to the resulting 1D object</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="c1">#from data_info import plottable_2D</span>
@@ -92,7 +84,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_q_compo"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.manipulations.get_q_compo">[docs]</a><span class="k">def</span> <span class="nf">get_q_compo</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">det_dist</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">compo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="get_q_compo"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.manipulations.get_q_compo">[docs]</a><span class="k">def</span> <span class="nf">get_q_compo</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">det_dist</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">compo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This reduces tiny error at very large q.</span>
 <span class="sd">    Implementation of this func is not started yet.&lt;--ToDo</span>
@@ -173,7 +165,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">q_1</span> <span class="ow">and</span> <span class="n">q</span> <span class="o">&lt;=</span> <span class="n">q_0</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="n">q_1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">q_0</span> <span class="o">-</span> <span class="n">q_1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">None</span></div>
+    <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="get_pixel_fraction"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.manipulations.get_pixel_fraction">[docs]</a><span class="k">def</span> <span class="nf">get_pixel_fraction</span><span class="p">(</span><span class="n">qmax</span><span class="p">,</span> <span class="n">q_00</span><span class="p">,</span> <span class="n">q_01</span><span class="p">,</span> <span class="n">q_10</span><span class="p">,</span> <span class="n">q_11</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -281,7 +273,7 @@
 
 <span class="c1">################################################################################</span>
 
-<div class="viewcode-block" id="reader2D_converter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.manipulations.reader2D_converter">[docs]</a><span class="k">def</span> <span class="nf">reader2D_converter</span><span class="p">(</span><span class="n">data2d</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="reader2D_converter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.manipulations.reader2D_converter">[docs]</a><span class="k">def</span> <span class="nf">reader2D_converter</span><span class="p">(</span><span class="n">data2d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    convert old 2d format opened by IhorReader or danse_reader</span>
 <span class="sd">    to new Data2D format</span>
@@ -291,7 +283,7 @@
 <span class="sd">    :return: 1d arrays of Data2D object</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">data2d</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">data2d</span><span class="o">.</span><span class="n">x_bins</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">data2d</span><span class="o">.</span><span class="n">y_bins</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">data2d</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data2d</span><span class="o">.</span><span class="n">x_bins</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data2d</span><span class="o">.</span><span class="n">y_bins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t convert this data: data=None...&quot;</span><span class="p">)</span>
     <span class="n">new_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">x_bins</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">y_bins</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">new_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">y_bins</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">x_bins</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
@@ -301,7 +293,7 @@
     <span class="n">qx_data</span> <span class="o">=</span> <span class="n">new_x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="n">qy_data</span> <span class="o">=</span> <span class="n">new_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
     <span class="n">q_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qx_data</span> <span class="o">*</span> <span class="n">qx_data</span> <span class="o">+</span> <span class="n">qy_data</span> <span class="o">*</span> <span class="n">qy_data</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">data2d</span><span class="o">.</span><span class="n">err_data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">err_data</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">data2d</span><span class="o">.</span><span class="n">err_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">err_data</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">new_err_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">new_data</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">new_err_data</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">err_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -328,7 +320,7 @@
 <span class="sd">    either linear or log</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">n_bins</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">,</span> <span class="n">n_bins</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        if base is None: Linear binning</span>
 <span class="sd">        &#39;&#39;&#39;</span>
@@ -359,7 +351,7 @@
 <span class="sd">    Compute average I(Q) for a region of interest</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">bin_width</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
         <span class="c1"># Minimum Qx value [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_min</span> <span class="o">=</span> <span class="n">x_min</span>
@@ -373,9 +365,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bin_width</span> <span class="o">=</span> <span class="n">bin_width</span>
         <span class="c1"># If True, I(|Q|) will be return, otherwise,</span>
         <span class="c1"># negative q-values are allowed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
     <span class="k">def</span> <span class="nf">_avg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">,</span> <span class="n">maj</span><span class="p">):</span>
@@ -455,7 +447,7 @@
             <span class="n">x</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">q_value</span>
             <span class="n">y</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span>
                 <span class="n">err_y</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span>
@@ -483,7 +475,7 @@
 <span class="sd">    Compute average I(Qy) for a region of interest</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute average I(Qy) for a region of interest</span>
 
@@ -498,7 +490,7 @@
 <span class="sd">    Compute average I(Qx) for a region of interest</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute average I(Qx) for a region of interest</span>
 <span class="sd">        :param data2D: Data2D object</span>
@@ -513,7 +505,7 @@
 <span class="sd">    Perform the sum of counts in a 2D region of interest.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="c1"># Minimum Qx value [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_min</span> <span class="o">=</span> <span class="n">x_min</span>
         <span class="c1"># Maximum Qx value [A-1]</span>
@@ -523,7 +515,7 @@
         <span class="c1"># Maximum Qy value [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_max</span> <span class="o">=</span> <span class="n">y_max</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform the sum in the region of interest</span>
 
@@ -582,7 +574,7 @@
             <span class="k">if</span> <span class="n">frac</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">y</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span>
                 <span class="n">err_y</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">npts</span><span class="p">]</span>
@@ -597,11 +589,11 @@
 <span class="sd">    Perform the average of counts in a 2D region of interest.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Boxavg</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Boxavg</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span>
                                      <span class="n">y_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform the sum in the region of interest</span>
 
@@ -627,7 +619,7 @@
 <span class="sd">    as a function of Q</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">bin_width</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">bin_width</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">):</span>
         <span class="c1"># Minimum radius included in the average [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r_min</span> <span class="o">=</span> <span class="n">r_min</span>
         <span class="c1"># Maximum radius included in the average [A-1]</span>
@@ -635,7 +627,7 @@
         <span class="c1"># Bin width (step size) [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bin_width</span> <span class="o">=</span> <span class="n">bin_width</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">,</span> <span class="n">ismask</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">,</span> <span class="n">ismask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform circular averaging on the data</span>
 
@@ -648,8 +640,8 @@
         <span class="n">err_data</span> <span class="o">=</span> <span class="n">data2D</span><span class="o">.</span><span class="n">err_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data2D</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
         <span class="n">mask_data</span> <span class="o">=</span> <span class="n">data2D</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data2D</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
 
-        <span class="n">dq_data</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">dq_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dq_data</span> <span class="o">=</span> <span class="n">get_dq_data</span><span class="p">(</span><span class="n">data2D</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">q_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -692,20 +684,20 @@
             <span class="n">y</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data_n</span>
             <span class="c1"># Take dqs from data to get the q_average</span>
             <span class="n">x</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">q_value</span>
-            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">data_n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">data_n</span> <span class="o">=</span> <span class="o">-</span><span class="n">data_n</span>
                 <span class="n">err_y</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data_n</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">err_y</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span> <span class="o">*</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">dq_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dq_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># To be consistent with dq calculation in 1d reduction,</span>
                 <span class="c1"># we need just the averages (not quadratures) because</span>
                 <span class="c1"># it should not depend on the number of the q points</span>
                 <span class="c1"># in the qr bins.</span>
                 <span class="n">err_x</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">dq_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">err_x</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="n">err_x</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">y_counts</span><span class="p">[</span><span class="n">i_q</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span>
 
         <span class="c1"># Average the sums</span>
@@ -722,10 +714,10 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y_counts</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">err_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">err_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">d_x</span> <span class="o">=</span> <span class="n">err_x</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">d_x</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">d_x</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Average Error: No points inside ROI to average...&quot;</span>
@@ -749,7 +741,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Todo: remove center.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">36</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">36</span><span class="p">):</span>
         <span class="c1"># Minimum radius</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r_min</span> <span class="o">=</span> <span class="n">r_min</span>
         <span class="c1"># Maximum radius</span>
@@ -761,7 +753,7 @@
         <span class="c1"># Number of angular bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nbins_phi</span> <span class="o">=</span> <span class="n">nbins</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply the ring to the data set.</span>
 <span class="sd">        Returns the angular distribution for a given q range</span>
@@ -770,7 +762,7 @@
 
 <span class="sd">        :return: Data1D object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Ring averaging only take plottable_2D objects&quot;</span><span class="p">)</span>
 
         <span class="n">Pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
@@ -814,7 +806,7 @@
                 <span class="n">i_phi</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">phi_bins</span><span class="p">[</span><span class="n">i_phi</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">npt</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">data_n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">data_n</span> <span class="o">=</span> <span class="o">-</span><span class="n">data_n</span>
                 <span class="n">phi_err</span><span class="p">[</span><span class="n">i_phi</span><span class="p">]</span> <span class="o">+=</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">frac</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">data_n</span><span class="p">)</span>
@@ -851,8 +843,8 @@
 <span class="sd">    starting from the x- axis on the left-hand side</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">phi_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi_max</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-                 <span class="n">base</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">phi_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi_max</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                 <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        :param base: must be a valid base for an algorithm, i.e.,</span>
 <span class="sd">        a positive number</span>
@@ -873,7 +865,7 @@
 
 <span class="sd">        :return: Data1D object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Ring averaging only take plottable_2D objects&quot;</span><span class="p">)</span>
 
         <span class="c1"># Get the all data &amp; info</span>
@@ -883,8 +875,8 @@
         <span class="n">qx_data</span> <span class="o">=</span> <span class="n">data2D</span><span class="o">.</span><span class="n">qx_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data2D</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
         <span class="n">qy_data</span> <span class="o">=</span> <span class="n">data2D</span><span class="o">.</span><span class="n">qy_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data2D</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
 
-        <span class="n">dq_data</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">dq_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data2D</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dq_data</span> <span class="o">=</span> <span class="n">get_dq_data</span><span class="p">(</span><span class="n">data2D</span><span class="p">)</span>
 
         <span class="c1"># set space for 1d outputs</span>
@@ -911,7 +903,7 @@
             <span class="n">data_n</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
 
             <span class="c1"># Is pixel within range?</span>
-            <span class="n">is_in</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">is_in</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="c1"># phi-value of the pixel (j,i)</span>
             <span class="n">phi_value</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">qy_data</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">qx_data</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
@@ -960,47 +952,48 @@
             <span class="c1"># Get the total y</span>
             <span class="n">y</span><span class="p">[</span><span class="n">i_bin</span><span class="p">]</span> <span class="o">+=</span> <span class="n">data_n</span>
             <span class="n">x</span><span class="p">[</span><span class="n">i_bin</span><span class="p">]</span> <span class="o">+=</span> <span class="n">q_value</span>
-            <span class="k">if</span> <span class="n">err_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">err_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">data_n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">data_n</span> <span class="o">=</span> <span class="o">-</span><span class="n">data_n</span>
                 <span class="n">y_err</span><span class="p">[</span><span class="n">i_bin</span><span class="p">]</span> <span class="o">+=</span> <span class="n">data_n</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">y_err</span><span class="p">[</span><span class="n">i_bin</span><span class="p">]</span> <span class="o">+=</span> <span class="n">err_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
 
-            <span class="k">if</span> <span class="n">dq_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dq_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># To be consistent with dq calculation in 1d reduction,</span>
                 <span class="c1"># we need just the averages (not quadratures) because</span>
                 <span class="c1"># it should not depend on the number of the q points</span>
                 <span class="c1"># in the qr bins.</span>
                 <span class="n">x_err</span><span class="p">[</span><span class="n">i_bin</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dq_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">x_err</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="n">x_err</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">y_counts</span><span class="p">[</span><span class="n">i_bin</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Organize the results</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbins</span><span class="p">):</span>
-            <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">y_err</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">y_err</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">y_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-            <span class="c1"># The type of averaging: phi,q2, or q</span>
-            <span class="c1"># Calculate x[i]should be at the center of the bin</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">/</span><span class="n">y_counts</span>
+            <span class="n">y_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">y_err</span><span class="p">)</span><span class="o">/</span><span class="n">y_counts</span>
+            <span class="c1"># The type of averaging: phi, q2, or q</span>
+            <span class="c1"># Calculate x values at the center of the bin</span>
             <span class="k">if</span> <span class="n">run</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;phi&#39;</span><span class="p">:</span>
-                <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi_min</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">*</span> \
-                    <span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi_min</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi_min</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbins</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi_min</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># We take the center of ring area, not radius.</span>
-                <span class="c1"># This is more accurate than taking the radial center of ring.</span>
-                <span class="c1"># delta_r = (self.r_max - self.r_min) / self.nbins</span>
-                <span class="c1"># r_inner = self.r_min + delta_r * i</span>
-                <span class="c1"># r_outer = r_inner + delta_r</span>
-                <span class="c1"># x[i] = math.sqrt((r_inner * r_inner + r_outer * r_outer) / 2)</span>
-                <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">y_err</span><span class="p">[</span><span class="n">y_err</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y_err</span><span class="p">)</span>
+                <span class="c1"># set q to the average of the q values within each bin</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">/</span><span class="n">y_counts</span>
+
+                <span class="c1">### Alternate algorithm</span>
+                <span class="c1">## We take the center of ring area, not radius.</span>
+                <span class="c1">## This is more accurate than taking the radial center of ring.</span>
+                <span class="c1">#step = (self.r_max - self.r_min) / self.nbins</span>
+                <span class="c1">#r_inner = self.r_min + step * np.arange(self.nbins)</span>
+                <span class="c1">#x = math.sqrt((r_inner**2 + (r_inner + step)**2) / 2)</span>
+
         <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_err</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">x_err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x_err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">d_x</span> <span class="o">=</span> <span class="n">x_err</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">y_counts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">d_x</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">d_x</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Average Error: No points inside sector of ROI to average...&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -1019,7 +1012,7 @@
 <span class="sd">    The number of bin in phi also has to be defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform sector average and return I(phi).</span>
 
@@ -1039,7 +1032,7 @@
 <span class="sd">    The number of bin in Q also has to be defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform sector average and return I(Q).</span>
 
@@ -1063,7 +1056,7 @@
 <span class="sd">    in anti-clockwise starting from the x- axis on the left-hand side</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="c1"># Minimum radius</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r_min</span> <span class="o">=</span> <span class="n">r_min</span>
         <span class="c1"># Maximum radius</span>
@@ -1073,7 +1066,7 @@
         <span class="c1"># Center of the ring in y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="n">center_y</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply the ring to the data set.</span>
 <span class="sd">        Returns the angular distribution for a given q range</span>
@@ -1082,7 +1075,7 @@
 
 <span class="sd">        :return: index array in the range</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Ring cut only take plottable_2D objects&quot;</span><span class="p">)</span>
 
         <span class="c1"># Get data</span>
@@ -1101,7 +1094,7 @@
 <span class="sd">    Find a rectangular 2D region of interest.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="c1"># Minimum Qx value [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_min</span> <span class="o">=</span> <span class="n">x_min</span>
         <span class="c1"># Maximum Qx value [A-1]</span>
@@ -1111,7 +1104,7 @@
         <span class="c1"># Maximum Qy value [A-1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_max</span> <span class="o">=</span> <span class="n">y_max</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">       Find a rectangular 2D region of interest.</span>
 
@@ -1132,7 +1125,7 @@
 <span class="sd">        :return: out, 1d array (length = len(data))</span>
 <span class="sd">           with Trues where the data points are inside ROI, otherwise Falses</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Boxcut take only plottable_2D objects&quot;</span><span class="p">)</span>
         <span class="c1"># Get qx_ and qy_data</span>
         <span class="n">qx_data</span> <span class="o">=</span> <span class="n">data2D</span><span class="o">.</span><span class="n">qx_data</span>
@@ -1157,11 +1150,11 @@
 <span class="sd">    and (phi_max-phi_min) should not be larger than pi</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi_max</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi_max</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phi_min</span> <span class="o">=</span> <span class="n">phi_min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phi_max</span> <span class="o">=</span> <span class="n">phi_max</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2D</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find a rectangular 2D region of interest.</span>
 
@@ -1185,7 +1178,7 @@
 
 <span class="sd">        with Trues where the data points are inside ROI, otherwise Falses</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">data2D</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;plottable_2D&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Sectorcut take only plottable_2D objects&quot;</span><span class="p">)</span>
         <span class="n">Pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
         <span class="c1"># Get data</span>
@@ -1230,12 +1223,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1251,14 +1246,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

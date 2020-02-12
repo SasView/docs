@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>hollow_cylinder &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>hollow_cylinder &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Cylinder Functions" href="../sasgui/perspectives/fitting/models/shape-cylinder.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="pearl_necklace" href="pearl_necklace.html" />
     <link rel="prev" title="flexible_cylinder_elliptical" href="flexible_cylinder_elliptical.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="flexible_cylinder_elliptical.html" title="flexible_cylinder_elliptical"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-cylinder.html" accesskey="U">Cylinder Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-cylinder.html" accesskey="U">Cylinder Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -123,13 +115,13 @@
 </table>
 <p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
 <p><strong>Definition</strong></p>
-<p>This model provides the form factor, <span class="math">\(P(q)\)</span>, for a monodisperse hollow right
+<p>This model provides the form factor, <span class="math notranslate nohighlight">\(P(q)\)</span>, for a monodisperse hollow right
 angle circular cylinder (rigid tube) where the The inside and outside of the
 hollow cylinder are assumed to have the same SLD and the form factor is thus
 normalized by the volume of the tube (i.e. not by the total cylinder volume).</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[P(q) = \text{scale} \left&lt;F^2\right&gt;/V_\text{shell} + \text{background}\]</div>
-<p>where the averaging <span class="math">\(\left&lt;\ldots\right&gt;\)</span> is applied only for the 1D
+<p>where the averaging <span class="math notranslate nohighlight">\(\left&lt;\ldots\right&gt;\)</span> is applied only for the 1D
 calculation. If Intensity is given on an absolute scale, the scale factor here
 is the volume fraction of the shell.  This differs from
 the <a class="reference internal" href="core_shell_cylinder.html#core-shell-cylinder"><span class="std std-ref">core_shell_cylinder</span></a> in that, in that case, scale is the volume
@@ -141,7 +133,7 @@ headgroups (in the shell) and the volume fraction of material comes fromm the
 whole cyclinder.  NOTE: the hollow_cylinder represents a tube whereas the
 core_shell_cylinder includes a shell layer covering the ends (end caps) as well.</p>
 <p>The 1D scattering intensity is calculated in the following way (Guinier, 1955)</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\begin{split}P(q)           &amp;= (\text{scale})V_\text{shell}\Delta\rho^2
         \int_0^{1}\Psi^2
         \left[q_z, R_\text{outer}(1-x^2)^{1/2},
@@ -153,40 +145,44 @@ core_shell_cylinder includes a shell layer covering the ends (end caps) as well.
 \gamma         &amp;= R_\text{core} / R_\text{outer} \\
 V_\text{shell} &amp;= \pi \left(R_\text{outer}^2 - R_\text{core}^2 \right)L \\
 J_1(x)         &amp;= (\sin(x)-x\cdot \cos(x)) / x^2\end{split}\]</div>
-<p>where <em>scale</em> is a scale factor, <span class="math">\(H = L/2\)</span> and <span class="math">\(J_1\)</span> is the 1st order
+<p>where <em>scale</em> is a scale factor, <span class="math notranslate nohighlight">\(H = L/2\)</span> and <span class="math notranslate nohighlight">\(J_1\)</span> is the 1st order
 Bessel function.</p>
 <p><strong>NB</strong>: The 2nd virial coefficient of the cylinder is calculated
 based on the outer radius and full length, which give an the effective radius
-for structure factor <span class="math">\(S(q)\)</span> when <span class="math">\(P(q) \cdot S(q)\)</span> is applied.</p>
-<p>In the parameters,the <em>radius</em> is <span class="math">\(R_\text{core}\)</span> while <em>thickness</em>
-is <span class="math">\(R_\text{outer} - R_\text{core}\)</span>.</p>
+for structure factor <span class="math notranslate nohighlight">\(S(q)\)</span> when <span class="math notranslate nohighlight">\(P(q) \cdot S(q)\)</span> is applied.</p>
+<p>In the parameters,the <em>radius</em> is <span class="math notranslate nohighlight">\(R_\text{core}\)</span> while <em>thickness</em>
+is <span class="math notranslate nohighlight">\(R_\text{outer} - R_\text{core}\)</span>.</p>
 <p>To provide easy access to the orientation of the core-shell cylinder, we define
-the axis of the cylinder using two angles <span class="math">\(\theta\)</span> and <span class="math">\(\phi\)</span>
+the axis of the cylinder using two angles <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span>
 (see <a class="reference internal" href="cylinder.html#cylinder-angle-definition"><span class="std std-ref">cylinder model</span></a>).</p>
-<div class="figure" id="id3">
+<div class="figure" id="id2">
 <img alt="../../_images/hollow_cylinder_autogenfig.png" src="../../_images/hollow_cylinder_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 31 </span><span class="caption-text">1D and 2D plots corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/bbd6f0188858dc90abb7f001b035bb9c/hollow_cylinder.py"><code class="xref download docutils literal notranslate"><span class="pre">hollow_cylinder.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/78a66336294563442fb6b28453282573/hollow_cylinder.c"><code class="xref download docutils literal notranslate"><span class="pre">hollow_cylinder.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/8941b08876d22491b6bc21038e68c166/gauss76.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/gauss76.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/4cfa6b83165e1eaf8fb7657e042211cd/sas_J1.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/sas_J1.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/9aa055a3bd852f216e2ff4f4ad9e9d79/polevl.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/polevl.c</span></code></a></p>
 <p><strong>References</strong></p>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>L A Feigin and D I Svergun, <em>Structure Analysis by Small-Angle X-Ray and
-Neutron Scattering</em>, Plenum Press, New York, (1987)</td></tr>
-</tbody>
-</table>
-<p><strong>Authorship and Verification</strong></p>
-<ul>
-<li><p class="first"><strong>Author:</strong> NIST IGOR/DANSE <strong>Date:</strong> pre 2010</p>
+<ol class="arabic simple">
+<li>L A Feigin and D I Svergun, <em>Structure Analysis by Small-Angle X-Ray and
+Neutron Scattering</em>, Plenum Press, New York, (1987)</li>
+<li><ol class="first upperalpha" start="12">
+<li>Onsager, <em>Ann. New York Acad. Sci.</em>, 51 (1949) 627-659</li>
+</ol>
 </li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong> NIST IGOR/DANSE <strong>Date:</strong> pre 2010</li>
 <li><dl class="first docutils">
 <dt><strong>Last Modified by:</strong> Paul Butler <strong>Date:</strong> September 06, 2018</dt>
-<dd><p class="first last">(corrected VR calculation)</p>
-</dd>
+<dd>(corrected VR calculation)</dd>
 </dl>
 </li>
-<li><p class="first"><strong>Last Reviewed by:</strong> Paul Butler <strong>Date:</strong> September 06, 2018</p>
-</li>
+<li><strong>Last Reviewed by:</strong> Paul Butler <strong>Date:</strong> September 06, 2018</li>
 </ul>
 </div>
 
@@ -205,18 +201,20 @@ Neutron Scattering</em>, Plenum Press, New York, (1987)</td></tr>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/hollow_cylinder.txt"
+      <li><a href="../../_sources/user/models/hollow_cylinder.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -238,15 +236,15 @@ Neutron Scattering</em>, Plenum Press, New York, (1987)</td></tr>
         <li class="right" >
           <a href="flexible_cylinder_elliptical.html" title="flexible_cylinder_elliptical"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-cylinder.html" >Cylinder Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-cylinder.html" >Cylinder Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

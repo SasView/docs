@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>fractal_core_shell &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>fractal_core_shell &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Shape-Independent Functions" href="../sasgui/perspectives/fitting/models/shape-independent.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="gauss_lorentz_gel" href="gauss_lorentz_gel.html" />
     <link rel="prev" title="fractal" href="fractal.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="fractal.html" title="fractal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -131,47 +123,54 @@
 <p><strong>Definition</strong>
 Calculates the scattering from a fractal structure with a primary building
 block of core-shell spheres, as opposed to just homogeneous spheres in
-the fractal model. It is an extension of the well known Teixeira<a class="footnote-reference" href="#teixeira" id="id2">[1]</a>
-fractal model replacing the <span class="math">\(P(q)\)</span> of a solid sphere with that of a core-shell
+the fractal model. It is an extension of the well known Teixeira<a class="footnote-reference" href="#teixeira1988" id="id2">[1]</a>
+fractal model replacing the <span class="math notranslate nohighlight">\(P(q)\)</span> of a solid sphere with that of a core-shell
 sphere. This model could find use for aggregates of coated particles, or
 aggregates of vesicles for example.</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[I(q) = P(q)S(q) + \text{background}\]</div>
-<p>Where <span class="math">\(P(q)\)</span> is the core-shell form factor and <span class="math">\(S(q)\)</span> is the
-Teixeira<a class="footnote-reference" href="#teixeira" id="id3">[1]</a> fractal structure factor both of which are given again
+<p>Where <span class="math notranslate nohighlight">\(P(q)\)</span> is the core-shell form factor and <span class="math notranslate nohighlight">\(S(q)\)</span> is the
+Teixeira<a class="footnote-reference" href="#teixeira1988" id="id3">[1]</a> fractal structure factor both of which are given again
 below:</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\begin{split}P(q) &amp;= \frac{\phi}{V_s}\left[3V_c(\rho_c-\rho_s)
 \frac{\sin(qr_c)-qr_c\cos(qr_c)}{(qr_c)^3}+
 3V_s(\rho_s-\rho_{solv})
 \frac{\sin(qr_s)-qr_s\cos(qr_s)}{(qr_s)^3}\right]^2 \\
 S(q) &amp;= 1 + \frac{D_f\ \Gamma\!(D_f-1)}{[1+1/(q\xi)^2]^{(D_f-1)/2}}
 \frac{\sin[(D_f-1)\tan^{-1}(q\xi)]}{(qr_s)^{D_f}}\end{split}\]</div>
-<p>where <span class="math">\(\phi\)</span> is the volume fraction of particles, <span class="math">\(V_s\)</span> is the volume of the
-whole particle, <span class="math">\(V_c\)</span> is the volume of the core, <span class="math">\(\rho_c\)</span>, <span class="math">\(\rho_s\)</span>, and
-<span class="math">\(\rho_{solv}\)</span> are the scattering length densities of the core, shell, and
-solvent respectively, <span class="math">\(r_c\)</span> and <span class="math">\(r_s\)</span> are the radius of the core and the radius
-of the whole particle respectively, <span class="math">\(D_f\)</span> is the fractal dimension, and <span class="math">\(\xi\)</span> the
+<p>where <span class="math notranslate nohighlight">\(\phi\)</span> is the volume fraction of particles, <span class="math notranslate nohighlight">\(V_s\)</span> is the volume of the
+whole particle, <span class="math notranslate nohighlight">\(V_c\)</span> is the volume of the core, <span class="math notranslate nohighlight">\(\rho_c\)</span>, <span class="math notranslate nohighlight">\(\rho_s\)</span>, and
+<span class="math notranslate nohighlight">\(\rho_{solv}\)</span> are the scattering length densities of the core, shell, and
+solvent respectively, <span class="math notranslate nohighlight">\(r_c\)</span> and <span class="math notranslate nohighlight">\(r_s\)</span> are the radius of the core and the radius
+of the whole particle respectively, <span class="math notranslate nohighlight">\(D_f\)</span> is the fractal dimension, and <span class="math notranslate nohighlight">\(\xi\)</span> the
 correlation length.</p>
 <p>Polydispersity of radius and thickness are also provided for.</p>
 <p>This model does not allow for anisotropy and thus the 2D scattering intensity
-is calculated in the same way as 1D, where the <span class="math">\(q\)</span> vector is defined as</p>
-<div class="math">
+is calculated in the same way as 1D, where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
 \[q = \sqrt{q_x^2 + q_y^2}\]</div>
 <p>Our model is derived from the form factor calculations implemented in IGOR
-macros by the NIST Center for Neutron Research<a class="footnote-reference" href="#kline" id="id4">[2]</a></p>
+macros by the NIST Center for Neutron Research<a class="footnote-reference" href="#kline2006" id="id4">[2]</a></p>
 <div class="figure" id="id5">
 <img alt="../../_images/fractal_core_shell_autogenfig.png" src="../../_images/fractal_core_shell_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 99 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/b51ac39fb96ab87b3bf62ae0b2cda41c/fractal_core_shell.py"><code class="xref download docutils literal notranslate"><span class="pre">fractal_core_shell.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/b687f8ac363a834a62f13513982ebade/fractal_core_shell.c"><code class="xref download docutils literal notranslate"><span class="pre">fractal_core_shell.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/7499dd4e01515b4ae34d0bb5827d2ce3/fractal_sq.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/fractal_sq.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/1ba46acd75e4f832577bce2e7f261975/core_shell.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/core_shell.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/14b83c4665f06f5d02698848529ee87b/sas_gamma.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/sas_gamma.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/6846240e6b225baee866f56076213b29/sas_3j1x_x.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/sas_3j1x_x.c</span></code></a></p>
 <p><strong>References</strong></p>
-<table class="docutils footnote" frame="void" id="teixeira" rules="none">
+<table class="docutils footnote" frame="void" id="teixeira1988" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> J Teixeira, <em>J. Appl. Cryst.</em>, 21 (1988) 781-785</td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="kline" rules="none">
+<table class="docutils footnote" frame="void" id="kline2006" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id4">[2]</a></td><td>S R Kline, <em>J Appl. Cryst.</em>, 39 (2006) 895</td></tr>
@@ -200,18 +199,20 @@ macros by the NIST Center for Neutron Research<a class="footnote-reference" href
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/fractal_core_shell.txt"
+      <li><a href="../../_sources/user/models/fractal_core_shell.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -233,15 +234,15 @@ macros by the NIST Center for Neutron Research<a class="footnote-reference" href
         <li class="right" >
           <a href="fractal.html" title="fractal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" >Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" >Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

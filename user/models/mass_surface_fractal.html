@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>mass_surface_fractal &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>mass_surface_fractal &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Shape-Independent Functions" href="../sasgui/perspectives/fitting/models/shape-independent.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="mono_gauss_coil" href="mono_gauss_coil.html" />
     <link rel="prev" title="mass_fractal" href="mass_fractal.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="mass_fractal.html" title="mass_fractal"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -115,15 +107,15 @@ silicas. These are all characterised by cluster mass distributions (sometimes
 also cluster size distributions) and internal surfaces that are fractal in
 nature. The scattering from such materials displays two distinct breaks in
 log-log representation, corresponding to the radius-of-gyration of the primary
-particles, <span class="math">\(rg\)</span>, and the radius-of-gyration of the clusters (aggregates),
-<span class="math">\(Rg\)</span>. Between these boundaries the scattering follows a power law related to
-the mass fractal dimension, <span class="math">\(Dm\)</span>, whilst above the high-Q boundary the
+particles, <span class="math notranslate nohighlight">\(rg\)</span>, and the radius-of-gyration of the clusters (aggregates),
+<span class="math notranslate nohighlight">\(Rg\)</span>. Between these boundaries the scattering follows a power law related to
+the mass fractal dimension, <span class="math notranslate nohighlight">\(Dm\)</span>, whilst above the high-Q boundary the
 scattering follows a power law related to the surface fractal dimension of
-the primary particles, <span class="math">\(Ds\)</span>.</p>
+the primary particles, <span class="math notranslate nohighlight">\(Ds\)</span>.</p>
 <p><strong>Definition</strong></p>
 <p>The scattered intensity I(q) is calculated using a modified
 Ornstein-Zernicke equation</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\begin{split}I(q) = scale \times P(q) + background \\
 P(q) = \left\{ \left[ 1+(q^2a)\right]^{D_m/2} \times
                \left[ 1+(q^2b)\right]^{(6-D_s-D_m)/2}
@@ -131,43 +123,39 @@ P(q) = \left\{ \left[ 1+(q^2a)\right]^{D_m/2} \times
 a = R_{g}^2/(3D_m/2) \\
 b = r_{g}^2/[-3(D_s+D_m-6)/2] \\
 scale = scale\_factor \times NV^2 (\rho_{particle} - \rho_{solvent})^2\end{split}\]</div>
-<p>where <span class="math">\(R_g\)</span> is the size of the cluster, <span class="math">\(r_g\)</span> is the size of the primary
-particle, <span class="math">\(D_s\)</span> is the surface fractal dimension, <span class="math">\(D_m\)</span> is the mass fractal
-dimension, <span class="math">\(\rho_{solvent}\)</span> is the scattering length density of the solvent,
-and <span class="math">\(\rho_{particle}\)</span> is the scattering length density of particles.</p>
+<p>where <span class="math notranslate nohighlight">\(R_g\)</span> is the size of the cluster, <span class="math notranslate nohighlight">\(r_g\)</span> is the size of the primary
+particle, <span class="math notranslate nohighlight">\(D_s\)</span> is the surface fractal dimension, <span class="math notranslate nohighlight">\(D_m\)</span> is the mass fractal
+dimension, <span class="math notranslate nohighlight">\(\rho_{solvent}\)</span> is the scattering length density of the solvent,
+and <span class="math notranslate nohighlight">\(\rho_{particle}\)</span> is the scattering length density of particles.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The surface ( <span class="math">\(D_s\)</span> ) and mass ( <span class="math">\(D_m\)</span> ) fractal dimensions are only
-valid if <span class="math">\(0 &lt; surface\_dim &lt; 6\)</span> , <span class="math">\(0 &lt; mass\_dim &lt; 6\)</span> , and
-<span class="math">\((surface\_dim + mass\_dim ) &lt; 6\)</span> .
+<p class="last">The surface ( <span class="math notranslate nohighlight">\(D_s\)</span> ) and mass ( <span class="math notranslate nohighlight">\(D_m\)</span> ) fractal dimensions are only
+valid if <span class="math notranslate nohighlight">\(0 &lt; surface\_dim &lt; 6\)</span>, <span class="math notranslate nohighlight">\(0 &lt; mass\_dim &lt; 6\)</span>, and
+<span class="math notranslate nohighlight">\((surface\_dim + mass\_dim ) &lt; 6\)</span>.
 Older versions of sasview may have the default primary particle radius
 larger than the cluster radius, this was an error, also present in the
 Schmidt review paper below. The primary particle should be the smaller
-as described in the original Hurd et.al. who also point out that
+as described in the original Hurd, et al., who also point out that
 polydispersity in the primary particle sizes may affect their
 apparent surface fractal dimension.</p>
 </div>
-<div class="figure" id="id4">
+<div class="figure" id="id2">
 <img alt="../../_images/mass_surface_fractal_autogenfig.png" src="../../_images/mass_surface_fractal_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 108 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/bacff36e91cf8be6b6340a40ad2aefdc/mass_surface_fractal.py"><code class="xref download docutils literal notranslate"><span class="pre">mass_surface_fractal.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/5a251c5b28811228801532708cd76b49/mass_surface_fractal.c"><code class="xref download docutils literal notranslate"><span class="pre">mass_surface_fractal.c</span></code></a></p>
 <p><strong>References</strong></p>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>P Schmidt, <em>J Appl. Cryst.</em>, 24 (1991) 414-435 Equation(19)</td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td>A J Hurd, D W Schaefer, J E Martin, <em>Phys. Rev. A</em>,
-35 (1987) 2361-2364 Equation(2)</td></tr>
-</tbody>
-</table>
+<ol class="arabic simple">
+<li>P Schmidt, <em>J Appl. Cryst.</em>, 24 (1991) 414-435 Equation(19)</li>
+<li>A J Hurd, D W Schaefer, J E Martin, <em>Phys. Rev. A</em>,
+35 (1987) 2361-2364 Equation(2)</li>
+</ol>
 <p><strong>Authorship and Verification</strong></p>
 <ul class="simple">
-<li><strong>Converted to sasmodels by:</strong> Piotr Rozyczko <strong>Date:</strong> Jan 20, 2016</li>
+<li><strong>Author:</strong> Piotr Rozyczko <strong>Date:</strong> Jan 20, 2016</li>
+<li><strong>Last Modified by:</strong></li>
 <li><strong>Last Reviewed by:</strong> Richard Heenan <strong>Date:</strong> May 30, 2018</li>
 </ul>
 </div>
@@ -187,18 +175,20 @@ apparent surface fractal dimension.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/mass_surface_fractal.txt"
+      <li><a href="../../_sources/user/models/mass_surface_fractal.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -220,15 +210,15 @@ apparent surface fractal dimension.</p>
         <li class="right" >
           <a href="mass_fractal.html" title="mass_fractal"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" >Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" >Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

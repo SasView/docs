@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>fuzzy_sphere &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>fuzzy_sphere &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Sphere Functions" href="../sasgui/perspectives/fitting/models/shape-sphere.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="linear_pearls" href="linear_pearls.html" />
     <link rel="prev" title="core_shell_sphere" href="core_shell_sphere.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="core_shell_sphere.html" title="core_shell_sphere"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-sphere.html" accesskey="U">Sphere Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-sphere.html" accesskey="U">Sphere Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -109,19 +101,19 @@
 </table>
 <p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
 <p>For information about polarised and magnetic scattering, see
-the <a class="reference internal" href="../sasgui/perspectives/fitting/magnetism/magnetism.html#magnetism"><span class="std std-ref">Polarisation/Magnetic Scattering</span></a> documentation.</p>
+the <a class="reference internal" href="../qtgui/Perspectives/Fitting/magnetism/magnetism.html#magnetism"><span class="std std-ref">Polarisation/Magnetic Scattering</span></a> documentation.</p>
 <p><strong>Definition</strong></p>
-<p>The scattering intensity <span class="math">\(I(q)\)</span> is calculated as:</p>
-<div class="math">
+<p>The scattering intensity <span class="math notranslate nohighlight">\(I(q)\)</span> is calculated as:</p>
+<div class="math notranslate nohighlight">
 \[I(q) = \frac{\text{scale}}{V}(\Delta \rho)^2 A^2(q) S(q)
        + \text{background}\]</div>
-<p>where the amplitude <span class="math">\(A(q)\)</span> is given as the typical sphere scattering convoluted
+<p>where the amplitude <span class="math notranslate nohighlight">\(A(q)\)</span> is given as the typical sphere scattering convoluted
 with a Gaussian to get a gradual drop-off in the scattering length density:</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[A(q) = \frac{3\left[\sin(qR) - qR \cos(qR)\right]}{(qR)^3}
        \exp\left(\frac{-(\sigma_\text{fuzzy}q)^2}{2}\right)\]</div>
-<p>Here <span class="math">\(A(q)^2\)</span> is the form factor, <span class="math">\(P(q)\)</span>. The scale is equivalent to the
-volume fraction of spheres, each of volume, <span class="math">\(V\)</span>. Contrast <span class="math">\((\Delta \rho)\)</span>
+<p>Here <span class="math notranslate nohighlight">\(A(q)^2\)</span> is the form factor, <span class="math notranslate nohighlight">\(P(q)\)</span>. The scale is equivalent to the
+volume fraction of spheres, each of volume, <span class="math notranslate nohighlight">\(V\)</span>. Contrast <span class="math notranslate nohighlight">\((\Delta \rho)\)</span>
 is the difference of scattering length densities of the sphere and the
 surrounding solvent.</p>
 <p>Poly-dispersion in radius and in fuzziness is provided for, though the
@@ -129,26 +121,37 @@ fuzziness must be kept much smaller than the sphere radius for meaningful
 results.</p>
 <p>From the reference:</p>
 <blockquote>
-<div>The &#8220;fuzziness&#8221; of the interface is defined by the parameter
-<span class="math">\(\sigma_\text{fuzzy}\)</span>. The particle radius <span class="math">\(R\)</span> represents the radius of the
+<div>The “fuzziness” of the interface is defined by the parameter
+<span class="math notranslate nohighlight">\(\sigma_\text{fuzzy}\)</span>. The particle radius <span class="math notranslate nohighlight">\(R\)</span> represents the radius of the
 particle where the scattering length density profile decreased to 1/2 of the
-core density. <span class="math">\(\sigma_\text{fuzzy}\)</span> is the width of the smeared particle
+core density. <span class="math notranslate nohighlight">\(\sigma_\text{fuzzy}\)</span> is the width of the smeared particle
 surface; i.e., the standard deviation from the average height of the fuzzy
 interface. The inner regions of the microgel that display a higher density
 are described by the radial box profile extending to a radius of
-approximately <span class="math">\(R_\text{box} \sim R - 2 \sigma\)</span>. The profile approaches
-zero as <span class="math">\(R_\text{sans} \sim R + 2\sigma\)</span>.</div></blockquote>
+approximately <span class="math notranslate nohighlight">\(R_\text{box} \sim R - 2 \sigma\)</span>. The profile approaches
+zero as <span class="math notranslate nohighlight">\(R_\text{sans} \sim R + 2\sigma\)</span>.</div></blockquote>
 <p>For 2D data: The 2D scattering intensity is calculated in the same way as 1D,
-where the <span class="math">\(q\)</span> vector is defined as</p>
-<div class="math">
+where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
 \[q = \sqrt{{q_x}^2 + {q_y}^2}\]</div>
 <div class="figure" id="id2">
 <img alt="../../_images/fuzzy_sphere_autogenfig.png" src="../../_images/fuzzy_sphere_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 80 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/27876ccb58c31c636fb6f07e681dc2d4/fuzzy_sphere.py"><code class="xref download docutils literal notranslate"><span class="pre">fuzzy_sphere.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/7f496be9116db5665fbc2a1352e2b825/fuzzy_sphere.c"><code class="xref download docutils literal notranslate"><span class="pre">fuzzy_sphere.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/6846240e6b225baee866f56076213b29/sas_3j1x_x.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/sas_3j1x_x.c</span></code></a></p>
 <p><strong>References</strong></p>
-<p>M Stieger, J. S Pedersen, P Lindner, W Richtering, <em>Langmuir</em>,
-20 (2004) 7283-7292</p>
+<ol class="arabic simple">
+<li>M Stieger, J. S Pedersen, P Lindner, W Richtering, <em>Langmuir</em>, 20 (2004) 7283-7292</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong></li>
+<li><strong>Last Modified by:</strong></li>
+<li><strong>Last Reviewed by:</strong></li>
+</ul>
 </div>
 
 
@@ -166,18 +169,20 @@ where the <span class="math">\(q\)</span> vector is defined as</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/fuzzy_sphere.txt"
+      <li><a href="../../_sources/user/models/fuzzy_sphere.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -199,15 +204,15 @@ where the <span class="math">\(q\)</span> vector is defined as</p>
         <li class="right" >
           <a href="core_shell_sphere.html" title="core_shell_sphere"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-sphere.html" >Sphere Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-sphere.html" >Sphere Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

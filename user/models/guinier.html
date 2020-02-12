@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>guinier &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>guinier &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Shape-Independent Functions" href="../sasgui/perspectives/fitting/models/shape-independent.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="guinier_porod" href="guinier_porod.html" />
     <link rel="prev" title="gel_fit" href="gel_fit.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="gel_fit.html" title="gel_fit"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -94,43 +86,52 @@
 <p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
 <p><strong>Definition</strong></p>
 <p>This model fits the Guinier function</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[I(q) = \text{scale} \cdot \exp{\left[ \frac{-Q^2 R_g^2 }{3} \right]}
         + \text{background}\]</div>
 <p>to the data directly without any need for linearisation (<em>cf</em>. the usual
-plot of <span class="math">\(\ln I(q)\)</span> vs <span class="math">\(q^2\)</span>). Note that you may have to restrict the data
+plot of <span class="math notranslate nohighlight">\(\ln I(q)\)</span> vs <span class="math notranslate nohighlight">\(q^2\)</span>). Note that you may have to restrict the data
 range to include small q only, where the Guinier approximation actually
 applies. See also the guinier_porod model.</p>
 <p>For 2D data the scattering intensity is calculated in the same way as 1D,
-where the <span class="math">\(q\)</span> vector is defined as</p>
-<div class="math">
+where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
 \[q = \sqrt{q_x^2 + q_y^2}\]</div>
-<p>In scattering, the radius of gyration <span class="math">\(R_g\)</span> quantifies the objects&#8217;s
-distribution of SLD (not mass density, as in mechanics) from the objects&#8217;s
+<p>In scattering, the radius of gyration <span class="math notranslate nohighlight">\(R_g\)</span> quantifies the objects’s
+distribution of SLD (not mass density, as in mechanics) from the objects’s
 SLD centre of mass. It is defined by</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[R_g^2 = \frac{\sum_i\rho_i\left(r_i-r_0\right)^2}{\sum_i\rho_i}\]</div>
-<p>where <span class="math">\(r_0\)</span> denotes the object&#8217;s SLD centre of mass and <span class="math">\(\rho_i\)</span> is the SLD at
-a point <span class="math">\(i\)</span>.</p>
-<p>Notice that <span class="math">\(R_g^2\)</span> may be negative (since SLD can be negative), which happens
-when a form factor <span class="math">\(P(Q)\)</span> is increasing with <span class="math">\(Q\)</span> rather than decreasing. This
+<p>where <span class="math notranslate nohighlight">\(r_0\)</span> denotes the object’s SLD centre of mass and <span class="math notranslate nohighlight">\(\rho_i\)</span> is the SLD at
+a point <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<p>Notice that <span class="math notranslate nohighlight">\(R_g^2\)</span> may be negative (since SLD can be negative), which happens
+when a form factor <span class="math notranslate nohighlight">\(P(Q)\)</span> is increasing with <span class="math notranslate nohighlight">\(Q\)</span> rather than decreasing. This
 can occur for core/shell particles, hollow particles, or for composite
 particles with domains of different SLDs in a solvent with an SLD close to the
 average match point. (Alternatively, this might be regarded as there being an
-internal inter-domain &#8220;structure factor&#8221; within a single particle which gives
+internal inter-domain “structure factor” within a single particle which gives
 rise to a peak in the scattering).</p>
-<p>To specify a negative value of <span class="math">\(R_g^2\)</span> in SasView, simply give <span class="math">\(R_g\)</span> a negative
-value (<span class="math">\(R_g^2\)</span> will be evaluated as <span class="math">\(R_g |R_g|\)</span>). Note that the physical radius
+<p>To specify a negative value of <span class="math notranslate nohighlight">\(R_g^2\)</span> in SasView, simply give <span class="math notranslate nohighlight">\(R_g\)</span> a negative
+value (<span class="math notranslate nohighlight">\(R_g^2\)</span> will be evaluated as <span class="math notranslate nohighlight">\(R_g |R_g|\)</span>). Note that the physical radius
 of gyration, of the exterior of the particle, will still be large and positive.
-It is only the apparent size from the small <span class="math">\(Q\)</span> data that will give a small or
-negative value of <span class="math">\(R_g^2\)</span>.</p>
+It is only the apparent size from the small <span class="math notranslate nohighlight">\(Q\)</span> data that will give a small or
+negative value of <span class="math notranslate nohighlight">\(R_g^2\)</span>.</p>
 <div class="figure" id="id2">
 <img alt="../../_images/guinier_autogenfig.png" src="../../_images/guinier_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 103 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/13c93020172ae15703deee2ee87c119a/guinier.py"><code class="xref download docutils literal notranslate"><span class="pre">guinier.py</span></code></a></p>
 <p><strong>References</strong></p>
-<p>A Guinier and G Fournet, <em>Small-Angle Scattering of X-Rays</em>,
-John Wiley &amp; Sons, New York (1955)</p>
+<ol class="arabic simple">
+<li>A Guinier and G Fournet, <em>Small-Angle Scattering of X-Rays</em>, John Wiley &amp; Sons, New York (1955)</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong></li>
+<li><strong>Last Modified by:</strong></li>
+<li><strong>Last Reviewed by:</strong></li>
+</ul>
 </div>
 
 
@@ -148,18 +149,20 @@ John Wiley &amp; Sons, New York (1955)</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/guinier.txt"
+      <li><a href="../../_sources/user/models/guinier.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -181,15 +184,15 @@ John Wiley &amp; Sons, New York (1955)</p>
         <li class="right" >
           <a href="gel_fit.html" title="gel_fit"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" >Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" >Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

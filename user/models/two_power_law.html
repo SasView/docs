@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>two_power_law &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>two_power_law &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Shape-Independent Functions" href="../sasgui/perspectives/fitting/models/shape-independent.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="unified_power_Rg" href="unified_power_Rg.html" />
     <link rel="prev" title="two_lorentzian" href="two_lorentzian.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="two_lorentzian.html" title="two_lorentzian"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -109,33 +101,36 @@
 </table>
 <p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
 <p><strong>Definition</strong></p>
-<p>The scattering intensity <span class="math">\(I(q)\)</span> is calculated as</p>
-<div class="math">
+<p>The scattering intensity <span class="math notranslate nohighlight">\(I(q)\)</span> is calculated as</p>
+<div class="math notranslate nohighlight">
 \[\begin{split}I(q) = \begin{cases}
 A q^{-m1} + \text{background} &amp; q &lt;= q_c \\
 C q^{-m2} + \text{background} &amp; q &gt; q_c
 \end{cases}\end{split}\]</div>
-<p>where <span class="math">\(q_c\)</span> = the location of the crossover from one slope to the other,
-<span class="math">\(A\)</span> = the scaling coefficent that sets the overall intensity of the lower Q
-power law region, <span class="math">\(m1\)</span> = power law exponent at low Q, and <span class="math">\(m2\)</span> = power law
+<p>where <span class="math notranslate nohighlight">\(q_c\)</span> = the location of the crossover from one slope to the other,
+<span class="math notranslate nohighlight">\(A\)</span> = the scaling coefficent that sets the overall intensity of the lower Q
+power law region, <span class="math notranslate nohighlight">\(m1\)</span> = power law exponent at low Q, and <span class="math notranslate nohighlight">\(m2\)</span> = power law
 exponent at high Q.  The scaling of the second power law region (coefficent C)
 is then automatically scaled to match the first by following formula:</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[C = \frac{A q_c^{m2}}{q_c^{m1}}\]</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Be sure to enter the power law exponents as positive values!</p>
 </div>
 <p>For 2D data the scattering intensity is calculated in the same way as 1D,
-where the <span class="math">\(q\)</span> vector is defined as</p>
-<div class="math">
+where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
 \[q = \sqrt{q_x^2 + q_y^2}\]</div>
 <div class="figure" id="id2">
 <img alt="../../_images/two_power_law_autogenfig.png" src="../../_images/two_power_law_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 121 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/53bb7bc67e9c306c989e8e505dde16ff/two_power_law.py"><code class="xref download docutils literal notranslate"><span class="pre">two_power_law.py</span></code></a></p>
 <p><strong>References</strong></p>
 <p>None.</p>
+<p><strong>Authorship and Verification</strong></p>
 <ul class="simple">
 <li><strong>Author:</strong> NIST IGOR/DANSE <strong>Date:</strong> pre 2010</li>
 <li><strong>Last Modified by:</strong> Wojciech Wpotrzebowski <strong>Date:</strong> February 18, 2016</li>
@@ -158,18 +153,20 @@ where the <span class="math">\(q\)</span> vector is defined as</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/two_power_law.txt"
+      <li><a href="../../_sources/user/models/two_power_law.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -191,15 +188,15 @@ where the <span class="math">\(q\)</span> vector is defined as</p>
         <li class="right" >
           <a href="two_lorentzian.html" title="two_lorentzian"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-independent.html" >Shape-Independent Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" >Shape-Independent Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

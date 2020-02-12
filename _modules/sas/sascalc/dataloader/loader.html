@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sas.sascalc.dataloader.loader &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sas.sascalc.dataloader.loader &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../../../index.html" />
-    <link rel="up" title="sas" href="../../../sas.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -87,7 +79,7 @@
 <span class="kn">from</span> <span class="nn">.readers</span> <span class="kn">import</span> <span class="n">cansas_reader</span>
 <span class="kn">from</span> <span class="nn">.readers</span> <span class="kn">import</span> <span class="n">cansas_reader_HDF5</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Registry"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Registry">[docs]</a><span class="k">class</span> <span class="nc">Registry</span><span class="p">(</span><span class="n">ExtensionRegistry</span><span class="p">):</span>
@@ -95,8 +87,8 @@
 <span class="sd">    Registry class for file format extensions.</span>
 <span class="sd">    Readers and writers are supported.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Registry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Registry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="c1"># Writers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writers</span> <span class="o">=</span> <span class="p">{}</span>
@@ -110,29 +102,35 @@
         <span class="c1"># Register default readers</span>
         <span class="n">readers</span><span class="o">.</span><span class="n">read_associations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Registry.load"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Registry.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Registry.load"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Registry.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call the loader for the file type of path.</span>
 
 <span class="sd">        :param path: file path</span>
 <span class="sd">        :param format: explicit extension, to force the use</span>
 <span class="sd">            of a particular reader</span>
+<span class="sd">        :param debug: when True, print the traceback for each loader that fails</span>
 
 <span class="sd">        Defaults to the ascii (multi-column), cansas XML, and cansas NeXuS</span>
 <span class="sd">        readers if no reader was registered for the file&#39;s extension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">traceback</span>
+
         <span class="c1"># Gets set to a string if the file has an associated reader that fails</span>
-        <span class="n">msg_from_reader</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">msg_from_reader</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Registry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">format</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Registry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">)</span>
         <span class="c1">#except Exception: raise  # for debugging, don&#39;t use fallback loader</span>
         <span class="k">except</span> <span class="n">NoKnownLoaderException</span> <span class="k">as</span> <span class="n">nkl_e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>  <span class="c1"># Try the ASCII reader</span>
         <span class="k">except</span> <span class="n">FileContentsException</span> <span class="k">as</span> <span class="n">fc_exc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="c1"># File has an associated reader but it failed.</span>
             <span class="c1"># Save the error message to display later, but try the 3 default loaders</span>
             <span class="n">msg_from_reader</span> <span class="o">=</span> <span class="n">fc_exc</span><span class="o">.</span><span class="n">message</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>
 
         <span class="c1"># File has no associated reader, or the associated reader failed.</span>
@@ -141,11 +139,14 @@
             <span class="n">ascii_loader</span> <span class="o">=</span> <span class="n">ascii_reader</span><span class="o">.</span><span class="n">Reader</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">ascii_loader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">NoKnownLoaderException</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>  <span class="c1"># Try the Cansas XML reader</span>
         <span class="k">except</span> <span class="n">DefaultReaderException</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>  <span class="c1"># Loader specific error to try the cansas XML reader</span>
         <span class="k">except</span> <span class="n">FileContentsException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
 
         <span class="c1"># ASCII reader failed - try CanSAS xML reader</span>
@@ -153,13 +154,17 @@
             <span class="n">cansas_loader</span> <span class="o">=</span> <span class="n">cansas_reader</span><span class="o">.</span><span class="n">Reader</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">cansas_loader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">NoKnownLoaderException</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>  <span class="c1"># Try the NXcanSAS reader</span>
         <span class="k">except</span> <span class="n">DefaultReaderException</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>  <span class="c1"># Loader specific error to try the NXcanSAS reader</span>
         <span class="k">except</span> <span class="n">FileContentsException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">pass</span>
 
         <span class="c1"># CanSAS XML reader failed - try NXcanSAS reader</span>
@@ -167,10 +172,11 @@
             <span class="n">cansas_nexus_loader</span> <span class="o">=</span> <span class="n">cansas_reader_HDF5</span><span class="o">.</span><span class="n">Reader</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">cansas_nexus_loader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">DefaultReaderException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No default loader can load the data&quot;</span><span class="p">)</span>
             <span class="c1"># No known reader available. Give up and throw an error</span>
-            <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Unknown data format: {}.</span><span class="se">\n</span><span class="s2">The file is not a &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Unknown data format: </span><span class="si">{}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">The file is not a &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;known format that can be loaded by SasView.</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="k">raise</span> <span class="n">NoKnownLoaderException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -178,7 +184,8 @@
                 <span class="c1"># Show error message from associated reader</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg_from_reader</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">FileContentsException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">err_msg</span> <span class="o">=</span> <span class="n">msg_from_reader</span> <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
+            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="n">msg_from_reader</span> <span class="k">if</span> <span class="n">msg_from_reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Registry.find_plugins"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Registry.find_plugins">[docs]</a>    <span class="k">def</span> <span class="nf">find_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
@@ -195,7 +202,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_path</span><span class="p">):</span>
             <span class="n">temp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="nb">dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_path</span><span class="p">):</span>
-            <span class="n">temp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="nb">dir</span><span class="p">)</span>
+            <span class="n">temp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="nb">dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_path</span><span class="p">):</span>
             <span class="n">temp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">dir</span><span class="p">)</span>
 
@@ -219,9 +226,9 @@
                         <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">toks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">())</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identify_plugin</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
                             <span class="n">readers_found</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="k">except</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Loader: Error importing &quot;</span>
-                        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
                 <span class="c1"># Process zip files</span>
@@ -241,14 +248,14 @@
                                                     <span class="nb">locals</span><span class="p">(),</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">])</span>
                                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identify_plugin</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
                                     <span class="n">readers_found</span> <span class="o">+=</span> <span class="mi">1</span>
-                            <span class="k">except</span><span class="p">:</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Loader: Error importing&quot;</span>
-                                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">mfile</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">mfile</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-                    <span class="k">except</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Loader: Error importing &quot;</span>
-                        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">readers_found</span></div>
@@ -262,7 +269,7 @@
 <span class="sd">        :param ext: file extension [string]</span>
 <span class="sd">        :param module: module object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">reader_found</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">reader_found</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;Reader&quot;</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
@@ -273,10 +280,10 @@
                 <span class="c1"># Append the new reader to the list</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">read</span><span class="p">)</span>
 
-                <span class="n">reader_found</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">reader_found</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="c1"># Keep track of wildcards</span>
-                <span class="n">type_name</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
+                <span class="n">type_name</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="s1">&#39;type_name&#39;</span><span class="p">):</span>
                     <span class="n">type_name</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">type_name</span>
 
@@ -292,9 +299,9 @@
                     <span class="c1"># Append the new writer to the list</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">write</span><span class="p">)</span>
 
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Loader: Error accessing&quot;</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; Reader in </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; Reader in </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">reader_found</span></div>
 
@@ -305,7 +312,7 @@
 <span class="sd">        :param ext: file extension [string]</span>
 <span class="sd">        :param module: reader object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">reader_found</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">reader_found</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Find supported extensions</span>
@@ -314,7 +321,7 @@
             <span class="c1"># Append the new reader to the list</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">read</span><span class="p">)</span>
 
-            <span class="n">reader_found</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">reader_found</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="c1"># Keep track of wildcards</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="s1">&#39;type_name&#39;</span><span class="p">):</span>
@@ -325,9 +332,9 @@
                 <span class="k">if</span> <span class="n">wcard</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wildcards</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">wildcards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wcard</span><span class="p">)</span>
 
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Loader: Error accessing Reader &quot;</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;in </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;in </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">reader_found</span></div>
 
@@ -339,7 +346,7 @@
 <span class="sd">        :param module: module object</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">reader_found</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">reader_found</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;Reader&quot;</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
@@ -352,10 +359,10 @@
                     <span class="c1"># treat this reader as the new default</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loader</span><span class="o">.</span><span class="n">read</span><span class="p">)</span>
 
-                    <span class="n">reader_found</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">reader_found</span> <span class="o">=</span> <span class="kc">True</span>
 
                     <span class="c1"># Keep track of wildcards</span>
-                    <span class="n">type_name</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
+                    <span class="n">type_name</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span>
                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="s1">&#39;type_name&#39;</span><span class="p">):</span>
                         <span class="n">type_name</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">type_name</span>
                     <span class="n">wcard</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> files (*</span><span class="si">%s</span><span class="s2">)|*</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
@@ -370,9 +377,9 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">loader</span><span class="o">.</span><span class="n">write</span><span class="p">)</span>
 
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Loader: Error accessing Reader&quot;</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; in </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; in </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">reader_found</span>
 
@@ -402,7 +409,7 @@
         <span class="c1"># All done</span>
         <span class="k">return</span> <span class="n">writers</span></div>
 
-<div class="viewcode-block" id="Registry.save"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Registry.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Registry.save"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Registry.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call the writer for the file type of path.</span>
 
@@ -410,16 +417,16 @@
 <span class="sd">        Raises KeyError if format is not available.</span>
 <span class="sd">        May raise a writer-defined exception if writer fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">format</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">writers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_writers</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">writers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="n">format</span><span class="p">]</span>
+            <span class="n">writers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writers</span><span class="p">[</span><span class="nb">format</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">writers</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Saving file {} using the {} writer failed.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">path</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Saving file </span><span class="si">{}</span><span class="s2"> using the </span><span class="si">{}</span><span class="s2"> writer failed.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">path</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
                 <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># give other loaders a chance to succeed</span></div></div>
 
@@ -451,7 +458,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__registry</span><span class="o">.</span><span class="n">associate_file_reader</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Loader.load"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Loader.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Loader.load"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Loader.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a file</span>
 
@@ -459,16 +466,16 @@
 <span class="sd">        :param format: specified format to use (optional)</span>
 <span class="sd">        :return: DataInfo object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__registry</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">format</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__registry</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Loader.save"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Loader.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">format</span><span class="p">):</span>
+<div class="viewcode-block" id="Loader.save"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.loader.Loader.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save a DataInfo object to file</span>
 <span class="sd">        :param file: file name (path)</span>
 <span class="sd">        :param data: DataInfo object</span>
 <span class="sd">        :param format: format to write the data in</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__registry</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">format</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__registry</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_registry_creation_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -499,12 +506,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -520,14 +529,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

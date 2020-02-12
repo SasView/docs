@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sas.sascalc.dataloader.readers.associations &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sas.sascalc.dataloader.readers.associations &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../../../../index.html" />
-    <link rel="up" title="sas" href="../../../../sas.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +59,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">FILE_ASSOCIATIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;.xml&quot;</span><span class="p">:</span> <span class="s2">&quot;cansas_reader&quot;</span><span class="p">,</span>
@@ -93,20 +85,20 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># For each FileType entry, get the associated reader and extension</span>
     <span class="k">for</span> <span class="n">ext</span><span class="p">,</span> <span class="n">reader</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Associate the extension with a particular reader</span>
             <span class="c1"># TODO: Modify the Register code to be case-insensitive</span>
             <span class="c1"># FIXME: Remove exec statements</span>
             <span class="c1"># and remove the extra line below.</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">exec</span><span class="p">(</span><span class="s2">&quot;from . import </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">reader</span><span class="p">)</span>
-                <span class="k">exec</span><span class="p">(</span><span class="s2">&quot;loader.associate_file_type(&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%s</span><span class="s2">)&quot;</span>
+                <span class="n">exec</span><span class="p">(</span><span class="s2">&quot;from . import </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">reader</span><span class="p">)</span>
+                <span class="n">exec</span><span class="p">(</span><span class="s2">&quot;loader.associate_file_type(&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%s</span><span class="s2">)&quot;</span>
                      <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">reader</span><span class="p">))</span>
-                <span class="k">exec</span><span class="p">(</span><span class="s2">&quot;loader.associate_file_type(&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%s</span><span class="s2">)&quot;</span>
+                <span class="n">exec</span><span class="p">(</span><span class="s2">&quot;loader.associate_file_type(&#39;</span><span class="si">%s</span><span class="s2">&#39;, </span><span class="si">%s</span><span class="s2">)&quot;</span>
                      <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">reader</span><span class="p">))</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;read_associations: skipping association&quot;</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; for </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_value</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; for </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">exc</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 </pre></div>
 
@@ -117,12 +109,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -138,14 +132,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

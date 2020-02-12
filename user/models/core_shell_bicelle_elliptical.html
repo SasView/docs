@@ -1,35 +1,27 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>core_shell_bicelle_elliptical &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>core_shell_bicelle_elliptical &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="Cylinder Functions" href="../sasgui/perspectives/fitting/models/shape-cylinder.html" />
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="core_shell_bicelle_elliptical_belt_rough" href="core_shell_bicelle_elliptical_belt_rough.html" />
     <link rel="prev" title="core_shell_bicelle" href="core_shell_bicelle.html" /> 
-  </head>
-  <body role="document">
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -45,10 +37,10 @@
         <li class="right" >
           <a href="core_shell_bicelle.html" title="core_shell_bicelle"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-cylinder.html" accesskey="U">Cylinder Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-cylinder.html" accesskey="U">Cylinder Functions</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -150,7 +142,8 @@
 <p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
 <p><strong>Definition</strong></p>
 <p>This model provides the form factor for an elliptical cylinder with a
-core-shell scattering length density profile. Thus this is a variation
+core-shell scattering length density profile <a class="footnote-reference" href="#onsager1949" id="id2">[1]</a>.
+Thus this is a variation
 of the core-shell bicelle model, but with an elliptical cylinder for the core.
 Outer shells on the rims and flat ends may be of different thicknesses and
 scattering length densities. The form factor is normalized by the total
@@ -163,13 +156,13 @@ calculates for rectangular, not curved, rims as shown below.</span></p>
 <div class="figure" id="id4">
 <img alt="../../_images/core_shell_bicelle_parameters.png" src="../../_images/core_shell_bicelle_parameters.png" />
 <p class="caption"><span class="caption-number">Fig. 12 </span><span class="caption-text">Cross section of model used here. Users will have
-to decide how to distribute &#8220;heads&#8221; and &#8220;tails&#8221; between the rim, face
+to decide how to distribute “heads” and “tails” between the rim, face
 and core regions in order to estimate appropriate starting parameters.</span></p>
 </div>
-<p>Given the scattering length densities (sld) <span class="math">\(\rho_c\)</span>, the core sld, <span class="math">\(\rho_f\)</span>,
-the face sld, <span class="math">\(\rho_r\)</span>, the rim sld and <span class="math">\(\rho_s\)</span> the solvent sld, the
+<p>Given the scattering length densities (sld) <span class="math notranslate nohighlight">\(\rho_c\)</span>, the core sld, <span class="math notranslate nohighlight">\(\rho_f\)</span>,
+the face sld, <span class="math notranslate nohighlight">\(\rho_r\)</span>, the rim sld and <span class="math notranslate nohighlight">\(\rho_s\)</span> the solvent sld, the
 scattering length density variation along the bicelle axis is:</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[\begin{split}\rho(r) =
   \begin{cases}
   &amp;\rho_c \text{ for } 0 \lt r \lt R; -L \lt z\lt L \\[1.5ex]
@@ -178,15 +171,15 @@ scattering length density variation along the bicelle axis is:</p>
   &amp;\rho_r\text{ for } 0 \lt r \lt R; -(L+2t) \lt z\lt -L; L \lt z\lt (L+2t)
   \end{cases}\end{split}\]</div>
 <p>The form factor for the bicelle is calculated in cylindrical coordinates, where
-<span class="math">\(\alpha\)</span> is the angle between the <span class="math">\(Q\)</span> vector and the cylinder axis, and <span class="math">\(\psi\)</span>
+<span class="math notranslate nohighlight">\(\alpha\)</span> is the angle between the <span class="math notranslate nohighlight">\(Q\)</span> vector and the cylinder axis, and <span class="math notranslate nohighlight">\(\psi\)</span>
 is the angle for the ellipsoidal cross section core, to give:</p>
-<div class="math">
+<div class="math notranslate nohighlight">
 \[I(Q,\alpha,\psi) = \frac{\text{scale}}{V_t} \cdot
     F(Q,\alpha, \psi)^2 \cdot sin(\alpha) + \text{background}\]</div>
-<p>where a numerical integration of <span class="math">\(F(Q,\alpha, \psi)^2 \cdot sin(\alpha)\)</span>
+<p>where a numerical integration of <span class="math notranslate nohighlight">\(F(Q,\alpha, \psi)^2 \cdot sin(\alpha)\)</span>
 is carried out over alpha and psi for:</p>
-<div class="math">
-\[\begin{align*}
+<div class="math notranslate nohighlight">
+\begin{align*}
 F(Q,\alpha,\psi) = &amp;\bigg[
 (\rho_c - \rho_f) V_c
  \frac{2J_1(QR'sin \alpha)}{QR'sin\alpha}
@@ -198,22 +191,22 @@ F(Q,\alpha,\psi) = &amp;\bigg[
  \frac{2J_1(Q(R'+t_r)sin\alpha)}{Q(R'+t_r)sin\alpha}
  \frac{sin(Q(L/2+t_f)cos\alpha)}{Q(L/2+t_f)cos\alpha}
 \bigg]
-\end{align*}\]</div><p>where</p>
-<div class="math">
+\end{align*}</div><p>where</p>
+<div class="math notranslate nohighlight">
 \[R'=\frac{R}{\sqrt{2}}\sqrt{(1+X_{core}^{2}) + (1-X_{core}^{2})cos(\psi)}\]</div>
-<p>and <span class="math">\(V_t = \pi.(R+t_r)(Xcore.R+t_r)^2.(L+2.t_f)\)</span> is the total volume of
-the bicelle, <span class="math">\(V_c = \pi.Xcore.R^2.L\)</span> the volume of the core,
-<span class="math">\(V_{c+f} = \pi.Xcore.R^2.(L+2.t_f)\)</span> the volume of the core plus the volume
-of the faces, <span class="math">\(R\)</span> is the radius of the core, <span class="math">\(Xcore\)</span> is the axial ratio of
-the core, <span class="math">\(L\)</span> the length of the core, <span class="math">\(t_f\)</span> the thickness of the face, <span class="math">\(t_r\)</span>
-the thickness of the rim and <span class="math">\(J_1\)</span> the usual first order bessel function.
-The core has radii <span class="math">\(R\)</span> and <span class="math">\(Xcore.R\)</span> so is circular, as for the
-core_shell_bicelle model, for <span class="math">\(Xcore\)</span> =1. Note that you may need to
-limit the range of <span class="math">\(Xcore\)</span>, especially if using the Monte-Carlo algorithm,
-as setting radius to <span class="math">\(R/Xcore\)</span> and axial ratio to <span class="math">\(1/Xcore\)</span> gives an
+<p>and <span class="math notranslate nohighlight">\(V_t = \pi.(R+t_r)(Xcore.R+t_r)^2.(L+2.t_f)\)</span> is the total volume of
+the bicelle, <span class="math notranslate nohighlight">\(V_c = \pi.Xcore.R^2.L\)</span> the volume of the core,
+<span class="math notranslate nohighlight">\(V_{c+f} = \pi.Xcore.R^2.(L+2.t_f)\)</span> the volume of the core plus the volume
+of the faces, <span class="math notranslate nohighlight">\(R\)</span> is the radius of the core, <span class="math notranslate nohighlight">\(Xcore\)</span> is the axial ratio of
+the core, <span class="math notranslate nohighlight">\(L\)</span> the length of the core, <span class="math notranslate nohighlight">\(t_f\)</span> the thickness of the face, <span class="math notranslate nohighlight">\(t_r\)</span>
+the thickness of the rim and <span class="math notranslate nohighlight">\(J_1\)</span> the usual first order bessel function.
+The core has radii <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(Xcore.R\)</span> so is circular, as for the
+core_shell_bicelle model, for <span class="math notranslate nohighlight">\(Xcore\)</span> =1. Note that you may need to
+limit the range of <span class="math notranslate nohighlight">\(Xcore\)</span>, especially if using the Monte-Carlo algorithm,
+as setting radius to <span class="math notranslate nohighlight">\(R/Xcore\)</span> and axial ratio to <span class="math notranslate nohighlight">\(1/Xcore\)</span> gives an
 equivalent solution!</p>
 <p>The output of the 1D scattering intensity function for randomly oriented
-bicelles is then given by integrating over all possible <span class="math">\(\alpha\)</span> and <span class="math">\(\psi\)</span>.</p>
+bicelles is then given by integrating over all possible <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\psi\)</span>.</p>
 <p>For oriented bicelles the <em>theta</em>, <em>phi</em> and <em>psi</em> orientation parameters will
 appear when fitting 2D data, see the <a class="reference internal" href="elliptical_cylinder.html#elliptical-cylinder"><span class="std std-ref">elliptical_cylinder</span></a> model
 for further information.</p>
@@ -226,11 +219,21 @@ for further information.</p>
 <img alt="../../_images/core_shell_bicelle_elliptical_autogenfig.png" src="../../_images/core_shell_bicelle_elliptical_autogenfig.png" />
 <p class="caption"><span class="caption-number">Fig. 14 </span><span class="caption-text">1D and 2D plots corresponding to the default parameters of the model.</span></p>
 </div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/d076497e0f04e7ed88bbe12ba6b484e7/core_shell_bicelle_elliptical.py"><code class="xref download docutils literal notranslate"><span class="pre">core_shell_bicelle_elliptical.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/e2804a59d5f234a011bbc9869535562f/core_shell_bicelle_elliptical.c"><code class="xref download docutils literal notranslate"><span class="pre">core_shell_bicelle_elliptical.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/8941b08876d22491b6bc21038e68c166/gauss76.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/gauss76.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/4cfa6b83165e1eaf8fb7657e042211cd/sas_J1.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/sas_J1.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/9aa055a3bd852f216e2ff4f4ad9e9d79/polevl.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/polevl.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/23c0489cd8ff9401a0eef2a4eb0c6ecd/sas_Si.c"><code class="xref download docutils literal notranslate"><span class="pre">lib/sas_Si.c</span></code></a></p>
 <p><strong>References</strong></p>
-<table class="docutils footnote" frame="void" id="id2" rules="none">
+<table class="docutils footnote" frame="void" id="onsager1949" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><ol class="first last upperalpha simple" start="12">
+<li>Onsager, <em>Ann. New York Acad. Sci.</em>, 51 (1949) 627-659</li>
+</ol>
+</td></tr>
 </tbody>
 </table>
 <p><strong>Authorship and Verification</strong></p>
@@ -256,18 +259,20 @@ for further information.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/user/models/core_shell_bicelle_elliptical.txt"
+      <li><a href="../../_sources/user/models/core_shell_bicelle_elliptical.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -289,15 +294,15 @@ for further information.</p>
         <li class="right" >
           <a href="core_shell_bicelle.html" title="core_shell_bicelle"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasgui/perspectives/fitting/models/index.html" >Model Functions</a> &raquo;</li>
-          <li class="nav-item nav-item-3"><a href="../sasgui/perspectives/fitting/models/shape-cylinder.html" >Cylinder Functions</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-cylinder.html" >Cylinder Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

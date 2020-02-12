@@ -1,33 +1,26 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Release Notes &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>Release Notes &#8212; SasView 5.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../index.html" />
-    <link rel="prev" title="sasmodels.custom package" href="../dev/sasmodels-api/sasmodels.custom.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="2. Calculator Interface" href="../dev/sasmodels-dev/calculator.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -38,9 +31,9 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../dev/sasmodels-api/sasmodels.custom.html" title="sasmodels.custom package"
+          <a href="../dev/sasmodels-dev/calculator.html" title="2. Calculator Interface"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">SasView 4.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">SasView 5.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,65 +49,94 @@
 <p class="last">In Windows use [Alt]-[Cursor left] to return to the previous page</p>
 </div>
 <div class="toctree-wrapper compound">
-<ul class="simple">
-</ul>
 </div>
 </div>
 <div class="section" id="features">
 <h1>Features</h1>
-<div class="section" id="new-in-version-4-2-2">
-<h2>New in Version 4.2.2</h2>
-<p>This release fixes the known issues reported in 4.2.1: the inability to read in
-project files due to the fixes (changes) in the NXcanSAS reader, and the fact
-that the 2D resolution smearing was only being applied to one quadrant.</p>
-<div class="section" id="resolved-issues">
-<h3>Resolved Issues</h3>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Trac tickets were moved to Github issues as of 4.2.2. Not only has
-that changed the numbering, but because different repositories are involved,
-the issue numbers must now be associated with the relevant repo.</p>
-</div>
-<p>This version of SasView is built with the same sasmodels version (ver 0.99) as
-was 4.2.1.  Hence not sasmodels issues were addressed in this release.</p>
-<p>sasview repository issues addressed:</p>
+<div class="section" id="new-in-version-5-0-1">
+<h2>New in Version 5.0.1</h2>
+<p>This is a point release fixing major bugs from 5.0 rlease</p>
+<div class="section" id="bug-fixes">
+<h3>Bug Fixes</h3>
 <ul class="simple">
-<li>Fixes sasview # 1268: (Trac #1242): Resolution smearing is only applied to positive Qx and Qy in 2D</li>
-<li>Fixes sasview # 1269: (Trac #1243): Problem reopening saved project .svs file</li>
+<li>Fixes sasview # 1339: Problem with plotting of the Correlation Function</li>
+<li>Fixes sasview # 1350: Multiple issues with the 2D slicer</li>
+<li>Fixes sasview # 1361: Data with negative values not showing on linear scale</li>
+<li>Fixes sasview # 1357: Q-range in the Correlation Function can be set by dragging</li>
+<li>Fixes sasview # 1356: Load in Mask Data column from NCNR 2D Data</li>
+<li>Fixes sasview # 1336: Issues with closing and reopening fit plots</li>
+<li>Fixes sasview # 1356: Change default state of dependent plots to unchecked</li>
+<li>Fixes sasview # 1325: Changing model resets the Q-range</li>
+<li>Fixes sasview # 1371: Multiple issues with fit plot lifetimes</li>
+<li>Fixes sasview # 1374: Data Operations not including all datasets</li>
+<li>Fixes sasview # 1327: Append functionality too generous</li>
+<li>Fixes sasview # 1086: Added separate thread for OpenCL tests</li>
+<li>Fixes sasview # 937: Set theory and data to the same Vmin/Vmax for 2D plots</li>
+<li>Fixes sasview # 1337: Automatically resizing plot legends</li>
+<li>Fixes sasview # 1417: Ambiguous labeling in Resolution tab</li>
+<li>Fixes sasview # 1431: When loading plugin model with unicode character, plugin editor crashes</li>
+<li>Fixes sasview # 1413: Corfunc is not working well</li>
+<li>Fixes sasview # 1293: Cannot model SESANS Data in GUI</li>
+<li>Fixes sasview # 1337: Non-resizing plot legend on OSX</li>
+<li>Fixes sasview # 690: Set reasonable min/max on polydispersity values for fitting</li>
+<li>Fixes sasview # 1412: Windows installer shortcut is misnamed</li>
+<li>Fixes sasview # 1410: Issues with multi-core shell model</li>
+<li>Fixes sasview # 1452: Clarified issue with Add/Multiply operation for plugin models</li>
+<li>Fixes sasview # 1441: Show SLD profile plot - linear not log</li>
 </ul>
 </div>
+<div class="section" id="known-issues">
+<h3>Known Issues</h3>
+<p>All the known bugs/feature requests can be found in the issues on github.
+Note the sasmodels issues are now separate from the sasview issues (i.e. different repositories)
+<a class="reference external" href="https://github.com/SasView/sasview">https://github.com/SasView/sasview</a>
+<a class="reference external" href="https://github.com/SasView/sasmodels">https://github.com/SasView/sasmodels</a></p>
+<p>A problem has been identified in Version 4.2.2 which also affects versions 5.0.0 and 5.0.1.
+The Easy Add/Multiply Editor dialog should not be used to combine a plugin model with a built-in model, or to combine two plugin models.
+In 5.0.0 the operation will fail (generating an error message in the Log Explorer).
+Whilst in 5.0.1 the operation has been blocked until the problem can be fixed.
+If it is necessary to generate a plugin model from more than two built-in models,
+please edit the plugin model .py file directly and specify the combination of built-in models directly. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">load_model_info</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="kn">import</span> <span class="n">make_model_from_info</span>
+<span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;power_law + fractal + gaussian_peak + gaussian_peak&#39;</span><span class="p">)</span>
+<span class="n">model_info</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;MyBigPluginModel&#39;</span>
+<span class="n">model_info</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;For fitting pores in crystalline framework&#39;</span>
+<span class="n">Model</span> <span class="o">=</span> <span class="n">make_model_from_info</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="new-in-version-4-2-1">
-<h2>New in Version 4.2.1</h2>
-<p>The major changes for this point release were to fix several problems with using
-the built in editor to create new models and to bring the NXcanSAS reader into
-compliance with the final published specification.  The orignal reader was
-based on a draft version of the specification.  As an early adopter,
-interpretation and implementation of the spec was iterated with all producers
-of NXcanSAS reduced data known to the SasView team in order to ensure
-compatibility and verify the implementation.  A few other enhancements and bug
-fixed were also introduced such as cleaning up the resolution section of the
-fitting page GUI, increasing the max size range allowed in the corfunc
-analysis, and adding the incomplete gamma function to the python library.</p>
+</div>
+</div>
+<div class="section" id="new-in-version-5-0">
+<h2>New in Version 5.0</h2>
+<p>This is a new version of SasView featuring new and enhanced GUI, back-end calculations, GUI separation, optimization of calculations and other improvements. This release also includes beta (decoupling) approximation for intensity calculation.
+The release is based on Python 3 and Qt5/PyQt5.
+We recommend that you avoid using installation folder paths which contain spaces, non-Latin characters or characters not available on a standard keyboard.</p>
+<div class="section" id="changes-improvements-from-5-0-beta2">
+<h3>Changes/Improvements from 5.0.beta2</h3>
+<ul class="simple">
+<li>Beta (decoupling) approximation has been introduced</li>
+<li>Stop fit button added to Constrained and Simultaneous Fitting</li>
+<li>Plotting has been improved</li>
+<li>Volume fraction naming conflicts has been resolved</li>
+<li>SLD calculator user interface has been improved</li>
+<li>Fit Options tab has been improved</li>
+<li>Windows installer path specification has been resolved</li>
+<li>Copy parameters function has been fixed</li>
+<li>Save/Load Project functionality has been improved</li>
+</ul>
+</div>
+<div class="section" id="documentation">
+<h3>Documentation</h3>
+<ul class="simple">
+<li>Documentation for Constrained and Simultaneous Fitting has been considerably reworked.</li>
+<li>Tutorials have been adapted to match 5.0 interface</li>
+</ul>
+</div>
 <div class="section" id="id1">
-<h3>Resolved Issues</h3>
-<ul class="simple">
-<li>Fixes #  976: CanSas HDF reader will not read all valid CanSas HDF (NXcanSAS) files</li>
-<li>Fixes # 1074: Add incomplete gamma function to sasmodels</li>
-<li>Fixes # 1108: &#8220;Writing a Plugin Model&#8221; does not explain function &#8220;random&#8221;</li>
-<li>Fixes # 1111: Convert all input Q units to 1/A</li>
-<li>Fixes # 1129: NXcanSAS writer not writing all meta data</li>
-<li>Fixes # 1142: Plugin framework is broken</li>
-<li>Closes # 1175: Need to rethink Tutorial option in GUI Help menu</li>
-<li>Fixes # 1183: Test from creating new model reset all parameters to default in all open FitPages</li>
-<li>Fixes # 1188: Colons removed from magnetic parameter names to address Python variable issue - done in 4.2. but documented in 4.2.1</li>
-<li>Fixes # 1205: 4.2 set weighting choice seems to be ignored.</li>
-<li>Fixes # 1206: Incorrect (and confusing) presentation of dQ from data in instrumental smearing section</li>
-<li>Fixes # 1212: Bug in Iqxqy plotting non rectangular / square matrices?</li>
-<li>Fixes # 1221: ABS reader does not read in USANS data properly GitHub</li>
-<li>Fixes # 1222: smearing options incorrect on show2D and show1D in fitpage14: Loading a saved project is really really slow</li>
-<li>Fixes # 1223: Expand permitted range of transformed data in Corfunc implementation</li>
-</ul>
+<h3>Known Issues</h3>
+<p>All the known bugs/feature requests can be found in the issues on github.</p>
+<p>[sasview](<a class="reference external" href="https://github.com/SasView/sasview/milestone/9">https://github.com/SasView/sasview/milestone/9</a>)</p>
 </div>
 </div>
 <div class="section" id="new-in-version-4-2-0">
@@ -184,7 +206,7 @@ distributions.</li>
 <li>There have been numerous other bug fixes.</li>
 </ul>
 </div>
-<div class="section" id="documentation">
+<div class="section" id="id2">
 <h3>Documentation</h3>
 <p>Several sections of the help documentation have undergone significant
 checking and updating, particularly those relating to orientation,
@@ -214,7 +236,7 @@ resources, some limited access to the latter functionality may be
 available in a future SasView 4.x release.</li>
 </ul>
 </div>
-<div class="section" id="bug-fixes">
+<div class="section" id="id3">
 <h3>Bug Fixes</h3>
 <ul class="simple">
 <li>Fixes #  14: Loading a saved project is really really slow</li>
@@ -233,14 +255,14 @@ available in a future SasView 4.x release.</li>
 <li>Fixes # 695: linear slope in onion model</li>
 <li>Fixes # 735: Review new Corfunc documentation</li>
 <li>Fixes # 741: Recalculate P(Q) and S(Q) components on model update.</li>
-<li>Fixes # 767: Sum/Product Models don&#8217;t do what they should</li>
+<li>Fixes # 767: Sum/Product Models don’t do what they should</li>
 <li>Fixes # 776: angular dispersity</li>
 <li>Fixes # 784: Add 3D integral to Correlation Function analysis</li>
 <li>Fixes # 786: core_shell_parallelepiped 1-D model is incorrect</li>
-<li>Fixes # 818: &#8220;report&#8221; button followed by &#8220;save&#8221; makes an empty pdf file???</li>
+<li>Fixes # 818: ‘report button’ followed by ‘save’ makes an empty pdf file???</li>
 <li>Fixes # 830: Check compliance of loader against NXcanSAS-1.0 release</li>
 <li>Fixes # 838: Fix model download from marketplace</li>
-<li>Fixes # 848: can&#8217;t save analysis when only one fit page</li>
+<li>Fixes # 848: can’t save analysis when only one fit page</li>
 <li>Fixes # 849: Load Folder should ignore files starting with .</li>
 <li>Fixes # 852: More unit tests, especially for oriented or 2d models</li>
 <li>Fixes # 854: remove unnecessary sleep() in fitting perspective</li>
@@ -276,7 +298,7 @@ available in a future SasView 4.x release.</li>
 <li>Fixes # 934: Slurp tutorial repo for tutorials</li>
 <li>Fixes # 935: Build new tutorials as PDF</li>
 <li>Fixes # 943: Deep copy error on setting model after data is selected</li>
-<li>Fixes # 950: Most of the readers don&#8217;t close files properly.</li>
+<li>Fixes # 950: Most of the readers don’t close files properly.</li>
 <li>Fixes # 954: cross check dll/opencl/python polydispersity and orientation results</li>
 <li>Fixes # 956: Possible problem with new doc build process</li>
 <li>Fixes # 961: sasmodels tests should fail if the parameter name does not exist</li>
@@ -284,7 +306,7 @@ available in a future SasView 4.x release.</li>
 <li>Fixes # 966: Inconsistent chi2 reporting</li>
 <li>Fixes # 967: no uncertainties errors on fitting parameters</li>
 <li>Fixes # 969: About Box not picking up dls_logo.png</li>
-<li>Fixes # 970: ASCII loader doesn&#8217;t handle ISIS 2D ASCII</li>
+<li>Fixes # 970: ASCII loader doesn’t handle ISIS 2D ASCII</li>
 <li>Fixes # 974: blacklist Intel HD 620/630 for double precision</li>
 <li>Fixes # 978: load project fails for pages which have not been defined</li>
 <li>Fixes # 983: Remove Nexus Loader</li>
@@ -295,7 +317,7 @@ available in a future SasView 4.x release.</li>
 <li>Fixes # 993: Windows x64 versions not installing to correct folder</li>
 <li>Fixes # 994: Error changing fit engine</li>
 <li>Fixes # 995: OpenCL required on Linux even if turned off in GUI</li>
-<li>Fixes #1006: multiplicity models don&#8217;t work with SQ</li>
+<li>Fixes #1006: multiplicity models don’t work with SQ</li>
 <li>Fixes #1007: spherical_sld model freezes SasView</li>
 <li>Fixes #1008: plugin model scaling not working?</li>
 <li>Fixes #1010: Win64 build script not creating working executable</li>
@@ -313,12 +335,12 @@ available in a future SasView 4.x release.</li>
 <li>Fixes #1044: Unable to upload c file to marketplace</li>
 <li>Fixes #1046: convert non builtin models in the marketplace to new API</li>
 <li>Fixes #1050: fix appveyor test for sasmodels win 64 python 3</li>
-<li>Fixes #1052: Can&#8217;t use a user-created plugin model in a plugin model</li>
+<li>Fixes #1052: Can’t use a user-created plugin model in a plugin model</li>
 <li>Fixes #1054: Check plugin &amp; orientation descriptions in full docs once SasModels PR #57 is merged</li>
 <li>Fixes #1057: phi rotation issue for elliptical cylinder</li>
 <li>Fixes #1060: incorrect default for rectangle dispersion</li>
 <li>Fixes #1062: win32 build not installing correctly</li>
-<li>Fixes #1064: &#8220;Fitting did not converge!!!&#8221; error with a Sum|Multi plugin model</li>
+<li>Fixes #1064: “Fitting did not converge!!!” error with a Sum|Multi plugin model</li>
 <li>Fixes #1068: 2d data (from NG7) not loadiing - strange format?</li>
 <li>Fixes #1069: GUI problem when using polydispersity/orientation distributions</li>
 <li>Fixes #1070: Parameter error boxes should not be editable</li>
@@ -420,11 +442,11 @@ interface. <em>This is not yet implemented</em>.</p>
 be plotted against the correct axes and models will automatically perform a Hankel
 transform in order to calculate SESANS from a SANS model.</p>
 </div>
-<div class="section" id="id2">
+<div class="section" id="id4">
 <h3>Documentation</h3>
 <p>The documentation has undergone significant checking and updating.</p>
 </div>
-<div class="section" id="id3">
+<div class="section" id="id5">
 <h3>Improvements</h3>
 <ul class="simple">
 <li>Correlation function (corfunc) analysis of 1D SAS data added from CCP13</li>
@@ -439,14 +461,14 @@ transform in order to calculate SESANS from a SANS model.</p>
 <li>Data and theory fields are now independently expandable</li>
 </ul>
 </div>
-<div class="section" id="id4">
+<div class="section" id="id6">
 <h3>Bug Fixes</h3>
 <ul class="simple">
 <li>Fixes #667: Models computed multiple times on parameters changes</li>
 <li>Fixes #673: Custom models override built in models of same name</li>
 <li>Fixes #678: Hard crash when running complex models on GPU</li>
 <li>Fixes $774: Old style plugin models unloadable</li>
-<li>Fixes #789: stacked disk scale doesn&#8217;t match cylinder model</li>
+<li>Fixes #789: stacked disk scale doesn’t match cylinder model</li>
 <li>Fixes #792: core_shell_fractal uses wrong effective radius</li>
 <li>Fixes #800: Plot range reset on plot redraws</li>
 <li>Fixes #811 and #825: 2D smearing broken</li>
@@ -469,14 +491,14 @@ multiplication by P(Q).</p>
 <div class="section" id="new-in-version-4-0">
 <h2>New in Version 4.0</h2>
 <p>This release fixes the various bugs found during the alpha and beta testing</p>
-<div class="section" id="id5">
+<div class="section" id="id7">
 <h3>Improvements</h3>
 <ul class="simple">
 <li>Support for reading data files from Anton Paar Saxess instruments</li>
 <li>Adds documentation on how to write custom models in the new framework</li>
 </ul>
 </div>
-<div class="section" id="id6">
+<div class="section" id="id8">
 <h3>Bug Fixes</h3>
 <ul class="simple">
 <li>Fixes #604: Pringle model questions</li>
@@ -523,7 +545,7 @@ in a future version.</p>
 changed.  Also the plot range no longer resets after a fit.</li>
 </ul>
 </div>
-<div class="section" id="id7">
+<div class="section" id="id9">
 <h3>Bug fixes</h3>
 <ul class="simple">
 <li>Fixes #511: Errors in linearized fits and clean up of interface
@@ -542,7 +564,7 @@ entered in the text box and does not wait for the user to hit enter</li>
 <p>This alpha release brings a major overhaul of the model system. The new model
 package allows rapid integration of custom models and access to polydispersity
 without requiring a compiler.</p>
-<div class="section" id="id8">
+<div class="section" id="id10">
 <h3>Model package changes and improvements</h3>
 <ul class="simple">
 <li>Separation of GUI and calculations for future GUI enhancements</li>
@@ -561,7 +583,7 @@ without requiring a compiler.</p>
 <li>2D cosine transformation added for TOF SESANS analysis.</li>
 </ul>
 </div>
-<div class="section" id="id9">
+<div class="section" id="id11">
 <h3>Documentation improvements</h3>
 <ul class="simple">
 <li>The documentation tree was restructured for a better end user experience.</li>
@@ -571,7 +593,7 @@ two people following the conversion of the model.</li>
 and added to the model documentation for each model.</li>
 </ul>
 </div>
-<div class="section" id="id10">
+<div class="section" id="id12">
 <h3>Bug fixes</h3>
 <ul class="simple">
 <li>Fixes #411: No stop button on simultaneous fit page</li>
@@ -715,7 +737,7 @@ data. Supported formats include: TIFF, TIF, PNG, BMP, JPG.</li>
 <li>Added DataInfo for data in the DataExplorer and plots</li>
 <li>Added Maximize/Restore button in the title bar of the graphs</li>
 <li>Added a hide button in the toolbar of the graph panel</li>
-<li>The &#8216;x&#8217; button now deletes a graph</li>
+<li>The ‘x’ button now deletes a graph</li>
 <li>Edit SUM Model from the menubar can now generate and save more than one sum model</li>
 <li>Reports can now be saved in pdf format on WIN and MAC</li>
 <li>Made significant improvements to the batch/grid panel and fixed several bugs</li>
@@ -730,12 +752,12 @@ data. Supported formats include: TIFF, TIF, PNG, BMP, JPG.</li>
 increasing number of models</li>
 <li>Improved the Grid Window functionality in the batch fitting mode</li>
 <li>Added a simpler Graph/Plot modification interface</li>
-<li>Added a new &#8216;Data Operation&#8217; tool for addition, subtraction, multiplication,
+<li>Added a new ‘Data Operation’ tool for addition, subtraction, multiplication,
 division, of two data sets.</li>
-<li>The &#8216;Sum Model&#8217; editor was extended and renamed &#8216;Summation and Multiplication&#8217;
+<li>The ‘Sum Model’ editor was extended and renamed ‘Summation and Multiplication’
 editor</li>
 <li>Added more plot symbols options for 1d plots</li>
-<li>Added improved trapping of compiling errors to the &#8216;New model editor&#8217;</li>
+<li>Added improved trapping of compiling errors to the ‘New model editor’</li>
 <li>Added some intelligent outputs (e.g., Rg, background, or rod diameter
 depending on the choice of axis scale of the plot) to the linear fits</li>
 <li>Added more models</li>
@@ -897,7 +919,7 @@ and using Conda can be found at <a class="reference external" href="http://trac.
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Much more information is available at www.sasview.org under
-links/downloads. In particular, look in the &#8216;For Developers&#8217; section.
+links/downloads. In particular, look in the ‘For Developers’ section.
 Also have a look at <a class="reference external" href="http://trac.sasview.org/">http://trac.sasview.org/</a></p>
 </div>
 <div class="section" id="system-requirements">
@@ -921,7 +943,7 @@ the SasView repo at sasview/build_tools/conda/ymls</li>
 <li>Get the source code</li>
 <li>Create a folder to contain the source code; if working with
 multiple versions you might want to use versioned folder names
-like &#8216;sasview-x.x.x&#8217;</li>
+like ‘sasview-x.x.x’</li>
 <li>Open a command line window in the source code folder</li>
 <li>To get the CURRENT DEVELOPMENT VERSION from source control use
 git clone <a class="reference external" href="https://github.com/SasView/sasview.git">https://github.com/SasView/sasview.git</a> sasview
@@ -937,46 +959,27 @@ to the source code folder.</li>
 <h2>Building and Installing</h2>
 <ul class="simple">
 <li>To build the code
-use &#8216;python setup.py build&#8217;</li>
+use ‘python setup.py build’</li>
 <li>To build the documentation
-use&#8217;python setup.py docs&#8217;</li>
+use’python setup.py docs’</li>
 </ul>
 </div>
 <div class="section" id="running-sasview">
 <h2>Running SasView</h2>
 <ul class="simple">
-<li>use &#8216;python run.py&#8217;; this runs from the source directories, so you
-don&#8217;t have to rebuild every time you make a change, unless you are
+<li>use ‘python run.py’; this runs from the source directories, so you
+don’t have to rebuild every time you make a change, unless you are
 changing the C model files.</li>
 <li>if using Conda the above command will also build SasView, but you
-must issue &#8216;activate sasview&#8217; first.</li>
+must issue ‘activate sasview’ first.</li>
 </ul>
 </div>
 </div>
-<div class="section" id="known-issues">
+<div class="section" id="id13">
 <h1>Known Issues</h1>
-<p>All known bugs/feature requests can be found in the issues on github. Note the
-sasmodels issues are now separate from the sasview issues (i.e. in different
-repositories)
-* sasview:   <a class="reference external" href="https://github.com/SasView/sasview/issues">https://github.com/SasView/sasview/issues</a>
-* sasmodels: <a class="reference external" href="https://github.com/SasView/sasmodels/issues">https://github.com/SasView/sasmodels/issues</a></p>
-<p>The old list, frozen as of April 2019, given by release version can still be
-viewed at <a class="reference external" href="http://trac.sasview.org/report/3">http://trac.sasview.org/report/3</a></p>
+<p>A full list of known bugs and feature requests by release version that
+users may wish to be aware of can be viewed at <a class="reference external" href="http://trac.sasview.org/report/3">http://trac.sasview.org/report/3</a></p>
 <div class="section" id="all-systems">
-<h2>4.2.1 - All systems</h2>
-<p>The issues with older plugins noted in 4.2.0 release notes remain valid.</p>
-<p>Unfortunately, after the release two new issues were discovered:
-* Changes made to the data loader to address Trac ticket #976</p>
-<blockquote>
-<div>(CanSas HDF reader will not read all valid CanSas HDF (NXcanSAS) files)
-broke backward compatibility and this version of SasView will not read in
-saved project files (because these store data as NXcanSAS).</div></blockquote>
-<ul class="simple">
-<li>Instrumental resolution smearing is currently only being applied to positive
-values of Qx and Qy in 2D.</li>
-</ul>
-</div>
-<div class="section" id="id11">
 <h2>4.2.0 - All systems</h2>
 <p>The refactoring of the plugin model architecture means that some issues
 may be encountered if Save Project/Analysis files using plugin models
@@ -1059,7 +1062,7 @@ marketplace.</li>
 model is the square root of the true value.</li>
 </ul>
 </div>
-<div class="section" id="id12">
+<div class="section" id="id14">
 <h2>3.1- All systems</h2>
 <ul class="simple">
 <li>The documentation window may take a few seconds to load the first time
@@ -1069,8 +1072,8 @@ original TeX format.</li>
 <li>If the documentation window remains stubbornly blank, try installing a
 different browser and set that as your default browser. Issues have
 been noted with Internet Explorer 11.</li>
-<li>Check for Updates may fail (with the status bar message &#8216; Cannot
-connect to the application server&#8217;) if your internet connection uses
+<li>Check for Updates may fail (with the status bar message ‘ Cannot
+connect to the application server’) if your internet connection uses
 a proxy server. Tested resolutions for this are described on the
 website FAQ.</li>
 <li>The copy and paste functions (^C, ^V) in the batch mode results grid
@@ -1142,24 +1145,27 @@ to all developer and user information, tools and resources.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Release Notes</a></li>
 <li><a class="reference internal" href="#features">Features</a><ul>
-<li><a class="reference internal" href="#new-in-version-4-2-2">New in Version 4.2.2</a><ul>
-<li><a class="reference internal" href="#resolved-issues">Resolved Issues</a></li>
+<li><a class="reference internal" href="#new-in-version-5-0-1">New in Version 5.0.1</a><ul>
+<li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+<li><a class="reference internal" href="#known-issues">Known Issues</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#new-in-version-4-2-1">New in Version 4.2.1</a><ul>
-<li><a class="reference internal" href="#id1">Resolved Issues</a></li>
+<li><a class="reference internal" href="#new-in-version-5-0">New in Version 5.0</a><ul>
+<li><a class="reference internal" href="#changes-improvements-from-5-0-beta2">Changes/Improvements from 5.0.beta2</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#id1">Known Issues</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#new-in-version-4-2-0">New in Version 4.2.0</a><ul>
 <li><a class="reference internal" href="#changes">Changes</a></li>
 <li><a class="reference internal" href="#improvements">Improvements</a></li>
-<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#id2">Documentation</a></li>
 <li><a class="reference internal" href="#other-work">Other Work</a></li>
-<li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id3">Bug Fixes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#new-in-version-4-2-0-beta">New in Version 4.2.0-Beta</a></li>
@@ -1168,29 +1174,29 @@ to all developer and user information, tools and resources.</p>
 <li><a class="reference internal" href="#new-in-version-4-1-0">New in Version 4.1.0</a><ul>
 <li><a class="reference internal" href="#correlation-function-analysis-corfunc">Correlation Function Analysis (Corfunc)</a></li>
 <li><a class="reference internal" href="#fitting-of-sesans-data">Fitting of SESANS Data</a></li>
-<li><a class="reference internal" href="#id2">Documentation</a></li>
-<li><a class="reference internal" href="#id3">Improvements</a></li>
-<li><a class="reference internal" href="#id4">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id4">Documentation</a></li>
+<li><a class="reference internal" href="#id5">Improvements</a></li>
+<li><a class="reference internal" href="#id6">Bug Fixes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#new-in-version-4-0-1">New in Version 4.0.1</a></li>
 <li><a class="reference internal" href="#new-in-version-4-0">New in Version 4.0</a><ul>
-<li><a class="reference internal" href="#id5">Improvements</a></li>
-<li><a class="reference internal" href="#id6">Bug Fixes</a></li>
+<li><a class="reference internal" href="#id7">Improvements</a></li>
+<li><a class="reference internal" href="#id8">Bug Fixes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#new-in-version-4-0-beta-1">New in Version 4.0 beta 1</a><ul>
 <li><a class="reference internal" href="#model-package-changes-and-improvements">Model package changes and improvements</a></li>
 <li><a class="reference internal" href="#documentation-improvements">Documentation improvements</a></li>
 <li><a class="reference internal" href="#other-improvements-additions">Other improvements/additions</a></li>
-<li><a class="reference internal" href="#id7">Bug fixes</a></li>
+<li><a class="reference internal" href="#id9">Bug fixes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#new-in-version-4-0-0-alpha">New in Version 4.0.0-alpha</a><ul>
-<li><a class="reference internal" href="#id8">Model package changes and improvements</a></li>
+<li><a class="reference internal" href="#id10">Model package changes and improvements</a></li>
 <li><a class="reference internal" href="#sesans-integration-and-implementation">SESANS integration and implementation</a></li>
-<li><a class="reference internal" href="#id9">Documentation improvements</a></li>
-<li><a class="reference internal" href="#id10">Bug fixes</a></li>
+<li><a class="reference internal" href="#id11">Documentation improvements</a></li>
+<li><a class="reference internal" href="#id12">Bug fixes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#new-in-version-3-1-2">New in Version 3.1.2</a></li>
@@ -1219,11 +1225,10 @@ to all developer and user information, tools and resources.</p>
 <li><a class="reference internal" href="#running-sasview">Running SasView</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#known-issues">Known Issues</a><ul>
-<li><a class="reference internal" href="#all-systems">4.2.1 - All systems</a></li>
-<li><a class="reference internal" href="#id11">4.2.0 - All systems</a></li>
+<li><a class="reference internal" href="#id13">Known Issues</a><ul>
+<li><a class="reference internal" href="#all-systems">4.2.0 - All systems</a></li>
 <li><a class="reference internal" href="#x-all-systems">4.1.x- All systems</a></li>
-<li><a class="reference internal" href="#id12">3.1- All systems</a></li>
+<li><a class="reference internal" href="#id14">3.1- All systems</a></li>
 <li><a class="reference internal" href="#windows">3.1 - Windows</a></li>
 <li><a class="reference internal" href="#mac">3.1 - MAC</a></li>
 <li><a class="reference internal" href="#linux">3.1 - Linux</a></li>
@@ -1235,23 +1240,25 @@ to all developer and user information, tools and resources.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../dev/sasmodels-api/sasmodels.custom.html"
-                        title="previous chapter">sasmodels.custom package</a></p>
+  <p class="topless"><a href="../dev/sasmodels-dev/calculator.html"
+                        title="previous chapter">2. Calculator Interface</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/user/RELEASE.txt"
+      <li><a href="../_sources/user/RELEASE.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1268,14 +1275,14 @@ to all developer and user information, tools and resources.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../dev/sasmodels-api/sasmodels.custom.html" title="sasmodels.custom package"
+          <a href="../dev/sasmodels-dev/calculator.html" title="2. Calculator Interface"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">SasView 4.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">SasView 5.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>
