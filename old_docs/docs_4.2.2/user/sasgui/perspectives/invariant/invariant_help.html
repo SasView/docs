@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Invariant Calculation &mdash; SasView 4.2.2 documentation</title>
+    <title>Invariant Calculation &#8212; SasView 4.2.2 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="top" title="SasView 4.2.2 documentation" href="../../../../index.html" />
     <link rel="up" title="Fitting &amp; Other Analyses" href="../../../analysis.html" />
     <link rel="next" title="Correlation Function Analysis" href="../corfunc/corfunc_help.html" />
@@ -37,17 +39,14 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="../corfunc/corfunc_help.html" title="Correlation Function Analysis"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../pr/pr_help.html" title="P(r) Calculation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../analysis.html" accesskey="U">Fitting &amp; Other Analyses</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../analysis.html" accesskey="U">Fitting &amp; Other Analyses</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -58,66 +57,129 @@
             
   <div class="section" id="invariant-calculation">
 <h1>Invariant Calculation</h1>
-<div class="section" id="description">
-<h2>Description</h2>
-<p>The scattering, or Porod, invariant (<span class="math">\(Q^*\)</span>) is a model-independent quantity that
-can be easily calculated from scattering data.</p>
-<p>For two phase systems, the scattering invariant is defined as the integral of
-the square of the wavevector transfer (<span class="math">\(Q\)</span>) multiplied by the scattering cross section
-over the full range of <span class="math">\(Q\)</span> from zero to infinity, that is</p>
+<div class="section" id="principle">
+<h2>Principle</h2>
+<p>In a multi-phase system, the integral of the appropriately dimensionally-weighted scattering cross-section (ie, &#8216;intensity&#8217;, <span class="math">\(I(Q)\)</span>) is a <em>constant</em>
+directly proportional to the mean-square average fluctuation in scattering
+length density (SLD) and the phase composition but which, usefully, is
+<em>independent</em> of the shape of the phase domains. If the scattering cross-section data are in absolute units this constant is known as the
+<em>Scattering Invariant</em>, the <em>Porod Invariant</em>, or simply as the
+<em>Invariant</em>, <span class="math">\(Q^*\)</span>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In this document we shall denote the invariant by the often encountered
+symbol <span class="math">\(Q^*\)</span>. But the reader should be aware that other symbols can be
+encountered in the literature. Glatter &amp; Kratky, and Stribeck, for example,
+both use <span class="math">\(Q\)</span>, the same symbol we use to denote the scattering vector in
+SasView(!), whilst Melnichenko uses <span class="math">\(Z\)</span>. Other variations include <span class="math">\(Q_I\)</span>.</p>
+</div>
+<p>If the data is measured on an instrument with &#8216;classic&#8217; pinhole geometry then</p>
 <div class="math">
-\[Q^* = \int_0^\infty q^2I(q)\,dq\]</div>
-<p>in the case of pinhole geometry. For slit geometry the invariant is given by</p>
+\[Q^* = \int_0^\infty Q^2I(Q)\,dQ\]</div>
+<p>whereas if the data is measured on an instrument with slit geometry</p>
 <div class="math">
-\[Q^* = \Delta q_v \int_0^\infty qI(q)\,dq\]</div>
-<p>where <span class="math">\(\Delta q_v\)</span> is the slit height.</p>
-<p>The worth of <span class="math">\(Q^*\)</span>  is that it can be used to determine the volume fraction and
-the specific area of a sample. Whilst these quantities are useful in their own
-right they can also be used in further analysis.</p>
+\[Q^* = \Delta Q_v \int_0^\infty QI(Q)\,dQ\]</div>
+<p>where <span class="math">\(\Delta Q_v\)</span> is the slit height and <span class="math">\(Q\)</span> denotes the scattering vector.</p>
+<p>The worth of <span class="math">\(Q^*\)</span> is that it can be used to determine quantities such as the
+volume fraction, composition, or specific surface area of a sample. It can also
+be used to cross-calibrate different SAS instruments.</p>
 <p>The difficulty with using <span class="math">\(Q^*\)</span>  arises from the fact that experimental data is
 never measured over the range <span class="math">\(0 \le Q \le \infty\)</span>. At best, combining USAS and
-WAS data might cover the range <span class="math">\(10^{-5} \le Q \le 10\)</span> 1/Å . Thus it is usually
-necessary to extrapolate the experimental data to low and high <span class="math">\(Q\)</span>. For this</p>
-<p>High-<span class="math">\(Q\)</span> region (&gt;= <em>Qmax</em> in data)</p>
+WAS data might cover the range <span class="math">\(10^{-5} \le Q \le 10\)</span> <span class="math">\(Ang^{-1}\)</span> . Thus, it is
+usually necessary to extrapolate the experimental data to both low and high
+<span class="math">\(Q\)</span>. For the</p>
+<p>Low-<span class="math">\(Q\)</span> region (&lt;= <span class="math">\(Q_{min}\)</span> in data):</p>
 <ul class="simple">
-<li>The power law function <span class="math">\(C/Q^4\)</span> is used where the constant
-<span class="math">\(C = 2 \pi \Delta\rho S_v\)</span> is to be found by fitting part of data
-within the range <span class="math">\(Q_{N-m}\)</span> to <span class="math">\(Q_N\)</span> (where <span class="math">\(m &lt; N\)</span>).</li>
+<li>The Guinier function <span class="math">\(I_0.exp(-Q^2 R_g^2/3)\)</span> can be used, where <span class="math">\(I_0\)</span>
+and <span class="math">\(R_g\)</span> are obtained by fitting the data within the range <span class="math">\(Q_{i}\)</span> to
+<span class="math">\(Q_{i+j}\)</span> (where <span class="math">\(i+j &gt; i\)</span>) at the lowest <span class="math">\(Q\)</span>-values. Alternatively a power
+law can be used. Because the integrals above are weighted by <span class="math">\(Q^2\)</span> or <span class="math">\(Q\)</span>
+the low-<span class="math">\(Q\)</span> extrapolation only contributes a small proportion, say &lt;3%,
+to the value of <span class="math">\(Q^*\)</span>.</li>
 </ul>
-<p>Low-<span class="math">\(Q\)</span> region (&lt;= <em>Qmin</em> in data)</p>
+<p>High-<span class="math">\(Q\)</span> region (&gt;= <span class="math">\(Q_{max}\)</span> in data):</p>
 <ul class="simple">
-<li>The Guinier function <span class="math">\(I_0 exp(-R_g^2 Q^2/3)\)</span> where <span class="math">\(I_0\)</span>
-and <span class="math">\(R_g\)</span> are obtained by fitting as for the high-<span class="math">\(Q\)</span> region above.
-Alternatively a power law can be used.</li>
+<li>The power law function <span class="math">\(C_p/Q^4\)</span> is used where the constant
+<span class="math">\(C_p\)</span> is obtained by fitting the data within the range <span class="math">\(Q_{n-m}\)</span> to <span class="math">\(Q_n\)</span>
+(where <span class="math">\(n-m &lt; n\)</span>) at the highest <span class="math">\(Q\)</span>-values. This extrapolation typically
+contributes 3 - 20% of the value of <span class="math">\(Q^*\)</span> so having data measured to as
+large a value of <span class="math">\(Q_{max}\)</span> as possible is much more important.</li>
 </ul>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters</h2>
+<p>For a two-phase system, the most commonly encountered situation, the Invariant
+is</p>
+<div class="math">
+\[Q^* = {2 \pi^2 (\Delta\rho)^2 \phi_1 \phi_2}\]</div>
+<p>where <span class="math">\(\Delta\rho = (\rho_1 - \rho_2)\)</span> is the SLD contrast and <span class="math">\(\phi_1\)</span> and
+<span class="math">\(\phi_2\)</span> are the volume fractions of the two phases (<span class="math">\(\phi_1 + \phi_2 = 1\)</span>).
+From this the volume fraction, specific surface area, and mean-square average
+SLD fluctuation can be determined.</p>
+<div class="section" id="volume-fraction">
+<h3>Volume Fraction</h3>
+<div class="math">
+\[\phi_1 \phi_2 = \frac{Q^*}{2 \pi^2 (\Delta\rho)^2} \equiv A\]</div>
+<p>and thus</p>
+<div class="math">
+\[\phi_1 = \frac{1 + \sqrt{1 - 4A}}{2}\]</div>
+</div>
+<div class="section" id="specific-surface-area">
+<h3>Specific Surface Area</h3>
+<p>From Porod&#8217;s Law</p>
+<div class="math">
+\[I(Q) = \frac{C_p}{Q^4}\]</div>
+<p>where the <em>Porod Constant</em> is</p>
+<div class="math">
+\[C_p = 2 \pi (\Delta\rho)^2 S_v \equiv 2 \pi (\Delta\rho)^2 (S/V)\]</div>
+<p>and <span class="math">\(S_v\)</span> is the specific surface area (the surface area-to-volume ratio,
+<span class="math">\(S/V\)</span>). From this it follows that</p>
+<div class="math">
+\[S_v = \frac{\pi \phi_1 \phi_2 C_p}{Q^*} \equiv \frac{\pi A C_p}{Q^*}\]</div>
+</div>
+<div class="section" id="sld-fluctuation">
+<h3>SLD Fluctuation</h3>
+<p>The mean-square average of the SLD fluctuation is</p>
+<div class="math">
+\[\langle \eta^2 \rangle = \langle (\rho^*)^2 \rangle - \langle (\rho^*) \rangle^2\]</div>
+<p>where</p>
+<div class="math">
+\[\langle (\rho^*)^2 \rangle = \phi_1 \rho_1^2 + \phi_2 \rho_2^2\]</div>
+<div class="math">
+\[\langle (\rho^*) \rangle = \phi_1 \rho_1 + \phi_2 \rho_2\]</div>
+</div>
+<div class="section" id="three-phase-systems">
+<h3>Three-Phase Systems</h3>
+<p>For the extension of Invariant Analysis to three phases, see the Melnichenko
+reference, Chapter 6, Section 6.9.</p>
+</div>
 </div>
 <div class="section" id="using-invariant-analysis">
 <h2>Using invariant analysis</h2>
 <ol class="arabic">
-<li><p class="first">Select <em>Invariant</em> from the <em>Analysis</em> menu on the SasView toolbar.</p>
-</li>
 <li><p class="first">Load some data with the <em>Data Explorer</em>.</p>
+<p>Select a dataset and use the <em>Send To</em> button on the <em>Data Explorer</em> to load
+the dataset into the <em>Invariant</em> panel. Or select <em>Invariant</em> from the
+<em>Analysis</em> category in the menu bar.</p>
+<p>A first estimate of <span class="math">\(Q^*\)</span> should be computed automatically. If not, click on
+the <em>Compute</em> button.</p>
 </li>
-<li><p class="first">Select a dataset and use the <em>Send To</em> button on the <em>Data Explorer</em> to load
-the dataset into the <em>Invariant</em> panel.</p>
+<li><p class="first">Use the <em>Customised Inputs</em> boxes on the <em>Invariant</em> panel to subtract
+any background, specify the contrast (i.e. difference in SLDs: note this
+must be specified for the eventual value of <span class="math">\(Q^*\)</span> to be on an absolute scale
+and to therefore have any meaning), or to rescale the data.</p>
 </li>
-<li><p class="first">Use the <em>Customised Input</em> boxes on the <em>Invariant</em> panel to subtract
-any background, specify the contrast (i.e. difference in SLDs - this must be
-specified for the eventual value of <span class="math">\(Q^*\)</span>  to be on an absolute scale), or to
-rescale the data.</p>
+<li><p class="first">(Optional) If known, a value for <span class="math">\(C_p\)</span> can also be specified.</p>
 </li>
-<li><p class="first">Adjust the extrapolation range as necessary. In most cases the default
-values will suffice.</p>
-</li>
-<li><p class="first">Click the <em>Compute</em> button.</p>
-</li>
-<li><p class="first">To include a lower and/or higher <span class="math">\(Q\)</span> range, check the relevant <em>Enable
+<li><p class="first">Adjust the extrapolation ranges and extrapolation types as necessary. In
+most cases the default values will suffice. Click the <em>Compute</em> button.</p>
+<p>To adjust the lower and/or higher <span class="math">\(Q\)</span> ranges, check the relevant <em>Enable
 Extrapolate</em> check boxes.</p>
 <p>If power law extrapolations are chosen, the exponent can be either held
-fixed or fitted. The number of points, Npts, to be used for the basis of the
-extrapolation can also be specified.</p>
+fixed or fitted. The number of points, <span class="math">\(Npts\)</span>, to be used for the basis of
+the extrapolation can also be specified.</p>
 </li>
-<li><p class="first">If the value of <span class="math">\(Q^*\)</span>  calculated with the extrapolated regions is invalid, a
+<li><p class="first">If the value of <span class="math">\(Q^*\)</span> calculated with the extrapolated regions is invalid, a
 red warning will appear at the top of the <em>Invariant</em> panel.</p>
 <p>The details of the calculation are available by clicking the <em>Details</em>
 button in the middle of the panel.</p>
@@ -125,34 +187,22 @@ button in the middle of the panel.</p>
 </ol>
 <img alt="../../../../_images/image005.png" src="../../../../_images/image005.png" />
 </div>
-<div class="section" id="parameters">
-<h2>Parameters</h2>
-<div class="section" id="volume-fraction">
-<h3>Volume Fraction</h3>
-<p>The volume fraction <span class="math">\(\phi\)</span> is related to <span class="math">\(Q^*\)</span>  by</p>
-<div class="math">
-\[\phi(1 - \phi) = \frac{Q^*}{2\pi^2(\Delta\rho)^2} \equiv A\]</div>
-<p>where <span class="math">\(\Delta\rho\)</span> is the SLD contrast.</p>
-<div class="math">
-\[\phi = \frac{1 \pm \sqrt{1 - 4A}}{2}\]</div>
-</div>
-<div class="section" id="specific-surface-area">
-<h3>Specific Surface Area</h3>
-<p>The specific surface area <span class="math">\(S_v\)</span> is related to <span class="math">\(Q^*\)</span>  by</p>
-<div class="math">
-\[S_v = \frac{2\pi\phi(1-\phi)C_p}{Q^*} = \frac{2\pi A C_p}{Q^*}\]</div>
-<p>where <span class="math">\(C_p\)</span> is the Porod constant.</p>
-</div>
-</div>
-<div class="section" id="reference">
-<h2>Reference</h2>
+<div class="section" id="references">
+<h2>References</h2>
 <p>O. Glatter and O. Kratky
-Chapter 2 in <em>Small Angle X-Ray Scattering</em>
+Chapter 2 and Chapter 14 in <em>Small Angle X-Ray Scattering</em>
 Academic Press, New York, 1982</p>
-<p><a class="reference external" href="http://web.archive.org/web/20110824105537/http://physchem.kfunigraz.ac.at/sm/Service/Glatter_Kratky_SAXS_1982.zip">http://web.archive.org/web/20110824105537/http://physchem.kfunigraz.ac.at/sm/Service/Glatter_Kratky_SAXS_1982.zip</a></p>
+<p>Available at:
+<a class="reference external" href="http://web.archive.org/web/20110824105537/http://physchem.kfunigraz.ac.at/sm/Service/Glatter_Kratky_SAXS_1982.zip">http://web.archive.org/web/20110824105537/http://physchem.kfunigraz.ac.at/sm/Service/Glatter_Kratky_SAXS_1982.zip</a></p>
+<p>N. Stribeck
+Chapter 8 in <em>X-Ray Scattering of Soft Matter</em>
+Springer, 2007</p>
+<p>Y.B. Melnichenko
+Chapter 6 in <em>Small-Angle Scattering from Confined and Interfacial Fluids</em>
+Springer, 2016</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This help document was last changed by Steve King, 01May2015</p>
+<p class="last">This help document was last changed by Steve King, 10Jan2020</p>
 </div>
 </div>
 </div>
@@ -166,14 +216,16 @@ Academic Press, New York, 1982</p>
   <h3><a href="../../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Invariant Calculation</a><ul>
-<li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#using-invariant-analysis">Using invariant analysis</a></li>
+<li><a class="reference internal" href="#principle">Principle</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a><ul>
 <li><a class="reference internal" href="#volume-fraction">Volume Fraction</a></li>
 <li><a class="reference internal" href="#specific-surface-area">Specific Surface Area</a></li>
+<li><a class="reference internal" href="#sld-fluctuation">SLD Fluctuation</a></li>
+<li><a class="reference internal" href="#three-phase-systems">Three-Phase Systems</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#reference">Reference</a></li>
+<li><a class="reference internal" href="#using-invariant-analysis">Using invariant analysis</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>
@@ -194,8 +246,8 @@ Academic Press, New York, 1982</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -212,22 +264,19 @@ Academic Press, New York, 1982</p>
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="../corfunc/corfunc_help.html" title="Correlation Function Analysis"
              >next</a> |</li>
         <li class="right" >
           <a href="../pr/pr_help.html" title="P(r) Calculation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 4.2.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>
