@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Plotting.SlicerParameters &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Plotting.SlicerParameters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Allows users to modify the box slicer parameters.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="c1"># Local UI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">main_resources_rc</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.UI.SlicerParametersUI</span> <span class="kn">import</span> <span class="n">Ui_SlicerParametersUI</span>
+
+<div class="viewcode-block" id="SlicerParameters"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.SlicerParameters">[docs]</a><span class="k">class</span> <span class="nc">SlicerParameters</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_SlicerParametersUI</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interaction between the QTableView and the underlying model,</span>
+<span class="sd">    passed from a slicer instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">closeWidgetSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SlicerParameters</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_method</span> <span class="o">=</span> <span class="n">validate_method</span>
+
+        <span class="c1"># Define a proxy model so cell enablement can be finegrained.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proxy</span> <span class="o">=</span> <span class="n">ProxyModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proxy</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># Set the proxy model for display in the Table View.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proxy</span><span class="p">)</span>
+
+        <span class="c1"># Disallow edit of the parameter name column.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">setColumnReadOnly</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Specify the validator on the parameter value column.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">EditDelegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">validate_method</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">setItemDelegate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delegate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">refocus_signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFocus</span><span class="p">)</span>
+
+        <span class="c1"># Display Help on clicking the button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Help</span><span class="p">)</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onHelp</span><span class="p">)</span>
+
+        <span class="c1"># Close doesn&#39;t trigger closeEvent automatically, so force it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Close</span><span class="p">)</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># Disable row number display</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Expanding</span><span class="p">)</span>
+
+        <span class="c1"># Header properties for nicer display</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Stretch</span><span class="p">)</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">setStretchLastSection</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SlicerParameters.onFocus"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.SlicerParameters.onFocus">[docs]</a>    <span class="k">def</span> <span class="nf">onFocus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the focus on the cell (row, column) &quot;&quot;&quot;</span>
+        <span class="n">selection_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span>
+        <span class="n">selection_model</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">Select</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">setSelectionModel</span><span class="p">(</span><span class="n">selection_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SlicerParameters.setModel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.SlicerParameters.setModel">[docs]</a>    <span class="k">def</span> <span class="nf">setModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Model setter &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proxy</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SlicerParameters.keyPressEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.SlicerParameters.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+         <span class="n">key</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span>
+
+         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closeWidgetSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SlicerParameters.closeEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.SlicerParameters.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwritten close widget method in order to send the close</span>
+<span class="sd">        signal to the parent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeWidgetSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SlicerParameters.onHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.SlicerParameters.onHelp">[docs]</a>    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display generic data averaging help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/MainWindow/graph_help.html#d-data-averaging&quot;</span>
+        <span class="n">GuiUtils</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="ProxyModel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.ProxyModel">[docs]</a><span class="k">class</span> <span class="nc">ProxyModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QIdentityProxyModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trivial proxy model with custom column edit flag</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ProxyModel.columnReadOnly"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.ProxyModel.columnReadOnly">[docs]</a>    <span class="k">def</span> <span class="nf">columnReadOnly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns True if column is read only, false otherwise&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span></div>
+
+<div class="viewcode-block" id="ProxyModel.setColumnReadOnly"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.ProxyModel.setColumnReadOnly">[docs]</a>    <span class="k">def</span> <span class="nf">setColumnReadOnly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Add/removes a column from the readonly list&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">readonly</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">column</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProxyModel.flags"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.ProxyModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Sets column flags&#39;&#39;&#39;</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">flags</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">columnReadOnly</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()):</span>
+            <span class="n">flags</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+        <span class="k">return</span> <span class="n">flags</span></div></div>
+
+<div class="viewcode-block" id="PositiveDoubleEditor"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.PositiveDoubleEditor">[docs]</a><span class="k">class</span> <span class="nc">PositiveDoubleEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">):</span>
+    <span class="c1"># a signal to tell the delegate when we have finished editing</span>
+    <span class="n">editingFinished</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># Initialize the editor object</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">PositiveDoubleEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setAutoFillBackground</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">validator</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">()</span>
+            <span class="c1"># Don&#39;t use the scientific notation, cause &#39;e&#39;.</span>
+            <span class="n">validator</span><span class="o">.</span><span class="n">setNotation</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="o">.</span><span class="n">StandardNotation</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">validator</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PositiveDoubleEditor.focusOutEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.PositiveDoubleEditor.focusOutEvent">[docs]</a>    <span class="k">def</span> <span class="nf">focusOutEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+            <span class="c1"># Once focus is lost, tell the delegate we&#39;re done editing</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="EditDelegate"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.EditDelegate">[docs]</a><span class="k">class</span> <span class="nc">EditDelegate</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QStyledItemDelegate</span><span class="p">):</span>
+    <span class="n">refocus_signal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EditDelegate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_method</span> <span class="o">=</span> <span class="n">validate_method</span>
+
+<div class="viewcode-block" id="EditDelegate.createEditor"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.EditDelegate.createEditor">[docs]</a>    <span class="k">def</span> <span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="c1"># Creates and returns the custom editor object we will use to edit the cell</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">PositiveDoubleEditor</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">editor</span>
+        <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QStyledItemDelegate</span><span class="o">.</span><span class="n">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EditDelegate.setModelData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.SlicerParameters.EditDelegate.setModelData">[docs]</a>    <span class="k">def</span> <span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Custom version of the model update, rejecting bad values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+
+        <span class="c1"># Find out the changed parameter name and proposed value</span>
+        <span class="n">new_value</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">toDouble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">param_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+
+        <span class="n">validated</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_method</span><span class="p">:</span>
+            <span class="c1"># Validate the proposed value in the slicer</span>
+            <span class="n">value_accepted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_method</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">new_value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value_accepted</span><span class="p">:</span>
+            <span class="c1"># Update the model only if value accepted</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">EditDelegate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setModelData</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>          </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,912 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Perspectives.Invariant.InvariantPerspective &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Invariant.InvariantPerspective</h1><div class="highlight"><pre>
+<span></span><span class="c1"># global</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">threads</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+
+<span class="c1"># sas-global</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.invariant</span> <span class="kn">import</span> <span class="n">invariant</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="c1"># import sas.qtgui.Plotting.PlotHelper as PlotHelper</span>
+
+<span class="c1"># local</span>
+<span class="kn">from</span> <span class="nn">.UI.TabbedInvariantUI</span> <span class="kn">import</span> <span class="n">Ui_tabbedInvariantUI</span>
+<span class="kn">from</span> <span class="nn">.InvariantDetails</span> <span class="kn">import</span> <span class="n">DetailsDialog</span>
+<span class="kn">from</span> <span class="nn">.InvariantUtils</span> <span class="kn">import</span> <span class="n">WIDGETS</span>
+
+<span class="c1"># The minimum q-value to be used when extrapolating</span>
+<span class="n">Q_MINIMUM</span> <span class="o">=</span> <span class="mf">1e-5</span>
+<span class="c1"># The maximum q-value to be used when extrapolating</span>
+<span class="n">Q_MAXIMUM</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="c1"># the ratio of maximum q value/(qmax of data) to plot the theory data</span>
+<span class="n">Q_MAXIMUM_PLOT</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1"># Default number of points of interpolation: high and low range</span>
+<span class="n">NPOINTS_Q_INTERP</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="c1"># Default power law for interpolation</span>
+<span class="n">DEFAULT_POWER_LOW</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1"># Background of line edits if settings OK or wrong</span>
+<span class="n">BG_WHITE</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(255, 255, 255);&quot;</span>
+<span class="n">BG_RED</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(244, 170, 164);&quot;</span>
+
+<div class="viewcode-block" id="InvariantWindow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow">[docs]</a><span class="k">class</span> <span class="nc">InvariantWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_tabbedInvariantUI</span><span class="p">):</span>
+    <span class="c1"># The controller which is responsible for managing signal slots connections</span>
+    <span class="c1"># for the gui and providing an interface to the data model.</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Invariant&quot;</span>  <span class="c1"># For displaying in the combo box in DataExplorer</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InvariantWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Invariant Perspective&quot;</span><span class="p">)</span>
+
+        <span class="c1"># initial input params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_background</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contrast</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_porod</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reactor</span> <span class="o">=</span> <span class="n">reactor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">detailsDialog</span> <span class="o">=</span> <span class="n">DetailsDialog</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detailsDialog</span><span class="o">.</span><span class="n">cmdOK</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enabling</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_guinier</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_power_value</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_points</span> <span class="o">=</span> <span class="n">NPOINTS_Q_INTERP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_power_value</span> <span class="o">=</span> <span class="n">DEFAULT_POWER_LOW</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_power_value</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_fit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_points</span> <span class="o">=</span> <span class="n">NPOINTS_Q_INTERP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_power_value</span> <span class="o">=</span> <span class="n">DEFAULT_POWER_LOW</span>
+
+        <span class="c1"># no reason to have this widget resizable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimumSizeHint</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">communicator</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Modify font in order to display Angstrom symbol correctly</span>
+        <span class="n">new_font</span> <span class="o">=</span> <span class="s1">&#39;font-family: -apple-system, &quot;Helvetica Neue&quot;, &quot;Ubuntu&quot;;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblTotalQUnits</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSpecificSurfaceUnits</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblInvariantTotalQUnits</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblContrastUnits</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblPorodCstUnits</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblExtrapolQUnits</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+
+        <span class="c1"># To remove blue square around line edits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBackgd</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtContrast</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPorodCst</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerHighQ</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_MacShowFocusRect</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtExtrapolQMin</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Q_MINIMUM</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtExtrapolQMax</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Q_MAXIMUM</span><span class="p">))</span>
+
+        <span class="c1"># Let&#39;s choose the Standard Item Model.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Connect buttons to slots.</span>
+        <span class="c1"># Needs to be done early so default values propagate properly.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupSlots</span><span class="p">()</span>
+
+        <span class="c1"># Set up the model.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupModel</span><span class="p">()</span>
+
+        <span class="c1"># Set up the mapper</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupMapper</span><span class="p">()</span>
+
+        <span class="c1"># Default enablement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># validator: double</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBackgd</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtContrast</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPorodCst</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+
+        <span class="c1"># validator: integer number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerHighQ</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+
+<div class="viewcode-block" id="InvariantWindow.enabling"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.enabling">[docs]</a>    <span class="k">def</span> <span class="nf">enabling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdStatus</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.setClosable"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.setClosable">[docs]</a>    <span class="k">def</span> <span class="nf">setClosable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Allow outsiders close this widget &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.closeEvent"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite QDialog close method to allow for custom widget close</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span><span class="p">:</span>
+            <span class="c1"># reset the closability flag</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setClosable</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># Tell the MdiArea to close the container</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>
+            <span class="c1"># Maybe we should just minimize</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setWindowState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinimized</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.updateFromModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.updateFromModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateFromModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the globals based on the data in the model &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_background</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contrast</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CONTRAST</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SCALE</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POROD_CST</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span> \
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POROD_CST</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_porod</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POROD_CST</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="c1"># Low extrapolating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_LOWQ</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_points</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_LOWQ</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_guinier</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_GUINIER</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_FIT</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_power_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_POWER_VALUE</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="c1"># High extrapolating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_HIGHQ</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_points</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_HIGHQ</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_fit</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_FIT</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_high_power_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_POWER_VALUE</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.calculateInvariant"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.calculateInvariant">[docs]</a>    <span class="k">def</span> <span class="nf">calculateInvariant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Use twisted to thread the calculations away &quot;&quot;&quot;</span>
+        <span class="c1"># Find out if extrapolation needs to be used.</span>
+        <span class="n">extrapolation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span><span class="p">:</span>
+            <span class="n">extrapolation</span> <span class="o">=</span> <span class="s2">&quot;low&quot;</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span><span class="p">:</span>
+            <span class="n">extrapolation</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span><span class="p">:</span>
+            <span class="n">extrapolation</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span>
+
+        <span class="c1"># modify the Calculate button to indicate background process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Calculating...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Send the calculations to separate thread.</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">deferToThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateThread</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">)</span>
+
+        <span class="c1"># Add deferred callback for call return</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deferredPlot</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">addErrback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculationFailed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.calculationFailed"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.calculationFailed">[docs]</a>    <span class="k">def</span> <span class="nf">calculationFailed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;calculation failed: &quot;</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.deferredPlot"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.deferredPlot">[docs]</a>    <span class="k">def</span> <span class="nf">deferredPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the GUI/model update in the main thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotResult</span><span class="p">(</span><span class="n">model</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.plotResult"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.plotResult">[docs]</a>    <span class="k">def</span> <span class="nf">plotResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Plot result of calculation &quot;&quot;&quot;</span>
+        <span class="c1"># Set the button back to available</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Calculate&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdStatus</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">filename</span>
+        <span class="c1"># Send the modified model item to DE for keeping in the model</span>
+        <span class="c1"># Currently -unused</span>
+        <span class="c1"># self.communicate.updateModelFromPerspectiveSignal.emit(self._model_item)</span>
+
+        <span class="n">plot_data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># only the Low-Q/High-Q data for plotting</span>
+        <span class="n">data_to_plot</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plot_data</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="n">ROLE_DATA</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">plotData</span><span class="p">(</span><span class="n">data_to_plot</span><span class="p">)</span>
+
+        <span class="c1"># Update the details dialog in case it is open</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateDetailsWidget</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.updateDetailsWidget"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.updateDetailsWidget">[docs]</a>    <span class="k">def</span> <span class="nf">updateDetailsWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On demand update of the details widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailsDialog</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onStatus</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.calculateThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.calculateThread">[docs]</a>    <span class="k">def</span> <span class="nf">calculateThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform Invariant calculations.</span>
+<span class="sd">        TODO: Create a dictionary of results to be sent to DE on completion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateFromModel</span><span class="p">()</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">qstar_low</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">qstar_low_err</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">qstar_high</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">qstar_high_err</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">qstar_total</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">qstar_total_error</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">temp_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+
+        <span class="c1"># Prepare the invariant object</span>
+        <span class="n">inv</span> <span class="o">=</span> <span class="n">invariant</span><span class="o">.</span><span class="n">InvariantCalculator</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">temp_data</span><span class="p">,</span>
+                                            <span class="n">background</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_background</span><span class="p">,</span>
+                                            <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span><span class="p">:</span>
+
+            <span class="n">function_low</span> <span class="o">=</span> <span class="s2">&quot;power_law&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_guinier</span><span class="p">:</span>
+                <span class="n">function_low</span> <span class="o">=</span> <span class="s2">&quot;guinier&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_low_power_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">inv</span><span class="o">.</span><span class="n">set_extrapolation</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="s2">&quot;low&quot;</span><span class="p">,</span>
+                                  <span class="n">npts</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_low_points</span><span class="p">),</span>
+                                  <span class="n">function</span><span class="o">=</span><span class="n">function_low</span><span class="p">,</span>
+                                  <span class="n">power</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_low_power_value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span><span class="p">:</span>
+            <span class="n">function_low</span> <span class="o">=</span> <span class="s2">&quot;power_law&quot;</span>
+            <span class="n">inv</span><span class="o">.</span><span class="n">set_extrapolation</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="s2">&quot;high&quot;</span><span class="p">,</span>
+                                  <span class="n">npts</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_high_points</span><span class="p">),</span>
+                                  <span class="n">function</span><span class="o">=</span><span class="n">function_low</span><span class="p">,</span>
+                                  <span class="n">power</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_high_power_value</span><span class="p">)</span>
+        <span class="c1"># Compute invariant</span>
+        <span class="n">calculation_failed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qstar_total</span><span class="p">,</span> <span class="n">qstar_total_error</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_qstar_with_error</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+            <span class="n">calculation_failed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># Display relevant information</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_INVARIANT</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_INVARIANT_ERR</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">volume_fraction</span><span class="p">,</span> <span class="n">volume_fraction_error</span> <span class="o">=</span> \
+                <span class="n">inv</span><span class="o">.</span><span class="n">get_volume_fraction_with_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contrast</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">calculation_failed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+            <span class="c1"># Display relevant information</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_VOLUME_FRACTION</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_VOLUME_FRACTION_ERR</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_porod</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">surface</span><span class="p">,</span> <span class="n">surface_error</span> <span class="o">=</span> \
+                    <span class="n">inv</span><span class="o">.</span><span class="n">get_surface_with_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contrast</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_porod</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">calculation_failed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="c1"># Display relevant information</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SPECIFIC_SURFACE</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SPECIFIC_SURFACE_ERR</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">surface</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">calculation_failed</span><span class="p">):</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Calculation failed: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+
+        <span class="n">low_calculation_pass</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">high_calculation_pass</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qstar_low</span><span class="p">,</span> <span class="n">qstar_low_err</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_qstar_low</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">low_calculation_pass</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Low-q calculation failed: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qstar_high</span><span class="p">,</span> <span class="n">qstar_high_err</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_qstar_high</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">high_calculation_pass</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;High-q calculation failed: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="ow">and</span> <span class="n">low_calculation_pass</span><span class="p">:</span>
+            <span class="n">extrapolated_data</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_extra_data_low</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_low_points</span><span class="p">)</span>
+            <span class="n">power_low</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_extrapolation_power</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Plot the chart</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Low-Q extrapolation&quot;</span>
+
+            <span class="c1"># Convert the data into plottable</span>
+            <span class="n">extrapolated_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">createGuiData</span><span class="p">(</span><span class="n">extrapolated_data</span><span class="p">)</span>
+
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">title</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;Line&quot;</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">has_errors</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># copy labels and units of axes for plotting</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">_xaxis</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_xaxis</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_xunit</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">_yaxis</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_yaxis</span>
+            <span class="n">extrapolated_data</span><span class="o">.</span><span class="n">_yunit</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_yunit</span>
+
+            <span class="c1"># Add the plot to the model item</span>
+            <span class="c1"># This needs to run in the main thread</span>
+            <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemWithPlot</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="p">,</span>
+                                       <span class="n">extrapolated_data</span><span class="p">,</span>
+                                       <span class="n">title</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span> <span class="ow">and</span> <span class="n">high_calculation_pass</span><span class="p">:</span>
+            <span class="c1"># for presentation in InvariantDetails</span>
+            <span class="n">qmax_plot</span> <span class="o">=</span> <span class="n">Q_MAXIMUM_PLOT</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">temp_data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">qmax_plot</span> <span class="o">&gt;</span> <span class="n">Q_MAXIMUM</span><span class="p">:</span>
+                <span class="n">qmax_plot</span> <span class="o">=</span> <span class="n">Q_MAXIMUM</span>
+            <span class="n">power_high</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_extrapolation_power</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="s1">&#39;high&#39;</span><span class="p">)</span>
+            <span class="n">high_out_data</span> <span class="o">=</span> <span class="n">inv</span><span class="o">.</span><span class="n">get_extra_data_high</span><span class="p">(</span><span class="n">q_end</span><span class="o">=</span><span class="n">qmax_plot</span><span class="p">,</span> <span class="n">npts</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+
+            <span class="c1"># Plot the chart</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;High-Q extrapolation&quot;</span>
+
+            <span class="c1"># Convert the data into plottable</span>
+            <span class="n">high_out_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">createGuiData</span><span class="p">(</span><span class="n">high_out_data</span><span class="p">)</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">title</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;Line&quot;</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">has_errors</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># copy labels and units of axes for plotting</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">_xaxis</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_xaxis</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_xunit</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">_yaxis</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_yaxis</span>
+            <span class="n">high_out_data</span><span class="o">.</span><span class="n">_yunit</span> <span class="o">=</span> <span class="n">temp_data</span><span class="o">.</span><span class="n">_yunit</span>
+
+            <span class="c1"># Add the plot to the model item</span>
+            <span class="c1"># This needs to run in the main thread</span>
+            <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemWithPlot</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="p">,</span> <span class="n">high_out_data</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_VOLUME_FRACTION</span><span class="p">,</span> <span class="n">volume_fraction</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_VOLUME_FRACTION_ERR</span><span class="p">,</span> <span class="n">volume_fraction_error</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">surface</span><span class="p">:</span>
+            <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SPECIFIC_SURFACE</span><span class="p">,</span> <span class="n">surface</span><span class="p">)</span>
+            <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SPECIFIC_SURFACE_ERR</span><span class="p">,</span>
+                                                    <span class="n">surface_error</span><span class="p">)</span>
+
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_INVARIANT</span><span class="p">,</span> <span class="n">qstar_total</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_INVARIANT_ERR</span><span class="p">,</span> <span class="n">qstar_total_error</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">D_LOW_QSTAR</span><span class="p">,</span> <span class="n">qstar_low</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">D_LOW_QSTAR_ERR</span><span class="p">,</span> <span class="n">qstar_low_err</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">D_HIGH_QSTAR</span><span class="p">,</span> <span class="n">qstar_high</span><span class="p">)</span>
+        <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromThread</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">D_HIGH_QSTAR_ERR</span><span class="p">,</span> <span class="n">qstar_high_err</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="InvariantWindow.updateModelFromThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.updateModelFromThread">[docs]</a>    <span class="k">def</span> <span class="nf">updateModelFromThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the model in the main thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%.3g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">value</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.title"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.title">[docs]</a>    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Perspective name &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Invariant panel&quot;</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.onStatus"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.onStatus">[docs]</a>    <span class="k">def</span> <span class="nf">onStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display Invariant Details panel when clicking on Status button</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detailsDialog</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detailsDialog</span><span class="o">.</span><span class="n">showDialog</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdStatus</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.onHelp"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.onHelp">[docs]</a>    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Display help when clicking on Help button &quot;&quot;&quot;</span>
+        <span class="n">treeLocation</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Invariant/invariant_help.html&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">treeLocation</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.setupSlots"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.setupSlots">[docs]</a>    <span class="k">def</span> <span class="nf">setupSlots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateInvariant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdStatus</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onStatus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdHelp</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onHelp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chkLowQ</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stateChanged</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chkLowQ</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkQExtrapolatedData</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chkHighQ</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stateChanged</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chkHighQ</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkQExtrapolatedData</span><span class="p">)</span>
+
+        <span class="c1"># slots for the Guinier and PowerLaw radio buttons at low Q</span>
+        <span class="c1"># since they are not auto-exclusive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbGuinier</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lowGuinierAndPowerToggle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbPowerLawLowQ</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lowGuinierAndPowerToggle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFitHighQ</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hiFitAndFixToggle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lowFitAndFixToggle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelChanged</span><span class="p">)</span>
+
+        <span class="c1"># update model from gui editing by users</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBackgd</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtContrast</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPorodCst</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerHighQ</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateFromGui</span><span class="p">)</span>
+
+        <span class="c1"># check values of n_points compared to distribution length</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkLength</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkLength</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.stateChanged"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.stateChanged">[docs]</a>    <span class="k">def</span> <span class="nf">stateChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Catch modifications from low- and high-Q extrapolation check boxes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span>
+
+        <span class="n">itemf</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sender</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">sender</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Enable Low-Q extrapolation&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_LOWQ</span><span class="p">,</span> <span class="n">itemf</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sender</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Enable High-Q extrapolation&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_HIGHQ</span><span class="p">,</span> <span class="n">itemf</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.checkLength"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.checkLength">[docs]</a>    <span class="k">def</span> <span class="nf">checkLength</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validators of number of points for extrapolation.</span>
+<span class="sd">        Error if it is larger than the distribution length</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">int_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">int_value</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;The number of points must be smaller than </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">)))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># logging.info(&#39;no data is loaded&#39;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.modelChanged"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.modelChanged">[docs]</a>    <span class="k">def</span> <span class="nf">modelChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update when model changed &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="o">==</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_LOWQ</span><span class="p">:</span>
+            <span class="n">toggle</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_extrapolate</span> <span class="o">=</span> <span class="n">toggle</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lowQToggle</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="o">==</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_HIGHQ</span><span class="p">:</span>
+            <span class="n">toggle</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_high_extrapolate</span> <span class="o">=</span> <span class="n">toggle</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">highQToggle</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.checkQExtrapolatedData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.checkQExtrapolatedData">[docs]</a>    <span class="k">def</span> <span class="nf">checkQExtrapolatedData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Match status of low or high-Q extrapolated data checkbox in</span>
+<span class="sd">        DataExplorer with low or high-Q extrapolation checkbox in invariant</span>
+<span class="sd">        panel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># name to search in DataExplorer</span>
+        <span class="k">if</span> <span class="s1">&#39;Low&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Low-Q extrapolation&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;High&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;High-Q extrapolation&quot;</span>
+
+        <span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemStatus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">checkState</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.updateFromGui"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.updateFromGui">[docs]</a>    <span class="k">def</span> <span class="nf">updateFromGui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update model when new user inputs &quot;&quot;&quot;</span>
+        <span class="n">possible_senders</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;txtBackgd&#39;</span><span class="p">,</span> <span class="s1">&#39;txtContrast&#39;</span><span class="p">,</span> <span class="s1">&#39;txtPorodCst&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;txtScale&#39;</span><span class="p">,</span> <span class="s1">&#39;txtPowerLowQ&#39;</span><span class="p">,</span> <span class="s1">&#39;txtPowerHighQ&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;txtNptsLowQ&#39;</span><span class="p">,</span> <span class="s1">&#39;txtNptsHighQ&#39;</span><span class="p">]</span>
+
+        <span class="n">related_widgets</span> <span class="o">=</span> <span class="p">[</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CONTRAST</span><span class="p">,</span>
+                           <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POROD_CST</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SCALE</span><span class="p">,</span>
+                           <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_POWER_VALUE</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_POWER_VALUE</span><span class="p">,</span>
+                           <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_LOWQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_HIGHQ</span><span class="p">]</span>
+
+        <span class="n">related_internal_values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_background</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contrast</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_porod</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_low_power_value</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_high_power_value</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_low_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_high_points</span><span class="p">]</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="n">index_elt</span> <span class="o">=</span> <span class="n">possible_senders</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">objectName</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">related_widgets</span><span class="p">[</span><span class="n">index_elt</span><span class="p">],</span> <span class="n">item</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">related_internal_values</span><span class="p">[</span><span class="n">index_elt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># empty field, just skip</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.lowGuinierAndPowerToggle"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.lowGuinierAndPowerToggle">[docs]</a>    <span class="k">def</span> <span class="nf">lowGuinierAndPowerToggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">toggle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Guinier and Power radio buttons cannot be selected at the same time</span>
+<span class="sd">        If Power is selected, Fit and Fix radio buttons are visible and</span>
+<span class="sd">        Power line edit can be edited if Fix is selected</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Guinier&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_guinier</span> <span class="o">=</span> <span class="n">toggle</span>
+
+            <span class="n">toggle</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">toggle</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbPowerLawLowQ</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lowFitAndFixToggle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbFixLowQ</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">toggle</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_low_guinier</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">toggle</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbGuinier</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="ow">not</span> <span class="n">toggle</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lowFitAndFixToggle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbFixLowQ</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">toggle</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.lowFitAndFixToggle"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.lowFitAndFixToggle">[docs]</a>    <span class="k">def</span> <span class="nf">lowFitAndFixToggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">toggle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fit and Fix radiobuttons cannot be selected at the same time &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span> <span class="o">=</span> <span class="n">toggle</span>
+
+        <span class="n">toggle</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">toggle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.hiFitAndFixToggle"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.hiFitAndFixToggle">[docs]</a>    <span class="k">def</span> <span class="nf">hiFitAndFixToggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">toggle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable editing of power exponent if Fix for high Q is checked</span>
+<span class="sd">        Disable otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerHighQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">toggle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.highQToggle"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.highQToggle">[docs]</a>    <span class="k">def</span> <span class="nf">highQToggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clicked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Disable/enable High Q extrapolation &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFitHighQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFixHighQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerHighQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.lowQToggle"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.lowQToggle">[docs]</a>    <span class="k">def</span> <span class="nf">lowQToggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clicked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Disable / enable Low Q extrapolation &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbGuinier</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbPowerLawLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>
+        <span class="c1"># Enable subelements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rbPowerLawLowQ</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFixLowQ</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rbPowerLawLowQ</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>  <span class="c1"># and not self._low_guinier)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbFixLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span><span class="p">)</span>  <span class="c1"># and not self._low_guinier)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">clicked</span>
+                                    <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_guinier</span>
+                                    <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_fit</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.setupModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.setupModel">[docs]</a>    <span class="k">def</span> <span class="nf">setupModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="c1"># filename</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># add Q parameters to the model</span>
+        <span class="n">qmin</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">qmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">qmax</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">qmax</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># add custom input params</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_background</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contrast</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CONTRAST</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SCALE</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="c1"># leave line edit empty if Porod constant not defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_porod</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_porod</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POROD_CST</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># Dialog elements</span>
+        <span class="n">itemf</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;false&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_HIGHQ</span><span class="p">,</span> <span class="n">itemf</span><span class="p">)</span>
+        <span class="n">itemf</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;false&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_LOWQ</span><span class="p">,</span> <span class="n">itemf</span><span class="p">)</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">NPOINTS_Q_INTERP</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_LOWQ</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">NPOINTS_Q_INTERP</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_HIGHQ</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="n">itemt</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_GUINIER</span><span class="p">,</span> <span class="n">itemt</span><span class="p">)</span>
+
+        <span class="n">itemt</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_FIT</span><span class="p">,</span> <span class="n">itemt</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">DEFAULT_POWER_LOW</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_POWER_VALUE</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="n">itemt</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_FIT</span><span class="p">,</span> <span class="n">itemt</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">DEFAULT_POWER_LOW</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_POWER_VALUE</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.setupMapper"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.setupMapper">[docs]</a>    <span class="k">def</span> <span class="nf">setupMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Set up the mapper.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># Filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtName</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">)</span>
+
+        <span class="c1"># Qmin/Qmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtTotalQMin</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtTotalQMax</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span>
+
+        <span class="c1"># Background</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtBackgd</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">)</span>
+
+        <span class="c1"># Scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SCALE</span><span class="p">)</span>
+
+        <span class="c1"># Contrast</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtContrast</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CONTRAST</span><span class="p">)</span>
+
+        <span class="c1"># Porod constant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtPorodCst</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POROD_CST</span><span class="p">)</span>
+
+        <span class="c1"># Lowq/Highq items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chkLowQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_LOWQ</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chkHighQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ENABLE_HIGHQ</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNptsLowQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_LOWQ</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rbGuinier</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_GUINIER</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rbFitLowQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_FIT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtPowerLowQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_LOWQ_POWER_VALUE</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNptsHighQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NPTS_HIGHQ</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rbFitHighQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_FIT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtPowerHighQ</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HIGHQ_POWER_VALUE</span><span class="p">)</span>
+    
+        <span class="c1"># Output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtVolFract</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_VOLUME_FRACTION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtVolFractErr</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_VOLUME_FRACTION_ERR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSpecSurf</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SPECIFIC_SURFACE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSpecSurfErr</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SPECIFIC_SURFACE_ERR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtInvariantTot</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_INVARIANT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtInvariantTotErr</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_INVARIANT_ERR</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.setData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain a QStandardItem object and dissect it to get Data1D/2D</span>
+<span class="sd">        Pass it over to the calculator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">data_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtName</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="n">data_item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;This file is already loaded in Invariant panel.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_item</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the Invariant Perspective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the Invariant Perspective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># only 1 file can be loaded</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span> <span class="o">=</span> <span class="n">data_item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Extract data on 1st child - this is the Data1D/2D component</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">)</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="c1"># update GUI and model with info from loaded data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateGuiFromFile</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.updateGuiFromFile"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.updateGuiFromFile">[docs]</a>    <span class="k">def</span> <span class="nf">updateGuiFromFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        update display in GUI and plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="c1"># plot loaded file</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invariant cannot be computed with 2D data.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;No filename chosen.&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">qmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to find q min/max of </span><span class="se">\n</span><span class="s2"> data named </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> \
+                  <span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># update model with input form files: filename, qmin, qmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">qmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">qmax</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">filename</span>
+
+        <span class="c1"># Calculate and add to GUI: volume fraction, invariant total,</span>
+        <span class="c1"># and specific surface if porod checked</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateInvariant</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InvariantWindow.allowBatch"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Invariant.html#sas.qtgui.Perspectives.Invariant.InvariantPerspective.InvariantWindow.allowBatch">[docs]</a>    <span class="k">def</span> <span class="nf">allowBatch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tell the caller that we don&#39;t accept multiple data instances</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

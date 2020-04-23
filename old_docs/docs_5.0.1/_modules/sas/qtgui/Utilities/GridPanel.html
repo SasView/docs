@@ -1,0 +1,598 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Utilities.GridPanel &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Utilities.GridPanel</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.UI.GridPanelUI</span> <span class="kn">import</span> <span class="n">Ui_GridPanelUI</span>
+
+
+<div class="viewcode-block" id="BatchOutputPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel">[docs]</a><span class="k">class</span> <span class="nc">BatchOutputPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">,</span> <span class="n">Ui_GridPanelUI</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for stateless grid-like printout of model parameters for mutiple models</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ERROR_COLUMN_CAPTION</span> <span class="o">=</span> <span class="s2">&quot; (Err)&quot;</span>
+    <span class="n">IS_WIN</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">)</span>
+    <span class="n">windowClosedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BatchOutputPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;communicate&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">communicate</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">addToolbarActions</span><span class="p">()</span>
+
+        <span class="c1"># file name for the dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">output_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>
+        <span class="c1"># Tab numbering</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_number</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># save state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># System dependent menu items</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">IS_WIN</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionOpen_with_Excel</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># list of QTableWidgets, indexed by tab number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="p">)</span>
+
+        <span class="c1"># context menu on the table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showContextMenu</span><span class="p">)</span>
+
+        <span class="c1"># Command buttons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdHelp</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onHelp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdPlot</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onPlot</span><span class="p">)</span>
+
+        <span class="c1"># Fill in the table from input data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupTable</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">output_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Set a table tooltip describing the model</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="n">output_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setTabToolTip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BatchOutputPanel.closeEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite QDialog close method to allow for custom widget close</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># notify the parent so it hides this window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowClosedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.addToolbarActions"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.addToolbarActions">[docs]</a>    <span class="k">def</span> <span class="nf">addToolbarActions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assing actions and callbacks to the File menu items</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionOpen</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionLoadData</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionOpen_with_Excel</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionSendToExcel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionSave</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionSaveFile</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.actionLoadData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.actionLoadData">[docs]</a>    <span class="k">def</span> <span class="nf">actionLoadData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open file load dialog and load a .csv file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">datafile</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Choose a file with results&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;CSV files (*.csv)&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">DontUseNativeDialog</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">datafile</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No data file chosen.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">csv_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupTableFromCSV</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.currentTable"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.currentTable">[docs]</a>    <span class="k">def</span> <span class="nf">currentTable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the currently shown QTabWidget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.showContextMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.showContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">showContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show context specific menu in the tab table widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">()</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentTable</span><span class="p">()</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectedRows</span><span class="p">()]</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># Find out which items got selected and in which row</span>
+        <span class="c1"># Select for fitting</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionPlotResults</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionPlotResults</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">&quot;actionPlot&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionPlotResults</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="s2">&quot;Plot selected fits.&quot;</span><span class="p">))</span>
+
+        <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionPlotResults</span><span class="p">)</span>
+
+        <span class="c1"># Define the callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionPlotResults</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onPlot</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentTable</span><span class="p">()</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">position</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error generating context menu: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ex</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.addTabPage"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.addTabPage">[docs]</a>    <span class="k">def</span> <span class="nf">addTabPage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add new tab page with QTableWidget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">tab_widget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># Same behaviour as the original tblParams</span>
+        <span class="n">tab_widget</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
+        <span class="n">tab_widget</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">tab_widget</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectRows</span><span class="p">)</span>
+        <span class="n">tab_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+        <span class="c1"># Simple naming here.</span>
+        <span class="c1"># One would think naming the tab with current model name would be good.</span>
+        <span class="c1"># However, some models have LONG names, which doesn&#39;t look well on the tab bar.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_number</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tab_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tab_name</span> <span class="o">=</span> <span class="s2">&quot;Tab &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_number</span><span class="p">)</span>
+        <span class="c1"># each table needs separate slots.</span>
+        <span class="n">tab_widget</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showContextMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">tab_widget</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">)</span>
+        <span class="c1"># Make the new tab active</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_number</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.addFitResults"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.addFitResults">[docs]</a>    <span class="k">def</span> <span class="nf">addFitResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new tab with batch fitting results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># pull out page name from results</span>
+        <span class="n">page_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">page_name</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addTabPage</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">page_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setTabText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">page_name</span><span class="p">)</span>
+        <span class="c1"># Update the new widget</span>
+        <span class="c1"># Fill in the table from input data in the last/newest page</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupTable</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Set a table tooltip describing the model</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">setTabToolTip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabWidget</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">page_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.onHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.onHelp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a local url in the default browser</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Fitting/fitting_help.html#batch-fit-mode&quot;</span>
+        <span class="n">GuiUtils</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">url</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BatchOutputPanel.onPlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.onPlot">[docs]</a>    <span class="k">def</span> <span class="nf">onPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot selected fits by sending signal to the parent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentTable</span><span class="p">()</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectedRows</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Nothing to plot!&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataFromTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentTable</span><span class="p">())</span>
+        <span class="c1"># data[&#39;Data&#39;] -&gt; [&#39;filename1&#39;, &#39;filename2&#39;, ...]</span>
+        <span class="c1"># look for the &#39;Data&#39; column and extract the filename</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Data&#39;</span><span class="p">][</span><span class="n">row</span><span class="p">]</span>
+                <span class="c1"># emit a signal so the plots are being shown</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotFromFilenameSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="c1"># data messed up.</span>
+                <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.dataFromTable"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.dataFromTable">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dataFromTable</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a dictionary {&lt;parameter&gt;:[list of values]} from the parameter table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidget</span><span class="p">))</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">columnCount</span><span class="p">()):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">rowCount</span><span class="p">())]</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">horizontalHeaderItem</span><span class="p">(</span><span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.actionSendToExcel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.actionSendToExcel">[docs]</a>    <span class="k">def</span> <span class="nf">actionSendToExcel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a .csv file and opens the default CSV reader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_filename</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">tempfile</span>
+            <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grid_filename</span> <span class="o">=</span> <span class="n">tmpfile</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataFromTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentTable</span><span class="p">())</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+            <span class="n">time_str</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%b </span><span class="si">%d</span><span class="s2"> %H:%M of %Y&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;File Generated by SasView &quot;</span>
+            <span class="n">details</span> <span class="o">+=</span> <span class="s2">&quot;on </span><span class="si">%s</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">time_str</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writeBatchToFile</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">tmpfile</span><span class="o">=</span><span class="n">tmpfile</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">)</span>
+            <span class="n">tmpfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">win32com.client</span> <span class="kn">import</span> <span class="n">Dispatch</span>
+            <span class="n">excel_app</span> <span class="o">=</span> <span class="n">Dispatch</span><span class="p">(</span><span class="s1">&#39;Excel.Application&#39;</span><span class="p">)</span>
+            <span class="n">excel_app</span><span class="o">.</span><span class="n">Workbooks</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_filename</span><span class="p">)</span>
+            <span class="n">excel_app</span><span class="o">.</span><span class="n">Visible</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error occured when calling Excel.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="n">ex</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.actionSaveFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.actionSaveFile">[docs]</a>    <span class="k">def</span> <span class="nf">actionSaveFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a .csv file and dump it do disk</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+        <span class="n">time_str</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%b </span><span class="si">%d</span><span class="s2"> %H %M of %Y&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">default_name</span> <span class="o">=</span> <span class="s2">&quot;Batch_Fitting_&quot;</span><span class="o">+</span><span class="n">time_str</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span>
+
+        <span class="n">wildcard</span> <span class="o">=</span> <span class="s2">&quot;CSV files (*.csv);;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;caption&#39;</span>   <span class="p">:</span> <span class="s1">&#39;Save As&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;directory&#39;</span> <span class="p">:</span> <span class="n">default_name</span><span class="p">,</span>
+            <span class="s1">&#39;filter&#39;</span>    <span class="p">:</span> <span class="n">wildcard</span><span class="p">,</span>
+            <span class="s1">&#39;parent&#39;</span>    <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># Query user for filename.</span>
+        <span class="n">filename_tuple</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># User cancelled.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataFromTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentTable</span><span class="p">())</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;File generated by SasView</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writeBatchToFile</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">tmpfile</span><span class="o">=</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.setupTableFromCSV"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.setupTableFromCSV">[docs]</a>    <span class="k">def</span> <span class="nf">setupTableFromCSV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create tablewidget items and show them, based on params</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Is this an empty grid?</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="c1"># Add a new page</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addTabPage</span><span class="p">()</span>
+            <span class="c1"># Access the newly created QTableWidget</span>
+            <span class="n">current_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span>
+        <span class="c1"># headers</span>
+        <span class="n">param_list</span> <span class="o">=</span> <span class="n">csv_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="c1"># need to remove the 2 header rows to get the total data row number</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">csv_data</span><span class="p">)</span> <span class="o">-</span><span class="mi">2</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">rows</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_list</span><span class="p">)</span>
+        <span class="n">current_page</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">current_page</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_list</span><span class="p">):</span>
+            <span class="n">current_page</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+        <span class="c1"># first - Chi2 and data filename</span>
+        <span class="k">for</span> <span class="n">i_row</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">csv_data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]):</span>
+            <span class="k">for</span> <span class="n">i_col</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+                <span class="n">current_page</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="n">i_col</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+
+        <span class="n">current_page</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.setupTable"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.setupTable">[docs]</a>    <span class="k">def</span> <span class="nf">setupTable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create tablewidget items and show them, based on params</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># quietly leave is nothing to show</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Figure out the headers</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">disperse_params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dispersion</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">magnetic_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">magnetic_params</span>
+        <span class="n">optimized_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">param_list</span>
+        <span class="c1"># Create the main parameter list</span>
+        <span class="n">param_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">magnetic_params</span> <span class="ow">and</span> <span class="s2">&quot;.width&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)]</span>
+
+        <span class="c1"># add fitted polydisp parameters</span>
+        <span class="n">param_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="s2">&quot;.width&quot;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">disperse_params</span> <span class="k">if</span> <span class="n">m</span><span class="o">+</span><span class="s2">&quot;.width&quot;</span> <span class="ow">in</span> <span class="n">optimized_params</span><span class="p">]</span>
+
+        <span class="c1"># add fitted magnetic params</span>
+        <span class="n">param_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">magnetic_params</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">optimized_params</span><span class="p">]</span>
+
+        <span class="c1"># Check if 2D model. If not, remove theta/phi</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sas_data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;theta&#39;</span> <span class="ow">in</span> <span class="n">param_list</span><span class="p">:</span>
+                <span class="n">param_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;theta&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;phi&#39;</span> <span class="ow">in</span> <span class="n">param_list</span><span class="p">:</span>
+                <span class="n">param_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;phi&#39;</span><span class="p">)</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_list</span><span class="p">)</span>
+
+        <span class="n">widget</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="n">columns</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># add 2 initial columns defined below</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+        <span class="c1"># Insert two additional columns</span>
+        <span class="n">param_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+        <span class="n">param_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Chi2&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_list</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+        <span class="c1"># dictionary of parameter errors for post-processing</span>
+        <span class="c1"># [param_name] = [param_column_nr, error_for_row_1, error_for_row_2,...]</span>
+        <span class="n">error_columns</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># first - Chi2 and data filename</span>
+        <span class="k">for</span> <span class="n">i_row</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="c1"># each row corresponds to a single fit</span>
+            <span class="n">chi2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fitness</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;sas_data&quot;</span><span class="p">):</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sas_data</span><span class="o">.</span><span class="n">filename</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)))</span>
+            <span class="c1"># Now, all the parameters</span>
+            <span class="k">for</span> <span class="n">i_col</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_list</span><span class="p">[</span><span class="mi">2</span><span class="p">:]):</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">param_list</span><span class="p">:</span>
+                    <span class="c1"># parameter is on the to-optimize list - get the optimized value</span>
+                    <span class="n">par_value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pvec</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">param_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
+                    <span class="c1"># parse out errors and store them for later use</span>
+                    <span class="n">err_value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stderr</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">param_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
+                    <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">error_columns</span><span class="p">:</span>
+                        <span class="n">error_columns</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err_value</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">error_columns</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i_col</span><span class="p">,</span> <span class="n">err_value</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># parameter was not varied</span>
+                    <span class="n">par_value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+
+                <span class="n">widget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="n">i_col</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                    <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">par_value</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+
+        <span class="c1"># Add errors</span>
+        <span class="n">error_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">error_columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">error_param</span> <span class="ow">in</span> <span class="n">error_list</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="c1"># must be reverse to keep column indices</span>
+            <span class="c1"># the offset for the err column: +2 from the first two extra columns, +1 to append this column</span>
+            <span class="n">error_column</span> <span class="o">=</span> <span class="n">error_columns</span><span class="p">[</span><span class="n">error_param</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">3</span>
+            <span class="n">error_values</span> <span class="o">=</span> <span class="n">error_columns</span><span class="p">[</span><span class="n">error_param</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">insertColumn</span><span class="p">(</span><span class="n">error_column</span><span class="p">)</span>
+
+            <span class="n">column_name</span> <span class="o">=</span> <span class="n">error_param</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERROR_COLUMN_CAPTION</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">error_column</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">i_row</span><span class="p">,</span> <span class="n">error</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">error_values</span><span class="p">):</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                <span class="c1"># Fancy, italic font for errors</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">()</span>
+                <span class="n">font</span><span class="o">.</span><span class="n">setItalic</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="n">error_column</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># resize content</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BatchOutputPanel.writeBatchToFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchOutputPanel.writeBatchToFile">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">writeBatchToFile</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper to write result from batch into cvs file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">tmpfile</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.csv&quot;</span><span class="p">:</span>
+            <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+        <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">details</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
+            <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+        <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">max_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">max_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_list</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">max_index</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">value_list</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_list</span><span class="p">):</span>
+                    <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value_list</span><span class="p">[</span><span class="n">index</span><span class="p">]))</span>
+                    <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+            <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+
+
+<div class="viewcode-block" id="BatchInversionOutputPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel">[docs]</a><span class="k">class</span> <span class="nc">BatchInversionOutputPanel</span><span class="p">(</span><span class="n">BatchOutputPanel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class for stateless grid-like printout of P(r) parameters for any number</span>
+<span class="sd">        of data sets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BatchInversionOutputPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
+        <span class="n">_translate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;GridPanelUI&quot;</span><span class="p">,</span> <span class="s2">&quot;Batch P(r) Results&quot;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="BatchInversionOutputPanel.setupTable"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel.setupTable">[docs]</a>    <span class="k">def</span> <span class="nf">setupTable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create tablewidget items and show them, based on params</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># headers</span>
+        <span class="n">param_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Filename&#39;</span><span class="p">,</span> <span class="s1">&#39;Rg [Å]&#39;</span><span class="p">,</span> <span class="s1">&#39;Chi^2/dof&#39;</span><span class="p">,</span> <span class="s1">&#39;I(Q=0)&#39;</span><span class="p">,</span> <span class="s1">&#39;Oscillations&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;Background [Å^-1]&#39;</span><span class="p">,</span> <span class="s1">&#39;P+ Fraction&#39;</span><span class="p">,</span> <span class="s1">&#39;P+1-theta Fraction&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;Calc. Time [sec]&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setHorizontalHeaderItem</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">param</span><span class="p">))</span>
+
+        <span class="c1"># first - Chi2 and data filename</span>
+        <span class="k">for</span> <span class="n">i_row</span><span class="p">,</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">pr</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">out</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">pr</span><span class="o">.</span><span class="n">cov</span>
+            <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;P(r) for </span><span class="si">{}</span><span class="s2"> did not converge.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">rg</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">chi2</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">iq0</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">oscillations</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">background</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_positive</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_pos_err</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">cov</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">i_row</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.2g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tblParams</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BatchInversionOutputPanel.onHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel.onHelp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a local url in the default browser</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">HELP_DIRECTORY_LOCATION</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Fitting/fitting_help.html#batch-fit-mode&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">location</span> <span class="o">+</span> <span class="n">url</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">webbrowser</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cannot display help. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ex</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BatchInversionOutputPanel.closeEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tell the parent window the window closed&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

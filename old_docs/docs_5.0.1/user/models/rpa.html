@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>rpa &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="spinodal" href="spinodal.html" />
+    <link rel="prev" title="power_law" href="power_law.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spinodal.html" title="spinodal"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="power_law.html" title="power_law"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="rpa">
+<span id="id1"></span><h1>rpa</h1>
+<p>Random Phase Approximation</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="45%" />
+<col width="13%" />
+<col width="24%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Description</th>
+<th class="head">Units</th>
+<th class="head">Default value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>scale</td>
+<td>Source intensity</td>
+<td>None</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>background</td>
+<td>Source background</td>
+<td>cm<sup>-1</sup></td>
+<td>0.001</td>
+</tr>
+<tr class="row-even"><td>case_num</td>
+<td>Component organization</td>
+<td>None</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>N[4]</td>
+<td>Degree of polymerization</td>
+<td>None</td>
+<td>1000</td>
+</tr>
+<tr class="row-even"><td>Phi[4]</td>
+<td>volume fraction</td>
+<td>None</td>
+<td>0.25</td>
+</tr>
+<tr class="row-odd"><td>v[4]</td>
+<td>molar volume</td>
+<td>mL/mol</td>
+<td>100</td>
+</tr>
+<tr class="row-even"><td>L[4]</td>
+<td>scattering length</td>
+<td>fm</td>
+<td>10</td>
+</tr>
+<tr class="row-odd"><td>b[4]</td>
+<td>segment length</td>
+<td>Å</td>
+<td>5</td>
+</tr>
+<tr class="row-even"><td>K12</td>
+<td>A:B interaction parameter</td>
+<td>None</td>
+<td>-0.0004</td>
+</tr>
+<tr class="row-odd"><td>K13</td>
+<td>A:C interaction parameter</td>
+<td>None</td>
+<td>-0.0004</td>
+</tr>
+<tr class="row-even"><td>K14</td>
+<td>A:D interaction parameter</td>
+<td>None</td>
+<td>-0.0004</td>
+</tr>
+<tr class="row-odd"><td>K23</td>
+<td>B:C interaction parameter</td>
+<td>None</td>
+<td>-0.0004</td>
+</tr>
+<tr class="row-even"><td>K24</td>
+<td>B:D interaction parameter</td>
+<td>None</td>
+<td>-0.0004</td>
+</tr>
+<tr class="row-odd"><td>K34</td>
+<td>C:D interaction parameter</td>
+<td>None</td>
+<td>-0.0004</td>
+</tr>
+</tbody>
+</table>
+<p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
+<p><strong>Definition</strong></p>
+<p>Calculates the macroscopic scattering intensity for a multi-component
+homogeneous mixture of polymers using the Random Phase Approximation.
+This general formalism contains 10 specific cases</p>
+<p>Case 0: C/D binary mixture of homopolymers</p>
+<p>Case 1: C-D diblock copolymer</p>
+<p>Case 2: B/C/D ternary mixture of homopolymers</p>
+<p>Case 3: C/C-D mixture of a homopolymer B and a diblock copolymer C-D</p>
+<p>Case 4: B-C-D triblock copolymer</p>
+<p>Case 5: A/B/C/D quaternary mixture of homopolymers</p>
+<p>Case 6: A/B/C-D mixture of two homopolymers A/B and a diblock C-D</p>
+<p>Case 7: A/B-C-D mixture of a homopolymer A and a triblock B-C-D</p>
+<p>Case 8: A-B/C-D mixture of two diblock copolymers A-B and C-D</p>
+<p>Case 9: A-B-C-D tetra-block copolymer</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These case numbers are different from those in the NIST SANS package!</p>
+</div>
+<p>The models are based on the papers by Akcasu <em>et al.</em> [1] and by
+Hammouda [2] assuming the polymer follows Gaussian statistics such
+that <span class="math notranslate nohighlight">\(R_g^2 = n b^2/6\)</span> where <span class="math notranslate nohighlight">\(b\)</span> is the statistical segment length and <span class="math notranslate nohighlight">\(n\)</span> is
+the number of statistical segment lengths. A nice tutorial on how these are
+constructed and implemented can be found in chapters 28, 31 and 34, and Part H,
+of Hammouda’s ‘SANS Toolbox’ [3].</p>
+<p>In brief, the macroscopic cross sections are derived from the general forms
+for homopolymer scattering and the multiblock cross-terms while the inter,
+polymer cross terms are described in the usual way by the <span class="math notranslate nohighlight">\(\chi\)</span> parameter.</p>
+<p>USAGE NOTES:</p>
+<ul>
+<li><p class="first">Only one case can be used at any one time.</p>
+</li>
+<li><p class="first">The RPA (mean field) formalism only applies only when the multicomponent
+polymer mixture is in the homogeneous mixed-phase region.</p>
+</li>
+<li><p class="first"><strong>Component D is assumed to be the “background” component (ie, all contrasts
+are calculated with respect to component D).</strong> So the scattering contrast
+for a C/D blend <span class="math notranslate nohighlight">\(\rho_{C/D} = [\rho_C - \rho_D]\)</span><sup>2</sup>.</p>
+</li>
+<li><p class="first">Depending on which case is being used, the number of fitting parameters can
+vary.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>In general the degrees of polymerization, the volume
+fractions, the molar volumes, and the neutron scattering lengths for each
+component are obtained from other methods and held fixed while The <em>scale</em>
+parameter should be held equal to unity.</li>
+<li>The variables are normally the segment lengths (<span class="math notranslate nohighlight">\(b_a\)</span>, <span class="math notranslate nohighlight">\(b_b\)</span>,
+etc.) and <span class="math notranslate nohighlight">\(\chi\)</span> parameters (<span class="math notranslate nohighlight">\(K_{ab}\)</span>, <span class="math notranslate nohighlight">\(K_{ac}\)</span>, etc).</li>
+</ul>
+</div>
+</li>
+</ul>
+<div class="figure" id="id2">
+<img alt="../../_images/rpa_autogenfig.png" src="../../_images/rpa_autogenfig.png" />
+<p class="caption"><span class="caption-number">Fig. 115 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
+</div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/1fec9c74d977975ebef096e2aa5caee9/rpa.py"><code class="xref download docutils literal notranslate"><span class="pre">rpa.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/2b904f681dadd8572845a5dcaa08ad3f/rpa.c"><code class="xref download docutils literal notranslate"><span class="pre">rpa.c</span></code></a></p>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li>A Z Akcasu, R Klein and B Hammouda, <em>Macromolecules</em>, 26 (1993) 4136</li>
+<li><ol class="first upperalpha" start="2">
+<li>Hammouda, <em>Advances in Polymer Science</em> 106 (1993) 87</li>
+</ol>
+</li>
+<li><ol class="first upperalpha" start="2">
+<li>Hammouda, <em>SANS Toolbox</em> <a class="reference external" href="https://www.ncnr.nist.gov/staff/hammouda/the_sans_toolbox.pdf">https://www.ncnr.nist.gov/staff/hammouda/the_sans_toolbox.pdf</a>.</li>
+</ol>
+</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong> Boualem Hammouda - NIST IGOR/DANSE <strong>Date:</strong> pre 2010</li>
+<li><strong>Converted to sasmodels by:</strong> Paul Kienzle <strong>Date:</strong> July 18, 2016</li>
+<li><strong>Last Modified by:</strong> Paul Butler <strong>Date:</strong> March 12, 2017</li>
+<li><strong>Last Reviewed by:</strong> Steve King <strong>Date:</strong> March 27, 2019</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="power_law.html"
+                        title="previous chapter">power_law</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="spinodal.html"
+                        title="next chapter">spinodal</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/user/models/rpa.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spinodal.html" title="spinodal"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="power_law.html" title="power_law"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" >Shape-Independent Functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

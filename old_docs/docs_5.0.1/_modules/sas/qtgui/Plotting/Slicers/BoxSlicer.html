@@ -1,0 +1,587 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Plotting.Slicers.BoxSlicer &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Plotting.Slicers.BoxSlicer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SlicerModel</span> <span class="kn">import</span> <span class="n">SlicerModel</span>
+
+
+<div class="viewcode-block" id="BoxInteractor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor">[docs]</a><span class="k">class</span> <span class="nc">BoxInteractor</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">,</span> <span class="n">SlicerModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    BoxInteractor define a rectangle that return data1D average of Data2D</span>
+<span class="sd">    in a rectangle area defined by -x, x ,y, -y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">SlicerModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># Class initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="c1">#connecting artist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">connect</span>
+        <span class="c1"># which direction is the preferred interaction direction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># determine x y  values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+                           <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+                           <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+        <span class="c1"># when reach qmax reset the graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymin</span><span class="p">)</span>
+        <span class="c1"># Number of points on the plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="c1"># If True, I(|Q|) will be return, otherwise,</span>
+        <span class="c1"># negative q-values are allowed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># reference of the current  Slab averaging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Create vertical and horizaontal lines for the rectangle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span> <span class="o">=</span> <span class="n">VerticalLines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span>
+                                            <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                                            <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                            <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                                            <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span> <span class="o">=</span> <span class="n">HorizontalLines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span>
+                                                <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span>
+                                                <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                                <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                                                <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span>
+        <span class="c1"># draw the rectangle and plost the data 1D resulting</span>
+        <span class="c1"># of averaging data2D</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setModelFromParams</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BoxInteractor.update_and_post"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.update_and_post">[docs]</a>    <span class="k">def</span> <span class="nf">update_and_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the slicer and plot the resulting data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.set_layer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.set_layer">[docs]</a>    <span class="k">def</span> <span class="nf">set_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+
+<span class="sd">        :param n: the number of layer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear the slicer and all connected events related to this slicer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">connect</span><span class="o">.</span><span class="n">clearall</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Respond to changes in the model by recalculating the profiles and</span>
+<span class="sd">        resetting the widgets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># #Update the slicer if an horizontal line is dragged</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="c1"># #Update the slicer if a vertical line is dragged</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="BoxInteractor.post_data"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.post_data">[docs]</a>    <span class="k">def</span> <span class="nf">post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_slab</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        post data averaging in Qx or Qy given new_slab type</span>
+
+<span class="sd">        :param new_slab: slicer that determine with direction to average</span>
+<span class="sd">        :param nbins: the number of points plotted when averaging</span>
+<span class="sd">        :param direction: the direction of averaging</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
+
+        <span class="n">x_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">y_max</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nbins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="n">nbins</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">averager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">new_slab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;post data:cannot average , averager is empty&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">averager</span> <span class="o">=</span> <span class="n">new_slab</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">:</span>
+                <span class="n">x_low</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_low</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x_min</span><span class="p">)</span>
+            <span class="n">bin_width</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">+</span> <span class="n">x_low</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold</span><span class="p">:</span>
+                <span class="n">y_low</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y_low</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y_min</span><span class="p">)</span>
+            <span class="n">bin_width</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_max</span> <span class="o">+</span> <span class="n">y_low</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;post data:no Box Average direction was supplied&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># # Average data2D given Qx or Qy</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">averager</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">,</span>
+                            <span class="n">bin_width</span><span class="o">=</span><span class="n">bin_width</span><span class="p">)</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">fold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fold</span>
+        <span class="n">boxavg</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># 3 Create Data1D to plot</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">boxavg</span><span class="p">,</span> <span class="s2">&quot;dxl&quot;</span><span class="p">):</span>
+            <span class="n">dxl</span> <span class="o">=</span> <span class="n">boxavg</span><span class="o">.</span><span class="n">dxl</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">boxavg</span><span class="p">,</span> <span class="s2">&quot;dxw&quot;</span><span class="p">):</span>
+            <span class="n">dxw</span> <span class="o">=</span> <span class="n">boxavg</span><span class="o">.</span><span class="n">dxw</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dxw</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">new_plot</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">boxavg</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">boxavg</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="n">boxavg</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="n">dxl</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="n">dxw</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">averager</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> \
+                        <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">averager</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> \
+                        <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">source</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span>
+        <span class="c1"># # If the data file does not tell us what the axes are, just assume...</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm</span><span class="si">{Q}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;A^{-1}&quot;</span><span class="p">)</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm</span><span class="si">{Intensity}</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="s2">&quot;cm^{-1}&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">scale</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span> <span class="ow">and</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_plot</span><span class="o">.</span><span class="n">ytransform</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span>
+            <span class="n">new_plot</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm</span><span class="si">{Residuals}</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+
+        <span class="c1">#new_plot. = &quot;2daverage&quot; + self.data.name</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">averager</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">group_id</span> <span class="o">=</span> <span class="n">new_plot</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">is_data</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span>
+        <span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemWithPlot</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">new_plot</span><span class="p">,</span> <span class="n">new_plot</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">forcePlotDisplaySignal</span><span class="o">.</span><span class="n">emit</span><span class="p">([</span><span class="n">item</span><span class="p">,</span> <span class="n">new_plot</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setModelFromParams</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called after a dragging event.</span>
+<span class="sd">        Post the slicer new parameters and creates a new Data1D</span>
+<span class="sd">        corresponding to the new average</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.set_cursor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.set_cursor">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.getParams"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.getParams">[docs]</a>    <span class="k">def</span> <span class="nf">getParams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store a copy of values of parameters of the slicer into a dictionary.</span>
+
+<span class="sd">        :return params: the dictionary created</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;y_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;nbins&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.setParams"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.setParams">[docs]</a>    <span class="k">def</span> <span class="nf">setParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receive a dictionary and reset the slicer with values contained</span>
+<span class="sd">        in the values of the dictionary.</span>
+
+<span class="sd">        :param params: a dictionary containing name of slicer parameters and</span>
+<span class="sd">            values the user assigned to the slicer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_max&quot;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;y_max&quot;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;nbins&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoxInteractor.draw"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="HorizontalLines"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines">[docs]</a><span class="k">class</span> <span class="nc">HorizontalLines</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw 2 Horizontal lines centered on (0,0) that can move</span>
+<span class="sd">    on the x- direction and in opposite direction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="c1"># Class initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="c1"># Saving the end points of two lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="c1"># Creating a marker</span>
+        <span class="c1"># Inner circle marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                           <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                           <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                                           <span class="n">pickradius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pick&quot;</span><span class="p">,</span>
+                                           <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                           <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Define 2 horizontal lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span>
+                                       <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                       <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span>
+                                          <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                          <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Flag to check the motion of the lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Connecting markers to mouse events and draw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_markers</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">top_line</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HorizontalLines.set_layer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.set_layer">[docs]</a>    <span class="k">def</span> <span class="nf">set_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+
+<span class="sd">        :param n: the number of layer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HorizontalLines.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear this slicer  and its markers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HorizontalLines.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw the new roughness on the graph.</span>
+
+<span class="sd">        :param x: x-coordinates to reset current class x</span>
+<span class="sd">        :param y: y-coordinates to reset current class y</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reset x, y- coordinates if send as parameters</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="c1"># Draw lines and markers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="HorizontalLines.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span></div>
+
+<div class="viewcode-block" id="HorizontalLines.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called after a dragging this edge and set self.has_move to False</span>
+<span class="sd">        to specify the end of dragging motion</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">moveend</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HorizontalLines.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span></div>
+
+<div class="viewcode-block" id="HorizontalLines.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.HorizontalLines.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="VerticalLines"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines">[docs]</a><span class="k">class</span> <span class="nc">VerticalLines</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select an annulus through a 2D plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="c1"># Inner circle marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                           <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                           <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                                           <span class="n">pickradius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pick&quot;</span><span class="p">,</span>
+                                           <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span>
+                                         <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span>
+                                         <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                         <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span>
+                                        <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span>
+                                        <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                        <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_markers</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">right_line</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+<div class="viewcode-block" id="VerticalLines.set_layer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.set_layer">[docs]</a>    <span class="k">def</span> <span class="nf">set_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+
+<span class="sd">        :param n: the number of layer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="VerticalLines.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear this slicer  and its markers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="VerticalLines.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw the new roughness on the graph.</span>
+
+<span class="sd">        :param x: x-coordinates to reset current class x</span>
+<span class="sd">        :param y: y-coordinates to reset current class y</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Reset x, y -coordinates if given as parameters</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="c1"># Draw lines and markers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="VerticalLines.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span></div>
+
+<div class="viewcode-block" id="VerticalLines.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called after a dragging this edge and set self.has_move to False</span>
+<span class="sd">        to specify the end of dragging motion</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">moveend</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VerticalLines.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span></div>
+
+<div class="viewcode-block" id="VerticalLines.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.VerticalLines.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="BoxInteractorX"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractorX">[docs]</a><span class="k">class</span> <span class="nc">BoxInteractorX</span><span class="p">(</span><span class="n">BoxInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average in Qx direction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">BoxInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post data creating by averaging in Qx direction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">SlabX</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">SlabX</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoxInteractorY"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractorY">[docs]</a><span class="k">class</span> <span class="nc">BoxInteractorY</span><span class="p">(</span><span class="n">BoxInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average in Qy direction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">BoxInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post data creating by averaging in Qy direction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">SlabY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">SlabY</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

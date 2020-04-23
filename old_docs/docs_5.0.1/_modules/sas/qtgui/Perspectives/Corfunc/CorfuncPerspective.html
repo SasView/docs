@@ -1,0 +1,616 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Perspectives.Corfunc.CorfuncPerspective &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Corfunc.CorfuncPerspective</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides the intelligence behind the gui interface for Corfunc.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=E1101</span>
+
+<span class="c1"># global</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvasQTAgg</span> \
+    <span class="k">as</span> <span class="n">FigureCanvas</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">NavigationToolbar2QT</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg.linalg</span> <span class="kn">import</span> <span class="n">LinAlgError</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<span class="c1"># sas-global</span>
+<span class="c1"># pylint: disable=import-error, no-name-in-module</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.corfunc.corfunc_calculator</span> <span class="kn">import</span> <span class="n">CorfuncCalculator</span>
+<span class="c1"># pylint: enable=import-error, no-name-in-module</span>
+
+<span class="c1"># local</span>
+<span class="kn">from</span> <span class="nn">.UI.CorfuncPanel</span> <span class="kn">import</span> <span class="n">Ui_CorfuncDialog</span>
+<span class="kn">from</span> <span class="nn">.CorfuncUtils</span> <span class="kn">import</span> <span class="n">WIDGETS</span> <span class="k">as</span> <span class="n">W</span>
+
+
+<div class="viewcode-block" id="MyMplCanvas"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas">[docs]</a><span class="k">class</span> <span class="nc">MyMplCanvas</span><span class="p">(</span><span class="n">FigureCanvas</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">Figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+        <span class="n">FigureCanvas</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extrap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draggable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;button_release_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_mouse_up</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;button_press_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_mouse_down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;motion_notify_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_motion</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MyMplCanvas.on_legend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas.on_legend">[docs]</a>    <span class="k">def</span> <span class="nf">on_legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if mouse coursor is on legend box</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">on_legend_box</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">qx</span> <span class="o">&gt;</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span> <span class="ow">and</span> <span class="n">qx</span> <span class="o">&lt;</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmax</span> <span class="ow">and</span> <span class="n">qy</span> <span class="o">&gt;</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span>  <span class="ow">and</span> <span class="n">qy</span> <span class="o">&lt;</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymax</span><span class="p">:</span>
+            <span class="n">on_legend_box</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span>  <span class="n">on_legend_box</span></div>
+
+<div class="viewcode-block" id="MyMplCanvas.on_mouse_down"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas.on_mouse_down">[docs]</a>    <span class="k">def</span> <span class="nf">on_mouse_down</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">draggable</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_legend</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="n">qmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">qmax1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">qmax2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">qmin</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">qmax1</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">qmin</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">qmax2</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">=</span> <span class="s2">&quot;qmin&quot;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">qmax2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">qmax1</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">=</span> <span class="s2">&quot;qmax2&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">=</span> <span class="s2">&quot;qmax1&quot;</span></div>
+
+<div class="viewcode-block" id="MyMplCanvas.on_mouse_up"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas.on_mouse_up">[docs]</a>    <span class="k">def</span> <span class="nf">on_mouse_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_legend</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">==</span> <span class="s2">&quot;qmin&quot;</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">==</span> <span class="s2">&quot;qmax1&quot;</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">))))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="MyMplCanvas.on_motion"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas.on_motion">[docs]</a>    <span class="k">def</span> <span class="nf">on_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">draggable</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">==</span> <span class="s2">&quot;qmin&quot;</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dragging</span> <span class="o">==</span> <span class="s2">&quot;qmax1&quot;</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="MyMplCanvas.draw_q_space"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas.draw_q_space">[docs]</a>    <span class="k">def</span> <span class="nf">draw_q_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Draw the Q space data in the plot window</span>
+
+<span class="sd">        This draws the q space data in self.data, as well</span>
+<span class="sd">        as the bounds set by self.qmin, self.qmax1, and self.qmax2.</span>
+<span class="sd">        It will also plot the extrpolation in self.extrap, if it exists.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draggable</span> <span class="o">=</span> <span class="kc">True</span><span class="p">;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Q [$\AA^{-1}$]&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;I(Q) [cm$^{-1}$]&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Scattering data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">qmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">qmax1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">qmax2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="c1"># self.axes.plot(self.data.x, self.data.y, label=&quot;Experimental Data&quot;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Experimental Data&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">qmin</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">qmax1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">qmax2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                               <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+                               <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extrap</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extrap</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">extrap</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Extrapolation&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">extrap</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MyMplCanvas.draw_real_space"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.MyMplCanvas.draw_real_space">[docs]</a>    <span class="k">def</span> <span class="nf">draw_real_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function draws the real space data onto the plot</span>
+
+<span class="sd">        The 1d correlation function in self.data, the 3d correlation function</span>
+<span class="sd">        in self.data3, and the interface distribution function in self.data_idf</span>
+<span class="sd">        are all draw in on the plot in linear cooredinates.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draggable</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Z [$\AA$]&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Correlation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Real Space Correlations&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">data1</span><span class="p">,</span> <span class="n">data3</span><span class="p">,</span> <span class="n">data_idf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data1</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;1D Correlation&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data3</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data3</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;3D Correlation&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_idf</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data_idf</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                           <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Interface Distribution Function&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">data1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="CorfuncWindow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow">[docs]</a><span class="k">class</span> <span class="nc">CorfuncWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_CorfuncDialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Displays the correlation function analysis of sas data.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Corfunc&quot;</span>  <span class="c1"># For displaying in the combo box</span>
+
+    <span class="n">trigger</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+
+<span class="c1"># pylint: disable=unused-argument</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CorfuncWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Corfunc Perspective&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">Communicate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span> <span class="o">=</span> <span class="n">CorfuncCalculator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtLowerQMin</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtLowerQMin</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span> <span class="o">=</span> <span class="n">MyMplCanvas</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotLayout</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotLayout</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">NavigationToolbar2QT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span> <span class="o">=</span> <span class="n">MyMplCanvas</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotLayout</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotLayout</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">NavigationToolbar2QT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gridLayout_4</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gridLayout_4</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Connect buttons to slots.</span>
+        <span class="c1"># Needs to be done early so default values propagate properly.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_slots</span><span class="p">()</span>
+
+        <span class="c1"># Set up the model.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_model</span><span class="p">()</span>
+
+        <span class="c1"># Set up the mapper</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_mapper</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CorfuncWindow.setup_slots"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.setup_slots">[docs]</a>    <span class="k">def</span> <span class="nf">setup_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect the buttons to their appropriate slots.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdExtrapolate</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdExtrapolate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTransform</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTransform</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdSave</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_save</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdSave</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculateBg</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_background</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculateBg</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdHelp</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showHelp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_changed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">finish_transform</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.setup_model"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.setup_model">[docs]</a>    <span class="k">def</span> <span class="nf">setup_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Populate the model with default data.&quot;&quot;&quot;</span>
+        <span class="c1"># filename</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.01&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.20&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.22&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">))</span>
+        <span class="c1">#self.model.setItem(W.W_TRANSFORM,</span>
+        <span class="c1">#                   QtGui.QStandardItem(&quot;Fourier&quot;))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERA</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERB</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PORODK</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PORODSIGMA</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_CORETHICK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_INTTHICK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_HARDBLOCK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_CRYSTAL</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_POLY</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PERIOD</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.model_changed"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.model_changed">[docs]</a>    <span class="k">def</span> <span class="nf">model_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Actions to perform when the data is updated&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">draw_q_space</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">lowerq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">qmax1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">qmax2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">upperq</span> <span class="o">=</span> <span class="p">(</span><span class="n">qmax1</span><span class="p">,</span> <span class="n">qmax2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> \
+            <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+<div class="viewcode-block" id="CorfuncWindow.extrapolate"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.extrapolate">[docs]</a>    <span class="k">def</span> <span class="nf">extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extend the experiemntal data with guinier and porod curves.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_calculator</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">compute_extrapolation</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERA</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">])))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERB</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">])))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PORODK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;K&#39;</span><span class="p">])))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PORODSIGMA</span><span class="p">,</span>
+                               <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">])))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">extrap</span> <span class="o">=</span> <span class="n">extrapolation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">draw_q_space</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdTransform</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">LinAlgError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;These is not enough data in the fitting range. &quot;</span>\
+                      <span class="s2">&quot;Try decreasing the upper Q, increasing the &quot;</span>\
+                      <span class="s2">&quot;cutoff Q, or increasing the lower Q.&quot;</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Calculation Error&quot;</span><span class="p">,</span>
+                                      <span class="n">message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">extrap</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">draw_q_space</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CorfuncWindow.transform"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the real space version of the extrapolation.&quot;&quot;&quot;</span>
+        <span class="c1">#method = self.model.item(W.W_TRANSFORM).text().lower()</span>
+
+        <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;fourier&quot;</span>
+
+        <span class="n">extrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">extrap</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">def</span> <span class="nf">updatefn</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Report progress of transformation.&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">completefn</span><span class="p">(</span><span class="n">transforms</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Extract the values from the transforms and plot&quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_calculator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">compute_transform</span><span class="p">(</span><span class="n">extrap</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span>
+                                           <span class="n">completefn</span><span class="p">,</span> <span class="n">updatefn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CorfuncWindow.finish_transform"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.finish_transform">[docs]</a>    <span class="k">def</span> <span class="nf">finish_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">extract_parameters</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_CORETHICK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;d0&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_INTTHICK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dtr&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_HARDBLOCK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Lc&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_CRYSTAL</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;fill&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_POLY</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PERIOD</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">transforms</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_real_space_plot</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="o">.</span><span class="n">draw_real_space</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdSave</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.update_real_space_plot"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.update_real_space_plot">[docs]</a>    <span class="k">def</span> <span class="nf">update_real_space_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datas</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;take the datas tuple and create a plot in DE&quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datas</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="n">plot_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1D Correlation&#39;</span><span class="p">,</span> <span class="s1">&#39;3D Correlation&#39;</span><span class="p">,</span> <span class="s1">&#39;Interface Distribution Function&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datas</span><span class="p">):</span>
+            <span class="n">plot_to_add</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">createGuiData</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span>
+            <span class="c1"># set plot properties</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">plot_to_add</span><span class="o">.</span><span class="n">title</span>
+            <span class="n">plot_to_add</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+            <span class="n">plot_to_add</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;Line&#39;</span>
+            <span class="n">plot_to_add</span><span class="o">.</span><span class="n">_xaxis</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
+            <span class="n">plot_to_add</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span>
+            <span class="n">plot_to_add</span><span class="o">.</span><span class="n">_yaxis</span> <span class="o">=</span> <span class="s2">&quot;\Gamma&quot;</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">titles</span><span class="p">):</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">plot_to_add</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">titles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemWithPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span><span class="p">,</span> <span class="n">plot_to_add</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+            <span class="c1">#self.axes.set_xlim(min(data1.x), max(data1.x) / 4)</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.setup_mapper"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.setup_mapper">[docs]</a>    <span class="k">def</span> <span class="nf">setup_mapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creating mapping between model and gui elements.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtLowerQMax</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtUpperQMin</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtUpperQMax</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_QCUTOFF</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">)</span>
+        <span class="c1">#self.mapper.addMapping(self.transformCombo, W.W_TRANSFORM)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtGuinierA</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERA</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtGuinierB</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtPorodK</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_PORODK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtPorodSigma</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_PORODSIGMA</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtAvgCoreThick</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_CORETHICK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtAvgIntThick</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_INTTHICK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtAvgHardBlock</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_HARDBLOCK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtPolydisp</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_POLY</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtLongPeriod</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_PERIOD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtLocalCrystal</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_CRYSTAL</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtFilename</span><span class="p">,</span> <span class="n">W</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.calculate_background"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.calculate_background">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find a good estimate of the background value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_calculator</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">background</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">compute_background</span><span class="p">()</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">background</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_BACKGROUND</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">LinAlgError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;These is not enough data in the fitting range. &quot;</span>\
+                      <span class="s2">&quot;Try decreasing the upper Q or increasing the cutoff Q&quot;</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Calculation Error&quot;</span><span class="p">,</span>
+                                      <span class="n">message</span><span class="p">)</span></div>
+
+
+    <span class="c1"># pylint: disable=invalid-name</span>
+<div class="viewcode-block" id="CorfuncWindow.showHelp"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.showHelp">[docs]</a>    <span class="k">def</span> <span class="nf">showHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Opens a webpage with help on the perspective</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Display help when clicking on Help button &quot;&quot;&quot;</span>
+        <span class="n">treeLocation</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Corfunc/corfunc_help.html&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">treeLocation</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.allowBatch"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.allowBatch">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">allowBatch</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We cannot perform corfunc analysis in batch at this time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.setData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_item</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain a QStandardItem object and dissect it to get Data1D/2D</span>
+<span class="sd">        Pass it over to the calculator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_item</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the Corfunc Perpsective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the Corfunc Perspective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">model_item</span> <span class="o">=</span> <span class="n">data_item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">model_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_item</span> <span class="o">=</span> <span class="n">model_item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCalculateBg</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdExtrapolate</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERA</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_GUINIERB</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PORODK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PORODSIGMA</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_CORETHICK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_INTTHICK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_HARDBLOCK</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_CRYSTAL</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_POLY</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_PERIOD</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">extrap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_canvas</span><span class="o">.</span><span class="n">draw_q_space</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdTransform</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="o">.</span><span class="n">draw_real_space</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">W</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.setClosable"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.setClosable">[docs]</a>    <span class="k">def</span> <span class="nf">setClosable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow outsiders close this widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.closeEvent"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite QDialog close method to allow for custom widget close</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span><span class="p">:</span>
+            <span class="c1"># reset the closability flag</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setClosable</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># Tell the MdiArea to close the container</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>
+            <span class="c1"># Maybe we should just minimize</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setWindowState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinimized</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.title"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.title">[docs]</a>    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Window title function used by certain error messages.</span>
+<span class="sd">        Check DataExplorer.py, line 355</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Corfunc Perspective&quot;</span></div>
+
+<div class="viewcode-block" id="CorfuncWindow.on_save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Corfunc.html#sas.qtgui.Perspectives.Corfunc.CorfuncPerspective.CorfuncWindow.on_save">[docs]</a>    <span class="k">def</span> <span class="nf">on_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save corfunc state into a file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f_name</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span>
+            <span class="n">caption</span><span class="o">=</span><span class="s2">&quot;Save As&quot;</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;Corfunc Text Output (*.crf)&quot;</span><span class="p">,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f_name</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f_name</span><span class="p">:</span>
+            <span class="n">f_name</span> <span class="o">+=</span> <span class="s2">&quot;.crf&quot;</span>
+
+        <span class="n">data1</span><span class="p">,</span> <span class="n">data3</span><span class="p">,</span> <span class="n">data_idf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_realplot</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;X 1D 3D IDF</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span>
+                       <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([(</span><span class="n">data1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data1</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">data3</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">data_idf</span><span class="o">.</span><span class="n">y</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div></div>
+    <span class="c1"># pylint: enable=invalid-name</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>
