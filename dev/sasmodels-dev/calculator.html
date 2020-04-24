@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2. Calculator Interface &#8212; SasView 5.0.1 documentation</title>
+    <title>2. Calculator Interface &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -19,7 +19,7 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Release Notes" href="../../user/RELEASE.html" />
+    <link rel="next" title="sasmodels" href="../sasmodels-api/modules.html" />
     <link rel="prev" title="1. Code Overview" href="overview.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -32,12 +32,12 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../../user/RELEASE.html" title="Release Notes"
+          <a href="../sasmodels-api/modules.html" title="sasmodels"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Code Overview"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Sasmodels Developers Guide</a> &#187;</li> 
       </ul>
@@ -89,7 +89,7 @@ kernel in a reasonable time; because the GPU is used by the operating
 system to show its windows, if a GPU kernel runs too long then it will be
 automatically killed and no results will be returned to the caller.</p>
 <p>The <em>ProblemDetails</em> structure is a direct map of the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code> buffer.  This indicates which parameters have
+<a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.details.CallDetails" title="sasmodels.details.CallDetails"><code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code></a> buffer.  This indicates which parameters have
 dispersity, and where in the values vector the values and weights can be
 found.  For each parameter with dispersity there is a parameter id, the length
 of the dispersity loop for that parameter, the offset of the parameter
@@ -116,7 +116,7 @@ for each parameter is stored in the <em>pd_offset</em> field of the <em>ProblemD
 structure, but the values do need to be contiguous.  After <em>num_weights</em>
 values, the pd weight vector is stored, with the same configuration as the
 pd value vector.  Note that the pd vectors can contain values that are not
-in the dispersity loop; this is used by <code class="xref py py-class docutils literal notranslate"><span class="pre">mixture.MixtureKernel</span></code>
+in the dispersity loop; this is used by <a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureKernel" title="sasmodels.mixture.MixtureKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">mixture.MixtureKernel</span></code></a>
 to make it easier to call the various component kernels.</p>
 <p>The <em>q</em> vector contains one value for each q for <em>Iq</em> kernels, or a pair
 of <em>(qx,qy)</em> values for each q for <em>Iqxy</em> and <em>Imagnetic</em> kernels.  OpenCL
@@ -128,7 +128,7 @@ all points in the dispersity mesh.  This is required when the dispersity
 loop is broken across several kernel calls.</p>
 <p><em>cutoff</em> is a importance cutoff so that points which contribute negligibly
 to the total scattering can be skipped without calculating them.</p>
-<p><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code> defines the following C macros:</p>
+<p><a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code></a> defines the following C macros:</p>
 <ul>
 <li><p class="first">USE_OPENCL is defined if running in opencl</p>
 </li>
@@ -310,7 +310,7 @@ along with the weights vector, since features such as the number of
 disperity points per pd parameter won’t change between function evaluations.
 A new parameter vector must be sent for each I(q) evaluation.  This is
 not currently implemented, and would require some resturcturing of
-the <code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code> interface.</p>
+the <a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.sasview_model.SasviewModel" title="sasmodels.sasview_model.SasviewModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code></a> interface.</p>
 <p>The results array will be initialized to zero for dispersity loop
 entry zero, and preserved between calls to [start, stop] so that the
 results accumulate by the time the loop has completed.  Background and
@@ -346,8 +346,8 @@ the accumulation vector.</p>
   <p class="topless"><a href="overview.html"
                         title="previous chapter">1. Code Overview</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../user/RELEASE.html"
-                        title="next chapter">Release Notes</a></p>
+  <p class="topless"><a href="../sasmodels-api/modules.html"
+                        title="next chapter">sasmodels</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -381,12 +381,12 @@ the accumulation vector.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../../user/RELEASE.html" title="Release Notes"
+          <a href="../sasmodels-api/modules.html" title="sasmodels"
              >next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Code Overview"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" >Sasmodels Developers Guide</a> &#187;</li> 
       </ul>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.sascalc.calculator package &#8212; SasView 5.0.1 documentation</title>
+    <title>sas.sascalc.calculator package &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="sas.sascalc.html" title="sas.sascalc package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -230,6 +230,31 @@ their own evalDistribution methods.</p>
 <dd><p>model dispersions</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-sas.sascalc.calculator.geni">
+<span id="sas-sascalc-calculator-geni-module"></span><h2>sas.sascalc.calculator.geni module</h2>
+<p>Compute scattering from a set of points.</p>
+<p>For 1-D scattering use <em>Iq(q, x, y, z, sld, vol, is_avg)</em></p>
+<dl class="function">
+<dt id="sas.sascalc.calculator.geni.Iq">
+<code class="descclassname">sas.sascalc.calculator.geni.</code><code class="descname">Iq</code><span class="sig-paren">(</span><em>q</em>, <em>x</em>, <em>y</em>, <em>z</em>, <em>sld</em>, <em>vol</em>, <em>is_avg=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/geni.html#Iq"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Computes 1D isotropic.</p>
+<p>Isotropic: Assumes all slds are real (no magnetic)</p>
+<p>Also assumes there is no polarization: No dependency on spin.</p>
+<p>All values must be numpy vectors of the correct size.</p>
+<p>Returns <em>I(q)</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.geni.Iqxy">
+<code class="descclassname">sas.sascalc.calculator.geni.</code><code class="descname">Iqxy</code><span class="sig-paren">(</span><em>qx</em>, <em>qy</em>, <em>x</em>, <em>y</em>, <em>z</em>, <em>sld</em>, <em>vol</em>, <em>mx</em>, <em>my</em>, <em>mz</em>, <em>in_spin</em>, <em>out_spin</em>, <em>s_theta</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/geni.html#Iqxy"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Computes 2D anisotropic.</p>
+<p><em>in_spin</em> and <em>out_spin</em> indicate portion of polarizer and analyzer
+transmission that are spin up.  <em>s_theta</em> is the polarization direction.</p>
+<p>All other values must be numpy vectors of the correct size.</p>
+<p>Returns <em>I(qx, qy)</em></p>
 </dd></dl>
 
 </div>
@@ -856,12 +881,23 @@ instrumental parameters.</p>
 </div>
 <div class="section" id="module-sas.sascalc.calculator.sas_gen">
 <span id="sas-sascalc-calculator-sas-gen-module"></span><h2>sas.sascalc.calculator.sas_gen module</h2>
-<p>SAS generic computation and sld file readers</p>
+<p>SAS generic computation and sld file readers.</p>
+<p>Calculation checked by sampling from an ellipsoid and comparing Iq with the
+1D, 2D oriented and 2D oriented magnetic analytical model from sasmodels.</p>
 <dl class="class">
 <dt id="sas.sascalc.calculator.sas_gen.GenSAS">
 <em class="property">class </em><code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">GenSAS</code><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#GenSAS"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#sas.sascalc.calculator.BaseComponent.BaseComponent" title="sas.sascalc.calculator.BaseComponent.BaseComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.calculator.BaseComponent.BaseComponent</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Generic SAS computation Model based on sld (n &amp; m) arrays</p>
+<dl class="method">
+<dt id="sas.sascalc.calculator.sas_gen.GenSAS.calculate_Iq">
+<code class="descname">calculate_Iq</code><span class="sig-paren">(</span><em>qx</em>, <em>qy=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#GenSAS.calculate_Iq"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Evaluate the function
+:Param x: array of x-values
+:Param y: array of y-values
+:return: function value</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="sas.sascalc.calculator.sas_gen.GenSAS.evalDistribution">
 <code class="descname">evalDistribution</code><span class="sig-paren">(</span><em>qdist</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#GenSAS.evalDistribution"><span class="viewcode-link">[source]</span></a></dt>
@@ -990,7 +1026,9 @@ where qx,qy are 1D ndarrays (for 2D).</td>
 <dl class="method">
 <dt id="sas.sascalc.calculator.sas_gen.MagSLD.set_sldn">
 <code class="descname">set_sldn</code><span class="sig-paren">(</span><em>sld_n</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#MagSLD.set_sldn"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Sets neutron SLD</p>
+<dd><p>Sets neutron SLD.</p>
+<p>Warning: if <em>sld_n</em> is a scalar and attribute <em>is_data</em> is True, then
+only pixels with non-zero magnetism will be set.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1151,7 +1189,9 @@ where qx,qy are 1D ndarrays (for 2D).</td>
 <dt id="sas.sascalc.calculator.sas_gen.SLDReader">
 <em class="property">class </em><code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">SLDReader</code><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#SLDReader"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to load ascii files (7 columns).</p>
+<p>SLD reader for text files.</p>
+<p>7 columns: x, y, z, sld, mx, my, mz
+8 columns: x, y, z, sld, mx, my, mz, volume</p>
 <dl class="attribute">
 <dt id="sas.sascalc.calculator.sas_gen.SLDReader.ext">
 <code class="descname">ext</code><em class="property"> = ['.sld', '.SLD', '.txt', '.TXT', '.*']</em></dt>
@@ -1163,8 +1203,7 @@ where qx,qy are 1D ndarrays (for 2D).</td>
 <dd><p>Load data file
 :param path: file path
 :return MagSLD: x, y, z, sld_n, sld_mx, sld_my, sld_mz
-:raise RuntimeError: when the file can’t be opened
-:raise ValueError: when the length of the data vectors are inconsistent</p>
+:raise RuntimeError: when the file can’t be loaded</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1188,9 +1227,59 @@ where qx,qy are 1D ndarrays (for 2D).</td>
 </dd></dl>
 
 <dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.compare">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">compare</code><span class="sig-paren">(</span><em>obj</em>, <em>qx</em>, <em>qy=None</em>, <em>plot_points=False</em>, <em>theory=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#compare"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Compare GenSAS calculator <em>obj</em> to old C and sasmodels versions.</p>
+<p><em>theory</em> is the I(q) value for the shape, if known.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="sas.sascalc.calculator.sas_gen.decode">
 <code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">decode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#decode"><span class="viewcode-link">[source]</span></a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.demo">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">demo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#demo"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Run a GenSAS operation demo.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.demo_load">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">demo_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#demo_load"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check loading of coordinate data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.demo_oommf">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">demo_oommf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#demo_oommf"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculate theory from saved OOMMF magnetic data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.demo_pdb">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">demo_pdb</code><span class="sig-paren">(</span><em>is_avg=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#demo_pdb"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Calculation I(q) for object in pdb file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.demo_save">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">demo_save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#demo_save"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check saving of coordinate data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.demo_shape">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">demo_shape</code><span class="sig-paren">(</span><em>shape='ellip'</em>, <em>samples=2000</em>, <em>nq=100</em>, <em>view=(60</em>, <em>30</em>, <em>0)</em>, <em>qmax=0.5</em>, <em>use_2d=False</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#demo_shape"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sample from shape with analytic model.</p>
+<p><em>shape</em> is one of the shapes from sasmodels/explore/realspace.py</p>
+<p><em>samples</em> is the number of sample points</p>
+<p><em>view</em> is the rotation angle for the shape</p>
+<p><em>qmax</em> is the max q value</p>
+<p><em>use_2d</em> produces a 2D shape rather</p>
+<p>Remaining keywords are specific to the shape.  See def build_SHAPE(…)
+in realspace.py for details.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="sas.sascalc.calculator.sas_gen.mag2sld">
@@ -1201,21 +1290,30 @@ Dm ~ 2.853E-12 [A^(-2)] ==&gt; Shouldn’t be 2.90636E-12 [A^(-2)]???</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.realspace_Iq">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">realspace_Iq</code><span class="sig-paren">(</span><em>self</em>, <em>qx</em>, <em>qy</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#realspace_Iq"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Compute Iq for GenSAS object using sasmodels/explore/realspace.py</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.sas_gen_c">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">sas_gen_c</code><span class="sig-paren">(</span><em>self</em>, <em>qx</em>, <em>qy=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#sas_gen_c"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>C interface to sas_gen, for comparison to new python interface.</p>
+<p>Note: this requires the old C implementation which may have already
+been removed from the repository.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.calculator.sas_gen.set_axis_equal_3D">
+<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">set_axis_equal_3D</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#set_axis_equal_3D"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set equal axes on a 3D plot.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="sas.sascalc.calculator.sas_gen.test">
 <code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#test"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Test code</p>
+<dd><p>Check that the GenSAS can load coordinates and compute I(q).</p>
 </dd></dl>
-
-<dl class="function">
-<dt id="sas.sascalc.calculator.sas_gen.test_load">
-<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">test_load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#test_load"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Test code</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="sas.sascalc.calculator.sas_gen.test_save">
-<code class="descclassname">sas.sascalc.calculator.sas_gen.</code><code class="descname">test_save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/calculator/sas_gen.html#test_save"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
 
 <dl class="function">
 <dt id="sas.sascalc.calculator.sas_gen.transform_center">
@@ -1301,6 +1399,7 @@ computation.</div></blockquote>
 <li><a class="reference internal" href="#">sas.sascalc.calculator package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.calculator.BaseComponent">sas.sascalc.calculator.BaseComponent module</a></li>
+<li><a class="reference internal" href="#module-sas.sascalc.calculator.geni">sas.sascalc.calculator.geni module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.calculator.instrument">sas.sascalc.calculator.instrument module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.calculator.kiessig_calculator">sas.sascalc.calculator.kiessig_calculator module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.calculator.resolution_calculator">sas.sascalc.calculator.resolution_calculator module</a></li>
@@ -1355,7 +1454,7 @@ computation.</div></blockquote>
         <li class="right" >
           <a href="sas.sascalc.html" title="sas.sascalc package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>

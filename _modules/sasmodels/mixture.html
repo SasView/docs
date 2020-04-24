@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sasmodels.mixture &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sasmodels.mixture &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -64,7 +56,9 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ModelInfo</span>
 <span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
@@ -86,15 +80,15 @@
     <span class="n">combined_pars</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">all_parts</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
-    <span class="n">is_flat</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">is_flat</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">is_flat</span><span class="p">:</span>
-        <span class="n">is_flat</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">is_flat</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">all_parts</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">composition</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">composition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;mixture&#39;</span> <span class="ow">and</span> \
                 <span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">composition</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">all_parts</span> <span class="o">+=</span> <span class="n">part</span><span class="o">.</span><span class="n">composition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">all_parts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
-                <span class="n">is_flat</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">is_flat</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1"># When creating a mixture model that is a sum of product models (ie (1*2)+(3*4))</span>
     <span class="c1"># the parameters for models 1 &amp; 2 will be prefixed with A &amp; B respectively,</span>
@@ -125,7 +119,7 @@
                 <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">submodel_pars</span><span class="p">:</span>
                     <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
                     <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-                    <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">par</span><span class="o">.</span><span class="n">length_control</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">length_control</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="n">npars</span>
 
@@ -163,13 +157,17 @@
             <span class="n">p</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
             <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span>
             <span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="n">id</span>
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span>
             <span class="n">combined_pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">ParameterTable</span><span class="p">(</span><span class="n">combined_pars</span><span class="p">)</span>
+    <span class="c1"># Allow for the scenario in which each component has all its PD parameters</span>
+    <span class="c1"># active simultaneously.  details.make_details() will throw an error if</span>
+    <span class="c1"># too many are used from any one component.</span>
     <span class="n">parameters</span><span class="o">.</span><span class="n">max_pd</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">max_pd</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">random</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Random set of model parameters for mixture model&quot;&quot;&quot;</span>
         <span class="n">combined_pars</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span><span class="o">+</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>
@@ -181,7 +179,7 @@
     <span class="n">model_info</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">)</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">operation</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">model_info</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Mixture model with &#39;</span> <span class="o">+</span> <span class="n">model_info</span><span class="o">.</span><span class="n">name</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">title</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">docs</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">title</span>
@@ -189,18 +187,20 @@
     <span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">random</span> <span class="o">=</span> <span class="n">random</span>
     <span class="c1">#model_info.single = any(part[&#39;single&#39;] for part in parts)</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">variant_info</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">model_info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">model_info</span><span class="o">.</span><span class="n">variant_info</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1">#model_info.tests = []</span>
     <span class="c1">#model_info.source = []</span>
-    <span class="c1"># Iq, Iqxy, form_volume, ER, VR and sesans</span>
     <span class="c1"># Remember the component info blocks so we can build the model</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">composition</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;mixture&#39;</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model_info</span></div>
 
 
 <div class="viewcode-block" id="MixtureModel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureModel">[docs]</a><span class="k">class</span> <span class="nc">MixtureModel</span><span class="p">(</span><span class="n">KernelModel</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model definition for mixture of models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, List[KernelModel]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parts</span> <span class="o">=</span> <span class="n">parts</span>
@@ -215,34 +215,52 @@
         <span class="c1"># in opencl; or both in opencl, but one in single precision and the</span>
         <span class="c1"># other in double precision).</span>
         <span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">q_vectors</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">MixtureKernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">kernels</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">MixtureKernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">)</span></div>
+    <span class="n">make_kernel</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">KernelModel</span><span class="o">.</span><span class="n">make_kernel</span><span class="o">.</span><span class="vm">__doc__</span>
 
 <div class="viewcode-block" id="MixtureModel.release"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureModel.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Free resources associated with the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Free resources associated with the model.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
-            <span class="n">part</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div></div>
+            <span class="n">part</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
+    <span class="n">release</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">KernelModel</span><span class="o">.</span><span class="n">release</span><span class="o">.</span><span class="vm">__doc__</span></div>
+
+
+<span class="k">def</span> <span class="nf">_intermediates</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+    <span class="c1"># type: (List[Tuple[Kernel, np.ndarray, Optional[Callable]]]) -&gt; OrderedDict[str, Any]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns intermediate results for mixture model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">part_num</span><span class="p">,</span> <span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">intermediates</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+        <span class="n">part_id</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">part_num</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">kernel</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;(Q)&quot;</span>
+        <span class="n">parts</span><span class="p">[</span><span class="n">part_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">Iq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">intermediates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parts</span><span class="p">[</span><span class="n">part_id</span> <span class="o">+</span> <span class="s2">&quot; parts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">intermediates</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">parts</span>
 
 
 <div class="viewcode-block" id="MixtureKernel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureKernel">[docs]</a><span class="k">class</span> <span class="nc">MixtureKernel</span><span class="p">(</span><span class="n">Kernel</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">kernels</span><span class="p">):</span>
-        <span class="c1"># type: (ModelInfo, List[Kernel]) -&gt; None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiated kernel for mixture of models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="c1"># type: (ModelInfo, List[Kernel], Tuple[np.ndarray]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span> <span class="o">=</span> <span class="n">kernels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">operation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[np.ndarray]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Callable[[], OrderedDict]</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">):</span>
+<div class="viewcode-block" id="MixtureKernel.Iq"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureKernel.Iq">[docs]</a>    <span class="k">def</span> <span class="nf">Iq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">):</span>
         <span class="c1"># type: (CallDetails, np.ndarray, np.ndarry, float, bool) -&gt; np.ndarray</span>
         <span class="n">scale</span><span class="p">,</span> <span class="n">background</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="c1"># remember the parts for plotting later</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[np.ndarray]</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="n">MixtureParts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">_MixtureParts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">kernel_details</span><span class="p">,</span> <span class="n">kernel_values</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
             <span class="c1">#print(&quot;calling kernel&quot;, kernel.info.name)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">kernel_details</span><span class="p">,</span> <span class="n">kernel_values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">)</span>
@@ -255,18 +273,30 @@
                     <span class="n">total</span> <span class="o">=</span> <span class="n">result</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">total</span> <span class="o">*=</span> <span class="n">result</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">kernel</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)))</span>
 
-        <span class="k">return</span> <span class="n">scale</span><span class="o">*</span><span class="n">total</span> <span class="o">+</span> <span class="n">background</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">_intermediates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scale</span><span class="o">*</span><span class="n">total</span> <span class="o">+</span> <span class="n">background</span></div>
+
+    <span class="n">Iq</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">Kernel</span><span class="o">.</span><span class="n">Iq</span><span class="o">.</span><span class="vm">__doc__</span>
+    <span class="fm">__call__</span> <span class="o">=</span> <span class="n">Iq</span>
 
 <div class="viewcode-block" id="MixtureKernel.release"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureKernel.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;Free resources associated with the kernel.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">:</span>
             <span class="n">k</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="MixtureParts"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureParts">[docs]</a><span class="k">class</span> <span class="nc">MixtureParts</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+<span class="c1"># Note: _MixtureParts doesn&#39;t implement iteration correctly, and only allows</span>
+<span class="c1"># a single iterator to be active at once.  It doesn&#39;t matter in this case</span>
+<span class="c1"># since _MixtureParts is only used in one place, but it is not clean style.</span>
+<span class="k">class</span> <span class="nc">_MixtureParts</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mixture component iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, List[Kernel], CallDetails, np.ndarray) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_info</span> <span class="o">=</span> <span class="n">model_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parts</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">composition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -274,16 +304,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">call_details</span> <span class="o">=</span> <span class="n">call_details</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spin_index</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="c1"># The following are redefined by __iter__, but set them here so that</span>
+        <span class="c1"># lint complains a little less.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_num</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">par_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="c1">#call_details.show(values)</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; PartIterable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">part_num</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">par_index</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mag_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin_index</span> <span class="o">+</span> <span class="mi">3</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; Tuple[List[Callable], CallDetails, np.ndarray]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">part_num</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span>
@@ -303,7 +338,7 @@
         <span class="k">return</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span>
 
     <span class="c1"># CRUFT: py2 support</span>
-    <span class="nb">next</span> <span class="o">=</span> <span class="n">__next__</span>
+    <span class="nb">next</span> <span class="o">=</span> <span class="fm">__next__</span>
 
     <span class="k">def</span> <span class="nf">_part_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">par_index</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, int) -&gt; CallDetails</span>
@@ -346,7 +381,7 @@
         <span class="n">spacer</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span><span class="o">%</span><span class="mi">32</span><span class="p">)</span><span class="o">%</span><span class="mi">32</span>
         <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">zero</span><span class="p">]</span><span class="o">*</span><span class="n">spacer</span><span class="p">)</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">values</span></div>
+        <span class="k">return</span> <span class="n">values</span>
 </pre></div>
 
           </div>
@@ -356,12 +391,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -377,14 +414,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

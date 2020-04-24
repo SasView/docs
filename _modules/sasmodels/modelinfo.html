@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sasmodels.modelinfo &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sasmodels.modelinfo &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -63,7 +55,7 @@
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
 <span class="c1"># Optional typing</span>
 <span class="c1"># pylint: disable=unused-import</span>
@@ -97,7 +89,7 @@
 <span class="c1"># depends on the some polydisperse parameter with the current implementation</span>
 <span class="n">DEFAULT_BACKGROUND</span> <span class="o">=</span> <span class="mf">1e-3</span>
 <span class="n">COMMON_PARAMETERS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Source intensity&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Scale factor or Volume fraction&quot;</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">&quot;background&quot;</span><span class="p">,</span> <span class="s2">&quot;1/cm&quot;</span><span class="p">,</span> <span class="n">DEFAULT_BACKGROUND</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Source background&quot;</span><span class="p">),</span>
 <span class="p">]</span>
 <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">COMMON_PARAMETERS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
@@ -120,11 +112,11 @@
                              <span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
         <span class="n">processed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parse_parameter</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">))</span>
     <span class="n">partable</span> <span class="o">=</span> <span class="n">ParameterTable</span><span class="p">(</span><span class="n">processed</span><span class="p">)</span>
-    <span class="n">partable</span><span class="o">.</span><span class="n">check_angles</span><span class="p">()</span>
+    <span class="n">partable</span><span class="o">.</span><span class="n">check_angles</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">partable</span></div>
 
 <div class="viewcode-block" id="parse_parameter"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.parse_parameter">[docs]</a><span class="k">def</span> <span class="nf">parse_parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span>
-                    <span class="n">user_limits</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+                    <span class="n">user_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="c1"># type: (str, str, float, Sequence[Any], str, str) -&gt; Parameter</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parse an individual parameter from the parameter definition block.</span>
@@ -140,7 +132,7 @@
 
     <span class="c1"># Process limits as [float, float] or [[str, str, ...]]</span>
     <span class="n">choices</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[str]</span>
-    <span class="k">if</span> <span class="n">user_limits</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">limits</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_limits</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid limits for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span>
@@ -184,7 +176,7 @@
         <span class="n">pid</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">pid</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span> <span class="bp">None</span>
+        <span class="n">pid</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span>
 
     <span class="c1"># automatically identify sld types</span>
     <span class="k">if</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pid</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;sld&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pid</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;sld&#39;</span><span class="p">)):</span>
@@ -196,13 +188,13 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need to specify vector length for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-            <span class="n">control</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">control</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">control</span> <span class="o">=</span> <span class="n">ref</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">length</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">control</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Build the parameter</span>
     <span class="n">parameter</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
@@ -214,24 +206,23 @@
     <span class="n">parameter</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
     <span class="n">parameter</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
     <span class="n">parameter</span><span class="o">.</span><span class="n">length_control</span> <span class="o">=</span> <span class="n">control</span>
-
     <span class="k">return</span> <span class="n">parameter</span></div>
 
 
-<div class="viewcode-block" id="expand_pars"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.expand_pars">[docs]</a><span class="k">def</span> <span class="nf">expand_pars</span><span class="p">(</span><span class="n">partable</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+<div class="viewcode-block" id="expand_pars"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.expand_pars">[docs]</a><span class="k">def</span> <span class="nf">expand_pars</span><span class="p">(</span><span class="n">partable</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># type: (ParameterTable, ParameterSetUser) -&gt;  ParameterSet</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create demo parameter set from key-value pairs.</span>
+<span class="sd">    Create a parameter set from key-value pairs.</span>
 
 <span class="sd">    *pars* are the key-value pairs to use for the parameters.  Any</span>
 <span class="sd">    parameters not specified in *pars* are set from the *partable* defaults.</span>
 
 <span class="sd">    If *pars* references vector fields, such as thickness[n], then support</span>
-<span class="sd">    different ways of assigning the demo values, including assigning a</span>
+<span class="sd">    different ways of assigning the parameter values, including assigning a</span>
 <span class="sd">    specific value (e.g., thickness3=50.0), assigning a new value to all</span>
 <span class="sd">    (e.g., thickness=50.0) or assigning values using list notation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">pars</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">partable</span><span class="o">.</span><span class="n">defaults</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">partable</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span>
@@ -315,9 +306,9 @@
 <span class="sd">    can automatically be promoted to magnetic parameters, each of which</span>
 <span class="sd">    will have a magnitude and a direction, which may be different from</span>
 <span class="sd">    other sld parameters. The volume parameters are used for calls</span>
-<span class="sd">    to form_volume within the kernel (required for volume normalization)</span>
-<span class="sd">    and for calls to ER and VR for effective radius and volume ratio</span>
-<span class="sd">    respectively.</span>
+<span class="sd">    to form_volume within the kernel (required for volume normalization),</span>
+<span class="sd">    to shell_volume (for hollow shapes), and to radius_effective (for</span>
+<span class="sd">    structure factor interactions) respectively.</span>
 
 <span class="sd">    *description* is a short description of the parameter.  This will</span>
 <span class="sd">    be displayed in the parameter table and used as a tool tip for the</span>
@@ -341,10 +332,29 @@
 <span class="sd">    *choices* is the option names for a drop down list of options, as for</span>
 <span class="sd">    example, might be used to set the value of a shape parameter.</span>
 
-<span class="sd">    These values are set by :func:`make_parameter_table` and</span>
+<span class="sd">    Control parameters are used for variant models such as :ref:`rpa` which</span>
+<span class="sd">    have different cases with different parameters, as well as models</span>
+<span class="sd">    like *spherical_sld* with its user defined number of shells.</span>
+<span class="sd">    The control parameter should appear in the parameter table along with the</span>
+<span class="sd">    parameters it is is controlling.  For variant models, use *[CASES]* in</span>
+<span class="sd">    place of the parameter limits Within the parameter definition table,</span>
+<span class="sd">    with case names such as::</span>
+
+<span class="sd">         CASES = [&quot;diblock copolymer&quot;, &quot;triblock copolymer&quot;, ...]</span>
+
+<span class="sd">    This should give *limits=[[case1, case2, ...]]*, but the model loader</span>
+<span class="sd">    translates it to *limits=[0, len(CASES)-1]*, and adds *choices=CASES* to</span>
+<span class="sd">    the :class:`Parameter` definition. Note that models can use a list of</span>
+<span class="sd">    cases as a parameter without it being a control parameter.  Either way,</span>
+<span class="sd">    the parameter is sent to the model evaluator as *float(choice_num)*,</span>
+<span class="sd">    where choices are numbered from 0. :meth:`ModelInfo.get_hidden_parameters`</span>
+<span class="sd">    will determine which parameers to display.</span>
+
+<span class="sd">    The class contructor should not be called directly, but instead the</span>
+<span class="sd">    parameter table is built using :func:`make_parameter_table` and</span>
 <span class="sd">    :func:`parse_parameter` therein.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
                  <span class="n">ptype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="c1"># type: (str, str, float, Limits, str, str) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="c1"># type: str</span>
@@ -358,12 +368,12 @@
         <span class="c1"># Length and length_control will be filled in once the complete</span>
         <span class="c1"># parameter table is available.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">1</span>                      <span class="c1"># type: int</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">length_control</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: Optional[str]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_control</span> <span class="o">=</span> <span class="bp">False</span>              <span class="c1"># type: bool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length_control</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Optional[str]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_control</span> <span class="o">=</span> <span class="kc">False</span>              <span class="c1"># type: bool</span>
 
         <span class="c1"># TODO: need better control over whether a parameter is polydisperse</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">polydisperse</span> <span class="o">=</span> <span class="bp">False</span>            <span class="c1"># type: bool</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">relative_pd</span> <span class="o">=</span> <span class="bp">False</span>             <span class="c1"># type: bool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polydisperse</span> <span class="o">=</span> <span class="kc">False</span>            <span class="c1"># type: bool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative_pd</span> <span class="o">=</span> <span class="kc">False</span>             <span class="c1"># type: bool</span>
 
         <span class="c1"># choices are also set externally.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="p">[]</span>                    <span class="c1"># type: List[str]</span>
@@ -384,7 +394,7 @@
 
 <div class="viewcode-block" id="Parameter.as_function_argument"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.Parameter.as_function_argument">[docs]</a>    <span class="k">def</span> <span class="nf">as_function_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; str</span>
-        <span class="sd">r&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Declare the variable as a function argument.</span>
 
 <span class="sd">        For example, the parameter thickness with length 3 will</span>
@@ -396,24 +406,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;double *</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
 
-<div class="viewcode-block" id="Parameter.as_call_reference"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.Parameter.as_call_reference">[docs]</a>    <span class="k">def</span> <span class="nf">as_call_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="c1"># type: (str) -&gt; str</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return *prefix* + parameter name.  For struct references, use &quot;v.&quot;</span>
-<span class="sd">        as the prefix.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Note: if the parameter is a struct type, then we will need to use</span>
-        <span class="c1"># &amp;prefix+id.  For scalars and vectors we can just use prefix+id.</span>
-        <span class="k">return</span> <span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; str</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2">&gt;&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; str</span>
         <span class="k">return</span> <span class="s2">&quot;P&lt;</span><span class="si">%s</span><span class="s2">&gt;&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
-
 
 <div class="viewcode-block" id="ParameterTable"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable">[docs]</a><span class="k">class</span> <span class="nc">ParameterTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -455,6 +454,10 @@
 <span class="sd">    * *npars* is the total number of parameters to the kernel, with vector</span>
 <span class="sd">      parameters counted as n individual parameters p1, p2, ...</span>
 
+<span class="sd">    * *common_parameters* is the list of common parameters, with a unique</span>
+<span class="sd">      copy for each model so that structure factors can have a default</span>
+<span class="sd">      background of 0.0.</span>
+
 <span class="sd">    * *call_parameters* is the complete list of parameters to the kernel,</span>
 <span class="sd">      including scale and background, with vector parameters recorded as</span>
 <span class="sd">      individual parameters p1, p2, ...</span>
@@ -467,21 +470,21 @@
 <span class="sd">    the scale and background parameters that the kernel does not see.  User</span>
 <span class="sd">    parameters don&#39;t use vector notation, and instead use p1, p2, ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># scale and background are implicit parameters</span>
-    <span class="n">COMMON</span> <span class="o">=</span> <span class="p">[</span><span class="n">Parameter</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">COMMON_PARAMETERS</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="c1"># type: (List[Parameter]) -&gt; None</span>
+
+        <span class="c1"># scale and background are implicit parameters</span>
+        <span class="c1"># Need them to be unique to each model in case they have different</span>
+        <span class="c1"># properties, such as default=0.0 for structure factor backgrounds.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Parameter</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">COMMON_PARAMETERS</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_vector_lengths</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">npars</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nmagnetic</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span>
                              <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;sld&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nvalues</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">npars</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nmagnetic</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nvalues</span> <span class="o">+=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nmagnetic</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_call_parameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_defaults</span><span class="p">()</span>
         <span class="c1">#self._name_table= dict((p.id, p) for p in parameters)</span>
@@ -522,9 +525,28 @@
                          <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">polydisperse</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;magnetic&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pd_2d</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">polydisperse</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ParameterTable.check_angles"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.check_angles">[docs]</a>    <span class="k">def</span> <span class="nf">check_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Final checks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_duplicates</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_angles</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ParameterTable.set_zero_background"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.set_zero_background">[docs]</a>    <span class="k">def</span> <span class="nf">set_zero_background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the default background to zero for this model.  This is done for</span>
+<span class="sd">        structure factor models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># type: () -&gt; None</span>
+        <span class="c1"># Make sure background is the second common parameter.</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;background&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_defaults</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ParameterTable.check_angles"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.check_angles">[docs]</a>    <span class="k">def</span> <span class="nf">check_angles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check that orientation angles are theta, phi and possibly psi.</span>
+
+<span class="sd">        *strict* should be True when checking a parameter table defined</span>
+<span class="sd">        in a model file, but False when checking from mixture models, etc.,</span>
+<span class="sd">        where the parameters aren&#39;t being passed to a calculator directly.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">psi</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">):</span>
@@ -540,7 +562,7 @@
                 <span class="n">psi</span> <span class="o">=</span> <span class="n">k</span>
                 <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s1">&#39;orientation&#39;</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;psi must be an orientation parameter&quot;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;orientation&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">strict</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;orientation&#39;</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;only theta, phi and psi can be orientation parameters&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">theta</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">phi</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">last_par</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
@@ -548,24 +570,39 @@
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;phi must follow theta&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">psi</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">psi</span> <span class="o">!=</span> <span class="n">phi</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;psi must follow phi&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">psi</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">psi</span> <span class="o">!=</span> <span class="n">last_par</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">psi</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">phi</span> <span class="o">!=</span> <span class="n">last_par</span><span class="p">):</span>
+            <span class="c1"># TODO: Why must theta/phi/psi be at the end?  Consistency only?</span>
+            <span class="k">if</span> <span class="n">strict</span> <span class="ow">and</span> <span class="n">phi</span> <span class="o">!=</span> <span class="n">last_par</span> <span class="ow">and</span> <span class="n">psi</span> <span class="o">!=</span> <span class="n">last_par</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;orientation parameters must appear at the &quot;</span>
                                 <span class="s2">&quot;end of the parameter table&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">theta</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">phi</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">psi</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;oriented shapes must have both theta and phi and maybe psi&quot;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterTable.check_duplicates"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.check_duplicates">[docs]</a>    <span class="k">def</span> <span class="nf">check_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check for duplicate parameter names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checked</span><span class="p">,</span> <span class="n">dups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">checked</span><span class="p">:</span>
+                <span class="n">dups</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">checked</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dups</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Duplicate parameters: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dups</span><span class="p">))))</span></div>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="c1"># Find the parameter definition</span>
         <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">par</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;unknown parameter </span><span class="si">%r</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">True</span>
-        <span class="k">return</span> <span class="bp">False</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_set_vector_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; List[str]</span>
@@ -585,8 +622,8 @@
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span><span class="p">:</span>
                 <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ref</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-                <span class="n">ref</span><span class="o">.</span><span class="n">is_control</span> <span class="o">=</span> <span class="bp">True</span>
-                <span class="n">ref</span><span class="o">.</span><span class="n">polydisperse</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">ref</span><span class="o">.</span><span class="n">is_control</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">ref</span><span class="o">.</span><span class="n">polydisperse</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">limits</span>
                 <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">low</span><span class="p">)</span> <span class="o">!=</span> <span class="n">low</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="n">high</span><span class="p">)</span> <span class="o">!=</span> <span class="n">high</span> <span class="ow">or</span> <span class="n">low</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">high</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;expected limits on </span><span class="si">%s</span><span class="s2"> to be within [0, 20]&quot;</span>
@@ -620,7 +657,7 @@
 
     <span class="k">def</span> <span class="nf">_get_call_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; List[Parameter]</span>
-        <span class="n">full_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">COMMON</span><span class="p">[:]</span>
+        <span class="n">full_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span><span class="p">[:]</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">full_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -656,7 +693,7 @@
         <span class="c1">#print(&quot;call parameters&quot;, full_list)</span>
         <span class="k">return</span> <span class="n">full_list</span>
 
-<div class="viewcode-block" id="ParameterTable.user_parameters"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.user_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">user_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">is2d</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterTable.user_parameters"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.user_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">user_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">is2d</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="c1"># type: (Dict[str, float], bool) -&gt; List[Parameter]</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the list of parameters for the given data type.</span>
@@ -700,13 +737,13 @@
         <span class="n">dependent</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># type: Dict[str, List[Parameter]]</span>
         <span class="n">dependent</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">control</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">dependent</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">length_control</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
         <span class="c1"># Gather entries such as name[4] into groups of the same length</span>
         <span class="n">fixed_length</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[int, List[Parameter]]</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">fixed_length</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
         <span class="c1"># Using the call_parameters table, we already have expanded forms</span>
@@ -723,13 +760,13 @@
                         <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expanded_pars</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="n">tag</span><span class="p">])</span>
 
         <span class="c1"># Gather the user parameters in order</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">control</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">COMMON</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">control</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is2d</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;magnetic&#39;</span><span class="p">):</span>
                 <span class="k">pass</span>
             <span class="k">elif</span> <span class="n">p</span><span class="o">.</span><span class="n">is_control</span><span class="p">:</span>
                 <span class="k">pass</span> <span class="c1"># already added</span>
-            <span class="k">elif</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">p</span><span class="o">.</span><span class="n">length_control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">table</span> <span class="o">=</span> <span class="n">dependent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">length_control</span><span class="p">,</span> <span class="p">[])</span>
                 <span class="k">if</span> <span class="n">table</span><span class="p">:</span>
                     <span class="c1"># look up length from incoming parameters</span>
@@ -762,6 +799,91 @@
 
         <span class="k">return</span> <span class="n">result</span></div></div>
 
+<span class="k">def</span> <span class="nf">_simple_insert</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">insert</span><span class="p">,</span> <span class="n">remove</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build new parameters from old with insertion locations specified.</span>
+
+<span class="sd">    *parameters* is the existing parameter list.</span>
+
+<span class="sd">    *insert* is list of parameters to insert.</span>
+
+<span class="sd">    *remove* is list of parameter names to remove.</span>
+
+<span class="sd">    The new parameters are inserted as a block replacing the first removed</span>
+<span class="sd">    parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">remove</span><span class="p">)</span>
+    <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remove</span><span class="p">:</span>
+            <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">remove</span> <span class="ow">and</span> <span class="n">insert</span><span class="p">:</span>
+            <span class="n">new_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">insert</span><span class="p">)</span>
+            <span class="n">insert</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="n">new_list</span>
+
+<span class="k">def</span> <span class="nf">_insert_after</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">insert</span><span class="p">,</span> <span class="n">remove</span><span class="p">,</span> <span class="n">insert_after</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build new parameters from old with insertion locations specified.</span>
+
+<span class="sd">    *parameters* is the existing parameter list.</span>
+
+<span class="sd">    *insert* is list of parameters to insert.</span>
+
+<span class="sd">    *remove* is list of parameter names to remove.</span>
+
+<span class="sd">    *insert_after* where to insert names, as {&quot;old&quot;: &quot;new,new,...&quot;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">remove</span><span class="p">)</span>
+    <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">insert</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">_process_group</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">insert_after</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+            <span class="c1"># Make sure par is available</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lookup</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;variable </span><span class="si">%s</span><span class="s2"> not in new parameters&quot;</span>
+                                 <span class="s2">&quot; when inserting </span><span class="si">%s</span><span class="s2"> after </span><span class="si">%r</span><span class="s2">&quot;</span>
+                                 <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
+            <span class="c1"># Make sure par hasn&#39;t be used</span>
+            <span class="k">if</span> <span class="n">lookup</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;variable </span><span class="si">%s</span><span class="s2"> already processed&quot;</span>
+                                 <span class="s2">&quot; when inserting </span><span class="si">%s</span><span class="s2"> after </span><span class="si">%r</span><span class="s2">&quot;</span>
+                                 <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
+            <span class="c1"># Append par</span>
+            <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lookup</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+            <span class="c1"># Mark par as used</span>
+            <span class="n">lookup</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_process_group</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remove</span><span class="p">:</span>
+            <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+        <span class="n">_process_group</span><span class="p">(</span><span class="n">par</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">lookup</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">par</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;parameter </span><span class="si">%s</span><span class="s2"> not listed in insert_after&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_list</span>
+
+<div class="viewcode-block" id="derive_table"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.derive_table">[docs]</a><span class="k">def</span> <span class="nf">derive_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">insert</span><span class="p">,</span> <span class="n">remove</span><span class="p">,</span> <span class="n">insert_after</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (ParameterTable, List[str], List[Parameter], Optional[Dict[str, str]]) -&gt; ParameterTable</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a derived parameter table.</span>
+
+<span class="sd">    Parameters given in *insert* are added to the table and parameters</span>
+<span class="sd">    named in *remove* are deleted from the table. If *insert_after* is</span>
+<span class="sd">    provided, then it indicates where in the new parameter table the</span>
+<span class="sd">    parameters are inserted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">kernel_parameters</span>
+    <span class="k">if</span> <span class="n">insert_after</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">_simple_insert</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">insert</span><span class="p">,</span> <span class="n">remove</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">_insert_after</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">insert</span><span class="p">,</span> <span class="n">remove</span><span class="p">,</span> <span class="n">insert_after</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ParameterTable</span><span class="p">(</span><span class="n">new</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="isstr"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.isstr">[docs]</a><span class="k">def</span> <span class="nf">isstr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="c1"># type: (Any) -&gt; bool</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -772,7 +894,8 @@
 
 
 <span class="c1">#: Set of variables defined in the model that might contain C code</span>
-<span class="n">C_SYMBOLS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Imagnetic&#39;</span><span class="p">,</span> <span class="s1">&#39;Iq&#39;</span><span class="p">,</span> <span class="s1">&#39;Iqxy&#39;</span><span class="p">,</span> <span class="s1">&#39;Iqac&#39;</span><span class="p">,</span> <span class="s1">&#39;Iqabc&#39;</span><span class="p">,</span> <span class="s1">&#39;form_volume&#39;</span><span class="p">,</span> <span class="s1">&#39;c_code&#39;</span><span class="p">]</span>
+<span class="n">C_SYMBOLS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Imagnetic&#39;</span><span class="p">,</span> <span class="s1">&#39;Iq&#39;</span><span class="p">,</span> <span class="s1">&#39;Iqxy&#39;</span><span class="p">,</span> <span class="s1">&#39;Iqac&#39;</span><span class="p">,</span> <span class="s1">&#39;Iqabc&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;form_volume&#39;</span><span class="p">,</span> <span class="s1">&#39;shell_volume&#39;</span><span class="p">,</span> <span class="s1">&#39;c_code&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">_find_source_lines</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">kernel_module</span><span class="p">):</span>
     <span class="c1"># type: (ModelInfo, ModuleType) -&gt; None</span>
@@ -790,7 +913,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Only need line numbers if we are creating a C module and the C symbols</span>
     <span class="c1"># are defined.</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">callable</span><span class="p">(</span><span class="n">model_info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">model_info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span>
             <span class="ow">or</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">C_SYMBOLS</span><span class="p">)):</span>
         <span class="k">return</span>
 
@@ -808,6 +931,7 @@
                 <span class="n">model_info</span><span class="o">.</span><span class="n">lineno</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">lineno</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="k">break</span>
 
+
 <div class="viewcode-block" id="make_model_info"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.make_model_info">[docs]</a><span class="k">def</span> <span class="nf">make_model_info</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">):</span>
     <span class="c1"># type: (module) -&gt; ModelInfo</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -821,61 +945,72 @@
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s2">&quot;model_info&quot;</span><span class="p">):</span>
         <span class="c1"># Custom sum/multi models</span>
         <span class="k">return</span> <span class="n">kernel_module</span><span class="o">.</span><span class="n">model_info</span>
+
     <span class="n">info</span> <span class="o">=</span> <span class="n">ModelInfo</span><span class="p">()</span>
+
+    <span class="c1"># Build the parameter table</span>
     <span class="c1">#print(&quot;make parameter table&quot;, kernel_module.parameters)</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">make_parameter_table</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="p">[]))</span>
-    <span class="n">demo</span> <span class="o">=</span> <span class="n">expand_pars</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+
+    <span class="c1"># background defaults to zero for structure factor models</span>
+    <span class="n">structure_factor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;structure_factor&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">structure_factor</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="o">.</span><span class="n">set_zero_background</span><span class="p">()</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">abspath</span><span class="p">(</span><span class="n">kernel_module</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s1">&#39;.py&#39;</span><span class="p">)</span>
     <span class="n">kernel_id</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">kernel_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span>
 
     <span class="n">info</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">kernel_id</span>  <span class="c1"># string used to load the kernel</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">basefile</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
     <span class="n">info</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     <span class="n">info</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">+</span><span class="s2">&quot; model&quot;</span><span class="p">)</span>
     <span class="n">info</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;no description&#39;</span><span class="p">)</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">demo</span> <span class="o">=</span> <span class="n">demo</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">composition</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">docs</span> <span class="o">=</span> <span class="n">kernel_module</span><span class="o">.</span><span class="n">__doc__</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;structure_factor&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">translation</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">composition</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">docs</span> <span class="o">=</span> <span class="n">kernel_module</span><span class="o">.</span><span class="vm">__doc__</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;structure_factor&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># TODO: find Fq by inspection</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">radius_effective_modes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;radius_effective_modes&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">have_Fq</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;have_Fq&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">info</span><span class="o">.</span><span class="n">profile_axes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;profile_axes&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
     <span class="c1"># Note: custom.load_custom_kernel_module assumes the C sources are defined</span>
     <span class="c1"># by this attribute.</span>
     <span class="n">info</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">c_code</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;c_code&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">c_code</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;c_code&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">radius_effective</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;radius_effective&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="c1"># TODO: check the structure of the tests</span>
     <span class="n">info</span><span class="o">.</span><span class="n">tests</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;tests&#39;</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">ER</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;ER&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">VR</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;VR&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">form_volume</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;form_volume&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">Iq</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iq&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">Iqxy</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iqxy&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">Iqac</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iqac&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">Iqabc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iqabc&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">Imagnetic</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Imagnetic&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">sesans</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;sesans&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">valid</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">form_volume</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;form_volume&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">shell_volume</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;shell_volume&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">Iq</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iq&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">Iqxy</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iqxy&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">Iqac</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iqac&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">Iqabc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Iqabc&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">Imagnetic</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;Imagnetic&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">sesans</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;sesans&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
     <span class="c1"># Default single and opencl to True for C models.  Python models have callable Iq.</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">opencl</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;opencl&#39;</span><span class="p">,</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">))</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">single</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">))</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">random</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">opencl</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;opencl&#39;</span><span class="p">,</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">))</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">single</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">))</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">random</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">hidden</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
 
-    <span class="c1"># multiplicity info</span>
-    <span class="n">control_pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_control</span><span class="p">]</span>
-    <span class="n">default_control</span> <span class="o">=</span> <span class="n">control_pars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">control_pars</span> <span class="k">else</span> <span class="bp">None</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">control</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;control&#39;</span><span class="p">,</span> <span class="n">default_control</span><span class="p">)</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">hidden</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="c1"># type: ignore</span>
+    <span class="c1"># Set control flag for explicitly set parameters, e.g., in the RPA model.</span>
+    <span class="n">control</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;control&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">control</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="n">control</span><span class="p">]</span><span class="o">.</span><span class="n">is_control</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="o">.</span><span class="n">has_2d</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="o">.</span><span class="n">has_2d</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;oriented python models not supported&quot;</span><span class="p">)</span>
 
     <span class="n">info</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_find_source_lines</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">kernel_module</span><span class="p">)</span>
-
     <span class="k">return</span> <span class="n">info</span></div>
 
 <div class="viewcode-block" id="ModelInfo"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ModelInfo">[docs]</a><span class="k">class</span> <span class="nc">ModelInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -890,30 +1025,36 @@
 <span class="sd">    of *Iq*, *Iqac* and *Iqabc* if they need to be defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#: Full path to the file defining the kernel, if any.</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>         <span class="c1"># type: Optional[str]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># type: Optional[str]</span>
+    <span class="c1">#: Base file is usually filename, but not when a model has been</span>
+    <span class="c1">#: reparameterized, in which case it is the file containing the original</span>
+    <span class="c1">#: model definition.  This is needed to signal an additional dependency for</span>
+    <span class="c1">#: the model time stamp, and so that the compiler reports correct file</span>
+    <span class="c1">#: for syntax errors.</span>
+    <span class="n">basefile</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># type: Optional[str]</span>
     <span class="c1">#: Id of the kernel used to load it from the filesystem.</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="bp">None</span>               <span class="c1"># type: str</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="kc">None</span>               <span class="c1"># type: str</span>
     <span class="c1">#: Display name of the model, which defaults to the model id but with</span>
     <span class="c1">#: capitalization of the parts so for example core_shell defaults to</span>
     <span class="c1">#: &quot;Core Shell&quot;.</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>             <span class="c1"># type: str</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: str</span>
     <span class="c1">#: Short description of the model.</span>
-    <span class="n">title</span> <span class="o">=</span> <span class="bp">None</span>            <span class="c1"># type: str</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># type: str</span>
     <span class="c1">#: Long description of the model.</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># type: str</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: str</span>
     <span class="c1">#: Model parameter table. Parameters are defined using a list of parameter</span>
     <span class="c1">#: definitions, each of which is contains parameter name, units,</span>
     <span class="c1">#: default value, limits, type and description.  See :class:`Parameter`</span>
     <span class="c1">#: for details on the individual parameters.  The parameters are gathered</span>
     <span class="c1">#: into a :class:`ParameterTable`, which provides various views into the</span>
     <span class="c1">#: parameter list.</span>
-    <span class="n">parameters</span> <span class="o">=</span> <span class="bp">None</span>       <span class="c1"># type: ParameterTable</span>
-    <span class="c1">#: Demo parameters as a *parameter:value* map used as the default values</span>
-    <span class="c1">#: for :mod:`compare`.  Any parameters not set in *demo* will use the</span>
-    <span class="c1">#: defaults from the parameter table.  That means no polydispersity, and</span>
-    <span class="c1">#: in the case of multiplicity models, a minimal model with no interesting</span>
-    <span class="c1">#: scattering.</span>
-    <span class="n">demo</span> <span class="o">=</span> <span class="bp">None</span>             <span class="c1"># type: Dict[str, float]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span>       <span class="c1"># type: ParameterTable</span>
+    <span class="c1">#: For reparameterized systems, *base* is the base parameter table.  For</span>
+    <span class="c1">#: normal systems it is simply a copy of *parameters*.</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: ParameterTable</span>
+    <span class="c1">#: Parameter translation code to convert from *parameters* table from</span>
+    <span class="c1">#: caller to the *base* table used to evaluate the model.</span>
+    <span class="n">translation</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: str</span>
     <span class="c1">#: Composition is None if this is an independent model, or it is a</span>
     <span class="c1">#: tuple with comoposition type (&#39;product&#39; or &#39;misture&#39;) and a list of</span>
     <span class="c1">#: :class:`ModelInfo` blocks for the composed objects.  This allows us</span>
@@ -921,19 +1062,7 @@
     <span class="c1">#: *composition* is not given in the model definition file, but instead</span>
     <span class="c1">#: arises when the model is constructed using names such as</span>
     <span class="c1">#: *sphere*hardsphere* or *cylinder+sphere*.</span>
-    <span class="n">composition</span> <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># type: Optional[Tuple[str, List[ModelInfo]]]</span>
-    <span class="c1">#: Name of the control parameter for a variant model such as :ref:`rpa`.</span>
-    <span class="c1">#: The *control* parameter should appear in the parameter table, with</span>
-    <span class="c1">#: limits defined as *[CASES]*, for case names such as</span>
-    <span class="c1">#: *CASES = [&quot;diblock copolymer&quot;, &quot;triblock copolymer&quot;, ...]*.</span>
-    <span class="c1">#: This should give *limits=[[case1, case2, ...]]*, but the</span>
-    <span class="c1">#: model loader translates this to *limits=[0, len(CASES)-1]*, and adds</span>
-    <span class="c1">#: *choices=CASES* to the :class:`Parameter` definition. Note that</span>
-    <span class="c1">#: models can use a list of cases as a parameter without it being a</span>
-    <span class="c1">#: control parameter.  Either way, the parameter is sent to the model</span>
-    <span class="c1">#: evaluator as *float(choice_num)*, where choices are numbered from 0.</span>
-    <span class="c1">#: See also :attr:`hidden`.</span>
-    <span class="n">control</span> <span class="o">=</span> <span class="bp">None</span>          <span class="c1"># type: str</span>
+    <span class="n">composition</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Optional[Tuple[str, List[ModelInfo]]]</span>
     <span class="c1">#: Different variants require different parameters.  In order to show</span>
     <span class="c1">#: just the parameters needed for the variant selected by :attr:`control`,</span>
     <span class="c1">#: you should provide a function *hidden(control) -&gt; set([&#39;a&#39;, &#39;b&#39;, ...])*</span>
@@ -942,73 +1071,72 @@
     <span class="c1">#: its number.  So for example, if variant &quot;a&quot; uses only *sld1* and *sld2*,</span>
     <span class="c1">#: then *sld3*, *sld4* and *sld5* of multiplicity parameter *sld[5]*</span>
     <span class="c1">#: should be in the hidden set.</span>
-    <span class="n">hidden</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: Optional[Callable[[int], Set[str]]]</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Optional[Callable[[int], Set[str]]]</span>
     <span class="c1">#: Doc string from the top of the model file.  This should be formatted</span>
     <span class="c1">#: using ReStructuredText format, with latex markup in &quot;.. math&quot;</span>
     <span class="c1">#: environments, or in dollar signs.  This will be automatically</span>
     <span class="c1">#: extracted to a .rst file by :func:`generate.make_docs`, then</span>
     <span class="c1">#: converted to HTML or PDF by Sphinx.</span>
-    <span class="n">docs</span> <span class="o">=</span> <span class="bp">None</span>             <span class="c1"># type: str</span>
+    <span class="n">docs</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: str</span>
     <span class="c1">#: Location of the model description in the documentation.  This takes the</span>
     <span class="c1">#: form of &quot;section&quot; or &quot;section:subsection&quot;.  So for example,</span>
     <span class="c1">#: :ref:`porod` uses *category=&quot;shape-independent&quot;* so it is in the</span>
     <span class="c1">#: :ref:`shape-independent` section whereas</span>
     <span class="c1">#: :ref:`capped-cylinder` uses: *category=&quot;shape:cylinder&quot;*, which puts</span>
     <span class="c1">#: it in the :ref:`shape-cylinder` section.</span>
-    <span class="n">category</span> <span class="o">=</span> <span class="bp">None</span>         <span class="c1"># type: Optional[str]</span>
+    <span class="n">category</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># type: Optional[str]</span>
     <span class="c1">#: True if the model can be computed accurately with single precision.</span>
     <span class="c1">#: This is True by default, but models such as :ref:`bcc-paracrystal` set</span>
     <span class="c1">#: it to False because they require double precision calculations.</span>
-    <span class="n">single</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: bool</span>
+    <span class="n">single</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: bool</span>
     <span class="c1">#: True if the model can be run as an opencl model.  If for some reason</span>
     <span class="c1">#: the model cannot be run in opencl (e.g., because the model passes</span>
     <span class="c1">#: functions by reference), then set this to false.</span>
-    <span class="n">opencl</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: bool</span>
+    <span class="n">opencl</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: bool</span>
     <span class="c1">#: True if the model is a structure factor used to model the interaction</span>
     <span class="c1">#: between form factor models.  This will default to False if it is not</span>
     <span class="c1">#: provided in the file.</span>
-    <span class="n">structure_factor</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># type: bool</span>
+    <span class="n">structure_factor</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: bool</span>
+    <span class="c1">#: True if the model defines an Fq function with signature</span>
+    <span class="c1">#: ``void Fq(double q, double *F1, double *F2, ...)``</span>
+    <span class="n">have_Fq</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1">#: List of options for computing the effective radius of the shape,</span>
+    <span class="c1">#: or None if the model is not usable as a form factor model.</span>
+    <span class="n">radius_effective_modes</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># type: List[str]</span>
     <span class="c1">#: List of C source files used to define the model.  The source files</span>
     <span class="c1">#: should define the *Iq* function, and possibly *Iqac* or *Iqabc* if the</span>
     <span class="c1">#: model defines orientation parameters. Files containing the most basic</span>
     <span class="c1">#: functions must appear first in the list, followed by the files that</span>
-    <span class="c1">#: use those functions.  Form factors are indicated by providing</span>
-    <span class="c1">#: an :attr:`ER` function.</span>
-    <span class="n">source</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: List[str]</span>
-    <span class="c1">#: The set of tests that must pass.  The format of the tests is described</span>
-    <span class="c1">#: in :mod:`model_test`.</span>
-    <span class="n">tests</span> <span class="o">=</span> <span class="bp">None</span>            <span class="c1"># type: List[TestCondition]</span>
-    <span class="c1">#: Returns the effective radius of the model given its volume parameters.</span>
-    <span class="c1">#: The presence of *ER* indicates that the model is a form factor model</span>
-    <span class="c1">#: that may be used together with a structure factor to form an implicit</span>
-    <span class="c1">#: multiplication model.</span>
-    <span class="c1">#:</span>
-    <span class="c1">#: The parameters to the *ER* function must be marked with type *volume*.</span>
-    <span class="c1">#: in the parameter table.  They will appear in the same order as they</span>
-    <span class="c1">#: do in the table.  The values passed to *ER* will be vectors, with one</span>
-    <span class="c1">#: value for each polydispersity condition.  For example, if the model</span>
-    <span class="c1">#: is polydisperse over both length and radius, then both length and</span>
-    <span class="c1">#: radius will have the same number of values in the vector, with one</span>
-    <span class="c1">#: value for each *length X radius*.  If only *radius* is polydisperse,</span>
-    <span class="c1">#: then the value for *length* will be repeated once for each value of</span>
-    <span class="c1">#: *radius*.  The *ER* function should return one effective radius for</span>
-    <span class="c1">#: each parameter set.  Multiplicity parameters will be received as</span>
-    <span class="c1">#: arrays, with one row per polydispersity condition.</span>
-    <span class="n">ER</span> <span class="o">=</span> <span class="bp">None</span>               <span class="c1"># type: Optional[Callable[[np.ndarray], np.ndarray]]</span>
-    <span class="c1">#: Returns the occupied volume and the total volume for each parameter set.</span>
-    <span class="c1">#: See :attr:`ER` for details on the parameters.</span>
-    <span class="n">VR</span> <span class="o">=</span> <span class="bp">None</span>               <span class="c1"># type: Optional[Callable[[np.ndarray], Tuple[np.ndarray, np.ndarray]]]</span>
-    <span class="c1">#: Arbitrary C code containing supporting functions, etc., to be inserted</span>
-    <span class="c1">#: after everything in source.  This can include Iq and Iqxy functions with</span>
-    <span class="c1">#: the full function signature, including all parameters.</span>
-    <span class="n">c_code</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c1">#: use those functions.</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: List[str]</span>
+    <span class="c1">#: inline source code, added after all elements of source</span>
+    <span class="n">c_code</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Optional[str]</span>
+    <span class="c1">#: Expression which evaluates to True if the input parameters are valid</span>
+    <span class="c1">#: and the model can be computed, or False otherwise.  Invalid parameter</span>
+    <span class="c1">#: sets will not be included in the weighted $I(Q)$ calculation or its</span>
+    <span class="c1">#: volume normalization.  Use C syntax for the expressions, with || for or</span>
+    <span class="c1">#: &amp;&amp; for and and ! for not.  Any non-magnetic parameter can be used.</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># type: str</span>
     <span class="c1">#: Returns the form volume for python-based models.  Form volume is needed</span>
     <span class="c1">#: for volume normalization in the polydispersity integral.  If no</span>
     <span class="c1">#: parameters are *volume* parameters, then form volume is not needed.</span>
     <span class="c1">#: For C-based models, (with :attr:`sources` defined, or with :attr:`Iq`</span>
     <span class="c1">#: defined using a string containing C code), form_volume must also be</span>
     <span class="c1">#: C code, either defined as a string, or in the sources.</span>
-    <span class="n">form_volume</span> <span class="o">=</span> <span class="bp">None</span>      <span class="c1"># type: Union[None, str, Callable[[np.ndarray], float]]</span>
+    <span class="n">form_volume</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Union[None, str, Callable[[np.ndarray], float]]</span>
+    <span class="c1">#: Returns the shell volume for python-based models.  Form volume and</span>
+    <span class="c1">#: shell volume are needed for volume normalization in the polydispersity</span>
+    <span class="c1">#: integral and structure interactions for hollow shapes.  If no</span>
+    <span class="c1">#: parameters are *volume* parameters, then shell volume is not needed.</span>
+    <span class="c1">#: For C-based models, (with :attr:`sources` defined, or with :attr:`Iq`</span>
+    <span class="c1">#: defined using a string containing C code), shell_volume must also be</span>
+    <span class="c1">#: C code, either defined as a string, or in the sources.</span>
+    <span class="n">shell_volume</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Union[None, str, Callable[[np.ndarray], float]]</span>
+    <span class="c1">#: Computes the effective radius of the shape given the volume parameters.</span>
+    <span class="c1">#: Only needed for models defined in python that can be used for</span>
+    <span class="c1">#: monodisperse approximation for non-dilute solutions, P@S.  The first</span>
+    <span class="c1">#: argument is the integer effective radius mode, with default 0.</span>
+    <span class="n">radius_effective</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Union[None, Callable[[int, np.ndarray], float]]</span>
     <span class="c1">#: Returns *I(q, a, b, ...)* for parameters *a*, *b*, etc. defined</span>
     <span class="c1">#: by the parameter table.  *Iq* can be defined as a python function, or</span>
     <span class="c1">#: as a C function.  If it is defined in C, then set *Iq* to the body of</span>
@@ -1020,31 +1148,38 @@
     <span class="c1">#: define *static double Iq(double q, double a, double b, ...)* which</span>
     <span class="c1">#: will return *I(q, a, b, ...)*.  Multiplicity parameters are sent as</span>
     <span class="c1">#: pointers to doubles.  Constants in floating point expressions should</span>
-    <span class="c1">#: include the decimal point. See :mod:`generate` for more details.</span>
-    <span class="n">Iq</span> <span class="o">=</span> <span class="bp">None</span>               <span class="c1"># type: Union[None, str, Callable[[np.ndarray], np.ndarray]]</span>
-    <span class="c1">#: Returns *I(qab, qc, a, b, ...)*.  The interface follows :attr:`Iq`.</span>
-    <span class="n">Iqac</span> <span class="o">=</span> <span class="bp">None</span>             <span class="c1"># type: Union[None, str, Callable[[np.ndarray], np.ndarray]]</span>
-    <span class="c1">#: Returns *I(qa, qb, qc, a, b, ...)*.  The interface follows :attr:`Iq`.</span>
-    <span class="n">Iqabc</span> <span class="o">=</span> <span class="bp">None</span>            <span class="c1"># type: Union[None, str, Callable[[np.ndarray], np.ndarray]]</span>
+    <span class="c1">#: include the decimal point. See :mod:`generate` for more details. If</span>
+    <span class="c1">#: *have_Fq* is True, then Iq should return an interleaved array of</span>
+    <span class="c1">#: $[\sum F(q_1), \sum F^2(q_1), \ldots, \sum F(q_n), \sum F^2(q_n)]$.</span>
+    <span class="n">Iq</span> <span class="o">=</span> <span class="kc">None</span>               <span class="c1"># type: Union[None, str, Callable[[...], np.ndarray]]</span>
     <span class="c1">#: Returns *I(qx, qy, a, b, ...)*.  The interface follows :attr:`Iq`.</span>
-    <span class="n">Imagnetic</span> <span class="o">=</span> <span class="bp">None</span>        <span class="c1"># type: Union[None, str, Callable[[np.ndarray], np.ndarray]]</span>
+    <span class="n">Iqxy</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: Union[None, str, Callable[[...], np.ndarray]]</span>
+    <span class="c1">#: Returns *I(qab, qc, a, b, ...)*.  The interface follows :attr:`Iq`.</span>
+    <span class="n">Iqac</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: Union[None, str, Callable[[...], np.ndarray]]</span>
+    <span class="c1">#: Returns *I(qa, qb, qc, a, b, ...)*.  The interface follows :attr:`Iq`.</span>
+    <span class="n">Iqabc</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># type: Union[None, str, Callable[[...], np.ndarray]]</span>
+    <span class="c1">#: Returns *I(qx, qy, a, b, ...)*.  The interface follows :attr:`Iq`.</span>
+    <span class="n">Imagnetic</span> <span class="o">=</span> <span class="kc">None</span>        <span class="c1"># type: Union[None, str, Callable[[...], np.ndarray]]</span>
     <span class="c1">#: Returns a model profile curve *x, y*.  If *profile* is defined, this</span>
     <span class="c1">#: curve will appear in response to the *Show* button in SasView.  Use</span>
     <span class="c1">#: :attr:`profile_axes` to set the axis labels.  Note that *y* values</span>
     <span class="c1">#: will be scaled by 1e6 before plotting.</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="bp">None</span>          <span class="c1"># type: Optional[Callable[[np.ndarray], None]]</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="kc">None</span>          <span class="c1"># type: Optional[Callable[[np.ndarray], None]]</span>
     <span class="c1">#: Axis labels for the :attr:`profile` plot.  The default is *[&#39;x&#39;, &#39;y&#39;]*.</span>
     <span class="c1">#: Only the *x* component is used for now.</span>
-    <span class="n">profile_axes</span> <span class="o">=</span> <span class="bp">None</span>     <span class="c1"># type: Tuple[str, str]</span>
+    <span class="n">profile_axes</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># type: Tuple[str, str]</span>
     <span class="c1">#: Returns *sesans(z, a, b, ...)* for models which can directly compute</span>
     <span class="c1">#: the SESANS correlation function.  Note: not currently implemented.</span>
-    <span class="n">sesans</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: Optional[Callable[[np.ndarray], np.ndarray]]</span>
+    <span class="n">sesans</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Optional[Callable[[np.ndarray], np.ndarray]]</span>
     <span class="c1">#: Returns a random parameter set for the model</span>
-    <span class="n">random</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: Optional[Callable[[], Dict[str, float]]]</span>
+    <span class="n">random</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Optional[Callable[[], Dict[str, float]]]</span>
     <span class="c1">#: Line numbers for symbols defining C code</span>
-    <span class="n">lineno</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># type: Dict[str, int]</span>
+    <span class="n">lineno</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Dict[str, int]</span>
+    <span class="c1">#: The set of tests that must pass.  The format of the tests is described</span>
+    <span class="c1">#: in :mod:`model_test`.</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># type: List[TestCondition]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="k">pass</span>
 
@@ -1055,7 +1190,7 @@
 <span class="sd">        an implicit control parameter, which is the parameter that controls</span>
 <span class="sd">        the multiplicity.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="p">(</span><span class="n">control</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">controls</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span>
@@ -1081,12 +1216,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1102,14 +1239,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

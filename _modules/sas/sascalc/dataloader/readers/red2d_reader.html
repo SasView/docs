@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.sascalc.dataloader.readers.red2d_reader &#8212; SasView 5.0.1 documentation</title>
+    <title>sas.sascalc.dataloader.readers.red2d_reader &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -269,12 +269,9 @@
         <span class="k">if</span> <span class="n">col_num</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="n">ver</span><span class="p">):</span>
             <span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_point</span><span class="p">[(</span><span class="mi">5</span> <span class="o">+</span> <span class="n">ver</span><span class="p">)]</span>
         <span class="c1">#if col_num &gt; (6 + ver): mask[data_point[(6 + ver)] &lt; 1] = False</span>
+        <span class="k">if</span> <span class="n">col_num</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">7</span> <span class="o">+</span> <span class="n">ver</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data_point</span><span class="p">[(</span><span class="mi">7</span> <span class="o">+</span> <span class="n">ver</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
         <span class="n">q_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qx_data</span><span class="o">*</span><span class="n">qx_data</span><span class="o">+</span><span class="n">qy_data</span><span class="o">*</span><span class="n">qy_data</span><span class="o">+</span><span class="n">qz_data</span><span class="o">*</span><span class="n">qz_data</span><span class="p">)</span>
-
-        <span class="c1"># Extra protection(it is needed for some data files):</span>
-        <span class="c1"># If all mask elements are False, put all True</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">mask</span><span class="p">[</span><span class="n">mask</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># Store limits of the image in q space</span>
         <span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">qx_data</span><span class="p">)</span>
@@ -397,7 +394,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>

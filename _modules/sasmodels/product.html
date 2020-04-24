@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sasmodels.product &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sasmodels.product &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -60,36 +52,165 @@
 
 <span class="sd">To use it, first load form factor P and structure factor S, then create</span>
 <span class="sd">*make_product_info(P, S)*.</span>
+
+<span class="sd">The P@S models is somewhat complicated because there are many special</span>
+<span class="sd">parameters that need to be handled in particular ways.  Much of the</span>
+<span class="sd">code is used to figure out what special parameters we have, where to</span>
+<span class="sd">find them in the P@S model inputs and how to distribute them to the underlying</span>
+<span class="sd">P and S model calculators.</span>
+
+<span class="sd">The parameter packet received by the P@S is a :class:`details.CallDetails`</span>
+<span class="sd">structure along with a data vector. The CallDetails structure indicates which</span>
+<span class="sd">parameters are polydisperse, the length of the distribution, and where to</span>
+<span class="sd">find it in the data vector.  The distributions are ordered from longest to</span>
+<span class="sd">shortest, with length 1 distributions filling out the distribution set.  That</span>
+<span class="sd">way the kernel calculator doesn&#39;t have to check if it needs another nesting</span>
+<span class="sd">level since it is always there.  The data vector consists of a list of target</span>
+<span class="sd">values for the parameters, followed by a concatenation of the distribution</span>
+<span class="sd">values, and then followed by a concatenation of the distribution weights.</span>
+<span class="sd">Given the combined details and data for P@S, we must decompose them in to</span>
+<span class="sd">details for P and details for S separately, which unfortunately requires</span>
+<span class="sd">intimate knowledge of the data structures and tricky code.</span>
+
+<span class="sd">The special parameters are:</span>
+
+<span class="sd">* *scale* and *background*:</span>
+<span class="sd">    First two parameters of the value list in each of P, S and P@S.</span>
+<span class="sd">    When decomposing P@S parameters, ignore *scale* and *background*,</span>
+<span class="sd">    instead using 1 and 0 for the first two slots of both P and S.</span>
+<span class="sd">    After calling P and S individually, the results are combined as</span>
+<span class="sd">    :code:`volfraction*scale*P*S + background`.  The *scale* and</span>
+<span class="sd">    *background* do not show up in the polydispersity structure so</span>
+<span class="sd">    they are easy to handle.</span>
+
+<span class="sd">* *volfraction*:</span>
+<span class="sd">    Always the first parameter of S, but it may also be in P. If it is in P,</span>
+<span class="sd">    then *P.volfraction* is used in the combined P@S list, and</span>
+<span class="sd">    *S.volfraction* is elided, otherwise *S.volfraction* is used. If we</span>
+<span class="sd">    are using *volfraction* from P we can treat it like all the other P</span>
+<span class="sd">    parameters when calling P, but when calling S we need to insert the</span>
+<span class="sd">    *P.volfraction* into data vector for S and assign a slot of length 1</span>
+<span class="sd">    in the distribution. Because we are using the original layout of the</span>
+<span class="sd">    distribution vectors from P@S, but copying it into private data</span>
+<span class="sd">    vectors for S and P, we are free to &quot;borrow&quot; a P slots to store the</span>
+<span class="sd">    missing *S.volfraction* distribution.  We use the *P.volfraction*</span>
+<span class="sd">    slot itself but any slot will work.</span>
+
+<span class="sd">    For hollow shapes, *volfraction* represents the volume fraction of</span>
+<span class="sd">    material but S needs the volume fraction enclosed by the shape. The</span>
+<span class="sd">    answer is to scale the user specified volume fraction by the form:shell</span>
+<span class="sd">    ratio computed from the average form volume and average shell volume</span>
+<span class="sd">    returned from P. Use the original *volfraction* divided by *shell_volume*</span>
+<span class="sd">    to compute the number density, and scale P@S by that to get absolute</span>
+<span class="sd">    scaling on the final *I(q)*. The *scale* for P@S should therefore usually</span>
+<span class="sd">    be one.</span>
+
+<span class="sd">* *radius_effective*:</span>
+<span class="sd">    Always the second parameter of S and always part of P@S, but never in P.</span>
+<span class="sd">    The value may be calculated using *P.radius_effective()* or it</span>
+<span class="sd">    may be set to the *radius_effective* value in P@S, depending on</span>
+<span class="sd">    *radius_effective_mode*.  If part of S, the value may be polydisperse.</span>
+<span class="sd">    If calculated by P, then it will be the weighted average of effective</span>
+<span class="sd">    radii computed for the polydisperse shape parameters.</span>
+
+<span class="sd">* *structure_factor_mode*</span>
+<span class="sd">    If P@S supports beta approximation (i.e., if it has the *Fq* function that</span>
+<span class="sd">    returns &lt;FF*&gt; and &lt;F&gt;&lt;F*&gt;), then *structure_factor_mode* will be added</span>
+<span class="sd">    to the P@S parameters right after the S parameters.  This mode may be 0</span>
+<span class="sd">    for the monodisperse approximation or 1 for the beta approximation.  We</span>
+<span class="sd">    will add more values here as we implemented more complicated operations,</span>
+<span class="sd">    but for now P and S must be computed separately.  If beta, then we</span>
+<span class="sd">    return *I = scale volfrac/volume ( &lt;FF&gt; + &lt;F&gt;^2 (S-1)) + background*.</span>
+<span class="sd">    If not beta then return *I = scale/volume P S + background* .  In both</span>
+<span class="sd">    cases, return the appropriate immediate values.</span>
+
+<span class="sd">* *radius_effective_mode*</span>
+<span class="sd">    If P defines the *radius_effective* function (and therefore</span>
+<span class="sd">    *P.info.radius_effective_modes* is a list of effective radius modes),</span>
+<span class="sd">    then *radius_effective_mode* will be the final parameter in P@S.  Mode</span>
+<span class="sd">    will be zero if *radius_effective* is defined by the user using the S</span>
+<span class="sd">    parameter; any other value and the *radius_effective* parameter will be</span>
+<span class="sd">    filled in from the value computed in P.  In the latter case, the</span>
+<span class="sd">    polydispersity information for *S.radius_effective* will need to be</span>
+<span class="sd">    suppressed, with pd length set to 1, the first value set to the</span>
+<span class="sd">    effective radius and the first weight set to 1.  Do this after composing</span>
+<span class="sd">    the S data vector so the inputs are left untouched.</span>
+
+<span class="sd">* *regular parameters*</span>
+<span class="sd">    The regular P parameters form a block of length *P.info.npars* at the</span>
+<span class="sd">    start of the data vector (after scale and background).  These will be</span>
+<span class="sd">    followed by *S.effective_radius*, and *S.volfraction* (if *P.volfraction*</span>
+<span class="sd">    is absent), and then the regular S parameters.  The P and S blocks can</span>
+<span class="sd">    be copied as a group into the respective P and S data vectors.</span>
+<span class="sd">    We can copy the distribution value and weight vectors untouched to both</span>
+<span class="sd">    the P and S data vectors since they are referenced by offset and length.</span>
+<span class="sd">    We can update the radius_effective slots in the P data vector with</span>
+<span class="sd">    *P.radius_effective()* if needed.</span>
+
+<span class="sd">* *magnetic parameters*</span>
+<span class="sd">    For each P parameter that is an SLD there will be a set of three magnetic</span>
+<span class="sd">    parameters tacked on to P@S after the regular P and S and after the</span>
+<span class="sd">    special *structure_factor_mode* and *radius_effective_mode*.  These</span>
+<span class="sd">    can be copied as a group after the regular P parameters.  There won&#39;t</span>
+<span class="sd">    be any magnetic S parameters.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ModelInfo</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
+
+<span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">parse_parameter</span>
 <span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
-<span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">make_details</span><span class="p">,</span> <span class="n">dispersion_mesh</span>
+<span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">make_details</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterSet</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
-<span class="c1"># TODO: make estimates available to constraints</span>
+<span class="c1"># TODO: make shape averages available to constraints</span>
 <span class="c1">#ESTIMATED_PARAMETERS = [</span>
-<span class="c1">#    [&quot;est_radius_effective&quot;, &quot;A&quot;, 0.0, [0, np.inf], &quot;&quot;, &quot;Estimated effective radius&quot;],</span>
-<span class="c1">#    [&quot;est_volume_ratio&quot;, &quot;&quot;, 1.0, [0, np.inf], &quot;&quot;, &quot;Estimated volume ratio&quot;],</span>
+<span class="c1">#    [&quot;mean_radius_effective&quot;, &quot;A&quot;, 0.0, [0, np.inf], &quot;&quot;, &quot;mean effective radius&quot;],</span>
+<span class="c1">#    [&quot;mean_volume&quot;, &quot;A&quot;, 0.0, [0, np.inf], &quot;&quot;, &quot;mean volume&quot;],</span>
+<span class="c1">#    [&quot;mean_volume_ratio&quot;, &quot;&quot;, 1.0, [0, np.inf], &quot;&quot;, &quot;mean form: mean shell volume ratio&quot;],</span>
 <span class="c1">#]</span>
+<span class="n">STRUCTURE_MODE_ID</span> <span class="o">=</span> <span class="s2">&quot;structure_factor_mode&quot;</span>
+<span class="n">RADIUS_MODE_ID</span> <span class="o">=</span> <span class="s2">&quot;radius_effective_mode&quot;</span>
+<span class="n">RADIUS_ID</span> <span class="o">=</span> <span class="s2">&quot;radius_effective&quot;</span>
+<span class="n">VOLFRAC_ID</span> <span class="o">=</span> <span class="s2">&quot;volfraction&quot;</span>
+<div class="viewcode-block" id="make_extra_pars"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.make_extra_pars">[docs]</a><span class="k">def</span> <span class="nf">make_extra_pars</span><span class="p">(</span><span class="n">p_info</span><span class="p">):</span>
+    <span class="c1"># type: (ModelInfo) -&gt; List[Parameter]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create parameters for structure factor and effective radius modes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">p_info</span><span class="o">.</span><span class="n">have_Fq</span><span class="p">:</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">parse_parameter</span><span class="p">(</span>
+            <span class="n">STRUCTURE_MODE_ID</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="p">[[</span><span class="s2">&quot;P*S&quot;</span><span class="p">,</span> <span class="s2">&quot;P*(1+beta*(S-1))&quot;</span><span class="p">]],</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Structure factor calculation&quot;</span><span class="p">)</span>
+        <span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p_info</span><span class="o">.</span><span class="n">radius_effective_modes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">parse_parameter</span><span class="p">(</span>
+            <span class="n">RADIUS_MODE_ID</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="p">[[</span><span class="s2">&quot;unconstrained&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">p_info</span><span class="o">.</span><span class="n">radius_effective_modes</span><span class="p">],</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Effective radius calculation&quot;</span><span class="p">)</span>
+        <span class="n">pars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pars</span></div>
 
-<span class="n">ER_ID</span> <span class="o">=</span> <span class="s2">&quot;radius_effective&quot;</span>
-<span class="n">VF_ID</span> <span class="o">=</span> <span class="s2">&quot;volfraction&quot;</span>
-
-<span class="c1"># TODO: core_shell_sphere model has suppressed the volume ratio calculation</span>
-<span class="c1"># revert it after making VR and ER available at run time as constraints.</span>
 <div class="viewcode-block" id="make_product_info"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.make_product_info">[docs]</a><span class="k">def</span> <span class="nf">make_product_info</span><span class="p">(</span><span class="n">p_info</span><span class="p">,</span> <span class="n">s_info</span><span class="p">):</span>
     <span class="c1"># type: (ModelInfo, ModelInfo) -&gt; ModelInfo</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -100,45 +221,57 @@
     <span class="c1"># structure factor calculator.  Structure factors should not</span>
     <span class="c1"># have any magnetic parameters</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S needs {} and {} as its first parameters&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ER_ID</span><span class="p">,</span> <span class="n">VF_ID</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">ER_ID</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S needs {} as first parameter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ER_ID</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">VF_ID</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S needs {} as second parameter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">VF_ID</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S needs </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2"> as its first parameters&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">RADIUS_ID</span><span class="p">,</span> <span class="n">VOLFRAC_ID</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">RADIUS_ID</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S needs </span><span class="si">{}</span><span class="s2"> as first parameter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">RADIUS_ID</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">VOLFRAC_ID</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S needs </span><span class="si">{}</span><span class="s2"> as second parameter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">VOLFRAC_ID</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">magnetism_index</span> <span class="o">==</span> <span class="p">[]:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;S should not have SLD parameters&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">RADIUS_ID</span> <span class="ow">in</span> <span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;P should not have </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">RADIUS_ID</span><span class="p">))</span>
     <span class="n">p_id</span><span class="p">,</span> <span class="n">p_name</span><span class="p">,</span> <span class="n">p_pars</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">p_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span>
     <span class="n">s_id</span><span class="p">,</span> <span class="n">s_name</span><span class="p">,</span> <span class="n">s_pars</span> <span class="o">=</span> <span class="n">s_info</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">s_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">p_has_volfrac</span> <span class="o">=</span> <span class="n">VOLFRAC_ID</span> <span class="ow">in</span> <span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span>
 
-    <span class="c1"># Create list of parameters for the combined model.  Skip the first</span>
-    <span class="c1"># parameter of S, which we verified above is effective radius.  If there</span>
-    <span class="c1"># are any names in P that overlap with those in S, modify the name in S</span>
-    <span class="c1"># to distinguish it.</span>
+    <span class="c1"># Create list of parameters for the combined model.  If a name in</span>
+    <span class="c1"># S overlaps a name in P, tag the S parameter name to distinguish it.</span>
+    <span class="c1"># If the tagged name also collides it will be caught by the parameter</span>
+    <span class="c1"># table builder.  Similarly if any special names are abused.  Need the</span>
+    <span class="c1"># pairs to create the translation table for random model generation.</span>
     <span class="n">p_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_pars</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span>
-    <span class="n">s_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">_tag_parameter</span><span class="p">(</span><span class="n">par</span><span class="p">)</span> <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">p_set</span> <span class="k">else</span> <span class="n">par</span><span class="p">)</span>
-              <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">s_pars</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
-    <span class="c1"># Check if still a collision after renaming.  This could happen if for</span>
-    <span class="c1"># example S has volfrac and P has both volfrac and volfrac_S.</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">p_set</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">s_list</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;name collision: P has P.name and P.name_S while S has S.name&quot;</span><span class="p">)</span>
+    <span class="n">s_pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">par</span><span class="p">,</span> <span class="p">(</span><span class="n">_tag_parameter</span><span class="p">(</span><span class="n">par</span><span class="p">)</span> <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">p_set</span> <span class="k">else</span> <span class="n">par</span><span class="p">))</span>
+               <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">s_pars</span><span class="o">.</span><span class="n">kernel_parameters</span>
+               <span class="c1"># Note: exclude volfraction from s_list if volfraction in p</span>
+               <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="n">VOLFRAC_ID</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">p_has_volfrac</span><span class="p">]</span>
+    <span class="n">s_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">s_pairs</span><span class="p">]</span>
 
-    <span class="n">translate_name</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">old</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">new</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span>
-                          <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">s_pars</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">s_list</span><span class="p">))</span>
-    <span class="n">combined_pars</span> <span class="o">=</span> <span class="n">p_pars</span><span class="o">.</span><span class="n">kernel_parameters</span> <span class="o">+</span> <span class="n">s_list</span>
+    <span class="c1"># Build combined parameter table</span>
+    <span class="n">combined_pars</span> <span class="o">=</span> <span class="n">p_pars</span><span class="o">.</span><span class="n">kernel_parameters</span> <span class="o">+</span> <span class="n">s_list</span> <span class="o">+</span> <span class="n">make_extra_pars</span><span class="p">(</span><span class="n">p_info</span><span class="p">)</span>
     <span class="n">parameters</span> <span class="o">=</span> <span class="n">ParameterTable</span><span class="p">(</span><span class="n">combined_pars</span><span class="p">)</span>
+    <span class="c1"># Allow for the scenario in which each component has all its PD parameters</span>
+    <span class="c1"># active simultaneously.  details.make_details() will throw an error if</span>
+    <span class="c1"># too many are used from any one component.</span>
     <span class="n">parameters</span><span class="o">.</span><span class="n">max_pd</span> <span class="o">=</span> <span class="n">p_pars</span><span class="o">.</span><span class="n">max_pd</span> <span class="o">+</span> <span class="n">s_pars</span><span class="o">.</span><span class="n">max_pd</span>
+
+    <span class="c1"># TODO: does user-defined polydisperse S.radius_effective make sense?</span>
+    <span class="c1"># make sure effective radius is not a polydisperse parameter in product</span>
+    <span class="c1">#s_list[0] = copy(s_list[0])</span>
+    <span class="c1">#s_list[0].polydisperse = False</span>
+
+    <span class="n">s_translate</span> <span class="o">=</span> <span class="p">{</span><span class="n">old</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">new</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="n">s_pairs</span><span class="p">}</span>
     <span class="k">def</span> <span class="nf">random</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Random set of model parameters for product model&quot;&quot;&quot;</span>
         <span class="n">combined_pars</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
-        <span class="n">s_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="n">s_pars</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-        <span class="n">combined_pars</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">translate_name</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">combined_pars</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">s_translate</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span>
                              <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s_info</span><span class="o">.</span><span class="n">random</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s_names</span><span class="p">)</span>
+                             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s_translate</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">combined_pars</span>
 
     <span class="n">model_info</span> <span class="o">=</span> <span class="n">ModelInfo</span><span class="p">()</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">p_id</span><span class="p">,</span> <span class="n">s_id</span><span class="p">))</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">p_name</span><span class="p">,</span> <span class="n">s_name</span><span class="p">))</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">model_info</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Product of </span><span class="si">%s</span><span class="s1"> and </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">p_name</span><span class="p">,</span> <span class="n">s_name</span><span class="p">)</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">title</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">docs</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">title</span>
@@ -146,23 +279,22 @@
     <span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">random</span> <span class="o">=</span> <span class="n">random</span>
     <span class="c1">#model_info.single = p_info.single and s_info.single</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">variant_info</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">model_info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">model_info</span><span class="o">.</span><span class="n">variant_info</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1">#model_info.tests = []</span>
     <span class="c1">#model_info.source = []</span>
-    <span class="c1"># Iq, Iqxy, form_volume, ER, VR and sesans</span>
     <span class="c1"># Remember the component info blocks so we can build the model</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">composition</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;product&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">p_info</span><span class="p">,</span> <span class="n">s_info</span><span class="p">])</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">control</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">control</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">hidden</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">hidden</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">p_info</span><span class="p">,</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">p_info</span><span class="p">,</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">profile_pars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Return SLD profile of the form factor as a function of radius.&quot;&quot;&quot;</span>
             <span class="c1"># extract the profile args</span>
             <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">profile_pars</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">p_info</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">profile</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">profile</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">profile_axes</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">profile_axes</span>
 
@@ -192,8 +324,42 @@
     <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">vector_length</span>
     <span class="k">return</span> <span class="n">par</span>
 
+<span class="k">def</span> <span class="nf">_intermediates</span><span class="p">(</span>
+        <span class="n">Q</span><span class="p">,</span>                <span class="c1"># type: np.ndarray</span>
+        <span class="n">F</span><span class="p">,</span>                <span class="c1"># type: np.ndarray</span>
+        <span class="n">Fsq</span><span class="p">,</span>              <span class="c1"># type: np.ndarray</span>
+        <span class="n">S</span><span class="p">,</span>                <span class="c1"># type: np.ndarray</span>
+        <span class="n">scale</span><span class="p">,</span>            <span class="c1"># type: float</span>
+        <span class="n">volume</span><span class="p">,</span>           <span class="c1"># type: float</span>
+        <span class="n">volume_ratio</span><span class="p">,</span>     <span class="c1"># type: float</span>
+        <span class="n">radius_effective</span><span class="p">,</span> <span class="c1"># type: float</span>
+        <span class="n">beta_mode</span><span class="p">,</span>        <span class="c1"># type: bool</span>
+        <span class="n">P_intermediate</span><span class="p">,</span>   <span class="c1"># type: Optional[Callable[[], OrderedDict]</span>
+    <span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; OrderedDict[str, Union[np.ndarray, float]]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns intermediate results for beta approximation-enabled product.</span>
+<span class="sd">    The result may be an array or a float.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;P(Q)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">Fsq</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">P_intermediate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;P(Q) parts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">P_intermediate</span><span class="p">()</span>
+    <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;volume&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">volume</span>
+    <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;volume_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">volume_ratio</span>
+    <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;radius_effective&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">radius_effective</span>
+    <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;S(Q)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">beta_mode</span><span class="p">:</span>
+        <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;beta(Q)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">F</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">Fsq</span><span class="p">)</span>
+        <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;S_eff(Q)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">F</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">Fsq</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">S</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="c1">#parts[&quot;I(Q)&quot;, scale*(Fsq + (F**2)*(S-1)) + bg</span>
+    <span class="k">return</span> <span class="n">parts</span>
+
 <div class="viewcode-block" id="ProductModel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.ProductModel">[docs]</a><span class="k">class</span> <span class="nc">ProductModel</span><span class="p">(</span><span class="n">KernelModel</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model definition for product model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, KernelModel, KernelModel) -&gt; None</span>
         <span class="c1">#: Combined info plock for the product model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
@@ -201,6 +367,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">P</span>
         <span class="c1">#: Structure factor modelling interaction between particles.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">S</span>
+
         <span class="c1">#: Model precision. This is not really relevant, since it is the</span>
         <span class="c1">#: individual P and S models that control the effective dtype,</span>
         <span class="c1">#: converting the q-vectors to the correct type when the kernels</span>
@@ -218,9 +385,11 @@
         <span class="c1"># separate q vectors are needed (e.g., form in python and structure</span>
         <span class="c1"># in opencl; or both in opencl, but one in single precision and the</span>
         <span class="c1"># other in double precision).</span>
+
         <span class="n">p_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">q_vectors</span><span class="p">)</span>
         <span class="n">s_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">q_vectors</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ProductKernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">p_kernel</span><span class="p">,</span> <span class="n">s_kernel</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">ProductKernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">p_kernel</span><span class="p">,</span> <span class="n">s_kernel</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">)</span></div>
+    <span class="n">make_kernel</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">KernelModel</span><span class="o">.</span><span class="n">make_kernel</span><span class="o">.</span><span class="vm">__doc__</span>
 
 <div class="viewcode-block" id="ProductModel.release"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.ProductModel.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: (None) -&gt; None</span>
@@ -232,140 +401,198 @@
 
 
 <div class="viewcode-block" id="ProductKernel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.ProductKernel">[docs]</a><span class="k">class</span> <span class="nc">ProductKernel</span><span class="p">(</span><span class="n">Kernel</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">p_kernel</span><span class="p">,</span> <span class="n">s_kernel</span><span class="p">):</span>
-        <span class="c1"># type: (ModelInfo, Kernel, Kernel) -&gt; None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiated kernel for product model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">p_kernel</span><span class="p">,</span> <span class="n">s_kernel</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="c1"># type: (ModelInfo, Kernel, Kernel, Tuple[np.ndarray]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span> <span class="o">=</span> <span class="n">p_kernel</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s_kernel</span> <span class="o">=</span> <span class="n">s_kernel</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">p_kernel</span><span class="o">.</span><span class="n">dtype</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># type: List[np.ndarray]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Callable[[], OrderedDict]</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">):</span>
+        <span class="c1"># Find index of volfraction parameter in parameter list</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">VOLFRAC_ID</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_index</span> <span class="o">=</span> <span class="n">k</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;no </span><span class="si">%s</span><span class="s2"> parameter in </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">VOLFRAC_ID</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+        <span class="n">p_info</span><span class="p">,</span> <span class="n">s_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">composition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">p_npars</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span>
+        <span class="n">s_npars</span> <span class="o">=</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span>
+
+        <span class="n">have_beta_mode</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">have_Fq</span>
+        <span class="n">have_er_mode</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">radius_effective_modes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">volfrac_in_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_index</span> <span class="o">&lt;</span> <span class="n">p_npars</span> <span class="o">+</span> <span class="mi">2</span>  <span class="c1"># scale &amp; background</span>
+
+        <span class="c1"># Slices into the details length/offset structure for P@S.</span>
+        <span class="c1"># Made complicated by the possibly missing volfraction in S.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p_detail_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p_npars</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s_detail_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">p_npars</span><span class="p">,</span> <span class="n">p_npars</span><span class="o">+</span><span class="n">s_npars</span><span class="o">-</span><span class="n">volfrac_in_p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_in_p</span> <span class="o">=</span> <span class="n">volfrac_in_p</span>
+
+        <span class="c1"># P block from data vector, without scale and background</span>
+        <span class="n">first_p</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">last_p</span> <span class="o">=</span> <span class="n">p_npars</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p_value_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">first_p</span><span class="p">,</span> <span class="n">last_p</span><span class="p">)</span>
+
+        <span class="c1"># radius_effective is the first parameter in S from the data vector.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_er_index</span> <span class="o">=</span> <span class="n">last_p</span>
+
+        <span class="c1"># S block from data vector, without scale, background, volfrac or er.</span>
+        <span class="n">first_s</span> <span class="o">=</span> <span class="n">last_p</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">volfrac_in_p</span>
+        <span class="n">last_s</span> <span class="o">=</span> <span class="n">first_s</span> <span class="o">+</span> <span class="n">s_npars</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s_value_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">first_s</span><span class="p">,</span> <span class="n">last_s</span><span class="p">)</span>
+
+        <span class="c1"># S distribution block in S data vector starts after all S values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s_dist_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">s_npars</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># structure_factor_mode is the first parameter after P and S.  Skip</span>
+        <span class="c1"># 2 for scale and background, and subtract 1 in case there is no</span>
+        <span class="c1"># volfraction in S.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_beta_mode_index</span> <span class="o">=</span> <span class="n">last_s</span> <span class="k">if</span> <span class="n">have_beta_mode</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="c1"># radius_effective_mode is the second parameter after P and S</span>
+        <span class="c1"># unless structure_factor_mode isn&#39;t available, in which case it</span>
+        <span class="c1"># is first.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_er_mode_index</span> <span class="o">=</span> <span class="n">last_s</span> <span class="o">+</span> <span class="n">have_beta_mode</span> <span class="k">if</span> <span class="n">have_er_mode</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="c1"># Magnetic parameters are after everything else.  If they exist,</span>
+        <span class="c1"># they will only be for form factor P, not structure factor S.</span>
+        <span class="n">first_mag</span> <span class="o">=</span> <span class="n">last_s</span> <span class="o">+</span> <span class="n">have_beta_mode</span> <span class="o">+</span> <span class="n">have_er_mode</span>
+        <span class="n">mag_pars</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">nmagnetic</span>
+        <span class="n">last_mag</span> <span class="o">=</span> <span class="n">first_mag</span> <span class="o">+</span> <span class="p">(</span><span class="n">mag_pars</span> <span class="o">+</span> <span class="mi">3</span> <span class="k">if</span> <span class="n">mag_pars</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_magentic_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">first_mag</span><span class="p">,</span> <span class="n">last_mag</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ProductKernel.Iq"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.ProductKernel.Iq">[docs]</a>    <span class="k">def</span> <span class="nf">Iq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">):</span>
         <span class="c1"># type: (CallDetails, np.ndarray, float, bool) -&gt; np.ndarray</span>
         <span class="n">p_info</span><span class="p">,</span> <span class="n">s_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">composition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># if there are magnetic parameters, they will only be on the</span>
-        <span class="c1"># form factor P, not the structure factor S.</span>
-        <span class="n">nmagnetic</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">magnetism_index</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">nmagnetic</span><span class="p">:</span>
-            <span class="n">spin_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span> <span class="o">+</span> <span class="mi">2</span>
-            <span class="n">magnetism</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">spin_index</span><span class="p">:</span> <span class="n">spin_index</span><span class="o">+</span><span class="mi">3</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">nmagnetic</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">magnetism</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Retrieve values from the data vector</span>
+        <span class="n">scale</span><span class="p">,</span> <span class="n">background</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">volfrac</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_index</span><span class="p">]</span>
+        <span class="n">er_mode</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_er_mode_index</span><span class="p">])</span>
+                   <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_er_mode_index</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">beta_mode</span> <span class="o">=</span> <span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_beta_mode_index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_beta_mode_index</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
+
         <span class="n">nvalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">nvalues</span>
         <span class="n">nweights</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">num_weights</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">nvalues</span><span class="p">:</span><span class="n">nvalues</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">nweights</span><span class="p">]</span>
 
+        <span class="c1"># Can&#39;t do 2d and beta_mode just yet</span>
+        <span class="k">if</span> <span class="n">beta_mode</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="s1">&#39;2d&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;beta not yet supported for 2D&quot;</span><span class="p">)</span>
+
         <span class="c1"># Construct the calling parameters for P.</span>
-        <span class="n">p_npars</span> <span class="o">=</span> <span class="n">p_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span>
-        <span class="n">p_length</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">length</span><span class="p">[:</span><span class="n">p_npars</span><span class="p">]</span>
-        <span class="n">p_offset</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">offset</span><span class="p">[:</span><span class="n">p_npars</span><span class="p">]</span>
+        <span class="n">p_length</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">length</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_p_detail_slice</span><span class="p">]</span>
+        <span class="n">p_offset</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_p_detail_slice</span><span class="p">]</span>
         <span class="n">p_details</span> <span class="o">=</span> <span class="n">make_details</span><span class="p">(</span><span class="n">p_info</span><span class="p">,</span> <span class="n">p_length</span><span class="p">,</span> <span class="n">p_offset</span><span class="p">,</span> <span class="n">nweights</span><span class="p">)</span>
-        <span class="c1"># Set p scale to the volume fraction in s, which is the first of the</span>
-        <span class="c1"># &#39;S&#39; parameters in the parameter list, or 2+np in 0-origin.</span>
-        <span class="n">volfrac</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="o">+</span><span class="n">p_npars</span><span class="p">]</span>
-        <span class="n">p_values</span> <span class="o">=</span> <span class="p">[[</span><span class="n">volfrac</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="o">+</span><span class="n">p_npars</span><span class="p">],</span> <span class="n">magnetism</span><span class="p">,</span> <span class="n">weights</span><span class="p">]</span>
+        <span class="n">p_values</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="c1"># scale=1, background=0,</span>
+            <span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_p_value_slice</span><span class="p">],</span>
+            <span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_magentic_slice</span><span class="p">],</span>
+            <span class="n">weights</span><span class="p">]</span>
         <span class="n">spacer</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p_values</span><span class="p">)</span><span class="o">%</span><span class="mi">32</span><span class="p">)</span><span class="o">%</span><span class="mi">32</span>
         <span class="n">p_values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">0.</span><span class="p">]</span><span class="o">*</span><span class="n">spacer</span><span class="p">)</span>
         <span class="n">p_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">p_values</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-        <span class="c1"># Call ER and VR for P since these are needed for S.</span>
-        <span class="n">p_er</span><span class="p">,</span> <span class="n">p_vr</span> <span class="o">=</span> <span class="n">calc_er_vr</span><span class="p">(</span><span class="n">p_info</span><span class="p">,</span> <span class="n">p_details</span><span class="p">,</span> <span class="n">p_values</span><span class="p">)</span>
-        <span class="n">s_vr</span> <span class="o">=</span> <span class="p">(</span><span class="n">volfrac</span><span class="o">/</span><span class="n">p_vr</span> <span class="k">if</span> <span class="n">p_vr</span> <span class="o">!=</span> <span class="mf">0.</span> <span class="k">else</span> <span class="n">volfrac</span><span class="p">)</span>
-        <span class="c1">#print(&quot;volfrac:%g p_er:%g p_vr:%g s_vr:%g&quot;%(volfrac,p_er,p_vr,s_vr))</span>
+        <span class="c1"># Call the form factor kernel to compute &lt;F&gt; and &lt;F^2&gt;.</span>
+        <span class="c1"># If the model doesn&#39;t support Fq the returned &lt;F&gt; will be None.</span>
+        <span class="n">F</span><span class="p">,</span> <span class="n">Fsq</span><span class="p">,</span> <span class="n">radius_effective</span><span class="p">,</span> <span class="n">shell_volume</span><span class="p">,</span> <span class="n">volume_ratio</span> \
+            <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span><span class="o">.</span><span class="n">Fq</span><span class="p">(</span><span class="n">p_details</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span> <span class="n">er_mode</span><span class="p">)</span>
+        <span class="n">p_intermediate</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># TODO: async call to the GPU</span>
 
         <span class="c1"># Construct the calling parameters for S.</span>
-        <span class="c1"># The  effective radius is not in the combined parameter list, so</span>
-        <span class="c1"># the number of &#39;S&#39; parameters is one less than expected.  The</span>
-        <span class="c1"># computed effective radius needs to be added into the weights</span>
-        <span class="c1"># vector, especially since it is a polydisperse parameter in the</span>
-        <span class="c1"># stand-alone structure factor models.  We will added it at the</span>
-        <span class="c1"># end so the remaining offsets don&#39;t need to change.</span>
-        <span class="n">s_npars</span> <span class="o">=</span> <span class="n">s_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span><span class="o">-</span><span class="mi">1</span>
-        <span class="n">s_length</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">length</span><span class="p">[</span><span class="n">p_npars</span><span class="p">:</span><span class="n">p_npars</span><span class="o">+</span><span class="n">s_npars</span><span class="p">]</span>
-        <span class="n">s_offset</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="n">p_npars</span><span class="p">:</span><span class="n">p_npars</span><span class="o">+</span><span class="n">s_npars</span><span class="p">]</span>
-        <span class="n">s_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">s_length</span><span class="p">))</span>
-        <span class="n">s_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">nweights</span><span class="p">,</span> <span class="n">s_offset</span><span class="p">))</span>
-        <span class="n">s_details</span> <span class="o">=</span> <span class="n">make_details</span><span class="p">(</span><span class="n">s_info</span><span class="p">,</span> <span class="n">s_length</span><span class="p">,</span> <span class="n">s_offset</span><span class="p">,</span> <span class="n">nweights</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[:</span><span class="n">nweights</span><span class="p">],</span> <span class="n">weights</span><span class="p">[</span><span class="n">nweights</span><span class="p">:]</span>
+        <span class="n">s_length</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">length</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_s_detail_slice</span><span class="p">]</span>
+        <span class="n">s_offset</span> <span class="o">=</span> <span class="n">call_details</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_s_detail_slice</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_in_p</span><span class="p">:</span>
+            <span class="c1"># Volfrac is in P and missing from S so insert a slot for it.  Say</span>
+            <span class="c1"># the distribution is length 1 and use the slot for volfraction</span>
+            <span class="c1"># from the P distribution.</span>
+            <span class="n">s_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s_length</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">s_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">s_offset</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p_offset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_index</span> <span class="o">-</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">er_mode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># If effective_radius comes from P, make sure it is monodisperse.</span>
+            <span class="c1"># Weight is set to 1 later, after the value array is created</span>
+            <span class="n">s_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">s_details</span> <span class="o">=</span> <span class="n">make_details</span><span class="p">(</span><span class="n">s_info</span><span class="p">,</span> <span class="n">s_length</span><span class="p">,</span> <span class="n">s_offset</span><span class="p">,</span> <span class="n">nweights</span><span class="p">)</span>
         <span class="n">s_values</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="c1"># scale=1, background=0, radius_effective=p_er, volfraction=s_vr</span>
-            <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">p_er</span><span class="p">,</span> <span class="n">s_vr</span><span class="p">],</span>
-            <span class="c1"># structure factor parameters start after scale, background and</span>
-            <span class="c1"># all the form factor parameters.  Skip the volfraction parameter</span>
-            <span class="c1"># as well, since it is computed elsewhere, and go to the end of the</span>
-            <span class="c1"># parameter list.</span>
-            <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="o">+</span><span class="n">p_npars</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">+</span><span class="n">p_npars</span><span class="o">+</span><span class="n">s_npars</span><span class="p">],</span>
-            <span class="c1"># no magnetism parameters to include for S</span>
-            <span class="c1"># add er into the (value, weights) pairs</span>
-            <span class="n">v</span><span class="p">,</span> <span class="p">[</span><span class="n">p_er</span><span class="p">],</span> <span class="n">w</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+            <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="c1"># scale=1</span>
+             <span class="mf">0.</span><span class="p">,</span> <span class="c1"># background=0,</span>
+             <span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_er_index</span><span class="p">],</span> <span class="c1"># S.radius_effective; may be replaced by P</span>
+             <span class="mf">0.</span><span class="p">],</span> <span class="c1"># volfraction; will be replaced by volfrac * volume_ratio</span>
+            <span class="c1"># followed by S parameters after effective_radius and volfraction</span>
+            <span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_s_value_slice</span><span class="p">],</span>
+            <span class="n">weights</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">spacer</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s_values</span><span class="p">)</span><span class="o">%</span><span class="mi">32</span><span class="p">)</span><span class="o">%</span><span class="mi">32</span>
         <span class="n">s_values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mf">0.</span><span class="p">]</span><span class="o">*</span><span class="n">spacer</span><span class="p">)</span>
         <span class="n">s_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">s_values</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s_kernel</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-        <span class="c1"># Call the kernels</span>
-        <span class="n">p_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span><span class="p">(</span><span class="n">p_details</span><span class="p">,</span> <span class="n">p_values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">)</span>
-        <span class="n">s_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_kernel</span><span class="p">(</span><span class="n">s_details</span><span class="p">,</span> <span class="n">s_values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="c1"># Plug R_eff from the form factor into structure factor parameters</span>
+        <span class="c1"># and scale volume fraction by form:shell volume ratio. These changes</span>
+        <span class="c1"># needs to be both in the initial value slot as well as the</span>
+        <span class="c1"># polydispersity distribution slot in the values array due to</span>
+        <span class="c1"># implementation details in kernel_iq.c.</span>
+        <span class="c1">#print(&quot;R_eff=%d:%g, volfrac=%g, volume ratio=%g&quot;</span>
+        <span class="c1">#      % (radius_type, radius_effective, volfrac, volume_ratio))</span>
+        <span class="n">s_dist</span> <span class="o">=</span> <span class="n">s_values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_s_dist_slice</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">er_mode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># set the value to the model R_eff and set the weight to 1</span>
+            <span class="n">s_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_dist</span><span class="p">[</span><span class="n">s_offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">radius_effective</span>
+            <span class="n">s_dist</span><span class="p">[</span><span class="n">s_offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">nweights</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">s_values</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_dist</span><span class="p">[</span><span class="n">s_offset</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">volfrac</span><span class="o">*</span><span class="n">volume_ratio</span>
+        <span class="n">s_dist</span><span class="p">[</span><span class="n">s_offset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">nweights</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-        <span class="c1">#print(&quot;p_npars&quot;,p_npars,s_npars,p_er,s_vr,values[2+p_npars+1:2+p_npars+s_npars])</span>
-        <span class="c1">#call_details.show(values)</span>
-        <span class="c1">#print(&quot;values&quot;, values)</span>
-        <span class="c1">#p_details.show(p_values)</span>
-        <span class="c1">#print(&quot;=&gt;&quot;, p_result)</span>
-        <span class="c1">#s_details.show(s_values)</span>
-        <span class="c1">#print(&quot;=&gt;&quot;, s_result)</span>
+        <span class="c1"># Call the structure factor kernel to compute S.</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_kernel</span><span class="o">.</span><span class="n">Iq</span><span class="p">(</span><span class="n">s_details</span><span class="p">,</span> <span class="n">s_values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="c1">#print(&quot;P&quot;, Fsq[:10])</span>
+        <span class="c1">#print(&quot;S&quot;, S[:10])</span>
+        <span class="c1">#print(radius_effective, volfrac*volume_ratio)</span>
 
-        <span class="c1"># remember the parts for plotting later</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_result</span><span class="p">,</span> <span class="n">s_result</span><span class="p">]</span>
+        <span class="c1"># Combine form factor and structure factor</span>
+        <span class="c1">#print(&quot;beta&quot;, beta_mode, F, Fsq, S)</span>
+        <span class="n">PS</span> <span class="o">=</span> <span class="n">Fsq</span> <span class="o">+</span> <span class="n">F</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">S</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">beta_mode</span> <span class="k">else</span> <span class="n">Fsq</span><span class="o">*</span><span class="n">S</span>
 
-        <span class="c1">#import pylab as plt</span>
-        <span class="c1">#plt.subplot(211); plt.loglog(self.p_kernel.q_input.q, p_result, &#39;-&#39;)</span>
-        <span class="c1">#plt.subplot(212); plt.loglog(self.s_kernel.q_input.q, s_result, &#39;-&#39;)</span>
-        <span class="c1">#plt.figure()</span>
+        <span class="c1"># Determine overall scale factor. Hollow shapes are weighted by</span>
+        <span class="c1"># shell_volume, so that is needed for number density estimation.</span>
+        <span class="c1"># For solid shapes we can use shell_volume as well since it is</span>
+        <span class="c1"># equal to form volume.  If P already has a volfraction parameter,</span>
+        <span class="c1"># then assume that it is already on absolute scale, and don&#39;t</span>
+        <span class="c1"># include volfrac in the combined_scale.</span>
+        <span class="n">combined_scale</span> <span class="o">=</span> <span class="n">scale</span><span class="o">*</span><span class="p">(</span><span class="n">volfrac</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volfrac_in_p</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">final_result</span> <span class="o">=</span> <span class="n">combined_scale</span><span class="o">/</span><span class="n">shell_volume</span><span class="o">*</span><span class="n">PS</span> <span class="o">+</span> <span class="n">background</span>
 
-        <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">p_result</span><span class="o">*</span><span class="n">s_result</span><span class="p">)</span> <span class="o">+</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Capture intermediate values so user can see them.  These are</span>
+        <span class="c1"># returned as a lazy evaluator since they are only needed in the</span>
+        <span class="c1"># GUI, and not for each evaluation during a fit.</span>
+        <span class="c1"># TODO: return the results structure with the final results</span>
+        <span class="c1"># That way the model calcs are idempotent. Further, we can</span>
+        <span class="c1"># generalize intermediates to various other model types if we put it</span>
+        <span class="c1"># kernel calling interface.  Could do this as an &quot;optional&quot;</span>
+        <span class="c1"># return value in the caller, though in that case we could return</span>
+        <span class="c1"># the results directly rather than through a lazy evaluator.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">_intermediates</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Fsq</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">combined_scale</span><span class="p">,</span> <span class="n">shell_volume</span><span class="p">,</span> <span class="n">volume_ratio</span><span class="p">,</span>
+            <span class="n">radius_effective</span><span class="p">,</span> <span class="n">beta_mode</span><span class="p">,</span> <span class="n">p_intermediate</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">final_result</span></div>
+
+    <span class="n">Iq</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">Kernel</span><span class="o">.</span><span class="n">Iq</span><span class="o">.</span><span class="vm">__doc__</span>
+    <span class="fm">__call__</span> <span class="o">=</span> <span class="n">Iq</span>
 
 <div class="viewcode-block" id="ProductKernel.release"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.ProductKernel.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;Free resources associated with the kernel.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_kernel</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s_kernel</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div></div>
-
-
-<div class="viewcode-block" id="calc_er_vr"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.product.calc_er_vr">[docs]</a><span class="k">def</span> <span class="nf">calc_er_vr</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, ParameterSet) -&gt; Tuple[float, float]</span>
-
-    <span class="k">if</span> <span class="n">model_info</span><span class="o">.</span><span class="n">ER</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">model_info</span><span class="o">.</span><span class="n">VR</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span>
-
-    <span class="n">nvalues</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">nvalues</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">nvalues</span><span class="p">:</span><span class="n">nvalues</span> <span class="o">+</span> <span class="n">call_details</span><span class="o">.</span><span class="n">num_weights</span><span class="p">]</span>
-    <span class="n">weight</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">nvalues</span> <span class="o">+</span> <span class="n">call_details</span><span class="o">.</span><span class="n">num_weights</span><span class="p">:</span> <span class="n">nvalues</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">call_details</span><span class="o">.</span><span class="n">num_weights</span><span class="p">]</span>
-    <span class="n">npars</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">npars</span>
-    <span class="c1"># Note: changed from pairs ([v], [w]) to triples (p, [v], [w]), but the</span>
-    <span class="c1"># dispersion mesh code doesn&#39;t actually care about the nominal parameter</span>
-    <span class="c1"># value, p, so set it to None.</span>
-    <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">None</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">length</span><span class="p">],</span> <span class="n">weight</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">length</span><span class="p">])</span>
-             <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">length</span>
-             <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="o">+</span><span class="n">npars</span><span class="p">],</span>
-                    <span class="n">call_details</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span>
-                    <span class="n">call_details</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-             <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;volume&#39;</span><span class="p">]</span>
-    <span class="n">value</span><span class="p">,</span> <span class="n">weight</span> <span class="o">=</span> <span class="n">dispersion_mesh</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">pairs</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">model_info</span><span class="o">.</span><span class="n">ER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">individual_radii</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">ER</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">radius_effective</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weight</span><span class="o">*</span><span class="n">individual_radii</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">radius_effective</span> <span class="o">=</span> <span class="mf">1.0</span>
-
-    <span class="k">if</span> <span class="n">model_info</span><span class="o">.</span><span class="n">VR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">whole</span><span class="p">,</span> <span class="n">part</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">VR</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">volume_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weight</span><span class="o">*</span><span class="n">part</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weight</span><span class="o">*</span><span class="n">whole</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">volume_ratio</span> <span class="o">=</span> <span class="mf">1.0</span>
-
-    <span class="k">return</span> <span class="n">radius_effective</span><span class="p">,</span> <span class="n">volume_ratio</span></div>
 </pre></div>
 
           </div>
@@ -375,12 +602,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -396,14 +625,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

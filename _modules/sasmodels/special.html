@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sasmodels.special &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sasmodels.special &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -49,7 +41,7 @@
           <div class="body" role="main">
             
   <h1>Source code for sasmodels.special</h1><div class="highlight"><pre>
-<span></span><span class="sd">r&quot;&quot;&quot;</span>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Special Functions</span>
 <span class="sd">.................</span>
 
@@ -159,7 +151,7 @@
 <span class="sd">        sorted from highest to lowest.</span>
 
 <span class="sd">    sas_gamma(x):</span>
-<span class="sd">        Gamma function $\text{sas_gamma}(x) = \Gamma(x)$.</span>
+<span class="sd">        Gamma function sas_gamma\ $(x) = \Gamma(x)$.</span>
 
 <span class="sd">        The standard math function, tgamma(x) is unstable for $x &lt; 1$</span>
 <span class="sd">        on some platforms.</span>
@@ -178,35 +170,35 @@
 
 <span class="sd">    sas_erf(x), sas_erfc(x):</span>
 <span class="sd">        Error function</span>
-<span class="sd">        $\text{sas_erf}(x) = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,dt$</span>
+<span class="sd">        sas_erf\ $(x) = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,dt$</span>
 <span class="sd">        and complementary error function</span>
-<span class="sd">        $\text{sas_erfc}(x) = \frac{2}{\sqrt\pi}\int_x^{\infty} e^{-t^2}\,dt$.</span>
+<span class="sd">        sas_erfc\ $(x) = \frac{2}{\sqrt\pi}\int_x^{\infty} e^{-t^2}\,dt$.</span>
 
 <span class="sd">        The standard math functions erf(x) and erfc(x) are slower and broken</span>
 <span class="sd">        on some platforms.</span>
 
 <span class="sd">    sas_J0(x):</span>
-<span class="sd">        Bessel function of the first kind $\text{sas_J0}(x)=J_0(x)$ where</span>
+<span class="sd">        Bessel function of the first kind sas_J0\ $(x)=J_0(x)$ where</span>
 <span class="sd">        $J_0(x) = \frac{1}{\pi}\int_0^\pi \cos(x\sin(\tau))\,d\tau$.</span>
 
 <span class="sd">        The standard math function j0(x) is not available on all platforms.</span>
 
 <span class="sd">    sas_J1(x):</span>
-<span class="sd">        Bessel function of the first kind  $\text{sas_J1}(x)=J_1(x)$ where</span>
+<span class="sd">        Bessel function of the first kind  sas_J1\ $(x)=J_1(x)$ where</span>
 <span class="sd">        $J_1(x) = \frac{1}{\pi}\int_0^\pi \cos(\tau - x\sin(\tau))\,d\tau$.</span>
 
 <span class="sd">        The standard math function j1(x) is not available on all platforms.</span>
 
 <span class="sd">    sas_JN(n, x):</span>
 <span class="sd">        Bessel function of the first kind and integer order $n$:</span>
-<span class="sd">        $\text{sas_JN}(n, x)=J_n(x)$ where</span>
+<span class="sd">        sas_JN\ $(n, x)=J_n(x)$ where</span>
 <span class="sd">        $J_n(x) = \frac{1}{\pi}\int_0^\pi \cos(n\tau - x\sin(\tau))\,d\tau$.</span>
 <span class="sd">        If $n$ = 0 or 1, it uses sas_J0(x) or sas_J1(x), respectively.</span>
 
 <span class="sd">        The standard math function jn(n, x) is not available on all platforms.</span>
 
 <span class="sd">    sas_Si(x):</span>
-<span class="sd">        Sine integral $\text{Si}(x) = \int_0^x \tfrac{\sin t}{t}\,dt$.</span>
+<span class="sd">        Sine integral sas_Si\ $(x) = \int_0^x \tfrac{\sin t}{t}\,dt$.</span>
 
 <span class="sd">        This function uses Taylor series for small and large arguments:</span>
 
@@ -230,7 +222,7 @@
 
 <span class="sd">    sas_3j1x_x(x):</span>
 <span class="sd">        Spherical Bessel form</span>
-<span class="sd">        $\text{sph_j1c}(x) = 3 j_1(x)/x = 3 (\sin(x) - x \cos(x))/x^3$,</span>
+<span class="sd">        sas_3j1x_x\ $(x) = 3 j_1(x)/x = 3 (\sin(x) - x \cos(x))/x^3$,</span>
 <span class="sd">        with a limiting value of 1 at $x=0$, where $j_1(x)$ is the spherical</span>
 <span class="sd">        Bessel function of the first kind and first order.</span>
 
@@ -238,7 +230,7 @@
 
 
 <span class="sd">    sas_2J1x_x(x):</span>
-<span class="sd">        Bessel form $\text{sas_J1c}(x) = 2 J_1(x)/x$, with a limiting value</span>
+<span class="sd">        Bessel form sas_2J1x_x\ $(x) = 2 J_1(x)/x$, with a limiting value</span>
 <span class="sd">        of 1 at $x=0$, where $J_1(x)$ is the Bessel function of first kind</span>
 <span class="sd">        and first order.</span>
 
@@ -256,7 +248,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># pylint: disable=unused-import</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># Functions to add to our standard set</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">radians</span>
@@ -361,17 +353,18 @@
 
 
 <span class="c1"># Gaussians</span>
-<div class="viewcode-block" id="Gauss"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.Gauss">[docs]</a><span class="k">class</span> <span class="nc">Gauss</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<div class="viewcode-block" id="Gauss"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.Gauss">[docs]</a><span class="k">class</span> <span class="nc">Gauss</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gauss-Legendre integration weights&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span></div>
 
 <span class="n">gauss20</span> <span class="o">=</span> <span class="n">Gauss</span><span class="p">(</span>
     <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="o">.</span><span class="mo">01761400713</span><span class="mi">91521</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">04060142</span><span class="mi">98003869</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">06267204</span><span class="mi">83341091</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0176140071391521</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0406014298003869</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0626720483341091</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">0832767415767047</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">10193011981724</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">118194531961518</span><span class="p">,</span>
@@ -386,9 +379,9 @@
         <span class="o">.</span><span class="mi">118194531961518</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">10193011981724</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">0832767415767047</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">06267204</span><span class="mi">83341091</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">04060142</span><span class="mi">98003869</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">01761400713</span><span class="mi">91521</span>
+        <span class="o">.</span><span class="mi">0626720483341091</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0406014298003869</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0176140071391521</span>
     <span class="p">]),</span>
     <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
         <span class="o">-.</span><span class="mi">993128599185095</span><span class="p">,</span>
@@ -400,8 +393,8 @@
         <span class="o">-.</span><span class="mi">510867001950827</span><span class="p">,</span>
         <span class="o">-.</span><span class="mi">37370608871542</span><span class="p">,</span>
         <span class="o">-.</span><span class="mi">227785851141645</span><span class="p">,</span>
-        <span class="o">-.</span><span class="mo">0765265211334</span><span class="mi">97</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0765265211334</span><span class="mi">973</span><span class="p">,</span>
+        <span class="o">-.</span><span class="mi">076526521133497</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0765265211334973</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">227785851141645</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">37370608871542</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">510867001950827</span><span class="p">,</span>
@@ -416,82 +409,82 @@
 
 <span class="n">gauss76</span> <span class="o">=</span> <span class="n">Gauss</span><span class="p">(</span>
     <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-        <span class="o">.</span><span class="mo">0012677</span><span class="mi">9163408536</span><span class="p">,</span>		<span class="c1">#0</span>
-        <span class="o">.</span><span class="mo">002</span><span class="mi">94910295364247</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">004627</span><span class="mi">93522803742</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0062</span><span class="mi">9918049732845</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">007</span><span class="mi">95984747723973</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">00</span><span class="mi">960710541471375</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">01123</span><span class="mi">81685696677</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">012</span><span class="mi">8502838475101</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">01444073174</span><span class="mi">82767</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">016006</span><span class="mi">8299122486</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">017545</span><span class="mi">9372914742</span><span class="p">,</span>		<span class="c1">#10</span>
-        <span class="o">.</span><span class="mo">01</span><span class="mi">90554584671906</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">020532</span><span class="mi">847967908</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">021</span><span class="mi">9756145344162</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0233</span><span class="mi">813253070112</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">02474760</span><span class="mi">99206597</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0260721644</span><span class="mi">97986</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">027352755531</span><span class="mi">8275</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">02</span><span class="mi">8587223650054</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">02</span><span class="mi">9773487255905</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">030</span><span class="mi">9095460374916</span><span class="p">,</span>		<span class="c1">#20</span>
-        <span class="o">.</span><span class="mo">031</span><span class="mi">9934843404216</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0330234743</span><span class="mi">977917</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">033</span><span class="mi">9977794120564</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">034</span><span class="mi">9147564835508</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">035772</span><span class="mi">8593807139</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03657064114732</span><span class="mi">96</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0373067565423</span><span class="mi">816</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">037</span><span class="mi">9799643084053</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03</span><span class="mi">85891292645067</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03</span><span class="mi">91332242205184</span><span class="p">,</span>		<span class="c1">#30</span>
-        <span class="o">.</span><span class="mo">03</span><span class="mi">96113317090621</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0400226455325</span><span class="mi">968</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">040366472122</span><span class="mi">844</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0406422317102</span><span class="mi">947</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">040</span><span class="mi">8494593018285</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">040</span><span class="mi">987805464794</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">041057036</span><span class="mi">9162294</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">041057036</span><span class="mi">9162294</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">040</span><span class="mi">987805464794</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">040</span><span class="mi">8494593018285</span><span class="p">,</span>		<span class="c1">#40</span>
-        <span class="o">.</span><span class="mo">0406422317102</span><span class="mi">947</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">040366472122</span><span class="mi">844</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0400226455325</span><span class="mi">968</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03</span><span class="mi">96113317090621</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03</span><span class="mi">91332242205184</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03</span><span class="mi">85891292645067</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">037</span><span class="mi">9799643084053</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0373067565423</span><span class="mi">816</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">03657064114732</span><span class="mi">96</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">035772</span><span class="mi">8593807139</span><span class="p">,</span>		<span class="c1">#50</span>
-        <span class="o">.</span><span class="mo">034</span><span class="mi">9147564835508</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">033</span><span class="mi">9977794120564</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0330234743</span><span class="mi">977917</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">031</span><span class="mi">9934843404216</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">030</span><span class="mi">9095460374916</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">02</span><span class="mi">9773487255905</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">02</span><span class="mi">8587223650054</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">027352755531</span><span class="mi">8275</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0260721644</span><span class="mi">97986</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">02474760</span><span class="mi">99206597</span><span class="p">,</span>		<span class="c1">#60</span>
-        <span class="o">.</span><span class="mo">0233</span><span class="mi">813253070112</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">021</span><span class="mi">9756145344162</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">020532</span><span class="mi">847967908</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">01</span><span class="mi">90554584671906</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">017545</span><span class="mi">9372914742</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">016006</span><span class="mi">8299122486</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">01444073174</span><span class="mi">82767</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">012</span><span class="mi">8502838475101</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">01123</span><span class="mi">81685696677</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">00</span><span class="mi">960710541471375</span><span class="p">,</span>		<span class="c1">#70</span>
-        <span class="o">.</span><span class="mo">007</span><span class="mi">95984747723973</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0062</span><span class="mi">9918049732845</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">004627</span><span class="mi">93522803742</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">002</span><span class="mi">94910295364247</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">0012677</span><span class="mi">9163408536</span>		<span class="c1">#75 (indexed from 0)</span>
+        <span class="o">.</span><span class="mi">00126779163408536</span><span class="p">,</span>		<span class="c1">#0</span>
+        <span class="o">.</span><span class="mi">00294910295364247</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00462793522803742</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00629918049732845</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00795984747723973</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00960710541471375</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0112381685696677</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0128502838475101</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0144407317482767</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0160068299122486</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0175459372914742</span><span class="p">,</span>		<span class="c1">#10</span>
+        <span class="o">.</span><span class="mi">0190554584671906</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">020532847967908</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0219756145344162</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0233813253070112</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0247476099206597</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">026072164497986</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0273527555318275</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">028587223650054</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">029773487255905</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0309095460374916</span><span class="p">,</span>		<span class="c1">#20</span>
+        <span class="o">.</span><span class="mi">0319934843404216</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0330234743977917</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0339977794120564</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0349147564835508</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0357728593807139</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0365706411473296</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0373067565423816</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0379799643084053</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0385891292645067</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0391332242205184</span><span class="p">,</span>		<span class="c1">#30</span>
+        <span class="o">.</span><span class="mi">0396113317090621</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0400226455325968</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">040366472122844</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0406422317102947</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0408494593018285</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">040987805464794</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0410570369162294</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0410570369162294</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">040987805464794</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0408494593018285</span><span class="p">,</span>		<span class="c1">#40</span>
+        <span class="o">.</span><span class="mi">0406422317102947</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">040366472122844</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0400226455325968</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0396113317090621</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0391332242205184</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0385891292645067</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0379799643084053</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0373067565423816</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0365706411473296</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0357728593807139</span><span class="p">,</span>		<span class="c1">#50</span>
+        <span class="o">.</span><span class="mi">0349147564835508</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0339977794120564</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0330234743977917</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0319934843404216</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0309095460374916</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">029773487255905</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">028587223650054</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0273527555318275</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">026072164497986</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0247476099206597</span><span class="p">,</span>		<span class="c1">#60</span>
+        <span class="o">.</span><span class="mi">0233813253070112</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0219756145344162</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">020532847967908</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0190554584671906</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0175459372914742</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0160068299122486</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0144407317482767</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0128502838475101</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0112381685696677</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00960710541471375</span><span class="p">,</span>		<span class="c1">#70</span>
+        <span class="o">.</span><span class="mi">00795984747723973</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00629918049732845</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00462793522803742</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00294910295364247</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">00126779163408536</span>		<span class="c1">#75 (indexed from 0)</span>
     <span class="p">]),</span>
     <span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
         <span class="o">-.</span><span class="mi">999505948362153</span><span class="p">,</span>		<span class="c1">#0</span>
@@ -530,10 +523,10 @@
         <span class="o">-.</span><span class="mi">183745593528914</span><span class="p">,</span>
         <span class="o">-.</span><span class="mi">143235548227268</span><span class="p">,</span>
         <span class="o">-.</span><span class="mi">102483975391227</span><span class="p">,</span>
-        <span class="o">-.</span><span class="mo">06155</span><span class="mi">95913906112</span><span class="p">,</span>
-        <span class="o">-.</span><span class="mo">020531403</span><span class="mi">9939986</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">020531403</span><span class="mi">9939986</span><span class="p">,</span>
-        <span class="o">.</span><span class="mo">06155</span><span class="mi">95913906112</span><span class="p">,</span>
+        <span class="o">-.</span><span class="mi">0615595913906112</span><span class="p">,</span>
+        <span class="o">-.</span><span class="mi">0205314039939986</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0205314039939986</span><span class="p">,</span>
+        <span class="o">.</span><span class="mi">0615595913906112</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">102483975391227</span><span class="p">,</span>			<span class="c1">#40</span>
         <span class="o">.</span><span class="mi">143235548227268</span><span class="p">,</span>
         <span class="o">.</span><span class="mi">183745593528914</span><span class="p">,</span>
@@ -888,12 +881,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -909,14 +904,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

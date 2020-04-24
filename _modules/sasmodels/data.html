@@ -1,33 +1,25 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>sasmodels.data &mdash; SasView 4.2.2 documentation</title>
-    
+    <title>sasmodels.data &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '4.2.2',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="top" title="SasView 4.2.2 documentation" href="../../index.html" />
-    <link rel="up" title="sasmodels" href="../sasmodels.html" /> 
-  </head>
-  <body role="document">
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -37,9 +29,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -85,7 +77,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
@@ -116,14 +108,14 @@
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">):</span>
             <span class="n">data</span><span class="o">.</span><span class="n">qmin</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                          <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">):</span>
             <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span>
     <span class="k">return</span> <span class="n">datasets</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="s1">&#39;all&#39;</span> <span class="k">else</span> <span class="n">datasets</span></div>
 
 
-<div class="viewcode-block" id="set_beam_stop"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.set_beam_stop">[docs]</a><span class="k">def</span> <span class="nf">set_beam_stop</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">outer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="set_beam_stop"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.set_beam_stop">[docs]</a><span class="k">def</span> <span class="nf">set_beam_stop</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">outer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># type: (Data, float, Optional[float]) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a beam stop of the given *radius*.  If *outer*, make an annulus.</span>
@@ -131,11 +123,11 @@
     <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Ringcut</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">):</span>
         <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">Ringcut</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">radius</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">outer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">outer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">+=</span> <span class="n">Ringcut</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">outer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">outer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">|=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">outer</span><span class="p">)</span></div>
 
 
@@ -190,22 +182,22 @@
 
 <span class="sd">    *_yaxis*, *_yunit*: label and units for the *y* axis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dy</span><span class="o">=</span><span class="bp">None</span>  <span class="c1"># type: Optional[np.ndarray]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">dy</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># type: Optional[np.ndarray]</span>
                 <span class="p">):</span>
         <span class="c1"># type: (...) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qmin</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmin</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
         <span class="c1"># TODO: why is 1D mask False and 2D mask True?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-                     <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-                     <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                     <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                     <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yunit</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
 
@@ -233,10 +225,10 @@
 
 <span class="sd">    *x* is spin echo length and *y* is polarization (P/P0).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">isSesans</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="n">Data1D</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># type: Optional[np.ndarray]</span></div>
+    <span class="n">isSesans</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">Data1D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Optional[np.ndarray]</span></div>
 
 <div class="viewcode-block" id="Data2D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.Data2D">[docs]</a><span class="k">class</span> <span class="nc">Data2D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -270,21 +262,21 @@
 
 <span class="sd">    *x_bins*, *y_bins*: grid steps in *x* and *y* directions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dy</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dz</span><span class="o">=</span><span class="bp">None</span>   <span class="c1"># type: Optional[np.ndarray]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
+                 <span class="n">dz</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[np.ndarray]</span>
                 <span class="p">):</span>
         <span class="c1"># type: (...) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">z</span><span class="p">,</span> <span class="n">dz</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-                     <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-                     <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                     <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                     <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qmin</span> <span class="o">=</span> <span class="mf">1e-16</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
@@ -298,8 +290,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xunit</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yunit</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_zaxis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zunit</span> <span class="o">=</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">x_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Data2D.xaxis"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.Data2D.xaxis">[docs]</a>    <span class="k">def</span> <span class="nf">xaxis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
         <span class="c1"># type: (str, str) -&gt; None</span>
@@ -330,7 +322,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    3-space vector of *x*, *y*, *z*</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (float, float, Optional[float]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span></div>
 
@@ -338,7 +330,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Detector attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixel_size</span><span class="o">=</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">distance</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixel_size</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (Tuple[float, float], float) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="o">*</span><span class="n">pixel_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="n">distance</span></div>
@@ -347,7 +339,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Beam attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength_unit</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span></div>
@@ -356,13 +348,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="empty_data1D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data1D">[docs]</a><span class="k">def</span> <span class="nf">empty_data1D</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dL</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
     <span class="c1"># type: (np.ndarray, float) -&gt; Data1D</span>
-    <span class="sd">r&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create empty 1D data using the given *q* as the x value.</span>
 
 <span class="sd">    rms *resolution* $\Delta q/q$ defaults to 0%.  If wavelength *L* and rms</span>
@@ -373,7 +365,7 @@
 
     <span class="c1">#Iq = 100 * np.ones_like(q)</span>
     <span class="c1">#dIq = np.sqrt(Iq)</span>
-    <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+    <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">L</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">resolution</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">q</span><span class="o">*</span><span class="n">L</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
@@ -387,13 +379,12 @@
         <span class="n">dq</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">L</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">dL</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">dtheta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">dq</span> <span class="o">=</span> <span class="n">resolution</span> <span class="o">*</span> <span class="n">q</span>
-
     <span class="n">data</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dq</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="n">dIq</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;fake data&quot;</span>
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="empty_data2D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data2D">[docs]</a><span class="k">def</span> <span class="nf">empty_data2D</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<div class="viewcode-block" id="empty_data2D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data2D">[docs]</a><span class="k">def</span> <span class="nf">empty_data2D</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
     <span class="c1"># type: (np.ndarray, Optional[np.ndarray], float) -&gt; Data2D</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create empty 2D data using the given mesh.</span>
@@ -402,7 +393,7 @@
 
 <span class="sd">    *resolution* dq/q defaults to 5%.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">qy</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">qy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">qy</span> <span class="o">=</span> <span class="n">qx</span>
     <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qx</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qy</span><span class="p">)</span>
     <span class="c1"># 5% dQ/Q resolution</span>
@@ -420,7 +411,7 @@
         <span class="n">dqx</span> <span class="o">=</span> <span class="n">resolution</span> <span class="o">*</span> <span class="n">Q</span>
         <span class="n">dqy</span> <span class="o">=</span> <span class="n">resolution</span> <span class="o">*</span> <span class="n">Q</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dqx</span> <span class="o">=</span> <span class="n">dqy</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">dqx</span> <span class="o">=</span> <span class="n">dqy</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">Data2D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Qx</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Qy</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Iq</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="n">dqy</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="n">dIq</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">x_bins</span> <span class="o">=</span> <span class="n">qx</span>
@@ -435,7 +426,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="plot_data"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.plot_data">[docs]</a><span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_data"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.plot_data">[docs]</a><span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># type: (Data, str, Optional[Tuple[float, float]]) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot data loaded by the sasview loader.</span>
@@ -451,20 +442,20 @@
     <span class="c1"># data, but they already handle the masking and graph markup already, so</span>
     <span class="c1"># do not repeat.</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;isSesans&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
-        <span class="n">_plot_result_sesans</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
-        <span class="n">_plot_result2D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
+        <span class="n">_plot_result_sesans</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">_plot_result2D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">_plot_result1D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span></div>
+        <span class="n">_plot_result1D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="plot_theory"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.plot_theory">[docs]</a><span class="k">def</span> <span class="nf">plot_theory</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>          <span class="c1"># type: Data</span>
                 <span class="n">theory</span><span class="p">,</span>        <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="n">resid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>    <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="n">view</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span>    <span class="c1"># type: str</span>
-                <span class="n">use_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="c1"># type: bool</span>
-                <span class="n">limits</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="n">Iq_calc</span><span class="o">=</span><span class="bp">None</span>   <span class="c1"># type: Optional[np.ndarray]</span>
+                <span class="n">resid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="c1"># type: Optional[np.ndarray]</span>
+                <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="c1"># type: str</span>
+                <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># type: bool</span>
+                <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
+                <span class="n">Iq_calc</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[np.ndarray]</span>
                <span class="p">):</span>
     <span class="c1"># type: (...) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -485,8 +476,8 @@
 <span class="sd">    *Iq_calc* is the raw theory values without resolution smearing</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;isSesans&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
-        <span class="n">_plot_result_sesans</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">_plot_result_sesans</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">_plot_result2D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">_plot_result1D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="p">,</span>
@@ -517,75 +508,74 @@
                    <span class="n">resid</span><span class="p">,</span>        <span class="c1"># type: Optional[np.ndarray]</span>
                    <span class="n">view</span><span class="p">,</span>         <span class="c1"># type: str</span>
                    <span class="n">use_data</span><span class="p">,</span>     <span class="c1"># type: bool</span>
-                   <span class="n">limits</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[Tuple[float, float]]</span>
-                   <span class="n">Iq_calc</span><span class="o">=</span><span class="bp">None</span>  <span class="c1"># type: Optional[np.ndarray]</span>
+                   <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[Tuple[float, float]]</span>
+                   <span class="n">Iq_calc</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># type: Optional[np.ndarray]</span>
                   <span class="p">):</span>
     <span class="c1"># type: (...) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the data and residuals for 1D data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
     <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">masked_array</span><span class="p">,</span> <span class="n">masked</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="c1"># Default to &#39;log&#39; view</span>
+    <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span>
+
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">q_data</span>
         <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span>
 
-    <span class="n">use_data</span> <span class="o">=</span> <span class="n">use_data</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_theory</span> <span class="o">=</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_resid</span> <span class="o">=</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_calc</span> <span class="o">=</span> <span class="n">use_theory</span> <span class="ow">and</span> <span class="n">Iq_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+    <span class="n">use_data</span> <span class="o">=</span> <span class="n">use_data</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_theory</span> <span class="o">=</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_resid</span> <span class="o">=</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_calc</span> <span class="o">=</span> <span class="n">use_theory</span> <span class="ow">and</span> <span class="n">Iq_calc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">num_plots</span> <span class="o">=</span> <span class="p">(</span><span class="n">use_data</span> <span class="ow">or</span> <span class="n">use_theory</span><span class="p">)</span> <span class="o">+</span> <span class="n">use_calc</span> <span class="o">+</span> <span class="n">use_resid</span>
     <span class="n">non_positive_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
 
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">**</span><span class="mi">4</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span> <span class="k">else</span> <span class="mf">1.0</span>
-    <span class="n">xscale</span> <span class="o">=</span> <span class="n">yscale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span> <span class="k">else</span> <span class="s1">&#39;log&#39;</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mf">1e8</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">**</span><span class="mi">4</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span> <span class="k">else</span> <span class="mf">1.0</span>
 
     <span class="k">if</span> <span class="n">use_data</span> <span class="ow">or</span> <span class="n">use_theory</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">num_plots</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_plots</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="c1">#print(vmin, vmax)</span>
-        <span class="n">all_positive</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">some_present</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">all_positive</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">some_present</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">use_data</span><span class="p">:</span>
             <span class="n">mdata</span> <span class="o">=</span> <span class="n">masked_array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
             <span class="n">mdata</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mdata</span><span class="p">)]</span> <span class="o">=</span> <span class="n">masked</span>
-            <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
                 <span class="n">mdata</span><span class="p">[</span><span class="n">mdata</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">masked</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">mdata</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">mdata</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">scale</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
             <span class="n">all_positive</span> <span class="o">=</span> <span class="n">all_positive</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mdata</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
             <span class="n">some_present</span> <span class="o">=</span> <span class="n">some_present</span> <span class="ow">or</span> <span class="p">(</span><span class="n">mdata</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 
 
         <span class="k">if</span> <span class="n">use_theory</span><span class="p">:</span>
+            <span class="c1"># Theory values are only calculated where the data is not masked,</span>
+            <span class="c1"># so restrict data.x and scale to only those points.</span>
             <span class="c1"># Note: masks merge, so any masked theory points will stay masked,</span>
             <span class="c1"># and the data mask will be added to it.</span>
             <span class="c1">#mtheory = masked_array(theory, data.mask.copy())</span>
             <span class="n">theory_x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">theory_scale</span> <span class="o">=</span> <span class="n">scale</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span> <span class="k">else</span> <span class="n">scale</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
             <span class="n">mtheory</span> <span class="o">=</span> <span class="n">masked_array</span><span class="p">(</span><span class="n">theory</span><span class="p">)</span>
             <span class="n">mtheory</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mtheory</span><span class="p">)]</span> <span class="o">=</span> <span class="n">masked</span>
-            <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
                 <span class="n">mtheory</span><span class="p">[</span><span class="n">mtheory</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">masked</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theory_x</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">mtheory</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theory_x</span><span class="p">,</span> <span class="n">theory_scale</span><span class="o">*</span><span class="n">mtheory</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
             <span class="n">all_positive</span> <span class="o">=</span> <span class="n">all_positive</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mtheory</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
             <span class="n">some_present</span> <span class="o">=</span> <span class="n">some_present</span> <span class="ow">or</span> <span class="p">(</span><span class="n">mtheory</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">*</span><span class="n">limits</span><span class="p">)</span>
 
 
-        <span class="n">xscale</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">some_present</span> <span class="ow">or</span> <span class="n">non_positive_x</span>
-                  <span class="k">else</span> <span class="n">view</span> <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-                  <span class="k">else</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
-        <span class="n">yscale</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span>
-                  <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">some_present</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">all_positive</span>
-                  <span class="k">else</span> <span class="n">view</span> <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-                  <span class="k">else</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="n">xscale</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">some_present</span> <span class="ow">or</span> <span class="n">non_positive_x</span> <span class="k">else</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span> <span class="k">if</span> <span class="n">some_present</span> <span class="ow">and</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="k">else</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$q$/A$^{-1}$&quot;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="n">yscale</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$I(q)$&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$10^8 q^4 I(q)$&#39;</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span> <span class="k">else</span> <span class="s1">&#39;$I(q)$&#39;</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;data and model&quot;</span> <span class="k">if</span> <span class="n">use_theory</span> <span class="ow">and</span> <span class="n">use_data</span>
                  <span class="k">else</span> <span class="s2">&quot;data&quot;</span> <span class="k">if</span> <span class="n">use_data</span>
                  <span class="k">else</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
@@ -614,7 +604,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$q$/A$^{-1}$&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;residuals&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;(model - Iq)/dIq&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="n">xscale</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">some_present</span> <span class="ow">or</span> <span class="n">non_positive_x</span> <span class="k">else</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
 
 
@@ -623,20 +613,20 @@
                         <span class="n">theory</span><span class="p">,</span>      <span class="c1"># type: Optional[np.ndarray]</span>
                         <span class="n">resid</span><span class="p">,</span>       <span class="c1"># type: Optional[np.ndarray]</span>
                         <span class="n">use_data</span><span class="p">,</span>    <span class="c1"># type: bool</span>
-                        <span class="n">limits</span><span class="o">=</span><span class="bp">None</span>  <span class="c1"># type: Optional[Tuple[float, float]]</span>
+                        <span class="n">limits</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># type: Optional[Tuple[float, float]]</span>
                        <span class="p">):</span>
     <span class="c1"># type: (...) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot SESANS results.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
-    <span class="n">use_data</span> <span class="o">=</span> <span class="n">use_data</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_theory</span> <span class="o">=</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_resid</span> <span class="o">=</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+    <span class="n">use_data</span> <span class="o">=</span> <span class="n">use_data</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_theory</span> <span class="o">=</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_resid</span> <span class="o">=</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">num_plots</span> <span class="o">=</span> <span class="p">(</span><span class="n">use_data</span> <span class="ow">or</span> <span class="n">use_theory</span><span class="p">)</span> <span class="o">+</span> <span class="n">use_resid</span>
 
     <span class="k">if</span> <span class="n">use_data</span> <span class="ow">or</span> <span class="n">use_theory</span><span class="p">:</span>
-        <span class="n">is_tof</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">lam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">lam</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">lam</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="n">is_tof</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">lam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">lam</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">lam</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">num_plots</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_plots</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">use_data</span><span class="p">:</span>
@@ -645,26 +635,26 @@
                              <span class="n">yerr</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">lam</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">lam</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">is_tof</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">theory</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">lam</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">lam</span><span class="p">),</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">*</span><span class="n">limits</span><span class="p">)</span>
 
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;spin echo length ({})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">_xunit</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;spin echo length (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">_xunit</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">is_tof</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">r&#39;(Log (P/P$_0$))/$\lambda^2$&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(Log (P/P$_0$))/$\lambda^2$&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;polarization (P/P0)&#39;</span><span class="p">)</span>
 
 
-    <span class="k">if</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">num_plots</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_plots</span><span class="p">,</span> <span class="p">(</span><span class="n">use_data</span> <span class="ow">or</span> <span class="n">use_theory</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;spin echo length ({})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">_xunit</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;spin echo length (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">_xunit</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;residuals (P/P0)&#39;</span><span class="p">)</span>
 
 
@@ -674,21 +664,23 @@
                    <span class="n">resid</span><span class="p">,</span>        <span class="c1"># type: Optional[np.ndarray]</span>
                    <span class="n">view</span><span class="p">,</span>         <span class="c1"># type: str</span>
                    <span class="n">use_data</span><span class="p">,</span>     <span class="c1"># type: bool</span>
-                   <span class="n">limits</span><span class="o">=</span><span class="bp">None</span>   <span class="c1"># type: Optional[Tuple[float, float]]</span>
+                   <span class="n">limits</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[Tuple[float, float]]</span>
                   <span class="p">):</span>
     <span class="c1"># type: (...) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the data and residuals for 2D data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
-    <span class="n">use_data</span> <span class="o">=</span> <span class="n">use_data</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_theory</span> <span class="o">=</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-    <span class="n">use_resid</span> <span class="o">=</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+    <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span>
+    <span class="n">use_data</span> <span class="o">=</span> <span class="n">use_data</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_theory</span> <span class="o">=</span> <span class="n">theory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">use_resid</span> <span class="o">=</span> <span class="n">resid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">num_plots</span> <span class="o">=</span> <span class="n">use_data</span> <span class="o">+</span> <span class="n">use_theory</span> <span class="o">+</span> <span class="n">use_resid</span>
 
     <span class="c1"># Put theory and data on a common colormap scale</span>
     <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># type: Optional[np.ndarray]</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Optional[np.ndarray]</span>
     <span class="k">if</span> <span class="n">use_data</span><span class="p">:</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
         <span class="n">datamin</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">target</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
@@ -702,7 +694,7 @@
         <span class="n">vmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vmax</span><span class="p">,</span> <span class="n">theorymax</span><span class="p">)</span>
 
     <span class="c1"># Override data limits from the caller</span>
-    <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">limits</span>
 
     <span class="c1"># Plot data</span>
@@ -721,8 +713,8 @@
         <span class="n">_plot_2d_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;theory&#39;</span><span class="p">)</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">r&#39;$\log_{10}I(q)$&#39;</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span>
-                    <span class="k">else</span> <span class="s1">r&#39;$q^4 I(q)$&#39;</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">I(q)$&#39;</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span>
+                    <span class="k">else</span> <span class="sa">r</span><span class="s1">&#39;$q^4 I(q)$&#39;</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span>
                     <span class="k">else</span> <span class="s1">&#39;$I(q)$&#39;</span><span class="p">)</span>
 
     <span class="c1"># plot resid</span>
@@ -732,15 +724,15 @@
         <span class="n">_plot_2d_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;residuals&#39;</span><span class="p">)</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-        <span class="n">h</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">r&#39;$\Delta I(q)$&#39;</span><span class="p">)</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\Delta I(q)$&#39;</span><span class="p">)</span>
 
 
 <span class="nd">@protect</span>
 <span class="k">def</span> <span class="nf">_plot_2d_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>       <span class="c1"># type: Data2D</span>
                     <span class="n">signal</span><span class="p">,</span>     <span class="c1"># type: np.ndarray</span>
-                    <span class="n">vmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[float]</span>
-                    <span class="n">vmax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="c1"># type: Optional[float]</span>
-                    <span class="n">view</span><span class="o">=</span><span class="s1">&#39;log&#39;</span>  <span class="c1"># type: str</span>
+                    <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[float]</span>
+                    <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[float]</span>
+                    <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: str</span>
                    <span class="p">):</span>
     <span class="c1"># type: (...) -&gt; Tuple[float, float]</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -749,34 +741,37 @@
 
 <span class="sd">    *scale* can be &#39;log&#39; for log scale data, or &#39;linear&#39;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
     <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">masked_array</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span>
 
     <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
     <span class="n">image</span><span class="p">[</span><span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal</span>
-    <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span>
     <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
-        <span class="n">valid</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">vmin</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">vmax</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">&amp;=</span> <span class="n">image</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmin</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmax</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">])</span>
     <span class="k">elif</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;q4&#39;</span><span class="p">:</span>
         <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">vmin</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">vmax</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmin</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmax</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">vmin</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">vmax</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmin</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vmax</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-    <span class="n">image</span><span class="p">[</span><span class="o">~</span><span class="n">valid</span> <span class="o">|</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">image</span><span class="p">[</span><span class="o">~</span><span class="n">valid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="c1">#plottable = Iq</span>
-    <span class="n">plottable</span> <span class="o">=</span> <span class="n">masked_array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">~</span><span class="n">valid</span> <span class="o">|</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">plottable</span> <span class="o">=</span> <span class="n">masked_array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">~</span><span class="n">valid</span><span class="p">)</span>
     <span class="c1"># Divide range by 10 to convert from angstroms to nanometers</span>
     <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
     <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
@@ -806,7 +801,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># No qx or qy given in a vector format</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span> <span class="ow">is</span> <span class="bp">None</span> \
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span> <span class="ow">is</span> <span class="kc">None</span> \
             <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">plottable</span>
 
@@ -839,7 +834,7 @@
     <span class="n">image</span><span class="p">[</span><span class="n">weights</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="n">weights</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">weights</span><span class="p">[</span><span class="n">weights</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
     <span class="c1"># Set image bins w/o a data point (weight==0) as None (was set to zero</span>
     <span class="c1"># by histogram2d.)</span>
-    <span class="n">image</span><span class="p">[</span><span class="n">weights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">image</span><span class="p">[</span><span class="n">weights</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Fill empty bins with 8 nearest neighbors only when at least</span>
     <span class="c1">#one None point exists</span>
@@ -895,7 +890,7 @@
 
     <span class="k">return</span> <span class="n">x_bins</span><span class="p">,</span> <span class="n">y_bins</span>
 
-<span class="k">def</span> <span class="nf">_fillup_pixels</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_fillup_pixels</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fill z values of the empty cells of 2d image matrix</span>
 <span class="sd">    with the average over up-to next nearest neighbor points</span>
@@ -908,9 +903,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># No image matrix given</span>
-    <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> \
+    <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> \
             <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> \
-            <span class="ow">or</span> <span class="n">weights</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="ow">or</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">image</span>
     <span class="c1"># Get bin size in y and x directions</span>
     <span class="n">len_y</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -972,11 +967,11 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;DEC07086.DAT&#39;</span><span class="p">)</span>
     <span class="n">set_beam_stop</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">)</span>
     <span class="n">plot_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">demo</span><span class="p">()</span>
 </pre></div>
 
@@ -987,12 +982,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1008,14 +1005,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 4.2.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
     </div>
   </body>
 </html>

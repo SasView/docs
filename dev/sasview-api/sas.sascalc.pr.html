@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.sascalc.pr package &#8212; SasView 5.0.1 documentation</title>
+    <title>sas.sascalc.pr package &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="sas.sascalc.invariant.html" title="sas.sascalc.invariant package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -54,6 +54,393 @@
 <h1>sas.sascalc.pr package</h1>
 <div class="section" id="submodules">
 <h2>Submodules</h2>
+</div>
+<div class="section" id="module-sas.sascalc.pr.calc">
+<span id="sas-sascalc-pr-calc-module"></span><h2>sas.sascalc.pr.calc module</h2>
+<p>Converted invertor.c’s methods.
+Implements low level inversion functionality, with conditional Numba njit compilation.</p>
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.dprdr">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">dprdr</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#dprdr"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>dP(r)/dr calculated from the expansion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>r</strong> – r-value.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dP(r)/dr.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.dprdr_calc">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">dprdr_calc</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#dprdr_calc"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.int_pr">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">int_pr</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#int_pr"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Integral of P(r).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Integral of P(r).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.int_pr_square">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">int_pr_square</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#int_pr_square"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Regularization term calculated from the expansion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Regularization term calculated from the expansion.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.iq">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">iq</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#iq"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Scattering intensity calculated from the expansion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>q</strong> – q (vector).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Scattering intensity from the expansion across all q.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.iq_smeared">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">iq_smeared</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#iq_smeared"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Scattering intensity calculated from the expansion, slit-smeared.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p</strong> – c-parameters.</li>
+<li><strong>q</strong> – q (vector).</li>
+<li><strong>height</strong> – slit_height.</li>
+<li><strong>width</strong> – slit_width.</li>
+<li><strong>npts</strong> – npts.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Scattering intensity from the expansion slit-smeared across all q.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.npeaks">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">npeaks</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#npeaks"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Get the number of P(r) peaks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Number of P(r) peaks.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.ortho">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">ortho</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#ortho"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Orthogonal Functions:
+B(r) = 2r sin(pi*nr/d)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>n</strong> – <ol class="loweralpha" start="14">
+<li></li>
+</ol>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">B(r).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.ortho_derived">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">ortho_derived</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#ortho_derived"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>First derivative in of the orthogonal function dB(r)/dr.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>n</strong> – <ol class="loweralpha" start="14">
+<li></li>
+</ol>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">First derivative in dB(r)/dr.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.ortho_transformed">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">ortho_transformed</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#ortho_transformed"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Fourier transform of the nth orthogonal function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> – q (vector).</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>n</strong> – <ol class="loweralpha" start="14">
+<li></li>
+</ol>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Fourier transform of nth orthogonal function across all q.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.ortho_transformed_smeared">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">ortho_transformed_smeared</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#ortho_transformed_smeared"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Slit-smeared Fourier transform of the nth orthogonal function.
+Smearing follows Lake, Acta Cryst. (1967) 23, 191.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> – q (vector).</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>n</strong> – <ol class="loweralpha" start="14">
+<li></li>
+</ol>
+</li>
+<li><strong>height</strong> – slit_height.</li>
+<li><strong>width</strong> – slit_width.</li>
+<li><strong>npts</strong> – npts.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Slit-smeared Fourier transform of nth orthogonal function across all q.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.positive_errors">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">positive_errors</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#positive_errors"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Get the fraction of the integral of P(r) over the whole range
+of r that is at least one sigma above 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>err</strong> – error terms.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The fraction of the integral of P(r) over the whole range</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>of r that is at least one sigma above 0.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.positive_integral">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">positive_integral</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#positive_integral"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Get the fraction of the integral of P(r) over the whole
+range of r that is above 0.
+A valid P(r) is defined as being positive for all r.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The fraction of the integral of P(r) over the whole</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>range of r that is above 0.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.pr">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">pr</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#pr"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>P(r) calculated from the expansion</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>r</strong> – r-value to evaluate P(r).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">P(r).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.pr_err">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">pr_err</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#pr_err"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>P(r) calculated from the expansion,
+with errors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>err</strong> – err.</li>
+<li><strong>r</strong> – r-value.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">[P(r), dP(r)].</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.reg_term">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">reg_term</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#reg_term"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Regularization term calculated from the expansion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Regularization term calculated from the expansion.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.calc.rg">
+<code class="descclassname">sas.sascalc.pr.calc.</code><code class="descname">rg</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/calc.html#rg"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>R_g radius of gyration calculation</p>
+<p>R_g**2 = integral[r**2 * p(r) dr] / (2.0 * integral[p(r) dr])</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>nslice</strong> – nslice.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">R_g radius of gyration.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.sascalc.pr.distance_explorer">
 <span id="sas-sascalc-pr-distance-explorer-module"></span><h2>sas.sascalc.pr.distance_explorer module</h2>
@@ -85,7 +472,7 @@ The module contains the Invertor class.</p>
 <dl class="class">
 <dt id="sas.sascalc.pr.invertor.Invertor">
 <em class="property">class </em><code class="descclassname">sas.sascalc.pr.invertor.</code><code class="descname">Invertor</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/invertor.html#Invertor"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Cinvertor</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#sas.sascalc.pr.p_invertor.Pinvertor" title="sas.sascalc.pr.p_invertor.Pinvertor"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.pr.p_invertor.Pinvertor</span></code></a></p>
 <p>Invertor class to perform P(r) inversion</p>
 <p>The problem is solved by posing the problem as  Ax = b,
 where x is the set of coefficients we are looking for.</p>
@@ -453,6 +840,688 @@ Future work: extend this function to allow topic selection</p>
 <dd></dd></dl>
 
 </div>
+<div class="section" id="module-sas.sascalc.pr.p_invertor">
+<span id="sas-sascalc-pr-p-invertor-module"></span><h2>sas.sascalc.pr.p_invertor module</h2>
+<p>Python implementation of the P(r) inversion
+Pinvertor is the base class for the Invertor class
+and provides the underlying computations.</p>
+<dl class="class">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor">
+<em class="property">class </em><code class="descclassname">sas.sascalc.pr.p_invertor.</code><code class="descname">Pinvertor</code><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.accept_q">
+<code class="descname">accept_q</code><span class="sig-paren">(</span><em>q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.accept_q"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check whether a q-value is within acceptable limits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">1 if accepted, 0 if rejected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.basefunc_ft">
+<code class="descname">basefunc_ft</code><span class="sig-paren">(</span><em>d_max</em>, <em>n</em>, <em>q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.basefunc_ft"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the value of the nth Fourier transformed base function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>d_max</strong> – d_max.</li>
+<li><strong>n</strong> – <ol class="loweralpha" start="14">
+<li></li>
+</ol>
+</li>
+<li><strong>q</strong> – q, scalar or vector.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">nth Fourier transformed base function, evaluated at q.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.check_for_zero">
+<code class="descname">check_for_zero</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.check_for_zero"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.err">
+<code class="descname">err</code><em class="property"> = array([], dtype=float64)</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_alpha">
+<code class="descname">get_alpha</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_alpha"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the alpha parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">alpha.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_dmax">
+<code class="descname">get_dmax</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_dmax"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the maximum distance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">d_max.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_err">
+<code class="descname">get_err</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_err"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to get the err data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Array of doubles to place err into.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">npoints - number of entries found</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_est_bck">
+<code class="descname">get_est_bck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_est_bck"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets background flag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">est_bck.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_iq_smeared">
+<code class="descname">get_iq_smeared</code><span class="sig-paren">(</span><em>pars</em>, <em>q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_iq_smeared"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to call to evaluate the scattering intensity.
+The scattering intensity is slit-smeared.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters</li>
+<li><strong>q</strong> – q, scalar or vector.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">I(q), either scalar or vector depending on q.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_nerr">
+<code class="descname">get_nerr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_nerr"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the number of error points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nerr.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_nx">
+<code class="descname">get_nx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_nx"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the number of x points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">npoints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_ny">
+<code class="descname">get_ny</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_ny"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the number of y points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ny.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_peaks">
+<code class="descname">get_peaks</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_peaks"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the number of peaks in the output P(r) distribution
+for the given set of coefficients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – c-parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of P(r) peaks.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_pos_err">
+<code class="descname">get_pos_err</code><span class="sig-paren">(</span><em>pars</em>, <em>pars_err</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_pos_err"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the fraction of P(r) that is 1 standard deviation
+above zero over the full range of r for the given set of coefficients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>pars_err</strong> – pars_err.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">fraction of P(r) that is positive.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_positive">
+<code class="descname">get_positive</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_positive"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the fraction of P(r) that is positive over
+the full range of r for the given set of coefficients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – c-parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">fraction of P(r) that is positive.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_pr_err">
+<code class="descname">get_pr_err</code><span class="sig-paren">(</span><em>pars</em>, <em>pars_err</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_pr_err"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to call to evaluate P(r) with errors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>pars_err</strong> – pars_err.</li>
+<li><strong>r</strong> – r-value.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(P(r), dP(r))</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_qmax">
+<code class="descname">get_qmax</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_qmax"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the maximum q.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">q_max.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_qmin">
+<code class="descname">get_qmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_qmin"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the minimum q.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">q_min.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_slit_height">
+<code class="descname">get_slit_height</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_slit_height"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the slit height.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">slit_height.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_slit_width">
+<code class="descname">get_slit_width</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_slit_width"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Gets the slit width.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">slit_width.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_x">
+<code class="descname">get_x</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_x"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to get the x data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Array to place x into</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">npoints - Number of entries found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.get_y">
+<code class="descname">get_y</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.get_y"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to get the y data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Array of doubles to place y into.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">npoints - Number of entries found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.iq">
+<code class="descname">iq</code><span class="sig-paren">(</span><em>pars</em>, <em>q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.iq"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to call to evaluate the scattering intensity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters</li>
+<li><strong>q</strong> – q, scalar or vector.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">I(q)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.iq0">
+<code class="descname">iq0</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.iq0"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the value of I(q=0).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – c-parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">I(q=0)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.is_valid">
+<code class="descname">is_valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.is_valid"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check the validity of the stored data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns the number of points if it’s all good, -1 otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.nerr">
+<code class="descname">nerr</code><em class="property"> = 0</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.npoints">
+<code class="descname">npoints</code><em class="property"> = 0</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.ny">
+<code class="descname">ny</code><em class="property"> = 0</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.oscillations">
+<code class="descname">oscillations</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.oscillations"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the value of the oscillation figure of merit for
+the given set of coefficients. For a sphere, the oscillation
+figure of merit is 1.1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – c-parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">oscillation figure of merit.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.pr">
+<code class="descname">pr</code><span class="sig-paren">(</span><em>pars</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.pr"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to call to evaluate P(r).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pars</strong> – c-parameters.</li>
+<li><strong>r</strong> – r-value to evaluate P(r) at.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">P(r)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.pr_residuals">
+<code class="descname">pr_residuals</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.pr_residuals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to call to evaluate the residuals for P(r) minimization (for testing purposes).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – input parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">residuals - list of residuals.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.residuals">
+<code class="descname">residuals</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.residuals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to call to evaluate the residuals for P(r) inversion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – input parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">residuals - list of residuals.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.rg">
+<code class="descname">rg</code><span class="sig-paren">(</span><em>pars</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.rg"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the value of the radius of gyration Rg.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pars</strong> – c-parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Rg.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_alpha">
+<code class="descname">set_alpha</code><span class="sig-paren">(</span><em>alpha</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_alpha"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the alpha parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>alpha</strong> – float to set alpha to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">alpha.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_dmax">
+<code class="descname">set_dmax</code><span class="sig-paren">(</span><em>d_max</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_dmax"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the maximum distance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d_max</strong> – float to set d_max to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">d_max</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_err">
+<code class="descname">set_err</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_err"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to set the err data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Array of doubles to set err to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nerr - Number of entries found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_est_bck">
+<code class="descname">set_est_bck</code><span class="sig-paren">(</span><em>est_bck</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_est_bck"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets background flag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>est_bck</strong> – int to set est_bck to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">est_bck.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_qmax">
+<code class="descname">set_qmax</code><span class="sig-paren">(</span><em>max_q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_qmax"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the maximum q.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_q</strong> – float to set q_max to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">q_max.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_qmin">
+<code class="descname">set_qmin</code><span class="sig-paren">(</span><em>min_q</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_qmin"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the minimum q.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>min_q</strong> – float to set q_min to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">q_min.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_slit_height">
+<code class="descname">set_slit_height</code><span class="sig-paren">(</span><em>slit_height</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_slit_height"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the slit height in units of q [A-1].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>slit_height</strong> – float to set slit-height to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">slit_height.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_slit_width">
+<code class="descname">set_slit_width</code><span class="sig-paren">(</span><em>slit_width</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_slit_width"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Sets the slit width in units of q [A-1].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>slit_width</strong> – float to set slit_width to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">slit_width.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_x">
+<code class="descname">set_x</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_x"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to set the x data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Array of doubles to set x to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">npoints - Number of entries found, the size of x.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.set_y">
+<code class="descname">set_y</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/pr/p_invertor.html#Pinvertor.set_y"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Function to set the y data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Array of doubles to set y to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ny - Number of entries found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.slit_height">
+<code class="descname">slit_height</code><em class="property"> = 0.0</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.slit_width">
+<code class="descname">slit_width</code><em class="property"> = 0.0</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.x">
+<code class="descname">x</code><em class="property"> = array([], dtype=float64)</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.pr.p_invertor.Pinvertor.y">
+<code class="descname">y</code><em class="property"> = array([], dtype=float64)</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-sas.sascalc.pr">
 <span id="module-contents"></span><h2>Module contents</h2>
 <p>P(r) inversion for SAS</p>
@@ -469,9 +1538,11 @@ Future work: extend this function to allow topic selection</p>
   <ul>
 <li><a class="reference internal" href="#">sas.sascalc.pr package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-sas.sascalc.pr.calc">sas.sascalc.pr.calc module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.pr.distance_explorer">sas.sascalc.pr.distance_explorer module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.pr.invertor">sas.sascalc.pr.invertor module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.pr.num_term">sas.sascalc.pr.num_term module</a></li>
+<li><a class="reference internal" href="#module-sas.sascalc.pr.p_invertor">sas.sascalc.pr.p_invertor module</a></li>
 <li><a class="reference internal" href="#module-sas.sascalc.pr">Module contents</a></li>
 </ul>
 </li>
@@ -521,7 +1592,7 @@ Future work: extend this function to allow topic selection</p>
         <li class="right" >
           <a href="sas.sascalc.invariant.html" title="sas.sascalc.invariant package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
