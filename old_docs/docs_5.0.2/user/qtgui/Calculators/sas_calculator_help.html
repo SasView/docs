@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Generic SANS Calculator Tool &#8212; SasView 5.0.2 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Python Shell-Editor Tool" href="python_shell_help.html" />
+    <link rel="prev" title="Q Resolution Estimator Tool" href="resolution_calculator_help.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="python_shell_help.html" title="Python Shell-Editor Tool"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="resolution_calculator_help.html" title="Q Resolution Estimator Tool"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../tools.html" accesskey="U">Tools &amp; Utilities</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="generic-sans-calculator-tool">
+<span id="sans-calculator-tool"></span><h1>Generic SANS Calculator Tool</h1>
+<div class="section" id="description">
+<h2>Description</h2>
+<p>This tool attempts to simulate the SANS expected from a specified
+shape/structure or scattering length density profile. The tool can
+handle both nuclear and magnetic contributions to the scattering.</p>
+</div>
+<div class="section" id="theory">
+<h2>Theory</h2>
+<p>In general, a particle with a volume <span class="math notranslate nohighlight">\(V\)</span> can be described by an ensemble
+containing <span class="math notranslate nohighlight">\(N\)</span> 3-dimensional rectangular pixels where each pixel is much
+smaller than <span class="math notranslate nohighlight">\(V\)</span>.</p>
+<p>Assuming that all the pixel sizes are the same, the elastic scattering
+intensity from the particle is defined as</p>
+<img alt="../../../_images/gen_i.png" src="../../../_images/gen_i.png" />
+<p>Equation 1.</p>
+<p>where <span class="math notranslate nohighlight">\(\beta_j\)</span> and <span class="math notranslate nohighlight">\(r_j\)</span> are the scattering length density and
+the position of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span> pixel respectively.</p>
+<p>The total volume <span class="math notranslate nohighlight">\(V\)</span> is equal to</p>
+<div class="math notranslate nohighlight">
+\[V = \sum_j^N v_j\]</div>
+<p>for <span class="math notranslate nohighlight">\(\beta_j \ne 0\)</span> where <span class="math notranslate nohighlight">\(v_j\)</span> is the volume of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span>
+pixel (or the <span class="math notranslate nohighlight">\(j^\text{th}\)</span> natural atomic volume (= atomic mass / (natural molar
+density * Avogadro number) for the atomic structures).</p>
+<p><span class="math notranslate nohighlight">\(V\)</span> can be corrected by users (input parameter <cite>Total volume</cite>). This correction
+is useful especially for an atomic structure (such as taken from a PDB file)
+to get the right normalization.</p>
+<p><em>NOTE! :math:`beta_j` displayed in the GUI may be incorrect (input parameter
+`solvent_SLD`) but this will not affect the scattering computation if the
+correction of the total volume V is made.</em></p>
+<p>The scattering length density (SLD) of each pixel, where the SLD is uniform, is
+a combination of the nuclear and magnetic SLDs and depends on the spin states
+of the neutrons as follows.</p>
+<div class="section" id="magnetic-scattering">
+<h3>Magnetic Scattering</h3>
+<p>For magnetic scattering, only the magnetization component, <span class="math notranslate nohighlight">\(M_\perp\)</span>,
+perpendicular to the scattering vector <span class="math notranslate nohighlight">\(Q\)</span> contributes to the magnetic
+scattering length.</p>
+<img alt="../../../_images/mag_vector.png" src="../../../_images/mag_vector.png" />
+<p>The magnetic scattering length density is then</p>
+<img alt="../../../_images/dm_eq.png" src="../../../_images/dm_eq.png" />
+<p>where the gyromagnetic ratio is <span class="math notranslate nohighlight">\(\gamma = -1.913\)</span>, <span class="math notranslate nohighlight">\(\mu_B\)</span> is the Bohr
+magneton, <span class="math notranslate nohighlight">\(r_0\)</span> is the classical radius of electron, and <span class="math notranslate nohighlight">\(\sigma\)</span> is the
+Pauli spin.</p>
+<p>For a polarized neutron, the magnetic scattering is depending on the spin states.</p>
+<p>Let us consider that the incident neutrons are polarised both parallel (+) and
+anti-parallel (-) to the x’ axis (see below). The possible states after
+scattering from the sample are then</p>
+<ul class="simple">
+<li>Non-spin flips: (+ +) and (- -)</li>
+<li>Spin flips:     (+ -) and (- +)</li>
+</ul>
+<img alt="../../../_images/gen_mag_pic.png" src="../../../_images/gen_mag_pic.png" />
+<p>Now let us assume that the angles of the <em>Q</em> vector and the spin-axis (x’)
+to the x-axis are <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\theta_\text{up}\)</span> respectively (see above). Then,
+depending upon the polarization (spin) state of neutrons, the scattering
+length densities, including the nuclear scattering length density (<span class="math notranslate nohighlight">\(\beta_N\)</span>)
+are given as</p>
+<ul>
+<li><p class="first">for non-spin-flips</p>
+<img alt="../../../_images/sld1.png" src="../../../_images/sld1.png" />
+</li>
+<li><p class="first">for spin-flips</p>
+<img alt="../../../_images/sld2.png" src="../../../_images/sld2.png" />
+</li>
+</ul>
+<p>where</p>
+<img alt="../../../_images/mxp.png" src="../../../_images/mxp.png" />
+<img alt="../../../_images/myp.png" src="../../../_images/myp.png" />
+<img alt="../../../_images/mzp.png" src="../../../_images/mzp.png" />
+<img alt="../../../_images/mqx.png" src="../../../_images/mqx.png" />
+<img alt="../../../_images/mqy.png" src="../../../_images/mqy.png" />
+<p>Here the <span class="math notranslate nohighlight">\(M_{0x}\)</span>, <span class="math notranslate nohighlight">\(M_{0y}\)</span> and <span class="math notranslate nohighlight">\(M_{0z}\)</span> are the <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(z\)</span>
+components of the magnetisation vector in the laboratory <span class="math notranslate nohighlight">\(xyz\)</span> frame.</p>
+</div>
+</div>
+<div class="section" id="using-the-tool">
+<h2>Using the tool</h2>
+<div class="figure">
+<img alt="../../../_images/gen_gui_help.png" src="../../../_images/gen_gui_help.png" />
+<div class="legend">
+<ol class="arabic simple">
+<li>Load .sld, .txt, or .omf datafile</li>
+<li>Select default shape of sample</li>
+<li>Draw magnetization with arrows (not recommended for a large number of
+pixels).</li>
+<li>Ratio of (+/total) neutrons after analyser</li>
+<li>Ratio of (+/total) neutrons before sample</li>
+<li>Polarization angle in degrees</li>
+<li>Default volume calculated from the pixel info
+(or natural density of pdf file)</li>
+<li>Compute the scattering pattern</li>
+<li>Reset GUI to initial state</li>
+<li>Display mean values or enter a new value if enabled</li>
+<li>Save the sld data as sld format</li>
+</ol>
+</div>
+</div>
+<p><em>Up_frac_in</em> and <em>Up_frac_out</em> are the ratio</p>
+<blockquote>
+<div>(spin up) / (spin up + spin down)</div></blockquote>
+<p>of neutrons before the sample and at the analyzer, respectively.</p>
+<p><em>NOTE 1. The values of Up_frac_in and Up_frac_out must be in the range
+0.0 to 1.0. Both values are 0.5 for unpolarized neutrons.</em></p>
+<p><em>NOTE 2. This computation is totally based on the pixel (or atomic) data fixed
+in xyz coordinates. No angular orientational averaging is considered.</em></p>
+<p><em>NOTE 3. For the nuclear scattering length density, only the real component
+is taken into account.</em></p>
+</div>
+<div class="section" id="using-pdb-omf-or-sld-files">
+<h2>Using PDB/OMF or SLD files</h2>
+<p>The SANS Calculator tool can read some PDB, OMF or SLD files but ignores
+polarized/magnetic scattering when doing so, thus related parameters such as
+<em>Up_frac_in</em>, etc, will be ignored.</p>
+<p>The calculation for fixed orientation uses Equation 1 above resulting in a 2D
+output, whereas the scattering calculation averaged over all the orientations
+uses the Debye equation below providing a 1D output</p>
+<img alt="../../../_images/gen_debye_eq.png" src="../../../_images/gen_debye_eq.png" />
+<p>where <span class="math notranslate nohighlight">\(v_j \beta_j \equiv b_j\)</span> is the scattering
+length of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span> atom.
+.. The calculation output is passed to the <em>Data Explorer</em>
+for further use.</p>
+<div class="figure">
+<img alt="../../../_images/pdb_combo.png" src="../../../_images/pdb_combo.png" />
+<div class="legend">
+<ol class="arabic simple">
+<li>PDB file loaded</li>
+<li>disabled input for <em>Up_frac_in</em>, <em>Up_frac_oupt</em>, <em>Up_theta</em></li>
+<li>option to perform the calculations using “Fixed orientations” (2D output)
+or “Averaging over all orientations using Debye equation” (1D output).
+This choice is only available for PDB files.</li>
+</ol>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This help document was last changed by Steve King, 01May2015</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Generic SANS Calculator Tool</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#theory">Theory</a><ul>
+<li><a class="reference internal" href="#magnetic-scattering">Magnetic Scattering</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-tool">Using the tool</a></li>
+<li><a class="reference internal" href="#using-pdb-omf-or-sld-files">Using PDB/OMF or SLD files</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="resolution_calculator_help.html"
+                        title="previous chapter">Q Resolution Estimator Tool</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="python_shell_help.html"
+                        title="next chapter">Python Shell-Editor Tool</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/user/qtgui/Calculators/sas_calculator_help.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="python_shell_help.html" title="Python Shell-Editor Tool"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="resolution_calculator_help.html" title="Q Resolution Estimator Tool"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../tools.html" >Tools &amp; Utilities</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

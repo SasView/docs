@@ -1,0 +1,282 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Calculators.DensityPanel &#8212; SasView 5.0.2 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Calculators.DensityPanel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># global</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">periodictable</span> <span class="kn">import</span> <span class="n">formula</span> <span class="k">as</span> <span class="n">Formula</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">FormulaValidator</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">main_resources_rc</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">HELP_DIRECTORY_LOCATION</span>
+
+<span class="c1"># Local UI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.UI.DensityPanel</span> <span class="kn">import</span> <span class="n">Ui_DensityPanel</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">enum</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">formatNumber</span>
+
+<span class="n">MODEL</span> <span class="o">=</span> <span class="n">enum</span><span class="p">(</span>
+    <span class="s1">&#39;MOLECULAR_FORMULA&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MOLAR_MASS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MOLAR_VOLUME&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MASS_DENSITY&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">MODES</span> <span class="o">=</span> <span class="n">enum</span><span class="p">(</span>
+    <span class="s1">&#39;VOLUME_TO_DENSITY&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DENSITY_TO_VOLUME&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="toMolarMass"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.toMolarMass">[docs]</a><span class="k">def</span> <span class="nf">toMolarMass</span><span class="p">(</span><span class="n">formula</span><span class="p">):</span>
+    <span class="n">AVOGADRO</span> <span class="o">=</span> <span class="mf">6.02214129e23</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">Formula</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">formula</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">molecular_mass</span> <span class="o">*</span> <span class="n">AVOGADRO</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="DensityPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel">[docs]</a><span class="k">class</span> <span class="nc">DensityPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DensityPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">()</span>
+        <span class="c1"># disable the context help icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupMapper</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DensityPanel.setupUi"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.setupUi">[docs]</a>    <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_DensityPanel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1">#self.setFixedSize(self.minimumSizeHint())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimumSizeHint</span><span class="p">())</span>
+
+        <span class="c1"># set validators</span>
+        <span class="c1">#self.ui.editMolecularFormula.setValidator(FormulaValidator(self.ui.editMolecularFormula))</span>
+
+        <span class="n">rx</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="s2">&quot;[+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolarVolume</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">rx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolarVolume</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMassDensity</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">rx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMassDensity</span><span class="p">))</span>
+
+        <span class="c1"># signals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolarVolume</span><span class="o">.</span><span class="n">textEdited</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setMode</span><span class="p">,</span> <span class="n">MODES</span><span class="o">.</span><span class="n">VOLUME_TO_DENSITY</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMassDensity</span><span class="o">.</span><span class="n">textEdited</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setMode</span><span class="p">,</span> <span class="n">MODES</span><span class="o">.</span><span class="n">DENSITY_TO_VOLUME</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Reset</span><span class="p">)</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelReset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Help</span><span class="p">)</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">displayHelp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DensityPanel.setupModel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.setupModel">[docs]</a>    <span class="k">def</span> <span class="nf">setupModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_MASS</span>       <span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span>     <span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span>     <span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolarVolume</span><span class="o">.</span><span class="n">textEdited</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">volumeChanged</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMassDensity</span><span class="o">.</span><span class="n">textEdited</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">massChanged</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolecularFormula</span><span class="o">.</span><span class="n">textEdited</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formulaChanged</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelReset</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DensityPanel.setupMapper"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.setupMapper">[docs]</a>    <span class="k">def</span> <span class="nf">setupMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolecularFormula</span><span class="p">,</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolarMass</span>       <span class="p">,</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_MASS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolarVolume</span>     <span class="p">,</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMassDensity</span>     <span class="p">,</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DensityPanel.dataChanged"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.dataChanged">[docs]</a>    <span class="k">def</span> <span class="nf">dataChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">bottom</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">:</span>
+                <span class="n">molarMass</span> <span class="o">=</span> <span class="n">toMolarMass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+                <span class="n">molarMass</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">molarMass</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_MASS</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">molarMass</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">MODES</span><span class="o">.</span><span class="n">VOLUME_TO_DENSITY</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_updateDensity</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">MODES</span><span class="o">.</span><span class="n">DENSITY_TO_VOLUME</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_updateVolume</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">MODES</span><span class="o">.</span><span class="n">VOLUME_TO_DENSITY</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_updateDensity</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">MODES</span><span class="o">.</span><span class="n">DENSITY_TO_VOLUME</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_updateVolume</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DensityPanel.volumeChanged"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.volumeChanged">[docs]</a>    <span class="k">def</span> <span class="nf">volumeChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_text</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">molarMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">toMolarMass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">molarVolume</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span>
+
+            <span class="n">molarDensity</span> <span class="o">=</span> <span class="n">molarMass</span> <span class="o">/</span> <span class="n">molarVolume</span>
+            <span class="n">molarDensity</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">molarDensity</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">molarDensity</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ArithmeticError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DensityPanel.massChanged"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.massChanged">[docs]</a>    <span class="k">def</span> <span class="nf">massChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_text</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">molarMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">toMolarMass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">molarDensity</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span>
+
+            <span class="n">molarVolume</span> <span class="o">=</span> <span class="n">molarMass</span> <span class="o">/</span> <span class="n">molarDensity</span>
+            <span class="n">molarVolume</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">molarVolume</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">molarVolume</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ArithmeticError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DensityPanel.formulaChanged"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.formulaChanged">[docs]</a>    <span class="k">def</span> <span class="nf">formulaChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_text</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">molarMass</span> <span class="o">=</span> <span class="n">toMolarMass</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span>
+            <span class="c1"># if this doesn&#39;t fail, update the model item for formula</span>
+            <span class="c1"># so related values can get recomputed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">current_text</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ArithmeticError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DensityPanel.setMode"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.setMode">[docs]</a>    <span class="k">def</span> <span class="nf">setMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span></div>
+
+    <span class="k">def</span> <span class="nf">_updateDensity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">molarMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">toMolarMass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">molarVolume</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+            <span class="n">molarDensity</span> <span class="o">=</span> <span class="n">molarMass</span> <span class="o">/</span> <span class="n">molarVolume</span>
+            <span class="n">molarDensity</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">molarDensity</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">molarDensity</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ArithmeticError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_updateVolume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">molarMass</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">toMolarMass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="n">molarDensity</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+            <span class="n">molarVolume</span> <span class="o">=</span> <span class="n">molarMass</span> <span class="o">/</span> <span class="n">molarDensity</span>
+            <span class="n">molarVolume</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">molarVolume</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">molarVolume</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ArithmeticError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DensityPanel.modelReset"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.modelReset">[docs]</a>    <span class="k">def</span> <span class="nf">modelReset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setMode</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;H2O&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLAR_VOLUME</span>     <span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span>     <span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="DensityPanel.displayHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DensityPanel.DensityPanel.displayHelp">[docs]</a>    <span class="k">def</span> <span class="nf">displayHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Calculators/density_calculator_help.html&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">location</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

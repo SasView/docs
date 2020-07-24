@@ -1,0 +1,224 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>teubner_strey &#8212; SasView 5.0.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="two_lorentzian" href="two_lorentzian.html" />
+    <link rel="prev" title="surface_fractal" href="surface_fractal.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="two_lorentzian.html" title="two_lorentzian"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="surface_fractal.html" title="surface_fractal"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" accesskey="U">Shape-Independent Functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="teubner-strey">
+<span id="id1"></span><h1>teubner_strey</h1>
+<p>Teubner-Strey model of microemulsions</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="45%" />
+<col width="17%" />
+<col width="19%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Description</th>
+<th class="head">Units</th>
+<th class="head">Default value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>scale</td>
+<td>Scale factor or Volume fraction</td>
+<td>None</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>background</td>
+<td>Source background</td>
+<td>cm<sup>-1</sup></td>
+<td>0.001</td>
+</tr>
+<tr class="row-even"><td>volfraction_a</td>
+<td>Volume fraction of phase a</td>
+<td>None</td>
+<td>0.5</td>
+</tr>
+<tr class="row-odd"><td>sld_a</td>
+<td>SLD of phase a</td>
+<td>10<sup>-6</sup>Å<sup>-2</sup></td>
+<td>0.3</td>
+</tr>
+<tr class="row-even"><td>sld_b</td>
+<td>SLD of phase b</td>
+<td>10<sup>-6</sup>Å<sup>-2</sup></td>
+<td>6.3</td>
+</tr>
+<tr class="row-odd"><td>d</td>
+<td>Domain size (periodicity)</td>
+<td>Å</td>
+<td>100</td>
+</tr>
+<tr class="row-even"><td>xi</td>
+<td>Correlation length</td>
+<td>Å</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
+<p><strong>Definition</strong></p>
+<p>This model calculates the scattered intensity of a two-component system
+using the Teubner-Strey model. Unlike <a class="reference internal" href="dab.html#dab"><span class="std std-ref">dab</span></a> this function generates
+a peak. A two-phase material can be characterised by two length scales -
+a correlation length and a domain size (periodicity).</p>
+<p>The original paper by Teubner and Strey defined the function as:</p>
+<div class="math notranslate nohighlight">
+\[I(q) \propto \frac{1}{a_2 + c_1 q^2 + c_2 q^4} + \text{background}\]</div>
+<p>where the parameters <span class="math notranslate nohighlight">\(a_2\)</span>, <span class="math notranslate nohighlight">\(c_1\)</span> and <span class="math notranslate nohighlight">\(c_2\)</span> are defined in terms of the
+periodicity, <span class="math notranslate nohighlight">\(d\)</span>, and correlation length <span class="math notranslate nohighlight">\(\xi\)</span> as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}a_2 &amp;= \biggl[1+\bigl(\frac{2\pi\xi}{d}\bigr)^2\biggr]^2\\
+c_1 &amp;= -2\xi^2\bigl(\frac{2\pi\xi}{d}\bigr)^2+2\xi^2\\
+c_2 &amp;= \xi^4\end{split}\]</div>
+<p>and thus, the periodicity, <span class="math notranslate nohighlight">\(d\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[d = 2\pi\left[\frac12\left(\frac{a_2}{c_2}\right)^{1/2}
+              - \frac14\frac{c_1}{c_2}\right]^{-1/2}\]</div>
+<p>and the correlation length, <span class="math notranslate nohighlight">\(\xi\)</span>, is given by</p>
+<div class="math notranslate nohighlight">
+\[\xi = \left[\frac12\left(\frac{a_2}{c_2}\right)^{1/2}
+              + \frac14\frac{c_1}{c_2}\right]^{-1/2}\]</div>
+<p>Here the model is parameterised in terms of  <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(\xi\)</span> and with an explicit
+volume fraction for one phase, <span class="math notranslate nohighlight">\(\phi_a\)</span>, and contrast,
+<span class="math notranslate nohighlight">\(\delta\rho^2 = (\rho_a - \rho_b)^2\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[I(q) = \frac{8\pi\phi_a(1-\phi_a)(\Delta\rho)^2c_2/\xi}
+    {a_2 + c_1q^2 + c_2q^4}\]</div>
+<p>where <span class="math notranslate nohighlight">\(8\pi\phi_a(1-\phi_a)(\Delta\rho)^2c_2/\xi\)</span> is the constant of
+proportionality from the first equation above.</p>
+<p>In the case of a microemulsion, <span class="math notranslate nohighlight">\(a_2 &gt; 0\)</span>, <span class="math notranslate nohighlight">\(c_1 &lt; 0\)</span>, and <span class="math notranslate nohighlight">\(c_2 &gt;0\)</span>.</p>
+<p>For 2D data, scattering intensity is calculated in the same way as 1D,
+where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
+\[q = \sqrt{q_x^2 + q_y^2}\]</div>
+<div class="figure" id="id2">
+<img alt="../../_images/teubner_strey_autogenfig.png" src="../../_images/teubner_strey_autogenfig.png" />
+<p class="caption"><span class="caption-number">Fig. 119 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
+</div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" download="" href="../../_downloads/1f0bacdbe0a48f08aacaa2de3f7a7056/teubner_strey.py"><code class="xref download docutils literal notranslate"><span class="pre">teubner_strey.py</span></code></a></p>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li>M Teubner, R Strey, <em>J. Chem. Phys.</em>, 87 (1987) 3195</li>
+<li>K V Schubert, R Strey, S R Kline and E W Kaler, <em>J. Chem. Phys.</em>, 101 (1994) 5343</li>
+<li>H Endo, M Mihailescu, M. Monkenbusch, J Allgaier, G Gompper, D Richter, B Jakobs, T Sottmann, R Strey, and I Grillo, <em>J. Chem. Phys.</em>, 115 (2001), 580</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong></li>
+<li><strong>Last Modified by:</strong></li>
+<li><strong>Last Reviewed by:</strong></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="surface_fractal.html"
+                        title="previous chapter">surface_fractal</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="two_lorentzian.html"
+                        title="next chapter">two_lorentzian</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/user/models/teubner_strey.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="two_lorentzian.html" title="two_lorentzian"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="surface_fractal.html" title="surface_fractal"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-independent.html" >Shape-Independent Functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>
