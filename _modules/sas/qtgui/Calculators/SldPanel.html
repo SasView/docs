@@ -9,14 +9,11 @@
     <title>sas.qtgui.Calculators.SldPanel &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -44,22 +41,22 @@
 <span></span><span class="c1"># global</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">periodictable</span> <span class="kn">import</span> <span class="n">formula</span> <span class="k">as</span> <span class="n">Formula</span>
-<span class="kn">from</span> <span class="nn">periodictable.xsf</span> <span class="kn">import</span> <span class="n">xray_energy</span><span class="p">,</span> <span class="n">xray_sld</span>
-<span class="kn">from</span> <span class="nn">periodictable.nsf</span> <span class="kn">import</span> <span class="n">neutron_scattering</span>
+<span class="kn">from</span> <span class="nn">periodictable</span> <span class="k">import</span> <span class="n">formula</span> <span class="k">as</span> <span class="n">Formula</span>
+<span class="kn">from</span> <span class="nn">periodictable.xsf</span> <span class="k">import</span> <span class="n">xray_energy</span><span class="p">,</span> <span class="n">xray_sld</span>
+<span class="kn">from</span> <span class="nn">periodictable.nsf</span> <span class="k">import</span> <span class="n">neutron_scattering</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">main_resources_rc</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="k">import</span> <span class="n">main_resources_rc</span>
 
 <span class="c1"># Local UI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.UI.SldPanel</span> <span class="kn">import</span> <span class="n">Ui_SldPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.UI.SldPanel</span> <span class="k">import</span> <span class="n">Ui_SldPanel</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">enum</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">import</span> <span class="n">enum</span>
 
 <span class="n">MODEL</span> <span class="o">=</span> <span class="n">enum</span><span class="p">(</span>
     <span class="s1">&#39;MOLECULAR_FORMULA&#39;</span><span class="p">,</span>
@@ -76,7 +73,7 @@
 <span class="p">)</span>
 
 <div class="viewcode-block" id="NeutronSldResult"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.NeutronSldResult">[docs]</a><span class="k">class</span> <span class="nc">NeutronSldResult</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neutron_wavelength</span><span class="p">,</span> <span class="n">neutron_sld_real</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neutron_wavelength</span><span class="p">,</span> <span class="n">neutron_sld_real</span><span class="p">,</span>
                  <span class="n">neutron_sld_imag</span><span class="p">,</span> <span class="n">neutron_inc_xs</span><span class="p">,</span> <span class="n">neutron_abs_xs</span><span class="p">,</span>
                  <span class="n">neutron_length</span><span class="p">):</span>
 
@@ -88,7 +85,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">neutron_length</span> <span class="o">=</span> <span class="n">neutron_length</span></div>
 
 <div class="viewcode-block" id="XraySldResult"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.XraySldResult">[docs]</a><span class="k">class</span> <span class="nc">XraySldResult</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xray_wavelength</span><span class="p">,</span> <span class="n">xray_sld_real</span><span class="p">,</span> <span class="n">xray_sld_imag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xray_wavelength</span><span class="p">,</span> <span class="n">xray_sld_real</span><span class="p">,</span> <span class="n">xray_sld_imag</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">xray_wavelength</span> <span class="o">=</span> <span class="n">xray_wavelength</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xray_sld_real</span> <span class="o">=</span> <span class="n">xray_sld_real</span>
@@ -130,9 +127,9 @@
                          <span class="n">scaled_xray_sld_imag</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="SldPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel">[docs]</a><span class="k">class</span> <span class="nc">SldPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SldPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SldPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">parent</span>
@@ -155,7 +152,7 @@
             <span class="n">MODEL</span><span class="o">.</span><span class="n">NEUTRON_LENGTH</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editNeutronLength</span>
         <span class="p">}</span>
 
-<div class="viewcode-block" id="SldPanel.setupUi"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.setupUi">[docs]</a>    <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_SldPanel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -174,12 +171,12 @@
         <span class="c1"># signals</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">helpButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">displayHelp</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">closeButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closePanel</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">recalculateButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateSLD</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">recalculateButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateSLD</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SldPanel.calculateSLD"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.calculateSLD">[docs]</a>    <span class="k">def</span> <span class="nf">calculateSLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="nf">calculateSLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SldPanel.setupModel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.setupModel">[docs]</a>    <span class="k">def</span> <span class="nf">setupModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setupModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span> <span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span>      <span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
@@ -196,9 +193,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editNeutronWavelength</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editXrayWavelength</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelReset</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelReset</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SldPanel.setupMapper"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.setupMapper">[docs]</a>    <span class="k">def</span> <span class="nf">setupMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setupMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
@@ -210,9 +207,9 @@
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">edit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getOutputs</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="n">edit</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SldPanel.dataChanged"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.dataChanged">[docs]</a>    <span class="k">def</span> <span class="nf">dataChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">dataChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">):</span>
         <span class="n">update</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">top</span><span class="o">.</span><span class="n">row</span><span class="p">(),</span> <span class="n">bottom</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">MASS_DENSITY</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">NEUTRON_WAVELENGTH</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">XRAY_WAVELENGTH</span><span class="p">):</span>
@@ -220,9 +217,9 @@
 
         <span class="c1"># calculation</span>
         <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SldPanel.recalculateSLD"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.recalculateSLD">[docs]</a>    <span class="k">def</span> <span class="nf">recalculateSLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">recalculateSLD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">formula</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMolecularFormula</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
         <span class="n">density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editMassDensity</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
         <span class="n">neutronWavelength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editNeutronWavelength</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
@@ -271,9 +268,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">XRAY_SLD_REAL</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">XRAY_SLD_IMAG</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editXraySldReal</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editXraySldImag</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">editXraySldImag</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SldPanel.modelReset"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.modelReset">[docs]</a>    <span class="k">def</span> <span class="nf">modelReset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">modelReset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1">#self.model.beginResetModel()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">MOLECULAR_FORMULA</span> <span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;H2O&quot;</span><span class="p">)</span>
@@ -282,19 +279,19 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">XRAY_WAVELENGTH</span>   <span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recalculateSLD</span><span class="p">()</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="k">pass</span></div>
+            <span class="k">pass</span>
         <span class="c1">#self.model.endResetModel()</span>
 
-<div class="viewcode-block" id="SldPanel.displayHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.displayHelp">[docs]</a>    <span class="k">def</span> <span class="nf">displayHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">displayHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Calculators/sld_calculator_help.html&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">location</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SldPanel.closePanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.SldPanel.SldPanel.closePanel">[docs]</a>    <span class="k">def</span> <span class="nf">closePanel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">closePanel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        close the window containing this panel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </pre></div>
 
@@ -335,7 +332,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

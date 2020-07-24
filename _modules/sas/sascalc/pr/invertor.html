@@ -9,14 +9,11 @@
     <title>sas.sascalc.pr.invertor &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -48,7 +45,7 @@
 
 <span class="sd">FIXME: The way the Invertor interacts with its C component should be cleaned up</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -58,8 +55,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">lstsq</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">lstsq</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
 
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -69,7 +66,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span>
 
 
-<span class="kn">from</span> <span class="nn">.p_invertor</span> <span class="kn">import</span> <span class="n">Pinvertor</span>
+<span class="kn">from</span> <span class="nn">.p_invertor</span> <span class="k">import</span> <span class="n">Pinvertor</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <div class="viewcode-block" id="help"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.invertor.help">[docs]</a><span class="k">def</span> <span class="nf">help</span><span class="p">():</span>
@@ -162,7 +159,7 @@
     <span class="c1">## Information dictionary for application use</span>
     <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">Pinvertor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -189,7 +186,7 @@
                 <span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">Invertor</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(),</span> <span class="n">state</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the value of an attribute.</span>
 <span class="sd">        Access the parent class methods for</span>
@@ -236,7 +233,7 @@
 
         <span class="k">return</span> <span class="n">Pinvertor</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of an attribute</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -587,7 +584,7 @@
 <span class="sd">        :return: number of terms, alpha, message</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.num_term</span> <span class="kn">import</span> <span class="n">NTermEstimator</span>
+        <span class="kn">from</span> <span class="nn">.num_term</span> <span class="k">import</span> <span class="n">NTermEstimator</span>
         <span class="n">estimator</span> <span class="o">=</span> <span class="n">NTermEstimator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">estimator</span><span class="o">.</span><span class="n">num_terms</span><span class="p">(</span><span class="n">isquit_func</span><span class="p">)</span>
@@ -845,7 +842,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

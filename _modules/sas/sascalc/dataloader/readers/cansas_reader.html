@@ -9,14 +9,11 @@
     <title>sas.sascalc.dataloader.readers.cansas_reader &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -51,20 +48,20 @@
 
 <span class="c1"># The following 2 imports *ARE* used. Do not remove either.</span>
 <span class="kn">import</span> <span class="nn">xml.dom.minidom</span>
-<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parseString</span>
+<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="k">import</span> <span class="n">parseString</span>
 
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="kn">import</span> <span class="n">Converter</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="k">import</span> <span class="n">Converter</span>
 
 <span class="c1"># For saving individual sections of data</span>
-<span class="kn">from</span> <span class="nn">..data_info</span> <span class="kn">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">DataInfo</span><span class="p">,</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">..data_info</span> <span class="k">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">DataInfo</span><span class="p">,</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span> \
     <span class="n">Collimation</span><span class="p">,</span> <span class="n">TransmissionSpectrum</span><span class="p">,</span> <span class="n">Detector</span><span class="p">,</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Aperture</span>
-<span class="kn">from</span> <span class="nn">..loader_exceptions</span> <span class="kn">import</span> <span class="n">FileContentsException</span><span class="p">,</span> <span class="n">DefaultReaderException</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">..loader_exceptions</span> <span class="k">import</span> <span class="n">FileContentsException</span><span class="p">,</span> <span class="n">DefaultReaderException</span><span class="p">,</span> \
     <span class="n">DataReaderException</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">xml_reader</span>
-<span class="kn">from</span> <span class="nn">.xml_reader</span> <span class="kn">import</span> <span class="n">XMLreader</span>
-<span class="kn">from</span> <span class="nn">.cansas_constants</span> <span class="kn">import</span> <span class="n">CansasConstants</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">xml_reader</span>
+<span class="kn">from</span> <span class="nn">.xml_reader</span> <span class="k">import</span> <span class="n">XMLreader</span>
+<span class="kn">from</span> <span class="nn">.cansas_constants</span> <span class="k">import</span> <span class="n">CansasConstants</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -82,8 +79,8 @@
 <span class="n">ALLOW_ALL</span> <span class="o">=</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="Reader"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.sascalc.dataloader.readers.html#sas.sascalc.dataloader.readers.cansas_reader.Reader">[docs]</a><span class="k">class</span> <span class="nc">Reader</span><span class="p">(</span><span class="n">XMLreader</span><span class="p">):</span>
-    <span class="n">cansas_version</span> <span class="o">=</span> <span class="s2">&quot;1.0&quot;</span>
-    <span class="n">base_ns</span> <span class="o">=</span> <span class="s2">&quot;{cansas1d/1.0}&quot;</span>
+    <span class="n">cansas_version</span> <span class="o">=</span> <span class="s2">&quot;1.1&quot;</span>
+    <span class="n">base_ns</span> <span class="o">=</span> <span class="s2">&quot;{cansas1d/1.1}&quot;</span>
     <span class="n">cansas_defaults</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">type_name</span> <span class="o">=</span> <span class="s2">&quot;canSAS&quot;</span>
     <span class="n">invalid</span> <span class="o">=</span> <span class="kc">True</span>
@@ -750,8 +747,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_write_data</span><span class="p">(</span><span class="n">datainfo</span><span class="p">,</span> <span class="n">entry_node</span><span class="p">)</span>
         <span class="c1"># Transmission Spectrum Info</span>
-        <span class="c1"># TODO: fix the writer to linearize all data, including T_spectrum</span>
-        <span class="c1"># self._write_trans_spectrum(datainfo, entry_node)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_trans_spectrum</span><span class="p">(</span><span class="n">datainfo</span><span class="p">,</span> <span class="n">entry_node</span><span class="p">)</span>
         <span class="c1"># Sample info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_sample_info</span><span class="p">(</span><span class="n">datainfo</span><span class="p">,</span> <span class="n">entry_node</span><span class="p">)</span>
         <span class="c1"># Instrument info</span>
@@ -809,18 +805,13 @@
 <span class="sd">        Creates the primary xml header used when writing to file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">xsi</span> <span class="o">=</span> <span class="s2">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cansas_version</span>
-        <span class="n">n_s</span> <span class="o">=</span> <span class="n">CANSAS_NS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">version</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ns&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;1.1&quot;</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.cansas.org/formats/1.1/&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://svn.smallangles.net/svn/canSAS/1dwg/trunk/&quot;</span>
-        <span class="n">schema_location</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2">cansas1d.xsd&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_s</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
-        <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">xsi</span> <span class="o">+</span> <span class="s2">&quot;}schemaLocation&quot;</span> <span class="p">:</span> <span class="n">schema_location</span><span class="p">,</span>
-                  <span class="s2">&quot;version&quot;</span> <span class="p">:</span> <span class="n">version</span><span class="p">}</span>
-        <span class="n">nsmap</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xsi&#39;</span> <span class="p">:</span> <span class="n">xsi</span><span class="p">,</span> <span class="kc">None</span><span class="p">:</span> <span class="n">n_s</span><span class="p">}</span>
-
-        <span class="n">main_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span><span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">n_s</span> <span class="o">+</span> <span class="s2">&quot;}SASroot&quot;</span><span class="p">,</span>
+        <span class="n">n_s</span> <span class="o">=</span> <span class="n">CANSAS_NS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cansas_version</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ns&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.cansas.org/formats/1.1/&quot;</span>
+        <span class="n">schema_location</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{n_s}</span><span class="s2"> </span><span class="si">{url}</span><span class="s2">cansas1d.xsd&quot;</span>
+        <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="s2">&quot;{{</span><span class="si">{xsi}</span><span class="s2">}}schemaLocation&quot;</span><span class="p">:</span> <span class="n">schema_location</span><span class="p">,</span>
+                  <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cansas_version</span><span class="p">}</span>
+        <span class="n">nsmap</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xsi&#39;</span><span class="p">:</span> <span class="n">xsi</span><span class="p">,</span> <span class="kc">None</span><span class="p">:</span> <span class="n">n_s</span><span class="p">}</span>
+        <span class="n">main_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{{</span><span class="si">{n_s}</span><span class="s2">}}SASroot&quot;</span><span class="p">,</span>
                                         <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">,</span> <span class="n">nsmap</span><span class="o">=</span><span class="n">nsmap</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">main_node</span>
 
@@ -934,8 +925,7 @@
 <span class="sd">        :param datainfo: The Data1D object the information is coming from</span>
 <span class="sd">        :param entry_node: lxml node ElementTree object to be appended to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">datainfo</span><span class="o">.</span><span class="n">trans_spectrum</span><span class="p">)):</span>
-            <span class="n">spectrum</span> <span class="o">=</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">trans_spectrum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">spectrum</span> <span class="ow">in</span> <span class="n">datainfo</span><span class="o">.</span><span class="n">trans_spectrum</span><span class="p">:</span>
             <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_element</span><span class="p">(</span><span class="s2">&quot;SAStransmission_spectrum&quot;</span><span class="p">,</span>
                                        <span class="p">{</span><span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">entry_node</span><span class="p">)</span>
@@ -946,14 +936,15 @@
                 <span class="n">node</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;Lambda&quot;</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">wavelength</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                                 <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">wavelength_unit</span><span class="p">})</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">transmission</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                                 <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_unit</span><span class="p">})</span>
-                <span class="k">if</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
-                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="s2">&quot;Tdev&quot;</span><span class="p">,</span>
-                                    <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                    <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span>
-                                     <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation_unit</span><span class="p">})</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write_node</span><span class="p">(</span>
+                    <span class="n">point</span><span class="p">,</span> <span class="s2">&quot;Tdev&quot;</span><span class="p">,</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="p">{</span><span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">transmission_deviation_unit</span><span class="p">})</span>
 
     <span class="k">def</span> <span class="nf">_write_sample_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datainfo</span><span class="p">,</span> <span class="n">entry_node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1414,7 +1405,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

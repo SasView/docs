@@ -9,14 +9,11 @@
     <title>sas.sascalc.dataloader.data_info &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -58,17 +55,20 @@
 <span class="c1">#copyright 2008, University of Tennessee</span>
 <span class="c1">######################################################################</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-
 <span class="c1">#TODO: Keep track of data manipulation in the &#39;process&#39; data structure.</span>
 <span class="c1">#TODO: This module should be independent of plottables. We should write</span>
 <span class="c1">#        an adapter class for plottables when needed.</span>
 
-<span class="c1">#from sas.guitools.plottables import Data1D as plottable_1D</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.uncertainty</span> <span class="kn">import</span> <span class="n">Uncertainty</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">fabs</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">fabs</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">#from sas.guitools.plottables import Data1D as plottable_1D</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.uncertainty</span> <span class="k">import</span> <span class="n">Uncertainty</span>
 
 <div class="viewcode-block" id="plottable_1D"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.data_info.plottable_1D">[docs]</a><span class="k">class</span> <span class="nc">plottable_1D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -94,7 +94,7 @@
     <span class="n">_yaxis</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="n">_yunit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dxl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dxw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dxl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dxw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -150,9 +150,10 @@
     <span class="n">_zaxis</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="n">_zunit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">err_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">err_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">qy_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">q_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">dqx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dqy_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">dqx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dqy_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ymin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qx_data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qy_data</span><span class="p">)</span>
@@ -167,6 +168,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dqx_data</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dqy_data</span><span class="p">)</span>
+
+        <span class="c1"># plot limits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">xmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">ymin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">ymax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span> <span class="n">zmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="n">zmax</span>
 
 <div class="viewcode-block" id="plottable_2D.xaxis"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.data_info.plottable_2D.xaxis">[docs]</a>    <span class="k">def</span> <span class="nf">xaxis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -201,7 +210,7 @@
     <span class="c1">## z component</span>
     <span class="n">z</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization. Components that are not</span>
 <span class="sd">        set a set to None by default.</span>
@@ -214,7 +223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;x = </span><span class="si">%s</span><span class="se">\t</span><span class="s2">y = </span><span class="si">%s</span><span class="se">\t</span><span class="s2">z = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">msg</span></div>
 
@@ -247,7 +256,7 @@
     <span class="n">slit_length</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">slit_length_unit</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize class attribute that are objects...</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -256,7 +265,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">beam_center</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;Detector:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Name:         </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Distance:     </span><span class="si">%s</span><span class="s2"> [</span><span class="si">%s</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
@@ -288,7 +297,7 @@
     <span class="n">distance</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">distance_unit</span> <span class="o">=</span> <span class="s1">&#39;mm&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">()</span></div>
 
 
@@ -304,10 +313,10 @@
     <span class="c1">## Aperture</span>
     <span class="n">aperture</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aperture</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;Collimation:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Length:       </span><span class="si">%s</span><span class="s2"> [</span><span class="si">%s</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
             <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length_unit</span><span class="p">))</span>
@@ -325,8 +334,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">## Name</span>
     <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="c1">## Radiation type [string]</span>
+    <span class="c1"># Generic radiation type (Type and probe give more specific info) [string]</span>
     <span class="n">radiation</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Type and probe are only written to by the NXcanSAS reader</span>
+    <span class="c1"># Specific radiation type (Synchotron X-ray, Reactor neutron, etc) [string]</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Radiation probe (generic probe such as neutron, x-ray, muon, etc) [string]</span>
+    <span class="n">probe</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1">## Beam size name</span>
     <span class="n">beam_size_name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1">## Beam size [Vector] [mm]</span>
@@ -347,12 +361,15 @@
     <span class="n">wavelength_spread</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">wavelength_spread_unit</span> <span class="o">=</span> <span class="s1">&#39;percent&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beam_size</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;Source:</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Radiation:    </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radiation</span><span class="p">)</span>
+        <span class="n">radiation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radiation</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radiation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">probe</span><span class="p">:</span>
+            <span class="n">radiation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">probe</span>
+        <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Radiation:    </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">radiation</span><span class="p">)</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Shape:        </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam_shape</span><span class="p">)</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Wavelength:   </span><span class="si">%s</span><span class="s2"> [</span><span class="si">%s</span><span class="s2">]</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> \
             <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength_unit</span><span class="p">))</span>
@@ -404,12 +421,12 @@
     <span class="n">zacceptance</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">yacceptance</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">details</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;Sample:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   ID:           </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Transmission: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transmission</span><span class="p">)</span>
@@ -440,7 +457,7 @@
     <span class="n">term</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">notes</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">term</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -457,7 +474,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;Process:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Name:         </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Date:         </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span>
@@ -486,12 +503,12 @@
     <span class="n">transmission_deviation</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">transmission_deviation_unit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transmission</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transmission_deviation</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;Transmission Spectrum:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Name:             </span><span class="se">\t</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Timestamp:        </span><span class="se">\t</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
@@ -544,7 +561,7 @@
     <span class="n">isSesans</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -589,7 +606,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Nice printout</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -631,7 +648,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add two data sets</span>
 
@@ -643,7 +660,7 @@
             <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add two data sets</span>
 
@@ -655,7 +672,7 @@
             <span class="k">return</span> <span class="n">b</span> <span class="o">+</span> <span class="n">a</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subtract two data sets</span>
 
@@ -667,7 +684,7 @@
             <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subtract two data sets</span>
 
@@ -679,7 +696,7 @@
             <span class="k">return</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Multiply two data sets</span>
 
@@ -691,7 +708,7 @@
             <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Multiply two data sets</span>
 
@@ -703,7 +720,7 @@
             <span class="k">return</span> <span class="n">b</span> <span class="o">*</span> <span class="n">a</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Divided a data set by another</span>
 
@@ -716,7 +733,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
     <span class="n">__div__</span> <span class="o">=</span> <span class="fm">__truediv__</span>
 
-    <span class="k">def</span> <span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Divided a data set by another</span>
 
@@ -729,7 +746,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_operation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
     <span class="n">__rdiv__</span> <span class="o">=</span> <span class="fm">__rtruediv__</span>
 
-    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Union a data set with another</span>
 
@@ -739,7 +756,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_union</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__ror__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__ror__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Union a data set with another</span>
 
@@ -753,9 +770,9 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    1D data class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">isSesans</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">isSesans</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">DataInfo</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">plottable_1D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">dlam</span><span class="p">)</span>
+        <span class="n">plottable_1D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">dlam</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isSesans</span> <span class="o">=</span> <span class="n">isSesans</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span> <span class="c1"># the data is SESANS</span>
@@ -767,7 +784,7 @@
         <span class="k">except</span><span class="p">:</span> <span class="c1"># the data is not recognized/supported, and the user is notified</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;data not recognized, check documentation for supported 1D data formats&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Nice printout</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -800,7 +817,7 @@
 <span class="sd">        :param length: length of the data array to be initialized</span>
 <span class="sd">        :param clone: if provided, the data will be copied to clone</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+        <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 
         <span class="k">if</span> <span class="n">clone</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">clone</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
@@ -826,6 +843,25 @@
         <span class="n">clone</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">clone</span></div>
+
+<div class="viewcode-block" id="Data1D.copy_from_datainfo"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.data_info.Data1D.copy_from_datainfo">[docs]</a>    <span class="k">def</span> <span class="nf">copy_from_datainfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data1d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        copy values of Data1D of type DataLaoder.Data_info</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span>  <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span>  <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data1d</span><span class="p">,</span> <span class="s2">&quot;dx&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">dx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data1d</span><span class="p">,</span> <span class="s2">&quot;dxl&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">dxl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data1d</span><span class="p">,</span> <span class="s2">&quot;dxw&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">dxw</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">,</span> <span class="n">data1d</span><span class="o">.</span><span class="n">_xunit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="n">data1d</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">,</span> <span class="n">data1d</span><span class="o">.</span><span class="n">_yunit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">data1d</span><span class="o">.</span><span class="n">title</span></div>
 
     <span class="k">def</span> <span class="nf">_validity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -987,19 +1023,24 @@
     <span class="c1">## No 2D SESANS data as of yet. Always set it to False</span>
     <span class="n">isSesans</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">err_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">err_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">qy_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">q_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">dqx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dqy_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">dqx_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dqy_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">xmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">zmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">DataInfo</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">plottable_2D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">err_data</span><span class="p">,</span> <span class="n">qx_data</span><span class="p">,</span>
-                              <span class="n">qy_data</span><span class="p">,</span> <span class="n">q_data</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">dqx_data</span><span class="p">,</span> <span class="n">dqy_data</span><span class="p">)</span>
+        <span class="n">plottable_2D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">err_data</span><span class="o">=</span><span class="n">err_data</span><span class="p">,</span>
+                              <span class="n">qx_data</span><span class="o">=</span><span class="n">qx_data</span><span class="p">,</span> <span class="n">qy_data</span><span class="o">=</span><span class="n">qy_data</span><span class="p">,</span>
+                              <span class="n">dqx_data</span><span class="o">=</span><span class="n">dqx_data</span><span class="p">,</span> <span class="n">dqy_data</span><span class="o">=</span><span class="n">dqy_data</span><span class="p">,</span>
+                              <span class="n">q_data</span><span class="o">=</span><span class="n">q_data</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">xmin</span><span class="o">=</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">xmax</span><span class="p">,</span>
+                              <span class="n">ymin</span><span class="o">=</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span> <span class="n">zmin</span><span class="o">=</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="n">zmax</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_bins</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detector</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Data2D: Detector bank already filled at init&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">DataInfo</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;Data:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;   Type:         </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
@@ -1019,7 +1060,7 @@
 <span class="sd">        :param length: length of the data array to be initialized</span>
 <span class="sd">        :param clone: if provided, the data will be copied to clone</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+        <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 
         <span class="k">if</span> <span class="n">clone</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">clone</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
@@ -1058,6 +1099,34 @@
         <span class="n">clone</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">clone</span></div>
+
+<div class="viewcode-block" id="Data2D.copy_from_datainfo"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.dataloader.html#sas.sascalc.dataloader.data_info.Data2D.copy_from_datainfo">[docs]</a>    <span class="k">def</span> <span class="nf">copy_from_datainfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data2d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        copy value of Data2D of type DataLoader.data_info</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">q_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">err_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_bins</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">x_bins</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">y_bins</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data2d</span><span class="o">.</span><span class="n">dqx_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">dqx_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data2d</span><span class="o">.</span><span class="n">dqy_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">dqy_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">xmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">ymin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">ymax</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data2d</span><span class="p">,</span> <span class="s2">&quot;zmin&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zmin</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">zmin</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data2d</span><span class="p">,</span> <span class="s2">&quot;zmax&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zmax</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">zmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">,</span> <span class="n">data2d</span><span class="o">.</span><span class="n">_xunit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="n">data2d</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">,</span> <span class="n">data2d</span><span class="o">.</span><span class="n">_yunit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">data2d</span><span class="o">.</span><span class="n">title</span></div>
 
     <span class="k">def</span> <span class="nf">_validity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1306,7 +1375,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

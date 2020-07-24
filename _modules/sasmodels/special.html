@@ -9,14 +9,11 @@
     <title>sasmodels.special &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -251,24 +248,24 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># Functions to add to our standard set</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">radians</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">radians</span>
 
 <span class="c1"># C99 standard math library functions</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">power</span> <span class="k">as</span> <span class="nb">pow</span><span class="p">,</span> <span class="n">expm1</span><span class="p">,</span> <span class="n">log1p</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">cbrt</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span><span class="p">,</span> <span class="n">arcsin</span> <span class="k">as</span> <span class="n">asin</span><span class="p">,</span> <span class="n">arccos</span> <span class="k">as</span> <span class="n">acos</span><span class="p">,</span> <span class="n">arctan</span> <span class="k">as</span> <span class="n">atan</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sinh</span><span class="p">,</span> <span class="n">cosh</span><span class="p">,</span> <span class="n">tanh</span><span class="p">,</span> <span class="n">arcsinh</span> <span class="k">as</span> <span class="n">asinh</span><span class="p">,</span> <span class="n">arccosh</span> <span class="k">as</span> <span class="n">acosh</span><span class="p">,</span> <span class="n">arctanh</span> <span class="k">as</span> <span class="n">atanh</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">arctan2</span> <span class="k">as</span> <span class="n">atan2</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">fabs</span><span class="p">,</span> <span class="n">fmin</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">rint</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">inf</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">gamma</span> <span class="k">as</span> <span class="n">sas_gamma</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">gammaln</span> <span class="k">as</span> <span class="n">sas_gammaln</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">gammainc</span> <span class="k">as</span> <span class="n">sas_gammainc</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">gammaincc</span> <span class="k">as</span> <span class="n">sas_gammaincc</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erf</span> <span class="k">as</span> <span class="n">sas_erf</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erfc</span> <span class="k">as</span> <span class="n">sas_erfc</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">j0</span> <span class="k">as</span> <span class="n">sas_J0</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">j1</span> <span class="k">as</span> <span class="n">sas_J1</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">jn</span> <span class="k">as</span> <span class="n">sas_JN</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">power</span> <span class="k">as</span> <span class="nb">pow</span><span class="p">,</span> <span class="n">expm1</span><span class="p">,</span> <span class="n">log1p</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">cbrt</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span><span class="p">,</span> <span class="n">arcsin</span> <span class="k">as</span> <span class="n">asin</span><span class="p">,</span> <span class="n">arccos</span> <span class="k">as</span> <span class="n">acos</span><span class="p">,</span> <span class="n">arctan</span> <span class="k">as</span> <span class="n">atan</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sinh</span><span class="p">,</span> <span class="n">cosh</span><span class="p">,</span> <span class="n">tanh</span><span class="p">,</span> <span class="n">arcsinh</span> <span class="k">as</span> <span class="n">asinh</span><span class="p">,</span> <span class="n">arccosh</span> <span class="k">as</span> <span class="n">acosh</span><span class="p">,</span> <span class="n">arctanh</span> <span class="k">as</span> <span class="n">atanh</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">arctan2</span> <span class="k">as</span> <span class="n">atan2</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">fabs</span><span class="p">,</span> <span class="n">fmin</span><span class="p">,</span> <span class="n">fmax</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">rint</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">inf</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gamma</span> <span class="k">as</span> <span class="n">sas_gamma</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaln</span> <span class="k">as</span> <span class="n">sas_gammaln</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammainc</span> <span class="k">as</span> <span class="n">sas_gammainc</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaincc</span> <span class="k">as</span> <span class="n">sas_gammaincc</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">erf</span> <span class="k">as</span> <span class="n">sas_erf</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">erfc</span> <span class="k">as</span> <span class="n">sas_erfc</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">j0</span> <span class="k">as</span> <span class="n">sas_J0</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">j1</span> <span class="k">as</span> <span class="n">sas_J1</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">jn</span> <span class="k">as</span> <span class="n">sas_JN</span>
 
 <span class="c1"># erf, erfc, tgamma, lgamma  **do not use**</span>
 
@@ -296,7 +293,7 @@
 
 <div class="viewcode-block" id="sas_sinx_x"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.sas_sinx_x">[docs]</a><span class="k">def</span> <span class="nf">sas_sinx_x</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;return sin(x)/x&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sinc</span> <span class="k">as</span> <span class="n">_sinc</span>
+    <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sinc</span> <span class="k">as</span> <span class="n">_sinc</span>
     <span class="k">return</span> <span class="n">_sinc</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">M_PI</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="powr"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.powr">[docs]</a><span class="k">def</span> <span class="nf">powr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -318,7 +315,7 @@
 
 <div class="viewcode-block" id="sas_Si"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.sas_Si">[docs]</a><span class="k">def</span> <span class="nf">sas_Si</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;return Si(x)&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">sici</span>
+    <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">sici</span>
     <span class="k">return</span> <span class="n">sici</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="sas_j1"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.sas_j1">[docs]</a><span class="k">def</span> <span class="nf">sas_j1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -355,7 +352,7 @@
 <span class="c1"># Gaussians</span>
 <div class="viewcode-block" id="Gauss"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.special.Gauss">[docs]</a><span class="k">class</span> <span class="nc">Gauss</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gauss-Legendre integration weights&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span></div>
@@ -911,7 +908,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

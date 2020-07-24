@@ -9,14 +9,11 @@
     <title>sas.sascalc.file_converter.nxcansas_writer &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -47,11 +44,17 @@
 
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader_HDF5</span> <span class="kn">import</span> <span class="n">Reader</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader_HDF5</span> <span class="k">import</span> <span class="n">Reader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span>
+
+<span class="n">PROBES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;neutron&#39;</span><span class="p">,</span> <span class="s1">&#39;x-ray&#39;</span><span class="p">,</span> <span class="s1">&#39;muon&#39;</span><span class="p">,</span> <span class="s1">&#39;electron&#39;</span><span class="p">,</span> <span class="s1">&#39;ultraviolet&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;visible light&#39;</span><span class="p">,</span> <span class="s1">&#39;positron&#39;</span><span class="p">,</span> <span class="s1">&#39;proton&#39;</span><span class="p">]</span>
+<span class="n">TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Spallation Neutron Source&#39;</span><span class="p">,</span> <span class="s1">&#39;UV Plasma Source&#39;</span><span class="p">,</span> <span class="s1">&#39;Free-Electron Laser&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;Reactor Neutron Source&#39;</span><span class="p">,</span> <span class="s1">&#39;Synchrotron X-ray Source&#39;</span><span class="p">,</span> <span class="s1">&#39;UV Laser&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;Pulsed Muon Source&#39;</span><span class="p">,</span> <span class="s1">&#39;Pulsed Reactor Neutron Source&#39;</span><span class="p">,</span> <span class="s1">&#39;Ion Source&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;Rotating Anode X-ray&#39;</span><span class="p">,</span> <span class="s1">&#39;Optical Laser&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed Tube X-ray&#39;</span><span class="p">]</span>
+
 
 <div class="viewcode-block" id="NXcanSASWriter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.nxcansas_writer.NXcanSASWriter">[docs]</a><span class="k">class</span> <span class="nc">NXcanSASWriter</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -150,7 +153,7 @@
         <span class="n">sasentry</span><span class="p">[</span><span class="s1">&#39;run&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">run_name</span>
         <span class="n">sasentry</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
         <span class="n">sasentry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASentry&#39;</span>
-        <span class="n">sasentry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+        <span class="n">sasentry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1.1&#39;</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data_obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
             <span class="n">data_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;sasdata</span><span class="si">{0:0=2d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
@@ -196,10 +199,18 @@
         <span class="c1"># Source metadata</span>
         <span class="n">source_entry</span> <span class="o">=</span> <span class="n">instrument_entry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sassource&#39;</span><span class="p">)</span>
         <span class="n">source_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASsource&#39;</span>
-        <span class="k">if</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;radiation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="s1">&#39;neutron&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;radiation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span> <span class="ow">in</span> <span class="n">PROBES</span><span class="p">:</span>
+                <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;probe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span> <span class="ow">in</span> <span class="n">TYPES</span><span class="p">:</span>
+                <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Should not get here, but we shouldn&#39;t throw info out either</span>
+                <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;notes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">probe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;probe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">probe</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">beam_shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">source_entry</span><span class="p">[</span><span class="s1">&#39;beam_shape&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">beam_shape</span><span class="p">)</span>
         <span class="n">wavelength_keys</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;wavelength&#39;</span><span class="p">:</span> <span class="s1">&#39;incident_wavelength&#39;</span><span class="p">,</span>
@@ -315,16 +326,20 @@
                                        <span class="n">data</span><span class="o">=</span><span class="n">trans</span><span class="o">.</span><span class="n">transmission_deviation</span><span class="p">)</span>
             <span class="n">trans_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;lambda&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">trans</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span>
 
-        <span class="n">note_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sasnote&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-        <span class="n">note_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASnote&#39;</span>
-        <span class="n">notes</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">)</span> <span class="ow">and</span> <span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+            <span class="c1"># Handle scalars that aren&#39;t empty arrays, None, &#39;&#39;, etc.</span>
+            <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">string_</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">)]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Handle iterables that aren&#39;t empty</span>
             <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">string_</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">]</span>
-            <span class="n">notes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">notes</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">data_info</span><span class="o">.</span><span class="n">notes</span> <span class="o">!=</span> <span class="p">[]:</span>
-            <span class="n">notes</span> <span class="o">=</span> <span class="n">_h5_string</span><span class="p">(</span><span class="n">data_info</span><span class="o">.</span><span class="n">notes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Notes are required in NXcanSAS format</span>
+            <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">string_</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">notes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">note_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;SASnote&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">notes</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">note</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">notes</span><span class="p">):</span>
+                <span class="n">note_entry</span> <span class="o">=</span> <span class="n">sasentry</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s1">&#39;sasnote</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">note_entry</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;canSAS_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SASnote&#39;</span>
+                <span class="n">note_entry</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;SASnote&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">note</span><span class="p">)</span>
 
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -448,7 +463,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

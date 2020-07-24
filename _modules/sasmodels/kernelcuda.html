@@ -9,14 +9,11 @@
     <title>sasmodels.kernelcuda &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -98,7 +95,7 @@
 <span class="sd">can see the output by setting PYOPENCL_COMPILER_OUTPUT=1.  It should be</span>
 <span class="sd">harmless, albeit annoying.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -113,8 +110,8 @@
 <span class="c1"># installed or if it is installed but there are no devices available.</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pycuda.driver</span> <span class="k">as</span> <span class="nn">cuda</span>  <span class="c1"># type: ignore</span>
-    <span class="kn">from</span> <span class="nn">pycuda.compiler</span> <span class="kn">import</span> <span class="n">SourceModule</span>
-    <span class="kn">from</span> <span class="nn">pycuda.tools</span> <span class="kn">import</span> <span class="n">make_default_context</span><span class="p">,</span> <span class="n">clear_context_caches</span>
+    <span class="kn">from</span> <span class="nn">pycuda.compiler</span> <span class="k">import</span> <span class="n">SourceModule</span>
+    <span class="kn">from</span> <span class="nn">pycuda.tools</span> <span class="k">import</span> <span class="n">make_default_context</span><span class="p">,</span> <span class="n">clear_context_caches</span>
     <span class="c1"># Ask CUDA for the default context (so that we know that one exists)</span>
     <span class="c1"># then immediately throw it away in case the user doesn&#39;t want it.</span>
     <span class="c1"># Note: cribbed from pycuda.autoinit</span>
@@ -129,14 +126,14 @@
     <span class="n">HAVE_CUDA</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">CUDA_ERROR</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">generate</span>
-<span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">generate</span>
+<span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ModelInfo</span>
-    <span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">CallDetails</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
+    <span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">CallDetails</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="c1"># pylint: enable=unused-import</span>
@@ -282,7 +279,7 @@
 <span class="sd">    GPU context for CUDA.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: cuda.Context</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devnum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">devnum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (int) -&gt; None</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAS_OPENCL&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">devnum</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;cuda:&quot;</span><span class="p">):</span>
@@ -309,7 +306,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
 <div class="viewcode-block" id="GpuEnvironment.has_type"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.kernelcuda.GpuEnvironment.has_type">[docs]</a>    <span class="k">def</span> <span class="nf">has_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
@@ -361,7 +358,7 @@
     <span class="n">_program</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: SourceModule</span>
     <span class="n">_kernels</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Dict[str, cuda.Function]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">generate</span><span class="o">.</span><span class="n">F32</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">generate</span><span class="o">.</span><span class="n">F32</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># type: (Dict[str,str], ModelInfo, np.dtype, bool) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
@@ -429,7 +426,7 @@
 <span class="sd">    Call :meth:`release` when complete.  Even if not called directly, the</span>
 <span class="sd">    buffer will be released when the data object is freed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">generate</span><span class="o">.</span><span class="n">F32</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">generate</span><span class="o">.</span><span class="n">F32</span><span class="p">):</span>
         <span class="c1"># type: (List[np.ndarray], np.dtype) -&gt; None</span>
         <span class="c1"># TODO: Do we ever need double precision q?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nq</span> <span class="o">=</span> <span class="n">q_vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
@@ -463,7 +460,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">q_b</span><span class="o">.</span><span class="n">free</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">q_b</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
 
@@ -491,7 +488,7 @@
     <span class="c1">#: Calculation results, updated after each call to :meth:`_call_kernel`.</span>
     <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: np.ndarray</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">):</span>
         <span class="c1"># type: (GpuModel, List[np.ndarray]) -&gt; None</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span> <span class="o">=</span> <span class="n">GpuInput</span><span class="p">(</span><span class="n">q_vectors</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
@@ -573,7 +570,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_result_b</span><span class="o">.</span><span class="n">free</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_result_b</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
 
@@ -662,7 +659,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

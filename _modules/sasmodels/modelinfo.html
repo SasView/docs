@@ -9,14 +9,11 @@
     <title>sasmodels.modelinfo &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -49,19 +46,20 @@
 <span class="sd">manipulating them.  In particular, :func:`make_model_info` converts a kernel</span>
 <span class="sd">module into the model info block as seen by the rest of the sasmodels library.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">abspath</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
 <span class="c1"># Optional typing</span>
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span>
-    <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span>
+    <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">ModuleType</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
@@ -74,6 +72,8 @@
     <span class="n">TestValue</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
     <span class="n">TestCondition</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ParameterSetUser</span><span class="p">,</span> <span class="n">TestInput</span><span class="p">,</span> <span class="n">TestValue</span><span class="p">]</span>
 <span class="c1"># pylint: enable=unused-import</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># If MAX_PD changes, need to change the loop macros in kernel_iq.c</span>
 <span class="n">MAX_PD</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1">#: Maximum number of simultaneously polydisperse parameters</span>
@@ -354,7 +354,7 @@
 <span class="sd">    parameter table is built using :func:`make_parameter_table` and</span>
 <span class="sd">    :func:`parse_parameter` therein.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
                  <span class="n">ptype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="c1"># type: (str, str, float, Limits, str, str) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="c1"># type: str</span>
@@ -406,11 +406,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;double *</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; str</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2">&gt;&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; str</span>
         <span class="k">return</span> <span class="s2">&quot;P&lt;</span><span class="si">%s</span><span class="s2">&gt;&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
 
@@ -470,7 +470,7 @@
 <span class="sd">    the scale and background parameters that the kernel does not see.  User</span>
 <span class="sd">    parameters don&#39;t use vector notation, and instead use p1, p2, ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="c1"># type: (List[Parameter]) -&gt; None</span>
 
         <span class="c1"># scale and background are implicit parameters</span>
@@ -591,14 +591,14 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Duplicate parameters: </span><span class="si">{}</span><span class="s2">&quot;</span>
                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dups</span><span class="p">))))</span></div>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="c1"># Find the parameter definition</span>
         <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">par</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;unknown parameter </span><span class="si">%r</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">par</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
@@ -1009,6 +1009,36 @@
     <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="o">.</span><span class="n">has_2d</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;oriented python models not supported&quot;</span><span class="p">)</span>
 
+    <span class="c1"># CRUFT: support old-style ER() for effective radius</span>
+    <span class="c1"># radius_effective(mode, ...), if it is present, should be a callable</span>
+    <span class="c1"># python function accepting the shape parameters, and have a corresponding</span>
+    <span class="c1"># Iq function in python (Fq in python is not suported at this time).</span>
+    <span class="c1"># If ER() is present, it might represent a 4.2 model that hasn&#39;t been</span>
+    <span class="c1"># converted, or it might represent a 4.2+5.0 model with both ER and</span>
+    <span class="c1"># radius_effective defined. Unfortunately we can&#39;t easily tell whether</span>
+    <span class="c1"># radius_effective is defined in the C sources without loading them,</span>
+    <span class="c1"># so just issue a warning if we see ER in a C model.</span>
+    <span class="n">ER</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;ER&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">Iq</span><span class="p">)</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">radius_effective</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">info</span><span class="o">.</span><span class="n">radius_effective_modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ER&#39;</span><span class="p">]</span>
+            <span class="n">info</span><span class="o">.</span><span class="n">radius_effective</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mode</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">ER</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="c1"># TODO: uncomment the following for the sasview 4.3 release</span>
+            <span class="c1">#logger.warning(</span>
+            <span class="c1">#    &quot;ER(...) deprecated. Replace with radius_effective(mode, ...).&quot;</span>
+            <span class="c1">#    &quot; See plugin model docs for details.&quot;</span>
+            <span class="c1">#)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;ER(...) function ignored. Using radius_effective(mode, ...)&quot;</span>
+                <span class="s2">&quot; instead if it exists.&quot;</span><span class="p">)</span>
+    <span class="c1">## --- untested, so left unsupported for now ---</span>
+    <span class="c1">## CRUFT: support old-style VR for form/shell ratio</span>
+    <span class="c1">#if info.shell_volume is None:</span>
+    <span class="c1">#    VR = getattr(kernel_module, &#39;VR&#39;)</span>
+    <span class="c1">#    if VR is not None:</span>
+    <span class="c1">#        info.shell_volume = lambda *args: info.form_volume(*args)*VR(*args)</span>
+
     <span class="n">info</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">_find_source_lines</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">kernel_module</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">info</span></div>
@@ -1179,7 +1209,7 @@
     <span class="c1">#: in :mod:`model_test`.</span>
     <span class="n">tests</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># type: List[TestCondition]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="k">pass</span>
 
@@ -1246,7 +1276,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

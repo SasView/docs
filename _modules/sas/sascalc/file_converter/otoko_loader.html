@@ -9,14 +9,11 @@
     <title>sas.sascalc.file_converter.otoko_loader &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -51,7 +48,7 @@
 <span class="kn">import</span> <span class="nn">struct</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">itertoops</span> <span class="kn">import</span> <span class="n">izip</span> <span class="k">as</span> <span class="nb">zip</span>
+    <span class="kn">from</span> <span class="nn">itertoops</span> <span class="k">import</span> <span class="n">izip</span> <span class="k">as</span> <span class="nb">zip</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
@@ -59,20 +56,20 @@
 
 <div class="viewcode-block" id="CStyleStruct"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.otoko_loader.CStyleStruct">[docs]</a><span class="k">class</span> <span class="nc">CStyleStruct</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;A nice and easy way to get &quot;C-style struct&quot; functionality.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwds</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OTOKOParsingError"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.otoko_loader.OTOKOParsingError">[docs]</a><span class="k">class</span> <span class="nc">OTOKOParsingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="OTOKOData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.otoko_loader.OTOKOData">[docs]</a><span class="k">class</span> <span class="nc">OTOKOData</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_axis</span><span class="p">,</span> <span class="n">data_axis</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_axis</span><span class="p">,</span> <span class="n">data_axis</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_axis</span> <span class="o">=</span> <span class="n">q_axis</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_axis</span> <span class="o">=</span> <span class="n">data_axis</span></div>
 
 <div class="viewcode-block" id="OTOKOLoader"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.otoko_loader.OTOKOLoader">[docs]</a><span class="k">class</span> <span class="nc">OTOKOLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qaxis_path</span><span class="p">,</span> <span class="n">data_path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qaxis_path</span><span class="p">,</span> <span class="n">data_path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qaxis_path</span> <span class="o">=</span> <span class="n">qaxis_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_path</span> <span class="o">=</span> <span class="n">data_path</span>
 
@@ -235,7 +232,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

@@ -9,14 +9,11 @@
     <title>sasmodels package &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sasmodels.custom package" href="sasmodels.custom.html" />
@@ -509,8 +506,8 @@ with a call to <em>np.random.seed(opts[‘seed’])</em>.</p>
 </div>
 <p>The values of <em>par=expr</em> are evaluated approximately as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">parameter_set</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">parameter_set</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">parameter_set</span><span class="o">.</span><span class="n">par</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
 </pre></div>
@@ -581,7 +578,7 @@ restored after the with statement is complete.</p>
 </tbody>
 </table>
 <p>Seed can be used directly to set the seed:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">randint</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">randint</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">push_seed</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
 <span class="go">&lt;...push_seed object at...&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000000</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
@@ -1389,6 +1386,13 @@ default value with a weight of 1.0.</p>
 <div class="section" id="module-sasmodels.exception">
 <span id="sasmodels-exception-module"></span><h2>sasmodels.exception module</h2>
 <p>Utility to add annotations to python exceptions.</p>
+<dl class="exception">
+<dt id="sasmodels.exception.WindowsError">
+<em class="property">exception </em><code class="descclassname">sasmodels.exception.</code><code class="descname">WindowsError</code><a class="reference internal" href="../../_modules/sasmodels/exception.html#WindowsError"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Fake WindowsException when not on Windows.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="sasmodels.exception.annotate_exception">
 <code class="descclassname">sasmodels.exception.</code><code class="descname">annotate_exception</code><span class="sig-paren">(</span><em>msg</em>, <em>exc=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/exception.html#annotate_exception"><span class="viewcode-link">[source]</span></a></dt>
@@ -1698,6 +1702,11 @@ information since that need not trigger a recompile of the DLL.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="sasmodels.generate.read_text">
+<code class="descclassname">sasmodels.generate.</code><code class="descname">read_text</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/generate.html#read_text"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="sasmodels.generate.set_integration_size">
 <code class="descclassname">sasmodels.generate.</code><code class="descname">set_integration_size</code><span class="sig-paren">(</span><em>info</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/generate.html#set_integration_size"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Update the model definition, replacing the gaussian integration with
@@ -1796,7 +1805,7 @@ import loops.</p>
 </div>
 <p>From a jupyter cell:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ipyvolume</span> <span class="k">as</span> <span class="nn">ipv</span>
-<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="kn">import</span> <span class="n">jitter</span>
+<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="k">import</span> <span class="n">jitter</span>
 <span class="kn">import</span> <span class="nn">importlib</span><span class="p">;</span> <span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">jitter</span><span class="p">)</span>
 <span class="n">jitter</span><span class="o">.</span><span class="n">set_plotter</span><span class="p">(</span><span class="s2">&quot;ipv&quot;</span><span class="p">)</span>
 
@@ -2967,7 +2976,7 @@ is an optional extension which may not be available on all devices.</p>
 <dl class="function">
 <dt id="sasmodels.kerneldll.compile_command">
 <code class="descclassname">sasmodels.kerneldll.</code><code class="descname">compile_command</code><span class="sig-paren">(</span><em>source</em>, <em>output</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/kerneldll.html#compile_command"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>tinycc compiler command</p>
+<dd><p>unix compiler command</p>
 </dd></dl>
 
 <dl class="function">
@@ -4786,7 +4795,7 @@ will be ignored.  After the context, the usual behaviour will be restored.</p>
 <p>Sasview model constructor.</p>
 <p>Given a module defining an OpenCL kernel such as sasmodels.models.cylinder,
 create a sasview model class to run that kernel as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="kn">import</span> <span class="n">load_custom_model</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">load_custom_model</span>
 <span class="n">CylinderModel</span> <span class="o">=</span> <span class="n">load_custom_model</span><span class="p">(</span><span class="s1">&#39;sasmodels/models/cylinder.py&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -5840,7 +5849,7 @@ used directly in setup(…,data_files=…) for setup.py.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sasmodels package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -5961,7 +5970,7 @@ used directly in setup(…,data_files=…) for setup.py.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

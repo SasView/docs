@@ -9,14 +9,11 @@
     <title>sasmodels.sasview_model &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -50,14 +47,14 @@
 <span class="sd">    from sasmodels.sasview_model import load_custom_model</span>
 <span class="sd">    CylinderModel = load_custom_model(&#39;sasmodels/models/cylinder.py&#39;)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">abspath</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">abspath</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">_thread</span> <span class="k">as</span> <span class="nn">thread</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -65,14 +62,14 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">core</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">custom</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kernelcl</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">generate</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">weights</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">modelinfo</span>
-<span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">make_kernel_args</span><span class="p">,</span> <span class="n">dispersion_mesh</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">core</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">custom</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">kernelcl</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">generate</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">weights</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">modelinfo</span>
+<span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">make_kernel_args</span><span class="p">,</span> <span class="n">dispersion_mesh</span>
 
 <span class="c1"># Hack: load in any custom distributions</span>
 <span class="c1"># Uses ~/.sasview/weights/*.py unless SASMODELS_WEIGHTS is set in the environ.</span>
@@ -81,10 +78,10 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="p">(</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span>
                         <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">Parameter</span>
-    <span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">Parameter</span>
+    <span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span>
     <span class="n">MultiplicityInfoType</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span>
         <span class="s1">&#39;MultiplicityInfo&#39;</span><span class="p">,</span>
         <span class="p">[(</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;control&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]),</span>
@@ -224,7 +221,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert *model_info* into a SasView model wrapper.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">SasviewModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="n">multiplicity</span><span class="p">)</span>
     <span class="n">attrs</span> <span class="o">=</span> <span class="n">_generate_model_attributes</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
     <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;__init__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="fm">__init__</span>
@@ -261,7 +258,7 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;sas.models&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sas</span><span class="o">.</span><span class="n">sascalc</span><span class="o">.</span><span class="n">fit</span>
     <span class="n">sas</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">sas</span><span class="o">.</span><span class="n">sascalc</span><span class="o">.</span><span class="n">fit</span>
     <span class="kn">import</span> <span class="nn">sas.models</span>
-    <span class="kn">from</span> <span class="nn">sasmodels.conversion_table</span> <span class="kn">import</span> <span class="n">CONVERSION_TABLE</span>
+    <span class="kn">from</span> <span class="nn">sasmodels.conversion_table</span> <span class="k">import</span> <span class="n">CONVERSION_TABLE</span>
 
     <span class="k">for</span> <span class="n">new_name</span><span class="p">,</span> <span class="n">conversion</span> <span class="ow">in</span> <span class="n">CONVERSION_TABLE</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="c1"># CoreShellEllipsoidModel =&gt; core_shell_ellipsoid:1</span>
@@ -419,7 +416,7 @@
     <span class="c1">#: memory for polydispersity array if using ArrayDispersion (used by sasview).</span>
     <span class="n">_persistency_dict</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Dict[str, Tuple[np.ndarray, np.ndarray]]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multiplicity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (Optional[int]) -&gt; None</span>
 
         <span class="c1"># TODO: _persistency_dict to persistency_dict throughout sasview</span>
@@ -486,7 +483,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="n">state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; str</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :return: string representation</span>
@@ -909,7 +906,7 @@
 
 <span class="sd">        Returns success flag and output</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.model_test</span> <span class="kn">import</span> <span class="n">check_model</span>
+        <span class="kn">from</span> <span class="nn">.model_test</span> <span class="k">import</span> <span class="n">check_model</span>
         <span class="k">return</span> <span class="n">check_model</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="test_cylinder"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.sasview_model.test_cylinder">[docs]</a><span class="k">def</span> <span class="nf">test_cylinder</span><span class="p">():</span>
@@ -973,7 +970,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make sure that all models build as sasview models</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">.exception</span> <span class="kn">import</span> <span class="n">annotate_exception</span>
+    <span class="kn">from</span> <span class="nn">.exception</span> <span class="k">import</span> <span class="n">annotate_exception</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">core</span><span class="o">.</span><span class="n">list_models</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">_make_standard_model</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -994,7 +991,7 @@
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">load_standard_models</span><span class="p">()</span>
-    <span class="kn">from</span> <span class="nn">sas.models.CylinderModel</span> <span class="kn">import</span> <span class="n">CylinderModel</span>
+    <span class="kn">from</span> <span class="nn">sas.models.CylinderModel</span> <span class="k">import</span> <span class="n">CylinderModel</span>
     <span class="n">CylinderModel</span><span class="p">()</span><span class="o">.</span><span class="n">evalDistribution</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="test_structure_factor_background"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.sasview_model.test_structure_factor_background">[docs]</a><span class="k">def</span> <span class="nf">test_structure_factor_background</span><span class="p">():</span>
@@ -1002,9 +999,9 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check that sasview model and direct model match, with background=0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">.data</span> <span class="kn">import</span> <span class="n">empty_data1D</span>
-    <span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">load_model_info</span><span class="p">,</span> <span class="n">build_model</span>
-    <span class="kn">from</span> <span class="nn">.direct_model</span> <span class="kn">import</span> <span class="n">DirectModel</span>
+    <span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">empty_data1D</span>
+    <span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">load_model_info</span><span class="p">,</span> <span class="n">build_model</span>
+    <span class="kn">from</span> <span class="nn">.direct_model</span> <span class="k">import</span> <span class="n">DirectModel</span>
 
     <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;hardsphere&quot;</span>
     <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
@@ -1088,7 +1085,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

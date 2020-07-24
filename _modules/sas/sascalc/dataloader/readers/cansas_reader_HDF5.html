@@ -9,14 +9,11 @@
     <title>sas.sascalc.dataloader.readers.cansas_reader_HDF5 &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -45,22 +42,25 @@
 <span class="sd">    NXcanSAS data reader for reading HDF5 formatted CanSAS files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
 
-<span class="kn">from</span> <span class="nn">..data_info</span> <span class="kn">import</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span>\
+<span class="kn">from</span> <span class="nn">..data_info</span> <span class="k">import</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span>\
     <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">DataInfo</span><span class="p">,</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Aperture</span><span class="p">,</span> <span class="n">Collimation</span><span class="p">,</span> \
     <span class="n">TransmissionSpectrum</span><span class="p">,</span> <span class="n">Detector</span>
-<span class="kn">from</span> <span class="nn">..loader_exceptions</span> <span class="kn">import</span> <span class="n">FileContentsException</span><span class="p">,</span> <span class="n">DefaultReaderException</span>
-<span class="kn">from</span> <span class="nn">..file_reader_base_class</span> <span class="kn">import</span> <span class="n">FileReader</span><span class="p">,</span> <span class="n">decode</span>
+<span class="kn">from</span> <span class="nn">..loader_exceptions</span> <span class="k">import</span> <span class="n">FileContentsException</span><span class="p">,</span> <span class="n">DefaultReaderException</span>
+<span class="kn">from</span> <span class="nn">..file_reader_base_class</span> <span class="k">import</span> <span class="n">FileReader</span><span class="p">,</span> <span class="n">decode</span>
 
 <span class="k">try</span><span class="p">:</span>
   <span class="n">basestring</span>
 <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>  <span class="c1"># CRUFT: python 2 support</span>
   <span class="n">basestring</span> <span class="o">=</span> <span class="nb">str</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="h5attr"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.sascalc.dataloader.readers.html#sas.sascalc.dataloader.readers.cansas_reader_HDF5.h5attr">[docs]</a><span class="k">def</span> <span class="nf">h5attr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -210,8 +210,12 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_attributes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_new_data_set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="c1"># Recursion step to access data within the group</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">read_children</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_list</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_intermediate</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">read_children</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">parent_list</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_intermediate</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
                 <span class="c1"># Reset parent class when returning from recursive method</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parent_class</span> <span class="o">=</span> <span class="n">last_parent_class</span>
                 <span class="n">parent_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -220,6 +224,9 @@
                 <span class="c1"># If this is a dataset, store the data appropriately</span>
                 <span class="n">data_set</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
                 <span class="n">unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="c1"># Put scalars into lists to be sure they are iterable</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">data_set</span><span class="p">):</span>
+                    <span class="n">data_set</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_set</span><span class="p">]</span>
 
                 <span class="k">for</span> <span class="n">data_point</span> <span class="ow">in</span> <span class="n">data_set</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_point</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -238,8 +245,8 @@
                     <span class="c1"># Run</span>
                     <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;run&#39;</span><span class="p">:</span>
                         <span class="k">try</span><span class="p">:</span>
-                            <span class="n">run_name</span> <span class="o">=</span> <span class="n">h5attr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span>
-                            <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">data_set</span><span class="p">:</span> <span class="n">run_name</span><span class="p">}</span>
+                            <span class="n">run_name</span> <span class="o">=</span> <span class="n">h5attr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+                            <span class="n">run_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">data_point</span><span class="p">:</span> <span class="n">run_name</span><span class="p">}</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">run_name</span> <span class="o">=</span> <span class="n">run_dict</span>
                         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                             <span class="k">pass</span>
@@ -531,7 +538,11 @@
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;beam_shape&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">beam_shape</span> <span class="o">=</span> <span class="n">data_point</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;radiation&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span> <span class="o">=</span> <span class="n">data_point</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">radiation</span> <span class="o">=</span> <span class="n">data_point</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;type&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">data_point</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;probe&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_datainfo</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">probe</span> <span class="o">=</span> <span class="n">data_point</span></div>
 
 <div class="viewcode-block" id="Reader.process_process"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.sascalc.dataloader.readers.html#sas.sascalc.dataloader.readers.cansas_reader_HDF5.Reader.process_process">[docs]</a>    <span class="k">def</span> <span class="nf">process_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_point</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -821,7 +832,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

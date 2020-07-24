@@ -9,14 +9,11 @@
     <title>sas.logger_config &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -41,7 +38,7 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.logger_config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">logging.config</span>
@@ -50,7 +47,7 @@
 
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 
-<span class="kn">from</span> <span class="nn">sas</span> <span class="kn">import</span> <span class="n">get_custom_config</span>
+<span class="kn">from</span> <span class="nn">sas</span> <span class="k">import</span> <span class="n">get_custom_config</span>
 
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">Module that manages the global logging</span>
@@ -62,7 +59,7 @@
 <span class="sd">    Called at the beginning of run.py or sasview.py</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_find_config_file</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">logger_name</span>
 
@@ -72,7 +69,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_read_config_file</span><span class="p">()</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;matplotlib&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">logger</span></div>
 
 <div class="viewcode-block" id="SetupLogger.config_development"><a class="viewcode-back" href="../../dev/sasview-api/sas.html#sas.logger_config.SetupLogger.config_development">[docs]</a>    <span class="k">def</span> <span class="nf">config_development</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -82,9 +79,8 @@
         <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_all_logs_to_debug</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_disable_debug_from_config</span><span class="p">()</span>
-
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;matplotlib&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARN</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">logger</span></div>
 
     <span class="k">def</span> <span class="nf">_disable_debug_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -183,7 +179,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

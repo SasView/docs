@@ -9,14 +9,11 @@
     <title>sas.sascalc.fit.pagestate &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -64,20 +61,20 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">import</span> <span class="nn">xml.dom.minidom</span>
-<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parseString</span>
-<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">getDOMImplementation</span>
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="k">import</span> <span class="n">parseString</span>
+<span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="k">import</span> <span class="n">getDOMImplementation</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span>
 
-<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="kn">import</span> <span class="n">convert</span>
+<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="k">import</span> <span class="n">convert</span>
 <span class="kn">import</span> <span class="nn">sasmodels.weights</span>
 
-<span class="kn">from</span> <span class="nn">sas.sasview</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">SASVIEW_VERSION</span>
+<span class="kn">from</span> <span class="nn">sas.sasview</span> <span class="k">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">SASVIEW_VERSION</span>
 
 <span class="kn">import</span> <span class="nn">sas.sascalc.dataloader</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader</span> <span class="kn">import</span> <span class="n">Reader</span> <span class="k">as</span> <span class="n">CansasReader</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader</span> <span class="kn">import</span> <span class="n">get_content</span><span class="p">,</span> <span class="n">write_node</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">Collimation</span><span class="p">,</span> <span class="n">Detector</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Aperture</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader</span> <span class="k">import</span> <span class="n">Reader</span> <span class="k">as</span> <span class="n">CansasReader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.readers.cansas_reader</span> <span class="k">import</span> <span class="n">get_content</span><span class="p">,</span> <span class="n">write_node</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">Collimation</span><span class="p">,</span> <span class="n">Detector</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Aperture</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -185,7 +182,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Contains information to reconstruct a page of the fitpanel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the current state</span>
 
@@ -556,7 +553,7 @@
             <span class="n">rep</span> <span class="o">+=</span> <span class="s2">&quot;parameter unit: </span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">rep</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        output string for printing</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1111,7 +1108,7 @@
 <span class="sd">    State of the simultaneous fit page for saving purposes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Sim Fit Page Number</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_page_no</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># Select all data</span>
@@ -1127,7 +1124,7 @@
         <span class="c1"># List of constraints</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">constraints_list</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># TODO: should use __str__, not __repr__ (similarly for PageState)</span>
         <span class="c1"># TODO: could use a nicer representation</span>
         <span class="nb">repr</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
@@ -1154,7 +1151,7 @@
     <span class="c1"># List of allowed extensions</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.fitv&#39;</span><span class="p">,</span> <span class="s1">&#39;.FITV&#39;</span><span class="p">,</span> <span class="s1">&#39;.svs&#39;</span><span class="p">,</span> <span class="s1">&#39;SVS&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cansas</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_back</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cansas</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">CansasReader</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the call-back method to be called</span>
@@ -1483,7 +1480,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

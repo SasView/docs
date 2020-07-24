@@ -9,14 +9,11 @@
     <title>sas.qtgui.Plotting package &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sas.qtgui.Plotting.Masks package" href="sas.qtgui.Plotting.Masks.html" />
@@ -1753,8 +1750,14 @@ and set corresponding View pointers</p>
 
 <dl class="method">
 <dt id="sas.qtgui.Plotting.SlicerModel.SlicerModel.setParamsFromModel">
-<code class="descname">setParamsFromModel</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/SlicerModel.html#SlicerModel.setParamsFromModel"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Set up the params dictionary based on the model content.</p>
+<code class="descname">setParamsFromModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/SlicerModel.html#SlicerModel.setParamsFromModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set up the params dictionary based on the current model content.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Plotting.SlicerModel.SlicerModel.setParamsFromModelItem">
+<code class="descname">setParamsFromModelItem</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/SlicerModel.html#SlicerModel.setParamsFromModelItem"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set up the params dictionary for the parameter in item.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1774,72 +1777,6 @@ and set corresponding View pointers</p>
 </div>
 <div class="section" id="module-sas.qtgui.Plotting.rangeSlider">
 <span id="sas-qtgui-plotting-rangeslider-module"></span><h2>sas.qtgui.Plotting.rangeSlider module</h2>
-<dl class="class">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider">
-<em class="property">class </em><code class="descclassname">sas.qtgui.Plotting.rangeSlider.</code><code class="descname">RangeSlider</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sphinx.ext.autodoc.importer._MockObject</span></code></p>
-<p>A slider for ranges.</p>
-<p>This class provides a dual-slider for ranges, where there is a defined
-maximum and minimum, as is a normal slider, but instead of having a
-single slider value, there are 2 slider values.</p>
-<p>This class emits the same signals as the QSlider base class, with the 
-exception of valueChanged.</p>
-<p>In addition, two new signals are emitted to catch the movement of 
-each handle, lowValueChanged(int) and highValueChanged(int).</p>
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.highValue">
-<code class="descname">highValue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.highValue"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.highValueChanged">
-<code class="descname">highValueChanged</code></dt>
-<dd><p>Used by autodoc_mock_imports.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.lowValue">
-<code class="descname">lowValue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.lowValue"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.lowValueChanged">
-<code class="descname">lowValueChanged</code></dt>
-<dd><p>Used by autodoc_mock_imports.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.mouseMoveEvent">
-<code class="descname">mouseMoveEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.mouseMoveEvent"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.mousePressEvent">
-<code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.mousePressEvent"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.mouseReleaseEvent">
-<code class="descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.paintEvent">
-<code class="descname">paintEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.paintEvent"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.setHighValue">
-<code class="descname">setHighValue</code><span class="sig-paren">(</span><em>high</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.setHighValue"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="sas.qtgui.Plotting.rangeSlider.RangeSlider.setLowValue">
-<code class="descname">setLowValue</code><span class="sig-paren">(</span><em>low</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Plotting/rangeSlider.html#RangeSlider.setLowValue"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-sas.qtgui.Plotting">
 <span id="module-contents"></span><h2>Module contents</h2>
@@ -1852,7 +1789,7 @@ each handle, lowValueChanged(int) and highValueChanged(int).</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sas.qtgui.Plotting package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -1940,7 +1877,7 @@ each handle, lowValueChanged(int) and highValueChanged(int).</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

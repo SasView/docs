@@ -9,14 +9,11 @@
     <title>sas.qtgui.Plotting.Slicers.AnnulusSlicer &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -44,10 +41,10 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
-<span class="kn">from</span> <span class="nn">.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">formatNumber</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SlicerModel</span> <span class="kn">import</span> <span class="n">SlicerModel</span>
+<span class="kn">from</span> <span class="nn">.BaseInteractor</span> <span class="k">import</span> <span class="n">BaseInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">import</span> <span class="n">formatNumber</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SlicerModel</span> <span class="k">import</span> <span class="n">SlicerModel</span>
 
 <div class="viewcode-block" id="AnnulusInteractor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AnnulusSlicer.AnnulusInteractor">[docs]</a><span class="k">class</span> <span class="nc">AnnulusInteractor</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">,</span> <span class="n">SlicerModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -56,7 +53,7 @@
 <span class="sd">    defined by 2 radius.</span>
 <span class="sd">    this class is defined by 2 Ringinterators.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 
         <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
         <span class="n">SlicerModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -65,15 +62,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_item</span> <span class="o">=</span> <span class="n">item</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
                         <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>  <span class="c1"># must be positive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dqmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">connect</span>
 
         <span class="c1"># Number of points on the plot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">36</span>
         <span class="c1"># Cursor position of Rings (Left(-1) or Right(1))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xmaxd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">xmind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmaxd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmaxd</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmind</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
@@ -139,7 +137,7 @@
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Ring</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">Ring</span>
         <span class="n">rmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()),</span>
                    <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()))</span>
         <span class="n">rmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()),</span>
@@ -200,7 +198,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Test the proposed new value &quot;value&quot; for row &quot;row&quot; of parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">MIN_DIFFERENCE</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="c1">#Set minimum difference in outer/inner ring to ensure data exists in annulus</span>
+        <span class="n">MIN_DIFFERENCE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dqmin</span>
         <span class="n">isValid</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">param_name</span> <span class="o">==</span> <span class="s1">&#39;inner_radius&#39;</span><span class="p">:</span>
@@ -288,7 +287,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">     Draw a ring Given a radius</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param: the color of the line that defined the ring</span>
 <span class="sd">        :param r: the radius of the ring</span>
@@ -468,7 +467,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

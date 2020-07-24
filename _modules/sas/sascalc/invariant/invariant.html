@@ -9,14 +9,11 @@
     <title>sas.sascalc.invariant.invariant &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -49,19 +46,21 @@
 <span class="c1">#See the license text in license.txt</span>
 <span class="c1">#copyright 2010, University of Tennessee</span>
 <span class="c1">######################################################################</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module implements invariant and its related computations.</span>
 
 <span class="sd">:author: Gervaise B. Alina/UTK</span>
 <span class="sd">:author: Mathieu Doucet/UTK</span>
 <span class="sd">:author: Jae Cho/UTK</span>
+<span class="sd">:author: Paul Butler/NIST/UD/UTK -- refactor in 2020</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Data1D</span> <span class="k">as</span> <span class="n">LoaderData1D</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Data1D</span> <span class="k">as</span> <span class="n">LoaderData1D</span>
 
 <span class="c1"># The minimum q-value to be used when extrapolating</span>
 <span class="n">Q_MINIMUM</span> <span class="o">=</span> <span class="mf">1e-5</span>
@@ -151,7 +150,7 @@
 <span class="sd">    class of type Transform that performs operations related to guinier</span>
 <span class="sd">    function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
         <span class="n">Transform</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
@@ -232,7 +231,7 @@
 <span class="sd">    class of type transform that perform operation related to power_law</span>
 <span class="sd">    function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
         <span class="n">Transform</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span>
@@ -308,7 +307,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extrapolate I(q) distribution using a given model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Determine a and b given a linear equation y = ax + b</span>
 
@@ -415,7 +414,7 @@
 
 <span class="sd">    :note: Some computations depends on each others.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize variables.</span>
 
@@ -571,7 +570,7 @@
 <span class="sd">        dyn: error on dy</span>
 
 <span class="sd">        :param data:</span>
-<span class="sd">        :note: if data doesn&#39;t contain dy assume dy= math.sqrt(data.y)</span>
+<span class="sd">        :note: if data doesn&#39;t contain dy return &quot;None&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> \
             <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="ow">or</span> \
@@ -580,11 +579,13 @@
             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; and greater than 1; got x=</span><span class="si">%s</span><span class="s2">, y=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1">#Create error for data without dy error</span>
+            <span class="c1"># For reduced data sqrt(I) is incorrect! if the data has no dy</span>
+            <span class="c1"># then we should not invent it and then propogate that completely</span>
+            <span class="c1"># bogus value.  So changed behaviour on Mar 23, 2020 to return</span>
+            <span class="c1"># None instead</span>
             <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">dy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">dy</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dy</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dy</span>
             <span class="c1"># Take care of smeared data</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smeared</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">gx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span>
@@ -853,23 +854,38 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the specific surface from the data.</span>
 
-<span class="sd">        Implementation::</span>
+<span class="sd">        Historically, Sv was computed with the invariant and the Porod</span>
+<span class="sd">        constant so as not to have to know the contrast in order to get the</span>
+<span class="sd">        Sv as:</span>
+<span class="sd">            surface = (pi * V * (1- V) * porod_const) / q_star</span>
+<span class="sd">        However, that turns out to be a pointless exercise since it</span>
+<span class="sd">        also requires a knowledge of the volume fractions and from the</span>
+<span class="sd">        volumer fraction and the invariant the contrast can be calculated as:</span>
+<span class="sd">            contrast**2 = q_star / (2 * pi**2 * V * (1- V))</span>
 
-<span class="sd">          V =  self.get_volume_fraction(contrast, extrapolation)</span>
+<span class="sd">        Thus either way, mathematically it is always identical to computing</span>
+<span class="sd">        with only the contrast and the Porod Constant. up to and including</span>
+<span class="sd">        SasView versions 4.2.2 and 5.0.1 the implementation used the traditional</span>
+<span class="sd">        circular approach.</span>
 
-<span class="sd">          Compute the surface given by:</span>
-<span class="sd">            surface = (2*pi *V(1- V)*porod_const)/ q_star</span>
+<span class="sd">        Implementation: ::</span>
+<span class="sd">           Given the above, as of SasView 4.3 and 5.0.2 we compute Sv simply</span>
+<span class="sd">           from the Porod Constant and the contrast between the two phases as:</span>
+<span class="sd">             surface = porod_const / (2 * pi contrast**2) </span>
 
-<span class="sd">        :param contrast: contrast value to compute the volume</span>
-<span class="sd">        :param porod_const: Porod constant to compute the surface</span>
-<span class="sd">        :param extrapolation: string to apply optional extrapolation</span>
+
+<span class="sd">        :param contrast: contrast between the two phases</span>
+<span class="sd">        :param porod_const: Porod constant</span>
+<span class="sd">        :param extrapolation: string to apply optional extrapolation. This will</span>
+<span class="sd">               only be needed if and when the contrast term is calculated from</span>
+<span class="sd">               the invariant.</span>
 
 <span class="sd">        :return: specific surface</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Compute the volume</span>
-        <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_fraction</span><span class="p">(</span><span class="n">contrast</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">volume</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">volume</span><span class="p">)</span> <span class="o">*</span> \
-            <span class="nb">float</span><span class="p">(</span><span class="n">porod_const</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span></div>
+        <span class="c1"># convert porod_const to units of A^-5 instead of cm^-1 A^-4 so that</span>
+        <span class="c1"># s is returned in units of 1/A.</span>
+        <span class="n">_porod_const</span> <span class="o">=</span> <span class="mf">1.0e-8</span> <span class="o">*</span> <span class="n">porod_const</span>
+        <span class="k">return</span> <span class="n">_porod_const</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">contrast</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="InvariantCalculator.get_volume_fraction"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.invariant.html#sas.sascalc.invariant.invariant.InvariantCalculator.get_volume_fraction">[docs]</a>    <span class="k">def</span> <span class="nf">get_volume_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">extrapolation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -946,11 +962,16 @@
 <span class="sd">        Compute uncertainty on volume value as well as the volume fraction</span>
 <span class="sd">        This uncertainty is given by the following equation: ::</span>
 
-<span class="sd">            dV = 0.5 * (4*k* dq_star) /(2* math.sqrt(1-k* q_star))</span>
+<span class="sd">            sigV = dV/dq_star * sigq_star</span>
+<span class="sd">            </span>
+<span class="sd">            so that</span>
+<span class="sd">            sigV = (k * sigq_star) /(q_star * math.sqrt(1 - 4 * k))</span>
 
 <span class="sd">            for k = 10^(-8)*q_star/(2*(pi*|contrast|)**2)</span>
 
-<span class="sd">            q_star: the invariant value including extrapolated value if existing</span>
+<span class="sd">            10^(-8) converts from cm^-1 to A^-1</span>
+<span class="sd">            q_star: the invariant, in cm^-1A^-3, including extrapolated values</span>
+<span class="sd">                if they have been requested</span>
 <span class="sd">            dq_star: the invariant uncertainty</span>
 <span class="sd">            dV: the volume uncertainty</span>
 
@@ -964,47 +985,70 @@
         <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_fraction</span><span class="p">(</span><span class="n">contrast</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">)</span>
 
         <span class="c1"># Compute error</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="mf">1.e-8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">contrast</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mf">1.e-8</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> \
+                                        <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">contrast</span><span class="p">)))</span><span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="c1"># Check value inside the sqrt function</span>
         <span class="n">value</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">uncertainty</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="c1"># Compute uncertainty</span>
-        <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> \
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_qstar_err</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Compute uncertainty</span>
+            <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="n">k</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar_err</span><span class="p">)</span>
+                                    <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">k</span><span class="p">)))</span>
 
         <span class="k">return</span> <span class="n">volume</span><span class="p">,</span> <span class="n">uncertainty</span></div>
 
 <div class="viewcode-block" id="InvariantCalculator.get_surface_with_error"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.invariant.html#sas.sascalc.invariant.invariant.InvariantCalculator.get_surface_with_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_surface_with_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">porod_const</span><span class="p">,</span> <span class="n">extrapolation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute uncertainty of the surface value as well as the surface value.</span>
-<span class="sd">        The uncertainty is given as follow: ::</span>
+<span class="sd">        As of SasView 4.3 and 5.0.3, the specific surface is computed directly</span>
+<span class="sd">        from the contrast and porod_constant wich are currently user inputs</span>
+<span class="sd">        with no option for any uncertainty so no uncertainty can be calculated.</span>
+<span class="sd">        However we include the uncertainty computation for future use if and</span>
+<span class="sd">        when these values get an uncertainty. This is given as:</span>
 
-<span class="sd">            dS = porod_const *2*pi[( dV -2*V*dV)/q_star</span>
-<span class="sd">                 + dq_star(v-v**2)</span>
+<span class="sd">            ds = sqrt[(s&#39;_cp)**2 * dcp**2 + (s&#39;_contrast)**2 * dcontrast**2]</span>
+<span class="sd">            where s&#39;_x is the partial derivative of S with respect to x </span>
+<span class="sd">        which gives (this should be checked before using in anger)</span>
+<span class="sd">            ds = sqrt((dporod_const**2 * contrast**2 + 4 * (porod_const *</span>
+<span class="sd">                          dcontrast)**2) / (4 * pi**2 * contrast**6))</span>
+<span class="sd">        We also assume some users will never enter a value for uncertainty so</span>
+<span class="sd">        allow for None even when it is an option.</span>
 
-<span class="sd">            q_star: the invariant value</span>
-<span class="sd">            dq_star: the invariant uncertainty</span>
-<span class="sd">            V: the volume fraction value</span>
-<span class="sd">            dV: the volume uncertainty</span>
+<span class="sd">        :param contrast: contrast value eventually with the error</span>
+<span class="sd">        :param porod_const: porod constant value eventually with the error</span>
+<span class="sd">        :param extrapolation: string to apply optional extrapolation. This will</span>
+<span class="sd">               only be needed if and when the contrast term is calculated from</span>
+<span class="sd">               the invariant.</span>
 
-<span class="sd">        :param contrast: contrast value</span>
-<span class="sd">        :param porod_const: porod constant value</span>
-<span class="sd">        :param extrapolation: string to apply optional extrapolation</span>
-
-<span class="sd">        :return S, dS: the surface, with its uncertainty</span>
+<span class="sd">        :return s, ds: the surface, with its uncertainty</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># We get the volume fraction, with error</span>
-        <span class="c1">#   get_volume_fraction_with_error calls get_volume_fraction</span>
-        <span class="c1">#   get_volume_fraction calls get_qstar</span>
-        <span class="c1">#   which computes Qstar and dQstar</span>
-        <span class="n">v</span><span class="p">,</span> <span class="n">dv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_volume_fraction_with_error</span><span class="p">(</span><span class="n">contrast</span><span class="p">,</span> <span class="n">extrapolation</span><span class="p">)</span>
-
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_surface</span><span class="p">(</span><span class="n">contrast</span><span class="o">=</span><span class="n">contrast</span><span class="p">,</span> <span class="n">porod_const</span><span class="o">=</span><span class="n">porod_const</span><span class="p">,</span>
-                             <span class="n">extrapolation</span><span class="o">=</span><span class="n">extrapolation</span><span class="p">)</span>
-        <span class="n">ds</span> <span class="o">=</span> <span class="n">porod_const</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">((</span><span class="n">dv</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">v</span> <span class="o">*</span> <span class="n">dv</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar</span>\
-                 <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qstar_err</span> <span class="o">*</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
-
+        <span class="c1"># until contrast and porod_constant are given with uncertainties set</span>
+        <span class="c1"># them to 0</span>
+        <span class="n">dcontrast</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">dporod_const</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># IMPORTATN: the porod constant (and eventually its uncertainty) are</span>
+        <span class="c1"># given in units of cm^-1 A^-4.  We need to be mindfult of units when</span>
+        <span class="c1"># writing equations. Thus for computing ds both the porod constant and</span>
+        <span class="c1"># its uncertainty need to be converted to A^-5 so they play well with</span>
+        <span class="c1"># the contrast which is in A-2.</span>
+        <span class="c1"># Note that the porod constant is converted in self.get_surface method</span>
+        <span class="c1">#so do NOT convert before calling here</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_surface</span><span class="p">(</span><span class="n">contrast</span><span class="o">=</span><span class="n">contrast</span><span class="p">,</span> <span class="n">porod_const</span><span class="o">=</span><span class="n">porod_const</span><span class="p">)</span>
+        <span class="c1"># Until uncertainties in contrast and the Porod Constant are provided</span>
+        <span class="c1"># just return nothing.</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># When they are available, use the following:</span>
+        <span class="c1"># if dporod_const is None:</span>
+        <span class="c1">#     _dporod_const = 0.</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     _dporod_const = dporod_const * 1e-8 </span>
+        <span class="c1"># if dcontrast is None:</span>
+        <span class="c1">#    dcontrast = 0.</span>
+        <span class="c1"># For this new computation we DO need to convert the units</span>
+        <span class="c1"># _porod_const = porod_const * 1e-8</span>
+        <span class="c1">#ds = math.sqrt((_dporod_const**2 * contrast**2 + 4 * (_porod_const * </span>
+        <span class="c1">#                 dcontrast)**2 / (4 * math.pi**2 * constrast**6))</span>
+   
         <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">ds</span></div></div>
 </pre></div>
 
@@ -1045,7 +1089,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

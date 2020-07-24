@@ -9,14 +9,11 @@
     <title>sasmodels.model_test &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -87,7 +84,7 @@
 
 <span class="sd">Precision defaults to 5 digits (relative).</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -95,30 +92,30 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+    <span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="c1"># StringIO.StringIO renamed to io.StringIO in Python 3</span>
     <span class="c1"># Note: io.StringIO exists in python 2, but using unicode instead of str</span>
-    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">list_models</span><span class="p">,</span> <span class="n">load_model_info</span><span class="p">,</span> <span class="n">build_model</span>
-<span class="kn">from</span> <span class="nn">.direct_model</span> <span class="kn">import</span> <span class="n">call_kernel</span><span class="p">,</span> <span class="n">call_Fq</span>
-<span class="kn">from</span> <span class="nn">.exception</span> <span class="kn">import</span> <span class="n">annotate_exception</span>
-<span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">expand_pars</span>
-<span class="kn">from</span> <span class="nn">.kernelcl</span> <span class="kn">import</span> <span class="n">use_opencl</span>
-<span class="kn">from</span> <span class="nn">.kernelcuda</span> <span class="kn">import</span> <span class="n">use_cuda</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">list_models</span><span class="p">,</span> <span class="n">load_model_info</span><span class="p">,</span> <span class="n">build_model</span>
+<span class="kn">from</span> <span class="nn">.direct_model</span> <span class="k">import</span> <span class="n">call_kernel</span><span class="p">,</span> <span class="n">call_Fq</span>
+<span class="kn">from</span> <span class="nn">.exception</span> <span class="k">import</span> <span class="n">annotate_exception</span>
+<span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">expand_pars</span>
+<span class="kn">from</span> <span class="nn">.kernelcl</span> <span class="k">import</span> <span class="n">use_opencl</span>
+<span class="kn">from</span> <span class="nn">.kernelcuda</span> <span class="k">import</span> <span class="n">use_cuda</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">product</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Callable</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">TestCondition</span><span class="p">,</span> <span class="n">ModelInfo</span>
-    <span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">TestCondition</span><span class="p">,</span> <span class="n">ModelInfo</span>
+    <span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <div class="viewcode-block" id="make_suite"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.model_test.make_suite">[docs]</a><span class="k">def</span> <span class="nf">make_suite</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
@@ -237,7 +234,7 @@
 <span class="sd">        functions, then runs the list of tests at the bottom of the model</span>
 <span class="sd">        description file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">test_method_name</span><span class="p">,</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_name</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">test_method_name</span><span class="p">,</span>
                      <span class="n">platform</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">stash</span><span class="p">):</span>
             <span class="c1"># type: (str, ModelInfo, str, str, DType, List[Any]) -&gt; None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">test_name</span> <span class="o">=</span> <span class="n">test_name</span>
@@ -543,7 +540,7 @@
     <span class="c1"># Note that running main() directly did not work from within the</span>
     <span class="c1"># wxPython pycrust console.  Instead of the results appearing in the</span>
     <span class="c1"># window they were printed to the underlying console.</span>
-    <span class="kn">from</span> <span class="nn">unittest.runner</span> <span class="kn">import</span> <span class="n">TextTestResult</span><span class="p">,</span> <span class="n">_WritelnDecorator</span>
+    <span class="kn">from</span> <span class="nn">unittest.runner</span> <span class="k">import</span> <span class="n">TextTestResult</span><span class="p">,</span> <span class="n">_WritelnDecorator</span>
 
     <span class="c1"># Build a object to capture and print the test results</span>
     <span class="n">stream</span> <span class="o">=</span> <span class="n">_WritelnDecorator</span><span class="p">(</span><span class="n">StringIO</span><span class="p">())</span>  <span class="c1"># Add writeln() method to stream</span>
@@ -630,10 +627,10 @@
 <span class="sd">    Returns 0 if success or 1 if any tests fail.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">xmlrunner</span> <span class="kn">import</span> <span class="n">XMLTestRunner</span> <span class="k">as</span> <span class="n">TestRunner</span>
+        <span class="kn">from</span> <span class="nn">xmlrunner</span> <span class="k">import</span> <span class="n">XMLTestRunner</span> <span class="k">as</span> <span class="n">TestRunner</span>
         <span class="n">test_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="s1">&#39;logs&#39;</span><span class="p">}</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TextTestRunner</span> <span class="k">as</span> <span class="n">TestRunner</span>
+        <span class="kn">from</span> <span class="nn">unittest</span> <span class="k">import</span> <span class="n">TextTestRunner</span> <span class="k">as</span> <span class="n">TestRunner</span>
         <span class="n">test_args</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Test SasModels Models&quot;</span><span class="p">)</span>
@@ -718,7 +715,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

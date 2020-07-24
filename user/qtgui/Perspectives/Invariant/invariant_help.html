@@ -9,14 +9,11 @@
     <title>Invariant Calculation &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="Correlation Function Analysis" href="../Corfunc/corfunc_help.html" />
@@ -53,12 +50,12 @@
 <div class="section" id="principle">
 <h2>Principle</h2>
 <p>For any multi-phase system, i.e. any system that contains regions with
-different scattering length densities (SLD), the integral over all <span class="math notranslate nohighlight">\(q\)</span> (or
-<span class="math notranslate nohighlight">\(4\pi\)</span> in scattering angle) of the appropriately dimensionally-weighted
-scattering cross-section (ie, ‘intensity’, <span class="math notranslate nohighlight">\(I(q)\)</span> in absolute units) is a
-<em>constant</em> directly proportional to the mean-square average fluctuation (SLD)
-and the phase composition. Usefully, this value is <em>independent</em> of the sizes,
-shapes, or interactions, or, more generally, the arrangement, of the phase
+different scattering length densities (SLD), the integral over all <span class="math notranslate nohighlight">\(\vec{q}\)</span>
+of the appropriately dimensionally-weighted scattering cross-section (ie,
+‘intensity’, <span class="math notranslate nohighlight">\(I(\vec{q})\)</span> in absolute units) is a <em>constant</em> directly
+proportional to the mean-square average fluctuation in SLD and the phase
+composition. Usefully, this value is <em>independent</em> of the sizes, shapes, or
+interactions, or, more generally, the arrangement, of the phase
 domains (i.e. it is <strong>invariant</strong>) <em>provided the system is incompressible</em>
 (i.e, the relative volume fractions of the phases do not change). For the
 purposes of this discussion, a phase is any portion of the material which
@@ -86,8 +83,9 @@ volume fractions or contrast terms.</p>
 <div class="section" id="calculation">
 <h3>Calculation</h3>
 <p>Assuming isotropic scattering, acquired on a typical ‘pinhole geometry’
-instrument, the invariant integral can be computed from the 1D reduced
-data as:</p>
+instrument, the invariant integral can be computed from the 1D reduced data
+(assuming the reduced data has removed all background from sample
+holders,incoherent scattering in the case of neutrons, etc.) as:</p>
 <div class="math notranslate nohighlight">
 \[Q^* = \int_0^\infty q^2I(q)\,dq\]</div>
 <div class="admonition warning">
@@ -96,8 +94,23 @@ data as:</p>
 implementations of this calculation, does not include the effects of
 instrumental resolution on the equation above. This means that for data
 with very significant resolution smearing (more likely to be encountered
-with SANS than with SAXS data) the calculated invariant will be distorted
-(it will be too high).</p>
+with SANS than with SAXS data) the calculated invariant will be somewhat
+high (though in most real cases this will probably not be the dominant
+uncertainty).</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The observant reader may notice the lack of a <span class="math notranslate nohighlight">\(4 \pi\)</span> prefactor in the
+above equation which would be required for an integral over all <span class="math notranslate nohighlight">\(q\)</span> stated
+at the beginning. This seems to be the convention historically adopted and
+is only important when extracting terms from the invariant as below. As
+long as the same convention is applied in their derivation all is consistent.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Also note that if some residual flat background remains in the data, it can
+be corrected for if the amount can be estimated as disucussed in the usage
+section below.</p>
 </div>
 <p>In the extreme case of “infinite” slit smearing, the above equation reduces to:</p>
 <div class="math notranslate nohighlight">
@@ -142,7 +155,10 @@ with: “The 6 columns”. For an example, see the example data set
 never measured over the range <span class="math notranslate nohighlight">\(0 \le q \le \infty\)</span> and it is thus usually
 necessary to extrapolate the experimental data to both low and high <span class="math notranslate nohighlight">\(q\)</span>.
 Currently, SasView allows extrapolation to a fixed low and high <span class="math notranslate nohighlight">\(q\)</span> such that
-<span class="math notranslate nohighlight">\(10^{-5} \le q \le 10\)</span> Å<sup>-1</sup>.</p>
+<span class="math notranslate nohighlight">\(10^{-5} \le q \le 10\)</span> Å<sup>-1</sup>. Note that the integrals above are
+weighted by <span class="math notranslate nohighlight">\(q^2\)</span> or <span class="math notranslate nohighlight">\(q\)</span>. Thus the high-<span class="math notranslate nohighlight">\(q\)</span> extrapolation is weighted far more
+heavily than the low-<span class="math notranslate nohighlight">\(q\)</span> extrapolation so that having data measured to as large
+a value of <span class="math notranslate nohighlight">\(q_{max}\)</span> as possible can be surprisingly important.</p>
 <p>Low-<span class="math notranslate nohighlight">\(q\)</span> region (&lt;= <span class="math notranslate nohighlight">\(q_{min}\)</span> in data):</p>
 <ul class="simple">
 <li>The Guinier function <span class="math notranslate nohighlight">\(I_0.exp(-q^2 R_g^2/3)\)</span> can be used, where <span class="math notranslate nohighlight">\(I_0\)</span>
@@ -150,29 +166,26 @@ and <span class="math notranslate nohighlight">\(R_g\)</span> are obtained by fi
 <span class="math notranslate nohighlight">\(q_{min+j}\)</span> where <span class="math notranslate nohighlight">\(j\)</span> is the user-chosen number of points from which to
 extrapolate. The default is the first 10 points. Alternatively a power
 law, similar to the high <span class="math notranslate nohighlight">\(q\)</span> extrapolation, can be used but this is not
-recommended! Because the integrals above are weighted by <span class="math notranslate nohighlight">\(q^2\)</span> or <span class="math notranslate nohighlight">\(q\)</span>
-the low-<span class="math notranslate nohighlight">\(q\)</span> extrapolation generally only contributes a small proportion,
-say &lt;3%, to the overall value of <span class="math notranslate nohighlight">\(Q^*\)</span>.</li>
+recommended!</li>
 </ul>
 <p>High-<span class="math notranslate nohighlight">\(q\)</span> region (&gt;= <span class="math notranslate nohighlight">\(q_{max}\)</span> in data):</p>
 <ul class="simple">
 <li>The power law function <span class="math notranslate nohighlight">\(A/q^m\)</span> is used where the power law constant
 <span class="math notranslate nohighlight">\(m\)</span> can be fixed to some value by the user or fit along with the constant
-<span class="math notranslate nohighlight">\(A\)</span>. <span class="math notranslate nohighlight">\(m\)</span> should typically be between -3 and -4 with -4 indicating sharp
-interfaces. The fitted constant(s) <span class="math notranslate nohighlight">\(A\)</span> (<span class="math notranslate nohighlight">\(m\)</span>) is/are obtained by
-fitting the data within the range <span class="math notranslate nohighlight">\(q_{max-j}\)</span> to <span class="math notranslate nohighlight">\(q_{max}\)</span>
-where, again, <span class="math notranslate nohighlight">\(j\)</span> is the user chosen number of points from which to
-extrapolate, the default again being the last 10 points. This extrapolation
-typically contributes 3 - 20% of the value of <span class="math notranslate nohighlight">\(Q^*\)</span> so having data measured
-to as large a value of <span class="math notranslate nohighlight">\(q_{max}\)</span> as possible is generally much more
-important.</li>
+<span class="math notranslate nohighlight">\(A\)</span>. <span class="math notranslate nohighlight">\(m\)</span> will typically be between 3 and 4 for pinhole resolution with
+4 indicating sharp interfaces and smaller values more diffuse interfaces.
+In real systems this may not always hold of course, but the user should
+think about what a deviation means and to what extent it is valid to use
+such an extrapolation. The fitted constant(s) <span class="math notranslate nohighlight">\(A\)</span> (<span class="math notranslate nohighlight">\(m\)</span>) is/are obtained by
+fitting the data within the range <span class="math notranslate nohighlight">\(q_{max-j}\)</span> to <span class="math notranslate nohighlight">\(q_{max}\)</span> where, again,
+<span class="math notranslate nohighlight">\(j\)</span> is the user chosen number of points from which to extrapolate, the
+default again being the last 10 points.</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">While the high <span class="math notranslate nohighlight">\(q\)</span> exponent should generally be close to -4 for the
-assumptions underlying the extraction of other parameters to be correct,
-in the special case of slit smearing that power law should be -3 for the
-same sharp interfaces.</p>
+<p class="last">While the high <span class="math notranslate nohighlight">\(q\)</span> exponent should generally be close to 4 for a
+system with sharp interfaces, in the special case of <em>infinite</em> slit
+smearing that power law should be 3 for the same sharp interfaces.</p>
 </div>
 </div>
 <div class="section" id="invariant">
@@ -188,13 +201,6 @@ Thus from the invariant one can either calculate the volume fractions of the
 two phases given the contrast or, calculate the contrast given the volume
 fraction. However, the current implementation in SasView only allows for the
 former: extracting the volume fraction given a known contrast factor.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The Invariant analysis window always tries to return the volume
-fraction using a default SLD of 1e-6 Å<sup>-1</sup>. The user <strong>must</strong> provide
-the <strong>correct</strong> SLD for their system and click on <em>Compute</em> before
-examining/using the value of the invariant displayed.</p>
-</div>
 </div>
 <div class="section" id="volume-fraction">
 <h3>Volume Fraction</h3>
@@ -225,17 +231,12 @@ invariant analysis.</p>
 </div>
 <div class="section" id="specific-surface-area">
 <h3>Specific Surface Area</h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The value of <span class="math notranslate nohighlight">\(S_v\)</span> returned by this version 5.0.2 of SasView
-<em>and ALL earlier versions of SasView</em> is <strong>twice</strong> what it should be.</p>
-</div>
 <p>The total surface area per unit volume is an important quantity for a variety of
 applications, for example, to understand the absorption capacity, reactivity, or
 catalytic activity of a material. This value, known as the specific surface area
 <span class="math notranslate nohighlight">\(S_v\)</span>, is reflected in the scattering of the material. Indeed, any interfaces in
-the material separating regions of different scattering length densities contribute
-to the overall scattering.</p>
+the material separating regions of different scattering length densities
+contribute to the overall scattering.</p>
 <p>For a two phase system, <span class="math notranslate nohighlight">\(S_v\)</span> can be computed from the scattering data as:</p>
 <div class="math notranslate nohighlight">
 \[S_v = \frac{C_p}{2 \pi (\Delta\rho)^2}\]</div>
@@ -256,8 +257,8 @@ only on two values - the contrast and Porod Constant - <em>which must be provide
 general concept and not limited to two phases.  Extending the formalism to more
 phases, so that useful information can be extracted from the invariant
 is, however, more difficult.</p>
-<p>We note here that in the more generalized formalism the contrast term is replaced
-by a quantity called the <em>SLD fluctuation</em>, <span class="math notranslate nohighlight">\(\eta\)</span>, so that:</p>
+<p>We note here that in the more generalized formalism the contrast term is
+replaced by a quantity called the <em>SLD fluctuation</em>, <span class="math notranslate nohighlight">\(\eta\)</span>, so that:</p>
 <div class="math notranslate nohighlight">
 \[Q^* = {2 \pi^2 \langle \eta^2 \rangle}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\eta\)</span> represents the deviation in SLD from the weighted-average value,
@@ -266,7 +267,8 @@ average of the SLD fluctuations, <span class="math notranslate nohighlight">\(&l
 <div class="math notranslate nohighlight">
 \[\langle \eta^2 \rangle = \langle (\rho^*)^2 \rangle -
 \langle (\rho^*) \rangle^2\]</div>
-<p><strong>In the case of a two-phase system</strong>:</p>
+<p>Returning to the simplest case of a two-phase system, this formalism can be
+shown to reduce to the same results given above:</p>
 <div class="math notranslate nohighlight">
 \[\langle (\rho^*)^2 \rangle = \phi_1 \rho_1^2 + \phi_2 \rho_2^2\]</div>
 <div class="math notranslate nohighlight">
@@ -280,7 +282,7 @@ average of the SLD fluctuations, <span class="math notranslate nohighlight">\(&l
 <div class="math notranslate nohighlight">
 \[\langle \eta^2 \rangle = \phi_1 \eta_1^2 + \phi_2 \eta_2^2 \equiv \phi_1 \phi_2
 (\rho_1 - \rho_2)^2\]</div>
-<p>and thus:</p>
+<p>and thus for the two phase system we recover:</p>
 <div class="math notranslate nohighlight">
 \[Q^* = {2 \pi^2 (\Delta\rho)^2 \phi_1 \phi_2}\]</div>
 <div class="admonition note">
@@ -298,27 +300,41 @@ Section 6.9, and the Shioya reference<a class="footnote-reference" href="#crawsh
 the dataset into the <em>Invariant</em> panel. Or select <em>Invariant</em> from the
 <em>Analysis</em> category in the menu bar.</p>
 <img alt="../../../../_images/image_invariant_load_data.png" src="../../../../_images/image_invariant_load_data.png" />
-<p>A first estimate of <span class="math notranslate nohighlight">\(Q^*\)</span> should be computed automatically. If not, click on
-the <em>Compute</em> button.</p>
-<p>Use the boxes on the <em>Options</em> tab to subtract
-any background, specify the contrast (i.e. difference in SLDs: note this
-must be specified for the eventual value of <span class="math notranslate nohighlight">\(Q^*\)</span> to be on an absolute scale
-and to therefore have any meaning), or to rescale the data.</p>
-<p>(Optional) If known, a value for <span class="math notranslate nohighlight">\(C_p\)</span> can also be specified.</p>
+<p>A first estimate of <span class="math notranslate nohighlight">\(Q^*\)</span> should be computed automatically but should be
+ignored as it will be incorect until the proper contrast term is specified.</p>
+<p>Use the box on the <em>Options</em> tab to specify the contrast term(i.e. difference
+in SLDs). Note this must be specified for the eventual value of <span class="math notranslate nohighlight">\(Q^*\)</span> to be on
+an absolute scale and to therefore have any meaning).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><strong>The user must provide the correct SLD contrast</strong> for the data
+they are analysing in the <em>Options</em> tab of the Invariant window <strong>and then</strong>
+click on <em>Compute</em> before examining/using any displayed value of the
+invariant or volume fraction. <strong>The default contrast has been deliberately
+set to the unlikley-to-be-realistic value of 8e-06</strong> Å<sup>-2</sup>.</p>
+</div>
+<p>Optional: Also in this tab a background term to subtract from the data can be
+specified (if the data is not already properly background subtracted), the data
+can be rescaled if necessary (e.g. to be on an absolute scale) and a value for
+<span class="math notranslate nohighlight">\(C_p\)</span> can be specified (required if the specific surface area <span class="math notranslate nohighlight">\(S_v\)</span> is desired).</p>
 <img alt="../../../../_images/image_invariant_option_tab.png" src="../../../../_images/image_invariant_option_tab.png" />
-<p>Adjust the extrapolation ranges and extrapolation types as necessary. In
-most cases the default values will suffice. Click the <em>Compute</em> button.</p>
-<p>To adjust the lower and/or higher <span class="math notranslate nohighlight">\(Q\)</span> ranges, check the relevant <em>Enable
-Extrapolate</em> check boxes.</p>
-<p>If power law extrapolations are chosen, the exponent can be either held
-fixed or fitted. The number of points, <span class="math notranslate nohighlight">\(Npts\)</span>, to be used for the basis of
-the extrapolation can also be specified.</p>
+<p>Adjust the extrapolation types as necessary by checking the relevant <em>Enable
+Extrapolate</em> check boxes. If power law extrapolations are chosen, the exponent
+can be either held fixed or fitted. The number of points, <span class="math notranslate nohighlight">\(Npts\)</span>, to be used
+for the basis of the extrapolation can also be specified.</p>
+<p>In most cases the default values will suffice. Click the <em>Compute</em> button.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">As mentioned above in the <a class="reference internal" href="#data-extrapolation">Data Extrapolation</a> section, the
+extrapolation ranges are currently fixed and not adjustable. They are
+designed to keep the computation time reasonable while including as
+much of the total <span class="math notranslate nohighlight">\(q\)</span> range as should be necessary for any SAS data.</p>
+</div>
 <p>The details of the calculation are available by clicking the <em>Status</em>
-button in the middle of the panel.</p>
+button at the bottom right of the panel.</p>
 <img alt="../../../../_images/image_invariant_details.png" src="../../../../_images/image_invariant_details.png" />
 <p>If more than 10% of the computed <span class="math notranslate nohighlight">\(Q^*\)</span> value comes from the areas under
-the extrapolated curves, particularly the high-<span class="math notranslate nohighlight">\(Q\)</span> extrapolation, proceed
-with caution.</p>
+the extrapolated curves, proceed with caution.</p>
 </div>
 <div class="section" id="references">
 <h2>References</h2>
@@ -364,7 +380,7 @@ R.E. Cameron <em>Polymer</em>, 41 1873-1881 (2000).</td></tr>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This help document was last changed (completely re-written) by Paul
-Butler and Steve King, 16Apr2020</p>
+Butler and Steve King, March-July 2020</p>
 </div>
 </div>
 </div>
@@ -375,7 +391,7 @@ Butler and Steve King, 16Apr2020</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Invariant Calculation</a><ul>
 <li><a class="reference internal" href="#principle">Principle</a></li>
@@ -445,7 +461,7 @@ Butler and Steve King, 16Apr2020</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

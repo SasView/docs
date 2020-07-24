@@ -9,14 +9,11 @@
     <title>sas.sascalc.fit.models &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -44,7 +41,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Utilities to manage models</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -56,16 +53,16 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">io</span>
 
-<span class="kn">from</span> <span class="nn">six</span> <span class="kn">import</span> <span class="n">reraise</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">reraise</span>
 
-<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="kn">import</span> <span class="n">load_custom_model</span><span class="p">,</span> <span class="n">load_standard_models</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">load_custom_model</span><span class="p">,</span> <span class="n">load_standard_models</span>
 
-<span class="kn">from</span> <span class="nn">sas</span> <span class="kn">import</span> <span class="n">get_user_dir</span>
+<span class="kn">from</span> <span class="nn">sas</span> <span class="k">import</span> <span class="n">get_user_dir</span>
 
 <span class="c1"># Explicitly import from the pluginmodel module so that py2exe</span>
 <span class="c1"># places it in the distribution. The Model1DPlugin class is used</span>
 <span class="c1"># as the base class of plug-in models.</span>
-<span class="kn">from</span> <span class="nn">.pluginmodel</span> <span class="kn">import</span> <span class="n">Model1DPlugin</span>
+<span class="kn">from</span> <span class="nn">.pluginmodel</span> <span class="k">import</span> <span class="n">Model1DPlugin</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -252,7 +249,7 @@
     <span class="c1">#: timestamp on the plugin directory at the last plugin update</span>
     <span class="n">last_time_dir_modified</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># type: int</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># the model dictionary is allocated at the start and updated to</span>
         <span class="c1"># reflect the current list of models.  Be sure to clear it rather</span>
         <span class="c1"># than reassign to it.</span>
@@ -357,7 +354,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">base</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ModelManagerBase()</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">base</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ModelManager</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">ModelManagerBase</span><span class="p">()</span>
 
@@ -417,7 +414,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

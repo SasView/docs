@@ -9,14 +9,11 @@
     <title>sas.qtgui.Plotting.Masks.BoxMask &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -43,10 +40,10 @@
   <h1>Source code for sas.qtgui.Plotting.Masks.BoxMask</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BoxSum</span> <span class="kn">import</span> <span class="n">PointInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BoxSum</span> <span class="kn">import</span> <span class="n">VerticalDoubleLine</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BoxSum</span> <span class="kn">import</span> <span class="n">HorizontalDoubleLine</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="k">import</span> <span class="n">BaseInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BoxSum</span> <span class="k">import</span> <span class="n">PointInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BoxSum</span> <span class="k">import</span> <span class="n">VerticalDoubleLine</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BoxSum</span> <span class="k">import</span> <span class="n">HorizontalDoubleLine</span>
 
 
 <div class="viewcode-block" id="BoxMask"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Masks.html#sas.qtgui.Plotting.Masks.BoxMask.BoxMask">[docs]</a><span class="k">class</span> <span class="nc">BoxMask</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
@@ -63,7 +60,7 @@
 <span class="sd">    :param y_max: the maximum value of the y coordinate</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">x_min</span><span class="o">=</span><span class="mf">0.008</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.008</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="mf">0.0025</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">0.0025</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -181,7 +178,7 @@
 <span class="sd">        Get the limits of the boxsum and compute the sum of the pixel</span>
 <span class="sd">        contained in that region and the error on that sum</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Boxcut</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">Boxcut</span>
         <span class="c1"># # Data 2D for which the pixel will be summed</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span>
@@ -307,7 +304,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

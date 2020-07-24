@@ -9,14 +9,11 @@
     <title>sas.qtgui.Plotting.Masks.SectorMask &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -46,15 +43,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.SectorSlicer</span> <span class="kn">import</span> <span class="n">SideInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.SectorSlicer</span> <span class="kn">import</span> <span class="n">LineInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="k">import</span> <span class="n">BaseInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.SectorSlicer</span> <span class="k">import</span> <span class="n">SideInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.SectorSlicer</span> <span class="k">import</span> <span class="n">LineInteractor</span>
 
 <div class="viewcode-block" id="SectorMask"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Masks.html#sas.qtgui.Plotting.Masks.SectorMask.SectorMask">[docs]</a><span class="k">class</span> <span class="nc">SectorMask</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Draw a sector slicer.Allow to find the data 2D inside of the sector lines</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
@@ -157,7 +154,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="c1">## Averaging</span>
-        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Sectorcut</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">Sectorcut</span>
         <span class="n">phimin</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">phi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_line</span><span class="o">.</span><span class="n">theta</span>
         <span class="n">phimax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">phi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_line</span><span class="o">.</span><span class="n">theta</span>
 
@@ -275,7 +272,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

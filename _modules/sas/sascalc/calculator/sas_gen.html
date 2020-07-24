@@ -9,14 +9,11 @@
     <title>sas.sascalc.calculator.sas_gen &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -48,16 +45,16 @@
 <span class="sd">Calculation checked by sampling from an ellipsoid and comparing Iq with the</span>
 <span class="sd">1D, 2D oriented and 2D oriented magnetic analytical model from sasmodels.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">periodictable</span> <span class="kn">import</span> <span class="n">formula</span><span class="p">,</span> <span class="n">nsf</span>
+<span class="kn">from</span> <span class="nn">periodictable</span> <span class="k">import</span> <span class="n">formula</span><span class="p">,</span> <span class="n">nsf</span>
 
-<span class="kn">from</span> <span class="nn">.geni</span> <span class="kn">import</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">Iqxy</span>
+<span class="kn">from</span> <span class="nn">.geni</span> <span class="k">import</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">Iqxy</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -102,7 +99,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generic SAS computation Model based on sld (n &amp; m) arrays</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Init</span>
 <span class="sd">        :Params sld_data: MagSLD object</span>
@@ -266,7 +263,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert OMFData to MAgData</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Init</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -718,7 +715,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_meshunit</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span>
     <span class="n">_valueunit</span> <span class="o">=</span> <span class="s2">&quot;A^(-2)&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Init for mag SLD</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -751,7 +748,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">valuerangeminmag</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valuerangemaxmag</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        doc strings</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -812,7 +809,7 @@
     <span class="n">_sld_unit</span> <span class="o">=</span> <span class="s1">&#39;1/A^(2)&#39;</span>
     <span class="n">_pix_type</span> <span class="o">=</span> <span class="s1">&#39;pixel&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">pos_z</span><span class="p">,</span> <span class="n">sld_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">pos_z</span><span class="p">,</span> <span class="n">sld_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">sld_mx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sld_my</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sld_mz</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vol_pix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Init for mag SLD</span>
@@ -853,7 +850,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_pixel_volumes</span><span class="p">(</span><span class="n">vol_pix</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        doc strings</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1051,7 +1048,7 @@
 <span class="c1"># =======================================================================</span>
 
 <span class="k">def</span> <span class="nf">_get_data_path</span><span class="p">(</span><span class="o">*</span><span class="n">path_parts</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">dirname</span>
+    <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">dirname</span>
     <span class="c1"># in sas/sascalc/calculator;  want sas/sasview/test</span>
     <span class="k">return</span> <span class="n">joinpath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span>
                     <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;sasview&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">path_parts</span><span class="p">)</span>
@@ -1072,7 +1069,7 @@
     <span class="n">foutput</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">ooutput</span><span class="p">)</span>
 
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">Axes3D</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">pos_y</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">pos_z</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span>
@@ -1118,7 +1115,7 @@
 <span class="sd">    Note: this requires the old C implementation which may have already</span>
 <span class="sd">    been removed from the repository.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_sld2i</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_sld2i</span>
 
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_z</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span><span class="p">:</span>
@@ -1159,8 +1156,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute Iq for GenSAS object using sasmodels/explore/realspace.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">realspace</span> <span class="kn">import</span> <span class="n">calc_Iq_magnetic</span><span class="p">,</span> <span class="n">calc_Iqxy</span>
-    <span class="kn">from</span> <span class="nn">realspace</span> <span class="kn">import</span> <span class="n">calc_Pr</span><span class="p">,</span> <span class="n">calc_Iq_from_Pr</span><span class="p">,</span> <span class="n">calc_Iq_avg</span><span class="p">,</span> <span class="n">r_bins</span>
+    <span class="kn">from</span> <span class="nn">realspace</span> <span class="k">import</span> <span class="n">calc_Iq_magnetic</span><span class="p">,</span> <span class="n">calc_Iqxy</span>
+    <span class="kn">from</span> <span class="nn">realspace</span> <span class="k">import</span> <span class="n">calc_Pr</span><span class="p">,</span> <span class="n">calc_Iq_from_Pr</span><span class="p">,</span> <span class="n">calc_Iq_avg</span><span class="p">,</span> <span class="n">r_bins</span>
 
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_z</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span><span class="p">:</span>
@@ -1225,8 +1222,8 @@
 
 <span class="sd">    *theory* is the I(q) value for the shape, if known.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-    <span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">default_timer</span> <span class="k">as</span> <span class="n">timer</span>
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+    <span class="kn">from</span> <span class="nn">timeit</span> <span class="k">import</span> <span class="n">default_timer</span> <span class="k">as</span> <span class="n">timer</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">realspace</span>
@@ -1235,7 +1232,7 @@
         <span class="n">use_realspace</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_sld2i</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_sld2i</span>
         <span class="c1"># old model is too slow for large number of points</span>
         <span class="n">use_oldmodel</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">data_x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">21000</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -1340,7 +1337,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">plot_points</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+        <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="k">import</span> <span class="n">Axes3D</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">Axes3D</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
         <span class="c1">#ax = fig.add_subplot((111), projection=&#39;3d&#39;)</span>
@@ -1488,7 +1485,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">realspace</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">dirname</span>
+        <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">dirname</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">realpath</span><span class="p">(</span><span class="n">joinpath</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
                                  <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span>
                                  <span class="s1">&#39;sasmodels&#39;</span><span class="p">,</span> <span class="s1">&#39;explore&#39;</span><span class="p">))</span>
@@ -1537,7 +1534,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

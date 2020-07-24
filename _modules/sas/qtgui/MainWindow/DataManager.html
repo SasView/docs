@@ -9,14 +9,11 @@
     <title>sas.qtgui.MainWindow.DataManager &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -66,29 +63,32 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">BytesIO</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="kn">import</span> <span class="n">PlottableTheory1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="kn">import</span> <span class="n">PlottableFit1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="kn">import</span> <span class="n">Text</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="kn">import</span> <span class="n">Chisq</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="kn">import</span> <span class="n">View</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="k">import</span> <span class="n">PlottableTheory1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="k">import</span> <span class="n">PlottableFit1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="k">import</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="k">import</span> <span class="n">Chisq</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plottables</span> <span class="k">import</span> <span class="n">View</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities</span> <span class="kn">import</span> <span class="n">GuiUtils</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataState</span> <span class="kn">import</span> <span class="n">DataState</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities</span> <span class="k">import</span> <span class="n">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataState</span> <span class="k">import</span> <span class="n">DataState</span>
 <span class="kn">import</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">as</span> <span class="nn">DataInfo</span>
 
 <span class="c1"># used for import/export</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Sample</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Vector</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Sample</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Vector</span>
+
+<span class="kn">from</span> <span class="nn">sas.sasview</span> <span class="k">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">SASVIEW_VERSION</span>
+
 
 <div class="viewcode-block" id="DataManager"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataManager.DataManager">[docs]</a><span class="k">class</span> <span class="nc">DataManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Manage a list of data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Store opened path and data object created at the loading time</span>
 <span class="sd">        :param auto_plot: if True the datamanager sends data to plotting</span>
@@ -103,7 +103,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">list_of_id</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_stamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_str</span>  <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">_str</span> <span class="o">+=</span> <span class="s2">&quot;No of states  is </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_data</span><span class="p">))</span>
         <span class="n">n_count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -122,6 +122,11 @@
             <span class="n">new_plot</span> <span class="o">=</span> <span class="n">Data2D</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">err_image</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">new_plot</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[],</span> <span class="n">y</span><span class="o">=</span><span class="p">[],</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Add a note with the SasView version to the data for export purposes</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">notes</span><span class="p">]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data file generated by SasView v</span><span class="si">{SASVIEW_VERSION}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">new_plot</span><span class="o">.</span><span class="n">copy_from_datainfo</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">clone_without_data</span><span class="p">(</span><span class="n">clone</span><span class="o">=</span><span class="n">new_plot</span><span class="p">)</span>
@@ -442,7 +447,7 @@
 
         <span class="k">def</span> <span class="nf">simple_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
             <span class="k">class</span> <span class="nc">Empty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-                <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">generate</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">level</span><span class="p">))</span>
 
@@ -557,7 +562,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

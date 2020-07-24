@@ -9,14 +9,11 @@
     <title>Writing a Plugin Model &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="GPU Setup" href="gpu_setup.html" />
@@ -152,7 +149,7 @@ at the start of the model documentation and as a tooltip in the SasView GUI</li>
 <li><dl class="first docutils">
 <dt>a <strong>long description</strong>:</dt>
 <dd><ul class="first last simple">
-<li>this is ReStructuredText enclosed between the r””” and “”” delimiters
+<li>this is ReStructuredText enclosed between the r”“” and “”” delimiters
 at the top of the <em>.py</em> file</li>
 <li>what you write here is abstracted into the SasView help documentation</li>
 <li>this is what other users will refer to when they want to know what
@@ -222,7 +219,7 @@ into the built-in library.</p>
 <p>The simplest way to define a new model is to combine existing models.  For
 example, <em>cyl_sphere.py</em> could contain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os.path</span>
-<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">load_model_info</span>
+<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">load_model_info</span>
 <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;cylinder+sphere@hardsphere&#39;</span><span class="p">)</span>
 <span class="n">model_info</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -237,8 +234,8 @@ model file path and assigns it to the model name.</p>
 <h3>Reparameterized Models</h3>
 <p>You can modify an existing model to use new parameters.  For example,
 to create an ellipsoid constrained by volume:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">inf</span>
-<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">reparameterize</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">inf</span>
+<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">reparameterize</span>
 <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span>
     <span class="c1"># name, units, default, [min, max], type, description</span>
     <span class="p">[</span><span class="s2">&quot;volume&quot;</span><span class="p">,</span> <span class="s2">&quot;Ang^3&quot;</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span> <span class="s2">&quot;ellipsoid volume&quot;</span><span class="p">],</span>
@@ -382,7 +379,7 @@ numbers or underscore.  Spaces, dashes, and other symbols are not permitted.</p>
 <p><strong>title = “short description”</strong> is short description of the model which
 is included after the model name in the automatically generated documentation.
 The title can also be used for a tooltip.</p>
-<p><strong>description = “””doc string”””</strong> is a longer description of the model. It
+<p><strong>description = “”“doc string”“”</strong> is a longer description of the model. It
 shows up when you press the “Description” button of the SasView FitPage.
 It should give a brief description of the equation and the parameters
 without the need to read the entire model documentation. The triple quotes
@@ -413,7 +410,7 @@ structure factor to account for interactions between particles.  See
 loading and modifying existing models.  This is done implicitly by
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.load_model_info" title="sasmodels.core.load_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">sasmodels.core.load_model_info()</span></code></a>, which can create a mixture model
 from a pair of existing models.  For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">load_model_info</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">load_model_info</span>
 <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;sphere+cylinder&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -594,7 +591,7 @@ the code in the <cite>_randomize_one()</cite> function from sasmodels/compare.py
 </div>
 <p>For pure python models, define the <em>Iq</em> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="o">...</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="o">...</span>
 
 <span class="k">def</span> <span class="nf">Iq</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">par1</span><span class="p">,</span> <span class="n">par2</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">I</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">par1</span><span class="p">,</span> <span class="n">par2</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
@@ -1195,11 +1192,25 @@ complete list of computed intermediates.</li>
 <span id="id4"></span><h2>Test Your New Model</h2>
 <div class="section" id="minimal-testing">
 <h3>Minimal Testing</h3>
-<p>From SasView either open the Python shell (<em>Tools</em> &gt; <em>Python Shell/Editor</em>)
-or the plugin editor (<em>Fitting</em> &gt; <em>Plugin Model Operations</em> &gt; <em>Advanced
-Plugin Editor</em>), load your model, and then select <em>Run &gt; Check Model</em> from
-the menu bar. An <em>Info</em> box will appear with the results of the compilation
-and a check that the model runs.</p>
+<p>In SasView 5.x, plugin models are loaded ‘on-the-fly’. So to test a plugin
+go to a FitPage (or create a new one with <em>Fitting</em> &gt; <em>New Fit Page</em>),
+select <em>Category</em> &gt; <em>Plugin Models</em>, and then select your model from the
+<em>Model Name</em> dropdown. Then click the <em>Calculate</em> button. If the model
+compiles succesfully, two things will happen: the <em>Calculate</em> button will
+change to <em>Show Plot</em>, and in the <em>Log Explorer</em> window something like
+this will appear, possibly followed by a report of the unit test in your
+plugin model:</p>
+<blockquote>
+<div>11:06:37 - INFO: make python model peak_voigt</div></blockquote>
+<p>If compilation of your plugin model fails, then Python traceback information
+will appear in the Log Explorer:</p>
+<blockquote>
+<div><p>11:32:47 - INFO: make python model dummy_voigt</p>
+<p>11:32:47 - ERROR: Traceback (most recent call last):</p>
+</div></blockquote>
+<p>If you look closely at traceback it should tell you why compilation is failing.
+A very common reason is simply that a variable name has been misspelt. Look for
+a line that begins <em>NameError</em>.</p>
 </div>
 <div class="section" id="recommended-testing">
 <h3>Recommended Testing</h3>
@@ -1208,7 +1219,7 @@ SasView build environment available!</strong></p>
 <p>If the model compiles and runs, you can next run the unit tests that
 you have added using the <strong>test =</strong> values.</p>
 <p>From SasView, switch to the <em>Shell</em> tab and type the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.model_test</span> <span class="kn">import</span> <span class="n">run_one</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.model_test</span> <span class="k">import</span> <span class="n">run_one</span>
 <span class="n">run_one</span><span class="p">(</span><span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1217,7 +1228,7 @@ you have added using the <strong>test =</strong> values.</p>
 </pre></div>
 </div>
 <p>To check whether single precision is good enough, type the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.compare</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">compare</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.compare</span> <span class="k">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">compare</span>
 <span class="n">compare</span><span class="p">(</span><span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1329,7 +1340,7 @@ consider adding your model to the
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../../../index.html">Table of Contents</a></h3>
+  <h3><a href="../../../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Writing a Plugin Model</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
@@ -1417,7 +1428,7 @@ consider adding your model to the
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

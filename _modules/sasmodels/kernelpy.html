@@ -9,14 +9,11 @@
     <title>sasmodels.kernelpy &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -49,29 +46,29 @@
 <span class="sd">summing the results.  The interface to :class:`PyModel` matches those for</span>
 <span class="sd">:class:`kernelcl.GpuModel` and :class:`kerneldll.DllModel`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">pi</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">pi</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cbrt</span>
+    <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">cbrt</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">cbrt</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return cubed root of x.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.generate</span> <span class="kn">import</span> <span class="n">F64</span>
-<span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
+<span class="kn">from</span> <span class="nn">.generate</span> <span class="k">import</span> <span class="n">F64</span>
+<span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">details</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">details</span>
     <span class="n">DType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
@@ -82,7 +79,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for pure python models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">):</span>
         <span class="c1"># Make sure Iq is available and vectorized.</span>
         <span class="n">_create_default_functions</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
@@ -120,7 +117,7 @@
 <span class="sd">    Call :meth:`release` when complete.  Even if not called directly, the</span>
 <span class="sd">    buffer will be released when the data object is freed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nq</span> <span class="o">=</span> <span class="n">q_vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_2d</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">q_vectors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
@@ -158,7 +155,7 @@
 
 <span class="sd">    Call :meth:`release` when done with the kernel instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">q_input</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">q_input</span><span class="p">):</span>
         <span class="c1"># type: (callable, ModelInfo, List[np.ndarray]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
@@ -323,9 +320,9 @@
                 <span class="c1"># Update value and norm.</span>
                 <span class="n">total</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">Iq</span>
                 <span class="n">weight_norm</span> <span class="o">+=</span> <span class="n">weight</span>
-                <span class="n">shell</span><span class="p">,</span> <span class="n">form</span> <span class="o">=</span> <span class="n">form_volume</span><span class="p">()</span>
-                <span class="n">weighted_form</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">form</span>
-                <span class="n">weighted_shell</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">shell</span>
+                <span class="n">unweighted_shell</span><span class="p">,</span> <span class="n">unweighted_form</span> <span class="o">=</span> <span class="n">form_volume</span><span class="p">()</span>
+                <span class="n">weighted_shell</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">unweighted_shell</span>
+                <span class="n">weighted_form</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">unweighted_form</span>
                 <span class="n">weighted_radius</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">form_radius</span><span class="p">()</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">total</span><span class="p">,</span> <span class="n">weight_norm</span><span class="p">,</span> <span class="n">weighted_form</span><span class="p">,</span> <span class="n">weighted_shell</span><span class="p">,</span> <span class="n">weighted_radius</span><span class="p">))</span>
@@ -426,7 +423,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

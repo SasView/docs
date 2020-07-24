@@ -9,14 +9,11 @@
     <title>sasmodels.product &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -155,24 +152,24 @@
 <span class="sd">    be any magnetic S parameters.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">parse_parameter</span>
-<span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
-<span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">make_details</span>
+<span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ParameterTable</span><span class="p">,</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">parse_parameter</span>
+<span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
+<span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">make_details</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">Parameter</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <span class="c1"># TODO: make shape averages available to constraints</span>
@@ -359,7 +356,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model definition for product model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, KernelModel, KernelModel) -&gt; None</span>
         <span class="c1">#: Combined info plock for the product model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
@@ -404,7 +401,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiated kernel for product model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">p_kernel</span><span class="p">,</span> <span class="n">s_kernel</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">p_kernel</span><span class="p">,</span> <span class="n">s_kernel</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, Kernel, Kernel, Tuple[np.ndarray]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span>
@@ -632,7 +629,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

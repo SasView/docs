@@ -9,14 +9,11 @@
     <title>sasmodels.compare &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -69,7 +66,7 @@
 <span class="sd">On Windows you will need to remove the quotes.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -80,23 +77,23 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">core</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">weights</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kerneldll</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kernelcl</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kernelcuda</span>
-<span class="kn">from</span> <span class="nn">.data</span> <span class="kn">import</span> <span class="n">plot_theory</span><span class="p">,</span> <span class="n">empty_data1D</span><span class="p">,</span> <span class="n">empty_data2D</span><span class="p">,</span> <span class="n">load_data</span>
-<span class="kn">from</span> <span class="nn">.direct_model</span> <span class="kn">import</span> <span class="n">DirectModel</span><span class="p">,</span> <span class="n">get_mesh</span>
-<span class="kn">from</span> <span class="nn">.generate</span> <span class="kn">import</span> <span class="n">FLOAT_RE</span><span class="p">,</span> <span class="n">set_integration_size</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">core</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">weights</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">kerneldll</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">kernelcl</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">kernelcuda</span>
+<span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">plot_theory</span><span class="p">,</span> <span class="n">empty_data1D</span><span class="p">,</span> <span class="n">empty_data2D</span><span class="p">,</span> <span class="n">load_data</span>
+<span class="kn">from</span> <span class="nn">.direct_model</span> <span class="k">import</span> <span class="n">DirectModel</span><span class="p">,</span> <span class="n">get_mesh</span>
+<span class="kn">from</span> <span class="nn">.generate</span> <span class="k">import</span> <span class="n">FLOAT_RE</span><span class="p">,</span> <span class="n">set_integration_size</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterSet</span>
-    <span class="kn">from</span> <span class="nn">.data</span> <span class="kn">import</span> <span class="n">Data</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterSet</span>
+    <span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">Data</span>
     <span class="n">Calculator</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
@@ -288,16 +285,16 @@
 <span class="sd">        Exception raised</span>
 <span class="sd">        899</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (Optional[int]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">trace</span><span class="p">):</span>
         <span class="c1"># type: (Any, BaseException, Any) -&gt; None</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)</span></div>
 
@@ -1132,7 +1129,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Use the columnize package (pycolumize) if it is available</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">columnize</span> <span class="kn">import</span> <span class="n">columnize</span> <span class="k">as</span> <span class="n">_columnize</span><span class="p">,</span> <span class="n">default_opts</span>
+        <span class="kn">from</span> <span class="nn">columnize</span> <span class="k">import</span> <span class="n">columnize</span> <span class="k">as</span> <span class="n">_columnize</span><span class="p">,</span> <span class="n">default_opts</span>
         <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">width</span> <span class="o">=</span> <span class="n">default_opts</span><span class="p">[</span><span class="s1">&#39;displaywidth&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">_columnize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">displaywidth</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">lineprefix</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
@@ -1625,8 +1622,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    show html docs for the model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">.generate</span> <span class="kn">import</span> <span class="n">make_html</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">rst2html</span>
+    <span class="kn">from</span> <span class="nn">.generate</span> <span class="k">import</span> <span class="n">make_html</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">rst2html</span>
 
     <span class="n">info</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">html</span> <span class="o">=</span> <span class="n">make_html</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
@@ -1640,9 +1637,9 @@
 <span class="sd">    explore the model using the bumps gui.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">wx</span>  <span class="c1"># type: ignore</span>
-    <span class="kn">from</span> <span class="nn">bumps.names</span> <span class="kn">import</span> <span class="n">FitProblem</span>  <span class="c1"># type: ignore</span>
-    <span class="kn">from</span> <span class="nn">bumps.gui.app_frame</span> <span class="kn">import</span> <span class="n">AppFrame</span>  <span class="c1"># type: ignore</span>
-    <span class="kn">from</span> <span class="nn">bumps.gui</span> <span class="kn">import</span> <span class="n">signal</span>
+    <span class="kn">from</span> <span class="nn">bumps.names</span> <span class="k">import</span> <span class="n">FitProblem</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">bumps.gui.app_frame</span> <span class="k">import</span> <span class="n">AppFrame</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">bumps.gui</span> <span class="k">import</span> <span class="n">signal</span>
 
     <span class="n">is_mac</span> <span class="o">=</span> <span class="s2">&quot;cocoa&quot;</span> <span class="ow">in</span> <span class="n">wx</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
     <span class="c1"># Create an app if not running embedded</span>
@@ -1672,10 +1669,10 @@
 <span class="sd">    The resulting object can be used as a Bumps fit problem so that</span>
 <span class="sd">    parameters can be adjusted in the GUI, with plots updated on the fly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opts</span><span class="p">):</span>
         <span class="c1"># type: (Dict[str, Any]) -&gt; None</span>
-        <span class="kn">from</span> <span class="nn">bumps.cli</span> <span class="kn">import</span> <span class="n">config_matplotlib</span>  <span class="c1"># type: ignore</span>
-        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">bumps_model</span>
+        <span class="kn">from</span> <span class="nn">bumps.cli</span> <span class="k">import</span> <span class="n">config_matplotlib</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">bumps_model</span>
         <span class="n">config_matplotlib</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">opts</span>
         <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">])</span>
@@ -1819,7 +1816,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

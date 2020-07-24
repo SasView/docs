@@ -9,14 +9,11 @@
     <title>sasmodels.data &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -78,11 +75,11 @@
 <span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
@@ -94,7 +91,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load data using a sasview loader.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.loader</span> <span class="kn">import</span> <span class="n">Loader</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.loader</span> <span class="k">import</span> <span class="n">Loader</span>  <span class="c1"># type: ignore</span>
     <span class="n">loader</span> <span class="o">=</span> <span class="n">Loader</span><span class="p">()</span>
     <span class="c1"># Allow for one part in multipart file</span>
     <span class="k">if</span> <span class="s1">&#39;[&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
@@ -120,7 +117,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a beam stop of the given *radius*.  If *outer*, make an annulus.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Ringcut</span>
+    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">Ringcut</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;qx_data&#39;</span><span class="p">):</span>
         <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">Ringcut</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">radius</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">outer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -136,7 +133,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select half of the data, either &quot;right&quot; or &quot;left&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Boxcut</span>
+    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">Boxcut</span>
     <span class="k">if</span> <span class="n">half</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span>
         <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">+=</span> \
             <span class="n">Boxcut</span><span class="p">(</span><span class="n">x_min</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
@@ -150,7 +147,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Chop the top off the data, above *cutoff*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Boxcut</span>
+    <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">Boxcut</span>
     <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">+=</span> \
         <span class="n">Boxcut</span><span class="p">(</span><span class="n">x_min</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span></div>
 
@@ -182,7 +179,7 @@
 
 <span class="sd">    *_yaxis*, *_yunit*: label and units for the *y* axis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
                  <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
                  <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># type: Optional[np.ndarray]</span>
@@ -226,7 +223,7 @@
 <span class="sd">    *x* is spin echo length and *y* is polarization (P/P0).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">isSesans</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="n">Data1D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Optional[np.ndarray]</span></div>
 
@@ -262,7 +259,7 @@
 
 <span class="sd">    *x_bins*, *y_bins*: grid steps in *x* and *y* directions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
                  <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
                  <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
@@ -322,7 +319,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    3-space vector of *x*, *y*, *z*</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (float, float, Optional[float]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span></div>
 
@@ -330,7 +327,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Detector attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixel_size</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixel_size</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (Tuple[float, float], float) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="o">*</span><span class="n">pixel_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="n">distance</span></div>
@@ -339,7 +336,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Beam attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength_unit</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span></div>
@@ -348,7 +345,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sample attributes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="k">pass</span></div>
 
@@ -516,7 +513,7 @@
 <span class="sd">    Plot the data and residuals for 1D data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
-    <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">masked_array</span><span class="p">,</span> <span class="n">masked</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="k">import</span> <span class="n">masked_array</span><span class="p">,</span> <span class="n">masked</span>  <span class="c1"># type: ignore</span>
 
     <span class="c1"># Default to &#39;log&#39; view</span>
     <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -742,7 +739,7 @@
 <span class="sd">    *scale* can be &#39;log&#39; for log scale data, or &#39;linear&#39;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># type: ignore</span>
-    <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">masked_array</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="k">import</span> <span class="n">masked_array</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">if</span> <span class="n">view</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">view</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span>
@@ -1012,7 +1009,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

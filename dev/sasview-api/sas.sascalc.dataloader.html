@@ -9,14 +9,11 @@
     <title>sas.sascalc.dataloader package &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sas.sascalc.dataloader.readers package" href="sas.sascalc.dataloader.readers.html" />
@@ -156,7 +153,7 @@ the CanSAS 1D XML data format:</p>
 
 <dl class="class">
 <dt id="sas.sascalc.dataloader.data_info.Data1D">
-<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">Data1D</code><span class="sig-paren">(</span><em>x=None</em>, <em>y=None</em>, <em>dx=None</em>, <em>dy=None</em>, <em>lam=None</em>, <em>dlam=None</em>, <em>isSesans=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data1D"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">Data1D</code><span class="sig-paren">(</span><em>x=None</em>, <em>y=None</em>, <em>dx=None</em>, <em>dy=None</em>, <em>lam=None</em>, <em>dlam=None</em>, <em>isSesans=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data1D"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sas.sascalc.dataloader.data_info.plottable_1D" title="sas.sascalc.dataloader.data_info.plottable_1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.dataloader.data_info.plottable_1D</span></code></a>, <a class="reference internal" href="#sas.sascalc.dataloader.data_info.DataInfo" title="sas.sascalc.dataloader.data_info.DataInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.dataloader.data_info.DataInfo</span></code></a></p>
 <p>1D data class</p>
 <dl class="method">
@@ -180,6 +177,12 @@ The data arrays will be initialized to zero.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="sas.sascalc.dataloader.data_info.Data1D.copy_from_datainfo">
+<code class="descname">copy_from_datainfo</code><span class="sig-paren">(</span><em>data1d</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data1D.copy_from_datainfo"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>copy values of Data1D of type DataLaoder.Data_info</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="sas.sascalc.dataloader.data_info.Data1D.is_slit_smeared">
 <code class="descname">is_slit_smeared</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data1D.is_slit_smeared"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Check whether the data has slit smearing information
@@ -190,7 +193,7 @@ The data arrays will be initialized to zero.</p>
 
 <dl class="class">
 <dt id="sas.sascalc.dataloader.data_info.Data2D">
-<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">Data2D</code><span class="sig-paren">(</span><em>data=None</em>, <em>err_data=None</em>, <em>qx_data=None</em>, <em>qy_data=None</em>, <em>q_data=None</em>, <em>mask=None</em>, <em>dqx_data=None</em>, <em>dqy_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data2D"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">Data2D</code><span class="sig-paren">(</span><em>data=None</em>, <em>err_data=None</em>, <em>qx_data=None</em>, <em>qy_data=None</em>, <em>q_data=None</em>, <em>mask=None</em>, <em>dqx_data=None</em>, <em>dqy_data=None</em>, <em>xmin=None</em>, <em>xmax=None</em>, <em>ymin=None</em>, <em>ymax=None</em>, <em>zmin=None</em>, <em>zmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data2D"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sas.sascalc.dataloader.data_info.plottable_2D" title="sas.sascalc.dataloader.data_info.plottable_2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.dataloader.data_info.plottable_2D</span></code></a>, <a class="reference internal" href="#sas.sascalc.dataloader.data_info.DataInfo" title="sas.sascalc.dataloader.data_info.DataInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.dataloader.data_info.DataInfo</span></code></a></p>
 <p>2D data class</p>
 <dl class="attribute">
@@ -221,6 +224,12 @@ The data arrays will be initialized to zero.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.data_info.Data2D.copy_from_datainfo">
+<code class="descname">copy_from_datainfo</code><span class="sig-paren">(</span><em>data2d</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#Data2D.copy_from_datainfo"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>copy value of Data2D of type DataLoader.data_info</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -561,8 +570,18 @@ performed on the data.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="sas.sascalc.dataloader.data_info.Source.probe">
+<code class="descname">probe</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="sas.sascalc.dataloader.data_info.Source.radiation">
 <code class="descname">radiation</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.dataloader.data_info.Source.type">
+<code class="descname">type</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -755,7 +774,7 @@ plottable_1D or 2D data object.</p>
 
 <dl class="class">
 <dt id="sas.sascalc.dataloader.data_info.plottable_2D">
-<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">plottable_2D</code><span class="sig-paren">(</span><em>data=None</em>, <em>err_data=None</em>, <em>qx_data=None</em>, <em>qy_data=None</em>, <em>q_data=None</em>, <em>mask=None</em>, <em>dqx_data=None</em>, <em>dqy_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#plottable_2D"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.data_info.</code><code class="descname">plottable_2D</code><span class="sig-paren">(</span><em>data=None</em>, <em>err_data=None</em>, <em>qx_data=None</em>, <em>qy_data=None</em>, <em>q_data=None</em>, <em>mask=None</em>, <em>dqx_data=None</em>, <em>dqy_data=None</em>, <em>xmin=None</em>, <em>xmax=None</em>, <em>ymin=None</em>, <em>ymax=None</em>, <em>zmin=None</em>, <em>zmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/data_info.html#plottable_2D"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Data2D is a place holder for 2D plottables.</p>
 <dl class="attribute">
@@ -1021,12 +1040,12 @@ to output</p>
 <div class="section" id="module-sas.sascalc.dataloader.loader">
 <span id="sas-sascalc-dataloader-loader-module"></span><h2>sas.sascalc.dataloader.loader module</h2>
 <p>File handler to support different file extensions.
-Uses reflectometer registry utility.</p>
-<p>The default readers are found in the ‘readers’ sub-module
-and registered by default at initialization time.</p>
-<p>To add a new default reader, one must register it in
-the register_readers method found in readers/__init__.py.</p>
-<p>A utility method (find_plugins) is available to inspect
+Uses reflectometer registry utility.
+The default readers are found in the ‘readers’ sub-module
+and registered by default at initialization time.
+To add a new default reader, one must register it in
+the register_readers method found in readers/__init__.py.
+A utility method (find_plugins) is available to inspect
 a directory (for instance, a user plug-in directory) and
 look for new readers/writers.</p>
 <dl class="class">
@@ -1037,19 +1056,9 @@ look for new readers/writers.</p>
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Loader.associate_file_reader">
 <code class="descname">associate_file_reader</code><span class="sig-paren">(</span><em>ext</em>, <em>loader</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Loader.associate_file_reader"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Append a reader object to readers</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ext</strong> – file extension [string]</li>
-<li><strong>module</strong> – reader object</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Append a reader object to readers
+:param ext: file extension [string]
+:param module: reader object</p>
 </dd></dl>
 
 <dl class="method">
@@ -1057,33 +1066,16 @@ look for new readers/writers.</p>
 <code class="descname">associate_file_type</code><span class="sig-paren">(</span><em>ext</em>, <em>module</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Loader.associate_file_type"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Look into a module to find whether it contains a
 Reader class. If so, append it to readers and (potentially)
-to the list of writers for the given extension</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ext</strong> – file extension [string]</li>
-<li><strong>module</strong> – module object</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+to the list of writers for the given extension
+:param ext: file extension [string]
+:param module: module object</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Loader.find_plugins">
 <code class="descname">find_plugins</code><span class="sig-paren">(</span><em>directory</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Loader.find_plugins"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Find plugins in a given directory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dir</strong> – directory to look into to find new readers/writers</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Find plugins in a given directory
+:param dir: directory to look into to find new readers/writers</p>
 </dd></dl>
 
 <dl class="method">
@@ -1095,22 +1087,10 @@ to the list of writers for the given extension</p>
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Loader.load">
 <code class="descname">load</code><span class="sig-paren">(</span><em>file</em>, <em>format=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Loader.load"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Load a file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file</strong> – file name (path)</li>
-<li><strong>format</strong> – specified format to use (optional)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">DataInfo object</p>
-</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Load a file
+:param file: file name (path)
+:param format: specified format to use (optional)
+:return: DataInfo object</p>
 </dd></dl>
 
 <dl class="method">
@@ -1133,19 +1113,9 @@ Readers and writers are supported.</p>
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Registry.associate_file_reader">
 <code class="descname">associate_file_reader</code><span class="sig-paren">(</span><em>ext</em>, <em>loader</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.associate_file_reader"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Append a reader object to readers</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ext</strong> – file extension [string]</li>
-<li><strong>module</strong> – reader object</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Append a reader object to readers
+:param ext: file extension [string]
+:param module: reader object</p>
 </dd></dl>
 
 <dl class="method">
@@ -1153,19 +1123,9 @@ Readers and writers are supported.</p>
 <code class="descname">associate_file_type</code><span class="sig-paren">(</span><em>ext</em>, <em>module</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.associate_file_type"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Look into a module to find whether it contains a
 Reader class. If so, APPEND it to readers and (potentially)
-to the list of writers for the given extension</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ext</strong> – file extension [string]</li>
-<li><strong>module</strong> – module object</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+to the list of writers for the given extension
+:param ext: file extension [string]
+:param module: module object</p>
 </dd></dl>
 
 <dl class="method">
@@ -1173,32 +1133,27 @@ to the list of writers for the given extension</p>
 <code class="descname">find_plugins</code><span class="sig-paren">(</span><em>dir</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.find_plugins"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Find readers in a given directory. This method
 can be used to inspect user plug-in directories to
-find new readers/writers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dir</strong> – directory to search into</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">number of readers found</td>
-</tr>
-</tbody>
-</table>
+find new readers/writers.
+:param dir: directory to search into
+:return: number of readers found</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Registry.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>path</em>, <em>format=None</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.load"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Call the loader for the file type of path.</p>
+<code class="descname">load</code><span class="sig-paren">(</span><em>path</em>, <em>format=None</em>, <em>debug=False</em>, <em>use_defaults=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.load"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Call the loader for the file type of path.
+:param path: file path
+:param format: explicit extension, to force the use</p>
+<blockquote>
+<div>of a particular reader</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> – file path</li>
-<li><strong>format</strong> – explicit extension, to force the use
-of a particular reader</li>
 <li><strong>debug</strong> – when True, print the traceback for each loader that fails</li>
+<li><strong>use_defaults</strong> – Flag to use the default readers as a backup if the
+main reader fails or no reader exists</li>
 </ul>
 </td>
 </tr>
@@ -1206,6 +1161,15 @@ of a particular reader</li>
 </table>
 <p>Defaults to the ascii (multi-column), cansas XML, and cansas NeXuS
 readers if no reader was registered for the file’s extension.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.dataloader.loader.Registry.load_using_generic_loaders">
+<code class="descname">load_using_generic_loaders</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.load_using_generic_loaders"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>If the expected reader cannot load the file or no known loader exists,
+attempt to load the file using a few defaults readers
+:param path: file path
+:return: List of Data1D and Data2D objects</p>
 </dd></dl>
 
 <dl class="method">
@@ -1227,8 +1191,8 @@ readers if no reader was registered for the file’s extension.</p>
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Registry.save">
 <code class="descname">save</code><span class="sig-paren">(</span><em>path</em>, <em>data</em>, <em>format=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.save"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Call the writer for the file type of path.</p>
-<p>Raises ValueError if no writer is available.
+<dd><p>Call the writer for the file type of path.
+Raises ValueError if no writer is available.
 Raises KeyError if format is not available.
 May raise a writer-defined exception if writer fails.</p>
 </dd></dl>
@@ -1540,7 +1504,7 @@ This is mainly used by the Readers</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sas.sascalc.dataloader package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -1608,7 +1572,7 @@ This is mainly used by the Readers</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

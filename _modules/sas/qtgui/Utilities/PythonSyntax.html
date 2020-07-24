@@ -9,14 +9,11 @@
     <title>sas.qtgui.Utilities.PythonSyntax &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -41,8 +38,8 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.Utilities.PythonSyntax</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">QRegExp</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QTextCharFormat</span><span class="p">,</span> <span class="n">QFont</span><span class="p">,</span> <span class="n">QSyntaxHighlighter</span>
+<span></span><span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">QRegExp</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QTextCharFormat</span><span class="p">,</span> <span class="n">QFont</span><span class="p">,</span> <span class="n">QSyntaxHighlighter</span>
 
 <div class="viewcode-block" id="format"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PythonSyntax.format">[docs]</a><span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return a QTextCharFormat with the given attributes.</span>
@@ -74,7 +71,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="PythonHighlighter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PythonSyntax.PythonHighlighter">[docs]</a><span class="k">class</span> <span class="nc">PythonHighlighter</span> <span class="p">(</span><span class="n">QSyntaxHighlighter</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PythonHighlighter</span> <span class="p">(</span><span class="n">QSyntaxHighlighter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Syntax highlighter for the Python language.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Python keywords</span>
@@ -116,7 +113,7 @@
     <span class="n">braces</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;\{&#39;</span><span class="p">,</span> <span class="s1">&#39;\}&#39;</span><span class="p">,</span> <span class="s1">&#39;\(&#39;</span><span class="p">,</span> <span class="s1">&#39;\)&#39;</span><span class="p">,</span> <span class="s1">&#39;\[&#39;</span><span class="p">,</span> <span class="s1">&#39;\]&#39;</span><span class="p">,</span>
     <span class="p">]</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">is_python</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">is_python</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">QSyntaxHighlighter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">)</span>
 
         <span class="c1"># Multi-line strings (expression, flag, style)</span>
@@ -169,7 +166,7 @@
             <span class="k">for</span> <span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rules</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="PythonHighlighter.highlightBlock"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.highlightBlock">[docs]</a>    <span class="k">def</span> <span class="nf">highlightBlock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">highlightBlock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply syntax highlighting to the given block of text.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Do other syntax formatting</span>
@@ -188,10 +185,10 @@
         <span class="c1"># Do multi-line strings</span>
         <span class="n">in_multiline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_multiline</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tri_single</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">in_multiline</span><span class="p">:</span>
-            <span class="n">in_multiline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_multiline</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tri_double</span><span class="p">)</span></div>
+            <span class="n">in_multiline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_multiline</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">tri_double</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="PythonHighlighter.match_multiline"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.match_multiline">[docs]</a>    <span class="k">def</span> <span class="nf">match_multiline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">in_state</span><span class="p">,</span> <span class="n">style</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match_multiline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">in_state</span><span class="p">,</span> <span class="n">style</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Do highlighting of multi-line strings. ``delimiter`` should be a</span>
 <span class="sd">        ``QRegExp`` for triple-single-quotes or triple-double-quotes, and</span>
 <span class="sd">        ``in_state`` should be a unique integer to represent the corresponding</span>
@@ -229,10 +226,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentBlockState</span><span class="p">()</span> <span class="o">==</span> <span class="n">in_state</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div></div>
+            <span class="k">return</span> <span class="kc">False</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+    <span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
     <span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>
     <span class="n">editor</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPlainTextEdit</span><span class="p">()</span>
@@ -283,7 +280,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

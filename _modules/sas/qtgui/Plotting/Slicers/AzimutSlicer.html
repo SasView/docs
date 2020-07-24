@@ -9,14 +9,11 @@
     <title>sas.qtgui.Plotting.Slicers.AzimutSlicer &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -47,15 +44,15 @@
 <span class="c1"># TODO: NEED MAJOR REFACTOR</span>
 <span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.Arc</span> <span class="kn">import</span> <span class="n">ArcInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.RadiusInteractor</span> <span class="kn">import</span> <span class="n">RadiusInteractor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.Arc</span> <span class="k">import</span> <span class="n">ArcInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.RadiusInteractor</span> <span class="k">import</span> <span class="n">RadiusInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="k">import</span> <span class="n">BaseInteractor</span>
 
 <div class="viewcode-block" id="SectorInteractor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor">[docs]</a><span class="k">class</span> <span class="nc">SectorInteractor</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select an annulus through a 2D plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
@@ -179,7 +176,7 @@
                           <span class="n">phi_min</span><span class="o">=</span><span class="n">phimin</span><span class="p">,</span> <span class="n">phi_max</span><span class="o">=</span><span class="n">phimax</span><span class="p">)</span>
         <span class="n">sector</span> <span class="o">=</span> <span class="n">sect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+        <span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="s2">&quot;dxl&quot;</span><span class="p">):</span>
             <span class="n">dxl</span> <span class="o">=</span> <span class="n">sector</span><span class="o">.</span><span class="n">dxl</span>
         <span class="k">else</span><span class="p">:</span>
@@ -277,7 +274,7 @@
 <div class="viewcode-block" id="SectorInteractorQ"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorQ">[docs]</a><span class="k">class</span> <span class="nc">SectorInteractorQ</span><span class="p">(</span><span class="n">SectorInteractor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">SectorInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
@@ -287,14 +284,14 @@
     <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">SectorQ</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">SectorQ</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">SectorQ</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SectorInteractorPhi"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorPhi">[docs]</a><span class="k">class</span> <span class="nc">SectorInteractorPhi</span><span class="p">(</span><span class="n">SectorInteractor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">SectorInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
@@ -304,7 +301,7 @@
     <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">SectorPhi</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="k">import</span> <span class="n">SectorPhi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">SectorPhi</span><span class="p">)</span></div>
 
 </pre></div>
@@ -346,7 +343,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

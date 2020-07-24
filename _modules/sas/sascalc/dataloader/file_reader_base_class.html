@@ -9,14 +9,11 @@
     <title>sas.sascalc.dataloader.file_reader_base_class &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -51,14 +48,14 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">.loader_exceptions</span> <span class="kn">import</span> <span class="n">NoKnownLoaderException</span><span class="p">,</span> <span class="n">FileContentsException</span><span class="p">,</span>\
+<span class="kn">from</span> <span class="nn">.loader_exceptions</span> <span class="k">import</span> <span class="n">NoKnownLoaderException</span><span class="p">,</span> <span class="n">FileContentsException</span><span class="p">,</span>\
     <span class="n">DataReaderException</span><span class="p">,</span> <span class="n">DefaultReaderException</span>
-<span class="kn">from</span> <span class="nn">.data_info</span> <span class="kn">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">DataInfo</span><span class="p">,</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span>\
+<span class="kn">from</span> <span class="nn">.data_info</span> <span class="k">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">,</span> <span class="n">DataInfo</span><span class="p">,</span> <span class="n">plottable_1D</span><span class="p">,</span> <span class="n">plottable_2D</span><span class="p">,</span>\
     <span class="n">combine_data_info_with_plottable</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="kn">import</span> <span class="n">Converter</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="k">import</span> <span class="n">Converter</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -97,7 +94,7 @@
     <span class="c1"># Default value of zero</span>
     <span class="n">_ZERO</span> <span class="o">=</span> <span class="mf">1e-16</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># List of Data1D and Data2D objects to be sent back to data_loader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Current plottable_(1D/2D) object being loaded in</span>
@@ -125,14 +122,17 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">f_open</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">get_file_contents</span><span class="p">()</span>
-
                 <span class="k">except</span> <span class="n">DataReaderException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">handle_error_message</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">handle_error_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="k">except</span> <span class="n">FileContentsException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span>
                 <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># If the file cannot be opened</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to open file: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">handle_error_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">handle_error_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                 <span class="k">finally</span><span class="p">:</span>
                     <span class="c1"># Close the file handle if it is open</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_open</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
@@ -585,7 +585,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

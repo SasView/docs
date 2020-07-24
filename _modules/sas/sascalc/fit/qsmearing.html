@@ -9,14 +9,11 @@
     <title>sas.sascalc.fit.qsmearing &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -56,13 +53,13 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">exp</span> <span class="c1"># type:ignore</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">exp</span> <span class="c1"># type:ignore</span>
 
-<span class="kn">from</span> <span class="nn">sasmodels.resolution</span> <span class="kn">import</span> <span class="n">Slit1D</span><span class="p">,</span> <span class="n">Pinhole1D</span>
-<span class="kn">from</span> <span class="nn">sasmodels.sesans</span> <span class="kn">import</span> <span class="n">SesansTransform</span>
-<span class="kn">from</span> <span class="nn">sasmodels.resolution2d</span> <span class="kn">import</span> <span class="n">Pinhole2D</span>
+<span class="kn">from</span> <span class="nn">sasmodels.resolution</span> <span class="k">import</span> <span class="n">Slit1D</span><span class="p">,</span> <span class="n">Pinhole1D</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sesans</span> <span class="k">import</span> <span class="n">SesansTransform</span>
+<span class="kn">from</span> <span class="nn">sasmodels.resolution2d</span> <span class="k">import</span> <span class="n">Pinhole2D</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="kn">import</span> <span class="n">Converter</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.data_util.nxsunit</span> <span class="k">import</span> <span class="n">Converter</span>
 
 <div class="viewcode-block" id="smear_selection"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.fit.html#sas.sascalc.fit.qsmearing.smear_selection">[docs]</a><span class="k">def</span> <span class="nf">smear_selection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -164,7 +161,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for pure python sasmodels resolution functions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolution</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
         <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -226,7 +223,7 @@
 <span class="sd">    Q smearing class for SAS 2d pinhole data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span> <span class="o">=</span> <span class="s1">&#39;Low&#39;</span>
@@ -334,7 +331,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

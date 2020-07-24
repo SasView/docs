@@ -9,14 +9,11 @@
     <title>sas.sascalc.pr.calc &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -45,7 +42,7 @@
 <span class="sd">Converted invertor.c&#39;s methods.</span>
 <span class="sd">Implements low level inversion functionality, with conditional Numba njit compilation.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">math</span>
@@ -56,13 +53,13 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">pi</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">pi</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">njit</span>
+    <span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">njit</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="c1">#Identity decorator for njit which ignores type signature.</span>
     <span class="n">njit</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
@@ -260,14 +257,12 @@
 
 <span class="sd">    :return: Regularization term calculated from the expansion.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nslice_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">deriv</span> <span class="o">=</span> <span class="n">dprdr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
-
     <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">deriv</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">total</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">d_max</span></div>
+    <span class="k">return</span> <span class="n">total</span><span class="o">*</span><span class="n">dx</span></div>
 
 <div class="viewcode-block" id="int_pr_square"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.calc.int_pr_square">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;f8(f8[:], f8, u8)&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">int_pr_square</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">):</span>
@@ -280,13 +275,12 @@
 
 <span class="sd">    :return:  Regularization term calculated from the expansion.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nslice_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
     <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">total</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">d_max</span></div>
+    <span class="k">return</span> <span class="n">total</span> <span class="o">*</span> <span class="n">dx</span></div>
 
 <div class="viewcode-block" id="int_pr"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.calc.int_pr">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;f8(f8[:], f8, u8)&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">int_pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">):</span>
@@ -299,15 +293,13 @@
 
 <span class="sd">    :return: Integral of P(r).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nslice_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
 
     <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">total</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">d_max</span></div>
+    <span class="k">return</span> <span class="n">total</span> <span class="o">*</span> <span class="n">dx</span></div>
 
 <div class="viewcode-block" id="npeaks"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.calc.npeaks">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;u8(f8[:], f8, u8)&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">npeaks</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">):</span>
@@ -320,8 +312,8 @@
 
 <span class="sd">    :return: Number of P(r) peaks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
 
     <span class="c1"># Build an index vector with True for ascending and false for flat or descending</span>
@@ -332,9 +324,6 @@
     <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">pos</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">count</span></div>
-
-
-
 
 <div class="viewcode-block" id="positive_integral"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.calc.positive_integral">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;f8(f8[:], f8, u8)&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">positive_integral</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">):</span>
@@ -350,15 +339,14 @@
 <span class="sd">    :return: The fraction of the integral of P(r) over the whole</span>
 <span class="sd">    range of r that is above 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nslice_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
 
     <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
     <span class="n">total_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">values</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">total_pos</span> <span class="o">/</span> <span class="n">total</span></div>
+    <span class="k">return</span> <span class="n">total_pos</span> <span class="o">/</span> <span class="n">total</span>  <span class="c1"># dx cancels</span></div>
 
 <div class="viewcode-block" id="positive_errors"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.calc.positive_errors">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;f8(f8[:], f8[:,:], f8, u8)&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">positive_errors</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">):</span>
@@ -374,9 +362,8 @@
 <span class="sd">    :return: The fraction of the integral of P(r) over the whole range</span>
 <span class="sd">    of r that is at least one sigma above 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nslice_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice_d</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">pr_vals</span> <span class="o">=</span> <span class="n">pr_err</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
 
     <span class="n">pr_val</span> <span class="o">=</span> <span class="n">pr_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
@@ -387,7 +374,7 @@
     <span class="n">index</span> <span class="o">=</span> <span class="n">pr_val</span> <span class="o">&gt;</span> <span class="n">pr_val_err</span>
     <span class="n">total_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pr_val</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">total_pos</span> <span class="o">/</span> <span class="n">total</span></div>
+    <span class="k">return</span> <span class="n">total_pos</span> <span class="o">/</span> <span class="n">total</span>  <span class="c1"># dx cancels</span></div>
 
 <div class="viewcode-block" id="rg"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.calc.rg">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;f8(f8[:], f8, u8)&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">rg</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">):</span>
@@ -402,14 +389,14 @@
 
 <span class="sd">    :return: R_g radius of gyration.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nslice</span><span class="p">)</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">d_max</span> <span class="o">/</span> <span class="n">nslice</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_r</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">d_max</span><span class="o">/</span><span class="n">nslice</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">-</span> <span class="n">dx</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
 
     <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="n">total_r2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">values</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">total_r2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">total</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">total_r2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">total</span><span class="p">))</span>  <span class="c1"># dx cancels</span></div>
 
 </pre></div>
 
@@ -450,7 +437,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

@@ -9,14 +9,11 @@
     <title>sasmodels.kerneldll &#8212; SasView 5.0.2 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -109,11 +106,11 @@
 <span class="sd">you wish to prevent single precision floating point evaluation for the compiled</span>
 <span class="sd">models, otherwise set it defaults to *True*.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">splitext</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">splitext</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -128,17 +125,17 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">tinycc</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">generate</span>
-<span class="kn">from</span> <span class="nn">.kernel</span> <span class="kn">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
-<span class="kn">from</span> <span class="nn">.kernelpy</span> <span class="kn">import</span> <span class="n">PyInput</span>
-<span class="kn">from</span> <span class="nn">.exception</span> <span class="kn">import</span> <span class="n">annotate_exception</span>
-<span class="kn">from</span> <span class="nn">.generate</span> <span class="kn">import</span> <span class="n">F16</span><span class="p">,</span> <span class="n">F32</span><span class="p">,</span> <span class="n">F64</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">generate</span>
+<span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span><span class="p">,</span> <span class="n">Kernel</span>
+<span class="kn">from</span> <span class="nn">.kernelpy</span> <span class="k">import</span> <span class="n">PyInput</span>
+<span class="kn">from</span> <span class="nn">.exception</span> <span class="k">import</span> <span class="n">annotate_exception</span>
+<span class="kn">from</span> <span class="nn">.generate</span> <span class="k">import</span> <span class="n">F16</span><span class="p">,</span> <span class="n">F32</span><span class="p">,</span> <span class="n">F64</span>
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ModelInfo</span>
-    <span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">CallDetails</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
+    <span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">CallDetails</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="c1"># pylint: enable=unused-import</span>
@@ -299,25 +296,17 @@
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">F64</span>  <span class="c1"># Force 64-bit dll.</span>
     <span class="c1"># Note: dtype may be F128 for long double precision.</span>
 
-    <span class="c1"># TOOD: Tag each dll with the hash of the source to avoid collisions.</span>
     <span class="c1"># TODO: Deal with ever-growing ~/.sasmodels/compiled_models.</span>
     <span class="c1"># TODO: Is the GPU model cache growing without bound?</span>
-    <span class="k">if</span> <span class="n">model_info</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">model_file</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">generate</span><span class="o">.</span><span class="n">tag_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Don&#39;t need to tag models which have an associated file since the</span>
-        <span class="c1"># timestamps on the dependencies will let us know they need to be</span>
-        <span class="c1"># regenerated.</span>
-        <span class="n">model_file</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span>
+    <span class="c1"># Tag model name with hash so any change to the model or the wrapper</span>
+    <span class="c1"># will generate a new dll. Need to tag with dtype as well because</span>
+    <span class="c1"># double has not yet been converted to the target type in the source.</span>
+    <span class="c1"># Don&#39;t use time stamps for caching since they are not reliable, especially</span>
+    <span class="c1"># when multiple versions of the application are installed.</span>
+    <span class="n">model_file</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">generate</span><span class="o">.</span><span class="n">tag_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="n">dll</span> <span class="o">=</span> <span class="n">dll_path</span><span class="p">(</span><span class="n">model_file</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dll</span><span class="p">):</span>
-        <span class="n">need_recompile</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">dll_time</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">dll</span><span class="p">)</span>
-        <span class="n">newest_source</span> <span class="o">=</span> <span class="n">generate</span><span class="o">.</span><span class="n">dll_timestamp</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
-        <span class="n">need_recompile</span> <span class="o">=</span> <span class="n">dll_time</span> <span class="o">&lt;</span> <span class="n">newest_source</span>
-    <span class="k">if</span> <span class="n">need_recompile</span><span class="p">:</span>
         <span class="c1"># Make sure the DLL path exists.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">SAS_DLL_PATH</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">SAS_DLL_PATH</span><span class="p">)</span>
@@ -362,7 +351,7 @@
 
 <span class="sd">    Call :meth:`release` when done with the kernel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dllpath</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">generate</span><span class="o">.</span><span class="n">F32</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dllpath</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">generate</span><span class="o">.</span><span class="n">F32</span><span class="p">):</span>
         <span class="c1"># type: (str, ModelInfo, np.dtype) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dllpath</span> <span class="o">=</span> <span class="n">dllpath</span>
@@ -442,7 +431,7 @@
 
 <span class="sd">    Call :meth:`release` when done with the kernel instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">q_input</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">q_input</span><span class="p">):</span>
         <span class="c1"># type: (Callable[[], np.ndarray], ModelInfo, PyInput) -&gt; None</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">q_input</span><span class="o">.</span><span class="n">dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span> <span class="o">=</span> <span class="n">q_input</span>
@@ -501,7 +490,7 @@
         <span class="c1">#self.q_input.release()</span>
         <span class="k">pass</span></div>
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
 </pre></div>
@@ -543,7 +532,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>
