@@ -285,7 +285,7 @@
     <span class="n">plotRequestedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># Plot from file names</span>
-    <span class="n">plotFromFilenameSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">plotFromNameSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="c1"># Plot update requested from a perspective</span>
     <span class="n">plotUpdateSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -509,17 +509,17 @@
 
     <span class="k">return</span></div>
 
-<div class="viewcode-block" id="itemFromFilename"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.itemFromFilename">[docs]</a><span class="k">def</span> <span class="nf">itemFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model_item</span><span class="p">):</span>
+<div class="viewcode-block" id="itemFromDisplayName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.itemFromDisplayName">[docs]</a><span class="k">def</span> <span class="nf">itemFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model_item</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the model item text=filename in the model</span>
+<span class="sd">    Returns the model item text=name in the model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_item</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="c1"># Iterate over model looking for named items</span>
     <span class="n">item</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">model_item</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
                              <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model_item</span><span class="o">.</span><span class="n">rowCount</span><span class="p">())]</span>
-                 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="n">filename</span><span class="p">])</span>
+                 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="n">name</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="plotsFromModel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.plotsFromModel">[docs]</a><span class="k">def</span> <span class="nf">plotsFromModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">model_item</span><span class="p">):</span>
@@ -545,18 +545,18 @@
 
     <span class="k">return</span> <span class="n">plot_data</span></div>
 
-<div class="viewcode-block" id="plotsFromFilename"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.plotsFromFilename">[docs]</a><span class="k">def</span> <span class="nf">plotsFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model_item</span><span class="p">):</span>
+<div class="viewcode-block" id="plotsFromDisplayName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.plotsFromDisplayName">[docs]</a><span class="k">def</span> <span class="nf">plotsFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model_item</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the list of plots for the item with text=filename in the model</span>
+<span class="sd">    Returns the list of plots for the item with text=name in the model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_item</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="n">plot_data</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># Iterate over model looking for named items</span>
     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model_item</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">model_item</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()):</span>
             <span class="c1"># TODO: assure item type is correct (either data1/2D or Plotter)</span>
             <span class="n">plot_data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
             <span class="c1"># Going 1 level deeper only</span>
@@ -1400,6 +1400,47 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;unable to load </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">new_stored_data</span></div>
+
+<div class="viewcode-block" id="getConstraints"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.getConstraints">[docs]</a><span class="k">def</span> <span class="nf">getConstraints</span><span class="p">(</span><span class="n">fit_project</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts constraints from *fir_project* dict and returns a dict where keys</span>
+<span class="sd">    are the tab name and values are a list of constraints on that tab. The</span>
+<span class="sd">    dict can then be passed to the updateFromConstraints method from the</span>
+<span class="sd">    fitting perspective to apply the constraints with error checking</span>
+<span class="sd">    mechanism</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">constraint_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fit_project</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># make sure we dealing with params</span>
+        <span class="k">if</span> <span class="s1">&#39;fit_params&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;fit_params&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">tab_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">constraint_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_value</span> <span class="ow">in</span> <span class="n">page</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># make sure we are dealing with lists</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="c1"># get the tab name</span>
+                <span class="k">elif</span> <span class="n">param_name</span> <span class="o">==</span> <span class="s2">&quot;tab_name&quot;</span><span class="p">:</span>
+                    <span class="n">tab_name</span> <span class="o">=</span> <span class="n">param_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># get parameters</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_value</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">ioffset</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="mi">0</span>
+                    <span class="n">cons</span> <span class="o">=</span> <span class="n">param_value</span><span class="p">[</span><span class="mi">4</span><span class="o">+</span><span class="n">ioffset</span><span class="p">]</span>
+                    <span class="c1"># get the constraint</span>
+                    <span class="k">if</span> <span class="n">cons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cons</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">constraint_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cons</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">tab_name</span> <span class="ow">and</span> <span class="n">constraint_list</span><span class="p">:</span>
+                <span class="n">constraint_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">tab_name</span><span class="p">:</span> <span class="n">constraint_list</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">constraint_dict</span></div>
 
 <div class="viewcode-block" id="readProjectFromSVS"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.GuiUtils.readProjectFromSVS">[docs]</a><span class="k">def</span> <span class="nf">readProjectFromSVS</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

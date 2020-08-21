@@ -862,6 +862,25 @@ is out of date:</p>
 </div>
 <p>Ideally, this interface will change</p>
 <dl class="function">
+<dt id="sas.sascalc.fit.expression.check_constraints">
+<code class="descclassname">sas.sascalc.fit.expression.</code><code class="descname">check_constraints</code><span class="sig-paren">(</span><em>symtab</em>, <em>exprs</em>, <em>context={}</em>, <em>html=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/fit/expression.html#check_constraints"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns a list of errors in <em>exprs</em> or the empty list if there are none.
+If the html flag is set to True, the list elements will have html &lt;b&gt;
+markups that allow the caller to control rendering:</p>
+<p>Unknown symbol: tags unknown symbols in <em>exprs</em>
+Syntax error: tags the beginning of a syntax error in <em>exprs</em>
+Cyclic dependency: tags comma separated parameters that have
+cyclic dependency</p>
+<p>All symbols must exist in <em>context</em> or in <em>symtab</em>. The symbols in
+<em>context</em> should be constants or functions. The symbols in <em>symtab</em>
+can be constants or parameter objects with a <em>value</em> attribute.</p>
+<p>It first runs <a class="reference internal" href="#sas.sascalc.fit.expression.compile_constraints" title="sas.sascalc.fit.expression.compile_constraints"><code class="xref py py-func docutils literal notranslate"><span class="pre">compile_constraints()</span></code></a>, returning a list of errors
+if any. If there are no errors it runs the compiled constraints function,
+returning any errors it produces. Any parameters in <em>symtab</em> are copied
+with a shallow copy so they aren’t overridden when the constraints are run.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="sas.sascalc.fit.expression.compile_constraints">
 <code class="descclassname">sas.sascalc.fit.expression.</code><code class="descname">compile_constraints</code><span class="sig-paren">(</span><em>symtab</em>, <em>exprs</em>, <em>context={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/fit/expression.html#compile_constraints"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Build and return a function to evaluate all parameter expressions in
@@ -877,23 +896,29 @@ the proper order.</p>
 <div>updater function which sets parameter.value for each expression</div></blockquote>
 <p>Raises:</p>
 <blockquote>
-<div><p>AssertionError - model, parameter or function is missing</p>
-<p>SyntaxError - improper expression syntax</p>
-<p>ValueError - expressions have circular dependencies</p>
-</div></blockquote>
+<div>RunTimeError if any expression contains a syntax error, if any
+symbol used is not defined, or if there are circular dependencies
+between symbols. Runtime error argument is a string describing all
+found errors.</div></blockquote>
 <p>This function is not terribly sophisticated, and it would be easy to
 trick.  However it handles the common cases cleanly and generates
 reasonable messages for the common errors.</p>
 <p>This code has not been fully audited for security.  While we have
 removed the builtins and the ability to import modules, there may
 be other vectors for users to perform more than simple function
-evaluations.  Unauthenticated users should not be running this code.</p>
+evaluations. Unauthenticated users should not be running this code.</p>
 <p>Parameter names are assumed to contain only _.a-zA-Z0-9#[]</p>
 <p>Both names are provided for inverse functions, e.g., acos and arccos.</p>
 <p>Should try running the function to identify syntax errors before
 running it in a fit.</p>
 <p>Use help(fn) to see the code generated for the returned function fn.
 dis.dis(fn) will show the corresponding python vm instructions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.fit.expression.iskeyword">
+<code class="descclassname">sas.sascalc.fit.expression.</code><code class="descname">iskeyword</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>x.__contains__(y) &lt;==&gt; y in x.</p>
 </dd></dl>
 
 <dl class="function">
@@ -906,8 +931,13 @@ dis.dis(fn) will show the corresponding python vm instructions.</p>
 <dt id="sas.sascalc.fit.expression.order_dependencies">
 <code class="descclassname">sas.sascalc.fit.expression.</code><code class="descname">order_dependencies</code><span class="sig-paren">(</span><em>pairs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/fit/expression.html#order_dependencies"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Order elements from pairs so that b comes before a in the
-ordered list for all pairs (a,b).</p>
+ordered list for all pairs (a, b).</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="sas.sascalc.fit.expression.standard_symbols">
+<code class="descclassname">sas.sascalc.fit.expression.</code><code class="descname">standard_symbols</code><span class="sig-paren">(</span><em>context={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/fit/expression.html#standard_symbols"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="sas.sascalc.fit.expression.test_deps">

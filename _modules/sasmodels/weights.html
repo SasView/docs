@@ -50,6 +50,14 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaln</span>  <span class="c1"># type: ignore</span>
 
+<span class="c1"># pylint: disable=unused-import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="c1"># pylint: enable=unused-import</span>
+
 <span class="c1"># TODO: include dispersion docs with the disperser models</span>
 
 <div class="viewcode-block" id="Dispersion"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.weights.Dispersion">[docs]</a><span class="k">class</span> <span class="nc">Dispersion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>

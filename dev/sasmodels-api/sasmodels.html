@@ -73,7 +73,7 @@ provide this service:</p>
 <p><a class="reference internal" href="#sasmodels.alignment.align_data" title="sasmodels.alignment.align_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">align_data()</span></code></a> aligns an existing array, returning a new array of the
 correct alignment.</p>
 <p><a class="reference internal" href="#sasmodels.alignment.align_empty" title="sasmodels.alignment.align_empty"><code class="xref py py-func docutils literal notranslate"><span class="pre">align_empty()</span></code></a> to create an empty array of the correct alignment.</p>
-<p>Set alignment to <code class="xref py py-func docutils literal notranslate"><span class="pre">gpu.environment()</span></code> attribute <em>boundary</em>.</p>
+<p>Set alignment to gpu environment attribute <em>boundary</em>.</p>
 <p>Note:  This code is unused. So far, tests have not demonstrated any
 improvement from forcing correct alignment.  The tests should
 be repeated with arrays forced away from the target boundaries
@@ -105,7 +105,7 @@ how far the polydispersity integral extends.</p>
 <em class="property">class </em><code class="descclassname">sasmodels.bumps_model.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>model</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/bumps_model.html#Model"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Bumps wrapper for a SAS model.</p>
-<p><em>model</em> is a runnable module as returned from <code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model()</span></code>.</p>
+<p><em>model</em> is a runnable module as returned from <a class="reference internal" href="#sasmodels.core.load_model" title="sasmodels.core.load_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model()</span></code></a>.</p>
 <p><em>cutoff</em> is the polydispersity weight cutoff.</p>
 <p>Any additional <em>key=value</em> pairs are model dependent parameters.</p>
 <dl class="method">
@@ -129,9 +129,9 @@ including polydispersity distribution type.</p>
 <em class="property">class </em><code class="descclassname">sasmodels.bumps_model.</code><code class="descname">Experiment</code><span class="sig-paren">(</span><em>data</em>, <em>model</em>, <em>cutoff=1e-05</em>, <em>name=None</em>, <em>extra_pars=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/bumps_model.html#Experiment"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.direct_model.DataMixin" title="sasmodels.direct_model.DataMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.direct_model.DataMixin</span></code></a></p>
 <p>Bumps wrapper for a SAS experiment.</p>
-<p><em>data</em> is a <code class="xref py py-class docutils literal notranslate"><span class="pre">data.Data1D</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">data.Data2D</span></code> or
-<code class="xref py py-class docutils literal notranslate"><span class="pre">data.Sesans</span></code> object.  Use <code class="xref py py-func docutils literal notranslate"><span class="pre">data.empty_data1D()</span></code> or
-<code class="xref py py-func docutils literal notranslate"><span class="pre">data.empty_data2D()</span></code> to define <span class="math notranslate nohighlight">\(q, \Delta q\)</span> calculation
+<p><em>data</em> is a <a class="reference internal" href="#sasmodels.data.Data1D" title="sasmodels.data.Data1D"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.Data1D</span></code></a>, <a class="reference internal" href="#sasmodels.data.Data2D" title="sasmodels.data.Data2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.Data2D</span></code></a> or
+<a class="reference internal" href="#sasmodels.data.SesansData" title="sasmodels.data.SesansData"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.SesansData</span></code></a> object.  Use <a class="reference internal" href="#sasmodels.data.empty_data1D" title="sasmodels.data.empty_data1D"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.empty_data1D()</span></code></a> or
+<a class="reference internal" href="#sasmodels.data.empty_data2D" title="sasmodels.data.empty_data2D"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.empty_data2D()</span></code></a> to define <span class="math notranslate nohighlight">\(q, \Delta q\)</span> calculation
 points for displaying the SANS curve when there is no measured data.</p>
 <p><em>model</em> is a <a class="reference internal" href="#sasmodels.bumps_model.Model" title="sasmodels.bumps_model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> object.</p>
 <p><em>cutoff</em> is the integration cutoff, which avoids computing the
@@ -172,7 +172,7 @@ uncertainty.</p>
 <dl class="attribute">
 <dt id="sasmodels.bumps_model.Experiment.resolution">
 <code class="descname">resolution</code></dt>
-<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.Resolution</span></code> applied to the data, if any.</p>
+<dd><p><a class="reference internal" href="#sasmodels.resolution.Resolution" title="sasmodels.resolution.Resolution"><code class="xref py py-class docutils literal notranslate"><span class="pre">resolution.Resolution</span></code></a> applied to the data, if any.</p>
 </dd></dl>
 
 <dl class="method">
@@ -215,102 +215,19 @@ where fast precision is single precision using native functions for
 trig, etc., and may not be completely IEEE 754 compliant.  This lets
 make sure that the model calculations are stable, or if you need to
 tag the model as double precision only.</p>
-<p>Run using ./compare.sh (Linux, Mac) or compare.bat (Windows) in the
-sasmodels root to see the command line options.</p>
+<p>Run using “./sascomp -h” in the sasmodels root to see the command
+line options. To run from from an installed version of sasmodels,
+use “python -m sasmodels.compare -h”.</p>
 <p>Note that there is no way within sasmodels to select between an
 OpenCL CPU device and a GPU device, but you can do so by setting the
-PYOPENCL_CTX environment variable ahead of time.  Start a python
-interpreter and enter:</p>
+SAS_OPENCL environment variable. Start a python interpreter and enter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
 <span class="n">cl</span><span class="o">.</span><span class="n">create_some_context</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This will prompt you to select from the available OpenCL devices
-and tell you which string to use for the PYOPENCL_CTX variable.
+and tell you which string to use for the SAS_OPENCL variable.
 On Windows you will need to remove the quotes.</p>
-<div class="section" id="program-description">
-<h3>Program description</h3>
-<p>usage: sascomp model [options…] [key=val]</p>
-<p>Generate and compare SAS models.  If a single model is specified it shows
-a plot of that model.  Different models can be compared, or the same model
-with different parameters.  The same model with the same parameters can
-be compared with different calculation engines to see the effects of precision
-on the resultant values.</p>
-<p>model or model1,model2 are the names of the models to compare (see below).</p>
-<p>Options (* for default):</p>
-<blockquote>
-<div><p>=== data generation ===
--data=”path” uses q, dq from the data file
--noise=0 sets the measurement error dI/I
--res=0 sets the resolution width dQ/Q if calculating with resolution
--lowq*/-midq/-highq/-exq use q values up to 0.05, 0.2, 1.0, 10.0
--q=min:max alternative specification of qrange
--nq=128 sets the number of Q points in the data set
--1d*/-2d computes 1d or 2d data
--zero indicates that q=0 should be included</p>
-<p>=== model parameters ===
--preset*/-random[=seed] preset or random parameters
--sets=n generates n random datasets with the seed given by -random=seed
--pars/-nopars* prints the parameter set or not
--sphere[=150] set up spherical integration over theta/phi using n points
--mono*/-poly suppress or allow polydispersity on generated parameters
--magnetic/-nonmagnetic* suppress or allow magnetism on generated parameters
--maxdim[=inf] limit randomly generate particle dimensions to maxdim</p>
-<p>=== calculation options ===
--cutoff=1e-5* cutoff value for including a point in polydispersity
--accuracy=Low accuracy of the resolution calculation Low, Mid, High, Xhigh
--neval=1 sets the number of evals for more accurate timing
--ngauss=0 overrides the number of points in the 1-D gaussian quadrature</p>
-<p>=== precision options ===
--engine=default uses the default calcution precision
--single/-double/-half/-fast sets an OpenCL calculation engine
--single!/-double!/-quad! sets an OpenMP calculation engine</p>
-<p>=== plotting ===
--plot*/-noplot plots or suppress the plot of the model
--linear/-log*/-q4 intensity scaling on plots
--hist/-nohist* plot histogram of relative error
--abs/-rel* plot relative or absolute error
--title=”note” adds note to the plot title, after the model name
--weights shows weights plots for the polydisperse parameters
--profile shows the sld profile if the model has a plottable sld profile</p>
-<p>=== output options ===
--edit starts the parameter explorer
--help/-html shows the model docs instead of running the model</p>
-<p>=== help ===
--h/-? print this help
--models[=all] show all builtin models of a given type:</p>
-<blockquote>
-<div>all, py, c, double, single, opencl, 1d, 2d, magnetic</div></blockquote>
-<p>=== environment variables ===
--DSAS_MODELPATH=~/.sasmodels/custom_models sets path to custom models
--DSAS_WEIGHTS_PATH=~/.sasview/weights sets path to custom distributions
--DSAS_OPENCL=vendor:device|cuda:device|none sets the target GPU device
--DXDG_CACHE_HOME=~/.cache sets the pyopencl cache root (linux only)
--DSAS_COMPILER=tinycc|msvc|mingw|unix sets the DLL compiler
--DSAS_OPENMP=0 set to 1 to turn on OpenMP for the DLLs
--DSAS_DLL_PATH=~/.sasmodels/compiled_models sets the DLL cache
--DPYOPENCL_NO_CACHE=1 turns off the PyOpenCL cache</p>
-</div></blockquote>
-<p>The interpretation of quad precision depends on architecture, and may
-vary from 64-bit to 128-bit, with 80-bit floats being common (1e-19 precision).
-On unix and mac you may need single quotes around the DLL computation
-engines, such as -engine=’single!,double!’ since !, is treated as a history
-expansion request in the shell.</p>
-<p>Key=value pairs allow you to set specific values for the model parameters.
-Key=value1,value2 to compare different values of the same parameter. The
-value can be an expression including other parameters.</p>
-<p>Items later on the command line override those that appear earlier.</p>
-<p>Examples:</p>
-<blockquote>
-<div><p># compare single and double precision calculation for a barbell
-sascomp barbell -engine=single,double</p>
-<p># generate 10 random lorentz models, with seed=27
-sascomp lorentz -sets=10 -seed=27</p>
-<p># compare ellipsoid with R = R_polar = R_equatorial to sphere of radius R
-sascomp sphere,ellipsoid radius_polar=radius radius_equatorial=radius</p>
-<p># model timing test requires multiple evals to perform the estimate
-sascomp pringle -engine=single,double -timing=100,100 -noplot</p>
-</div></blockquote>
 <dl class="class">
 <dt id="sasmodels.compare.Explore">
 <em class="property">class </em><code class="descclassname">sasmodels.compare.</code><code class="descname">Explore</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/compare.html#Explore"><span class="viewcode-link">[source]</span></a></dt>
@@ -531,7 +448,7 @@ values from the first expression, which allows things like:</p>
 <dl class="function">
 <dt id="sasmodels.compare.plot_models">
 <code class="descclassname">sasmodels.compare.</code><code class="descname">plot_models</code><span class="sig-paren">(</span><em>opts</em>, <em>result</em>, <em>limits=None</em>, <em>setnum=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/compare.html#plot_models"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Plot the results from <code class="xref py py-func docutils literal notranslate"><span class="pre">run_model()</span></code>.</p>
+<dd><p>Plot the results from <a class="reference internal" href="#sasmodels.compare.run_models" title="sasmodels.compare.run_models"><code class="xref py py-func docutils literal notranslate"><span class="pre">run_models()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -539,9 +456,8 @@ values from the first expression, which allows things like:</p>
 <code class="descclassname">sasmodels.compare.</code><code class="descname">plot_profile</code><span class="sig-paren">(</span><em>model_info</em>, <em>label='base'</em>, <em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/compare.html#plot_profile"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Plot the profile returned by the model profile method.</p>
 <p><em>model_info</em> defines model parameters, etc.</p>
-<p><em>mesh</em> is a list of tuples containing (<em>value</em>, <em>dispersity</em>, <em>weights</em>)
-for each parameter, where (<em>dispersity</em>, <em>weights</em>) pairs are the
-distributions to be plotted.</p>
+<p><em>label</em> is the legend label for the plotted line.</p>
+<p><em>args</em> are <em>parameter=value</em> pairs for the model profile function.</p>
 </dd></dl>
 
 <dl class="function">
@@ -687,7 +603,6 @@ initialize the calculation engine, and make the average more stable.</p>
 </dd></dl>
 
 </div>
-</div>
 <div class="section" id="module-sasmodels.compare_many">
 <span id="sasmodels-compare-many-module"></span><h2>sasmodels.compare_many module</h2>
 <p>Program to compare results from many random parameter sets for a given model.</p>
@@ -696,7 +611,7 @@ from standard output into a file and loaded into a spreadsheet.</p>
 <p>The models are compared for each parameter set and if the difference is
 greater than expected for that precision, the parameter set is labeled
 as bad and written to the output, along with the random seed used to
-generate that parameter value.  This seed can be used with <code class="xref py py-mod docutils literal notranslate"><span class="pre">compare</span></code>
+generate that parameter value.  This seed can be used with <a class="reference internal" href="#module-sasmodels.compare" title="sasmodels.compare"><code class="xref py py-mod docutils literal notranslate"><span class="pre">compare</span></code></a>
 to reload and display the details of the model.</p>
 <dl class="function">
 <dt id="sasmodels.compare_many.calc_stats">
@@ -758,7 +673,7 @@ and print them to standard output.</p>
 <span id="sasmodels-conversion-table-module"></span><h2>sasmodels.conversion_table module</h2>
 <p>Parameter conversion table</p>
 <p><em>CONVERSION_TABLE</em> gives the old model name and a dictionary of old parameter
-names for each parameter in sasmodels.  This is used by <code class="xref py py-mod docutils literal notranslate"><span class="pre">convert</span></code> to
+names for each parameter in sasmodels.  This is used by <a class="reference internal" href="#module-sasmodels.convert" title="sasmodels.convert"><code class="xref py py-mod docutils literal notranslate"><span class="pre">convert</span></code></a> to
 determine the equivalent parameter set when comparing a sasmodels model to
 the models defined in previous versions of SasView and sasmodels. This is now
 versioned based on the version number of SasView.</p>
@@ -887,6 +802,44 @@ otherwise it uses the default “ocl”.</p>
 it does not already exist.</p>
 <p>This can be used when build the windows distribution of sasmodels
 which may be missing the OpenCL driver and the dll compiler.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sasmodels.core.reparameterize">
+<code class="descclassname">sasmodels.core.</code><code class="descname">reparameterize</code><span class="sig-paren">(</span><em>base</em>, <em>parameters</em>, <em>translation</em>, <em>filename=None</em>, <em>title=None</em>, <em>insert_after=None</em>, <em>docs=None</em>, <em>name=None</em>, <em>source=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/core.html#reparameterize"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Reparameterize an existing model.</p>
+<p><em>base</em> is the original modelinfo. This cannot be a reparameterized model;
+only one level of reparameterization is supported.</p>
+<p><em>parameters</em> are the new parameter definitions that will be
+included in the model info.</p>
+<p><em>translation</em> is a string each line containing <em>var = expr</em>.  The variable
+<em>var</em> can be a new intermediate value, or it can be a parameter from
+the base model that will be replace by the expression.  The expression
+<em>expr</em> can be any C99 expression, including C-style if-expressions
+<em>condition ? value1 : value2</em>.  Expressions can use any new or existing
+parameter that is not being replaced including intermediate values that
+are previously defined.  Parameters can only be assigned once, never
+updated.  C99 math functions are available, as well as any functions
+defined in the base model or included in <em>source</em> (see below).</p>
+<p><em>filename</em> is the filename for the replacement model.  This is usually
+<em>__file__</em>, giving the path to the model file, but it could also be a
+nominal filename for translations defined on-the-fly.</p>
+<p><em>title</em> is the model title, which defaults to <em>base.title</em> plus
+” (reparameterized)”.</p>
+<p><em>insert_after</em> controls parameter placement.  By default, the new
+parameters replace the old parameters in their original position.
+Instead, you can provide a dictionary <em>{‘par’: ‘newpar1,newpar2’}</em>
+indicating that new parameters named <em>newpar1</em> and <em>newpar2</em> should
+be included in the table after the existing parameter <em>par</em>, or at
+the beginning if <em>par</em> is the empty string.</p>
+<p><em>docs</em> constains the doc string for the translated model, which by default
+references the base model and gives the <em>translation</em> text.</p>
+<p><em>name</em> is the model name (default = <code class="code docutils literal notranslate"><span class="pre">&quot;constrained_&quot;</span> <span class="pre">+</span> <span class="pre">base.name</span></code>).</p>
+<p><em>source</em> is a list any additional C source files that should be included to
+define functions and constants used in the translation expressions.  This
+will be included after all sources for the base model.  Sources will only
+be included once, even if they are listed in both places, so feel free to
+list all dependencies for the helper function, such as “lib/polevl.c”.</p>
 </dd></dl>
 
 </div>
@@ -1119,7 +1072,7 @@ number of details that need to be sent to the caller.  This includes the
 list of polydisperse parameters, the number of points in the polydispersity
 weight distribution, and which parameter is the “theta” parameter for
 polar coordinate integration.  The <a class="reference internal" href="#sasmodels.details.CallDetails" title="sasmodels.details.CallDetails"><code class="xref py py-class docutils literal notranslate"><span class="pre">CallDetails</span></code></a> object maintains
-this data.  Use <code class="xref py py-func docutils literal notranslate"><span class="pre">build_details()</span></code> to build a <em>details</em> object which
+this data.  Use <a class="reference internal" href="#sasmodels.details.make_details" title="sasmodels.details.make_details"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_details()</span></code></a> to build a <em>details</em> object which
 can be passed to one of the computational kernels.</p>
 <dl class="class">
 <dt id="sasmodels.details.CallDetails">
@@ -1286,7 +1239,7 @@ must be called to return the predicted value for each measured data point.</p>
 keyword arguments and returns the appropriate theory values for the data.</p>
 <p><a class="reference internal" href="#sasmodels.direct_model.DataMixin" title="sasmodels.direct_model.DataMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataMixin</span></code></a> does the real work of interpreting the data and calling
 the model calculator.  This is used by <a class="reference internal" href="#sasmodels.direct_model.DirectModel" title="sasmodels.direct_model.DirectModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DirectModel</span></code></a>, which uses
-direct parameter values and by <code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Experiment</span></code> which wraps
+direct parameter values and by <a class="reference internal" href="#sasmodels.bumps_model.Experiment" title="sasmodels.bumps_model.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Experiment</span></code></a> which wraps
 the parameter values in boxes so that the user can set fitting ranges, etc.
 on the individual parameters and send the model to the Bumps optimizers.</p>
 <dl class="class">
@@ -1297,17 +1250,17 @@ on the individual parameters and send the model to the Bumps optimizers.</p>
 particular data set, including calculating Iq and evaluating the
 resolution function.  It is used in particular by <a class="reference internal" href="#sasmodels.direct_model.DirectModel" title="sasmodels.direct_model.DirectModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DirectModel</span></code></a>,
 which evaluates a SAS model parameters as key word arguments to the
-calculator method, and by <code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Experiment</span></code>, which wraps the
+calculator method, and by <a class="reference internal" href="#sasmodels.bumps_model.Experiment" title="sasmodels.bumps_model.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Experiment</span></code></a>, which wraps the
 model and data for use with the Bumps fitting engine.  It is not
-currently used by <code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code> since this will
+currently used by <a class="reference internal" href="#sasmodels.sasview_model.SasviewModel" title="sasmodels.sasview_model.SasviewModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code></a> since this will
 require a number of changes to SasView before we can do it.</p>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_interpret_data()</span></code> initializes the data structures necessary
+<p><em>_interpret_data</em> initializes the data structures necessary
 to manage the calculations.  This sets attributes in the child class
 such as <em>data_type</em> and <em>resolution</em>.</p>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_calc_theory()</span></code> evaluates the model at the given control values.</p>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_set_data()</span></code> sets the intensity data in the data object,
+<p><em>_calc_theory</em> evaluates the model at the given control values.</p>
+<p><em>_set_data</em> sets the intensity data in the data object,
 possibly with random noise added.  This is useful for simulating a
-dataset with the results from <code class="xref py py-meth docutils literal notranslate"><span class="pre">_calc_theory()</span></code>.</p>
+dataset with the results from <em>_calc_theory</em>.</p>
 </dd></dl>
 
 <dl class="class">
@@ -1316,7 +1269,7 @@ dataset with the results from <code class="xref py py-meth docutils literal notr
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.direct_model.DataMixin" title="sasmodels.direct_model.DataMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.direct_model.DataMixin</span></code></a></p>
 <p>Create a calculator object for a model.</p>
 <p><em>data</em> is 1D SAS, 2D SAS or SESANS data</p>
-<p><em>model</em> is a model calculator return from <code class="xref py py-func docutils literal notranslate"><span class="pre">generate.load_model()</span></code></p>
+<p><em>model</em> is a model calculator return from <a class="reference internal" href="#sasmodels.core.load_model" title="sasmodels.core.load_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model()</span></code></a></p>
 <p><em>cutoff</em> is the polydispersity weight cutoff.</p>
 <dl class="method">
 <dt id="sasmodels.direct_model.DirectModel.profile">
@@ -1505,7 +1458,7 @@ are valid (e.g., “bell_radius &gt;= radius” for the barbell or capped
 cylinder models).  The expression can call C functions, including
 those defined in your model file.</p>
 </div></blockquote>
-<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">modelinfo.ModelInfo</span></code> structure is constructed from the kernel meta
+<p>A <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo" title="sasmodels.modelinfo.ModelInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">modelinfo.ModelInfo</span></code></a> structure is constructed from the kernel meta
 data and returned to the caller.</p>
 <p>Valid inputs should be identified by the <em>valid</em> expression.
 Particularly with polydispersity, there are some sets of shape parameters
@@ -1537,10 +1490,10 @@ file names and extensions.</p>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#sasmodels.generate.load_kernel_module" title="sasmodels.generate.load_kernel_module"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_kernel_module()</span></code></a> loads the model definition file and
-<code class="xref py py-func docutils literal notranslate"><span class="pre">modelinfo.make_model_info()</span></code> parses it. <a class="reference internal" href="#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_source()</span></code></a>
+<a class="reference internal" href="#sasmodels.modelinfo.make_model_info" title="sasmodels.modelinfo.make_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">modelinfo.make_model_info()</span></code></a> parses it. <a class="reference internal" href="#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_source()</span></code></a>
 converts C-based model definitions to C source code, including the
 polydispersity integral.  <a class="reference internal" href="#sasmodels.generate.model_sources" title="sasmodels.generate.model_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">model_sources()</span></code></a> returns the list of
-source files the model depends on, and <code class="xref py py-func docutils literal notranslate"><span class="pre">timestamp()</span></code> returns
+source files the model depends on, and <a class="reference internal" href="#sasmodels.generate.ocl_timestamp" title="sasmodels.generate.ocl_timestamp"><code class="xref py py-func docutils literal notranslate"><span class="pre">ocl_timestamp()</span></code></a> returns
 the latest time stamp amongst the source files (so you can check if
 the model needs to be rebuilt).</p>
 <p>The function <a class="reference internal" href="#sasmodels.generate.make_doc" title="sasmodels.generate.make_doc"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_doc()</span></code></a> extracts the doc string and adds the
@@ -1644,8 +1597,8 @@ next to the executable for Mac OS/X installs.</p>
 <code class="descclassname">sasmodels.generate.</code><code class="descname">load_kernel_module</code><span class="sig-paren">(</span><em>model_name</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/generate.html#load_kernel_module"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return the kernel module named in <em>model_name</em>.</p>
 <p>If the name ends in <em>.py</em> then load it as a custom model using
-<a class="reference internal" href="sasmodels.custom.html#sasmodels.custom.load_custom_kernel_module" title="sasmodels.custom.load_custom_kernel_module"><code class="xref py py-func docutils literal notranslate"><span class="pre">sasmodels.custom.load_custom_kernel_module()</span></code></a>, otherwise
-load it from <code class="xref py py-mod docutils literal notranslate"><span class="pre">sasmodels.models</span></code>.</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">custom.__init__.load_custom_kernel_module()</span></code>, otherwise
+load it as a builtin from <em>sasmodels.models</em>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1929,7 +1882,7 @@ the returned calculator as <em>calculator.pars</em>.  They are used by
 calculation.</p>
 <p>Returns a <em>calculator</em> function which takes a dictionary or parameters and
 produces Iqxy.  The Iqxy value needs to be reshaped to an n x n matrix
-for plotting.  See the <a class="reference internal" href="#sasmodels.direct_model.DirectModel" title="sasmodels.direct_model.DirectModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.direct_model.DirectModel</span></code></a> class
+for plotting.  See the <a class="reference internal" href="#sasmodels.direct_model.DirectModel" title="sasmodels.direct_model.DirectModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">direct_model.DirectModel</span></code></a> class
 for details.</p>
 </dd></dl>
 
@@ -2202,8 +2155,36 @@ the kernel should be released, which also releases the inputs.</p>
 <em class="property">class </em><code class="descclassname">sasmodels.kernel.</code><code class="descname">Kernel</code><a class="reference internal" href="../../_modules/sasmodels/kernel.html#Kernel"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Instantiated model for the compute engine, applied to a particular <em>q</em>.</p>
-<p>Subclasses should define <code class="xref py py-meth docutils literal notranslate"><span class="pre">_call_kernel()</span></code> to evaluate the kernel over
-its inputs.</p>
+<p>Subclasses should define <em>__init__()</em> to set up the kernel inputs, and
+<em>_call_kernel()</em> to evaluate the kernel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">q</span><span class="o">-</span><span class="n">value</span> <span class="k">class</span> <span class="nc">with</span> <span class="n">nq</span> <span class="n">attribute</span><span class="o">&gt;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">ModelInfo</span> <span class="nb">object</span><span class="o">&gt;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="o">&lt;</span><span class="s1">&#39;1d&#39;</span> <span class="ow">or</span> <span class="s1">&#39;2d&#39;</span><span class="o">&gt;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">kernel</span><span class="o">.</span><span class="n">dtype</span><span class="o">&gt;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span><span class="o">+</span><span class="mi">4</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">have_Fq</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span><span class="o">+</span><span class="mi">4</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">+</span> <span class="o">&lt;</span><span class="n">extra</span> <span class="n">padding</span> <span class="k">if</span> <span class="n">needed</span> <span class="k">for</span> <span class="n">kernel</span><span class="o">&gt;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_call_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span>
+                <span class="n">radius_effective_mode</span><span class="p">):</span>
+    <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; None</span>
+    <span class="o">...</span> <span class="c1"># call &lt;kernel&gt;</span>
+    <span class="n">nq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">have_Fq</span><span class="p">:</span>  <span class="c1"># models that compute both F and F^2</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">nq</span> <span class="k">if</span> <span class="n">have_Fq</span> <span class="k">else</span> <span class="n">nq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">end</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">F</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">end</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">F</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">nq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">Fsq</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_weight</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">form_volume</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">shell_volume</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">end</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">radius_effective</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="sasmodels.kernel.Kernel.Fq">
 <code class="descname">Fq</code><span class="sig-paren">(</span><em>call_details</em>, <em>values</em>, <em>cutoff</em>, <em>magnetic</em>, <em>radius_effective_mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/kernel.html#Kernel.Fq"><span class="viewcode-link">[source]</span></a></dt>
@@ -2292,7 +2273,7 @@ built into the model, and do not need an additional scale.</p>
 <dl class="attribute">
 <dt id="sasmodels.kernel.Kernel.q_input">
 <code class="descname">q_input</code><em class="property"> = None</em></dt>
-<dd><p>q values at which the kernel is to be evaluated</p>
+<dd><p>Q values at which the kernel is to be evaluated.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2304,7 +2285,7 @@ built into the model, and do not need an additional scale.</p>
 <dl class="attribute">
 <dt id="sasmodels.kernel.Kernel.result">
 <code class="descname">result</code><em class="property"> = None</em></dt>
-<dd><p>Place to hold result of <code class="xref py py-meth docutils literal notranslate"><span class="pre">_call_kernel()</span></code> for subclass.</p>
+<dd><p>Place to hold result of <em>_call_kernel()</em> for subclass.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2345,18 +2326,18 @@ built into the model, and do not need an additional scale.</p>
 <p>GPU driver for C kernels</p>
 <p>TODO: docs are out of date</p>
 <p>There should be a single GPU environment running on the system.  This
-environment is constructed on the first call to <code class="xref py py-func docutils literal notranslate"><span class="pre">env()</span></code>, and the
+environment is constructed on the first call to <a class="reference internal" href="#sasmodels.kernelcl.environment" title="sasmodels.kernelcl.environment"><code class="xref py py-func docutils literal notranslate"><span class="pre">environment()</span></code></a>, and the
 same environment is returned on each call.</p>
 <p>After retrieving the environment, the next step is to create the kernel.
-This is done with a call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">GpuEnvironment.make_kernel()</span></code>, which
+This is done with a call to <a class="reference internal" href="#sasmodels.kernelcl.GpuEnvironment.compile_program" title="sasmodels.kernelcl.GpuEnvironment.compile_program"><code class="xref py py-meth docutils literal notranslate"><span class="pre">GpuEnvironment.compile_program()</span></code></a>, which
 returns the type of data used by the kernel.</p>
-<p>Next a <code class="xref py py-class docutils literal notranslate"><span class="pre">GpuData</span></code> object should be created with the correct kind
+<p>Next a <a class="reference internal" href="#sasmodels.kernelcl.GpuInput" title="sasmodels.kernelcl.GpuInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuInput</span></code></a> object should be created with the correct kind
 of data.  This data object can be used by multiple kernels, for example,
 if the target model is a weighted sum of multiple kernels.  The data
 should include any extra evaluation points required to compute the proper
 data smearing.  This need not match the square grid for 2D data if there
 is an index saying which q points are active.</p>
-<p>Together the GpuData, the program, and a device form a <a class="reference internal" href="#sasmodels.kernelcl.GpuKernel" title="sasmodels.kernelcl.GpuKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuKernel</span></code></a>.
+<p>Together the GpuInput, the program, and a device form a <a class="reference internal" href="#sasmodels.kernelcl.GpuKernel" title="sasmodels.kernelcl.GpuKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuKernel</span></code></a>.
 This kernel is used during fitting, receiving new sets of parameters and
 evaluating them.  The output value is stored in an output buffer on the
 devices, where it can be combined with other structure factors and form
@@ -2414,9 +2395,9 @@ stretching the array to better match the memory architecture.  Additional
 points will be evaluated with <em>q=1e-3</em>.</p>
 <p><em>dtype</em> is the data type for the q vectors. The data type should be
 set to match that of the kernel, which is an attribute of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">GpuProgram</span></code>.  Note that not all kernels support double
+<a class="reference internal" href="#sasmodels.kernelcl.GpuModel" title="sasmodels.kernelcl.GpuModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuModel</span></code></a>.  Note that not all kernels support double
 precision, so even if the program was created for double precision,
-the <em>GpuProgram.dtype</em> may be single precision.</p>
+the <em>GpuModel.dtype</em> may be single precision.</p>
 <p>Call <a class="reference internal" href="#sasmodels.kernelcl.GpuInput.release" title="sasmodels.kernelcl.GpuInput.release"><code class="xref py py-meth docutils literal notranslate"><span class="pre">release()</span></code></a> when complete.  Even if not called directly, the
 buffer will be released when the data object is freed.</p>
 <dl class="attribute">
@@ -2458,8 +2439,8 @@ buffer will be released when the data object is freed.</p>
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.kernel.Kernel" title="sasmodels.kernel.Kernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.kernel.Kernel</span></code></a></p>
 <p>Callable SAS kernel.</p>
 <p><em>model</em> is the GpuModel object to call</p>
-<p>The kernel is derived from <code class="xref py py-class docutils literal notranslate"><span class="pre">Kernel</span></code>, providing the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">call_kernel()</span></code> method to evaluate the kernel for a given set of
+<p>The kernel is derived from <a class="reference internal" href="#sasmodels.kernel.Kernel" title="sasmodels.kernel.Kernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernel.Kernel</span></code></a>, providing the
+<em>_call_kernel()</em> method to evaluate the kernel for a given set of
 parameters.  Because of the need to move the q values to the GPU before
 evaluation, the kernel is instantiated for a particular set of q vectors,
 and can be called many times without transfering q each time.</p>
@@ -2496,7 +2477,7 @@ and can be called many times without transfering q each time.</p>
 <dl class="attribute">
 <dt id="sasmodels.kernelcl.GpuKernel.result">
 <code class="descname">result</code><em class="property"> = None</em></dt>
-<dd><p>Calculation results, updated after each call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">_call_kernel()</span></code>.</p>
+<dd><p>Calculation results, updated after each call to <em>_call_kernel()</em>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2507,7 +2488,7 @@ and can be called many times without transfering q each time.</p>
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.kernel.KernelModel" title="sasmodels.kernel.KernelModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.kernel.KernelModel</span></code></a></p>
 <p>GPU wrapper for a single model.</p>
 <p><em>source</em> and <em>model_info</em> are the model source and interface as returned
-from <code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_model_info()</span></code>.</p>
+from <a class="reference internal" href="#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code></a> and <a class="reference internal" href="#sasmodels.modelinfo.make_model_info" title="sasmodels.modelinfo.make_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">modelinfo.make_model_info()</span></code></a>.</p>
 <p><em>dtype</em> is the desired model precision.  Any numpy dtype for single
 or double precision floats will do, such as ‘f’, ‘float32’ or ‘single’
 for single and ‘d’, ‘float64’ or ‘double’ for double.  Double precision
@@ -2614,18 +2595,18 @@ or a file ~/.cuda-device containing n for the device number.  Otherwise, try
 all available device numbers.</p>
 <p>TODO: docs are out of date</p>
 <p>There should be a single GPU environment running on the system.  This
-environment is constructed on the first call to <code class="xref py py-func docutils literal notranslate"><span class="pre">env()</span></code>, and the
+environment is constructed on the first call to <a class="reference internal" href="#sasmodels.kernelcuda.environment" title="sasmodels.kernelcuda.environment"><code class="xref py py-func docutils literal notranslate"><span class="pre">environment()</span></code></a>, and the
 same environment is returned on each call.</p>
 <p>After retrieving the environment, the next step is to create the kernel.
-This is done with a call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">GpuEnvironment.make_kernel()</span></code>, which
+This is done with a call to <a class="reference internal" href="#sasmodels.kernelcuda.GpuEnvironment.compile_program" title="sasmodels.kernelcuda.GpuEnvironment.compile_program"><code class="xref py py-meth docutils literal notranslate"><span class="pre">GpuEnvironment.compile_program()</span></code></a>, which
 returns the type of data used by the kernel.</p>
-<p>Next a <code class="xref py py-class docutils literal notranslate"><span class="pre">GpuData</span></code> object should be created with the correct kind
+<p>Next a <a class="reference internal" href="#sasmodels.kernelcuda.GpuInput" title="sasmodels.kernelcuda.GpuInput"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuInput</span></code></a> object should be created with the correct kind
 of data.  This data object can be used by multiple kernels, for example,
 if the target model is a weighted sum of multiple kernels.  The data
 should include any extra evaluation points required to compute the proper
 data smearing.  This need not match the square grid for 2D data if there
 is an index saying which q points are active.</p>
-<p>Together the GpuData, the program, and a device form a <a class="reference internal" href="#sasmodels.kernelcuda.GpuKernel" title="sasmodels.kernelcuda.GpuKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuKernel</span></code></a>.
+<p>Together the GpuInput, the program, and a device form a <a class="reference internal" href="#sasmodels.kernelcuda.GpuKernel" title="sasmodels.kernelcuda.GpuKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuKernel</span></code></a>.
 This kernel is used during fitting, receiving new sets of parameters and
 evaluating them.  The output value is stored in an output buffer on the
 devices, where it can be combined with other structure factors and form
@@ -2694,9 +2675,9 @@ stretching the array to better match the memory architecture.  Additional
 points will be evaluated with <em>q=1e-3</em>.</p>
 <p><em>dtype</em> is the data type for the q vectors. The data type should be
 set to match that of the kernel, which is an attribute of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">GpuProgram</span></code>.  Note that not all kernels support double
+<a class="reference internal" href="#sasmodels.kernelcuda.GpuModel" title="sasmodels.kernelcuda.GpuModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">GpuModel</span></code></a>.  Note that not all kernels support double
 precision, so even if the program was created for double precision,
-the <em>GpuProgram.dtype</em> may be single precision.</p>
+the <em>GpuModel.dtype</em> may be single precision.</p>
 <p>Call <a class="reference internal" href="#sasmodels.kernelcuda.GpuInput.release" title="sasmodels.kernelcuda.GpuInput.release"><code class="xref py py-meth docutils literal notranslate"><span class="pre">release()</span></code></a> when complete.  Even if not called directly, the
 buffer will be released when the data object is freed.</p>
 <dl class="method">
@@ -2713,9 +2694,9 @@ buffer will be released when the data object is freed.</p>
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.kernel.Kernel" title="sasmodels.kernel.Kernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.kernel.Kernel</span></code></a></p>
 <p>Callable SAS kernel.</p>
 <p><em>model</em> is the GpuModel object to call</p>
-<p>The kernel is derived from <code class="xref py py-class docutils literal notranslate"><span class="pre">Kernel</span></code>, providing the
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">call_kernel()</span></code> method to evaluate the kernel for a given set of
-parameters.  Because of the need to move the q values to the GPU before
+<p>The kernel is derived from <a class="reference internal" href="#sasmodels.kernel.Kernel" title="sasmodels.kernel.Kernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernel.Kernel</span></code></a>, providing the
+<em>_call_kernel()</em> method to evaluate the kernel for a given set of
+parameters. Because of the need to move the q values to the GPU before
 evaluation, the kernel is instantiated for a particular set of q vectors,
 and can be called many times without transfering q each time.</p>
 <p>Call <a class="reference internal" href="#sasmodels.kernelcuda.GpuKernel.release" title="sasmodels.kernelcuda.GpuKernel.release"><code class="xref py py-meth docutils literal notranslate"><span class="pre">release()</span></code></a> when done with the kernel instance.</p>
@@ -2746,7 +2727,7 @@ and can be called many times without transfering q each time.</p>
 <dl class="attribute">
 <dt id="sasmodels.kernelcuda.GpuKernel.result">
 <code class="descname">result</code><em class="property"> = None</em></dt>
-<dd><p>Calculation results, updated after each call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">_call_kernel()</span></code>.</p>
+<dd><p>Calculation results, updated after each call to <em>_call_kernel()</em>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2757,7 +2738,7 @@ and can be called many times without transfering q each time.</p>
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.kernel.KernelModel" title="sasmodels.kernel.KernelModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.kernel.KernelModel</span></code></a></p>
 <p>GPU wrapper for a single model.</p>
 <p><em>source</em> and <em>model_info</em> are the model source and interface as returned
-from <code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_model_info()</span></code>.</p>
+from <a class="reference internal" href="#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code></a> and <a class="reference internal" href="#sasmodels.modelinfo.make_model_info" title="sasmodels.modelinfo.make_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">modelinfo.make_model_info()</span></code></a>.</p>
 <p><em>dtype</em> is the desired model precision.  Any numpy dtype for single
 or double precision floats will do, such as ‘f’, ‘float32’ or ‘single’
 for single and ‘d’, ‘float64’ or ‘double’ for double.  Double precision
@@ -2952,8 +2933,9 @@ will not be calculated.</p>
 <em class="property">class </em><code class="descclassname">sasmodels.kerneldll.</code><code class="descname">DllModel</code><span class="sig-paren">(</span><em>dllpath</em>, <em>model_info</em>, <em>dtype=dtype('float32')</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/kerneldll.html#DllModel"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#sasmodels.kernel.KernelModel" title="sasmodels.kernel.KernelModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.kernel.KernelModel</span></code></a></p>
 <p>ctypes wrapper for a single model.</p>
-<p><em>source</em> and <em>model_info</em> are the model source and interface as returned
-from <code class="xref py py-func docutils literal notranslate"><span class="pre">gen.make()</span></code>.</p>
+<p><em>dllpath</em> is the stored path to the dll.</p>
+<p><em>model_info</em> is the model definition returned from
+<a class="reference internal" href="#sasmodels.modelinfo.make_model_info" title="sasmodels.modelinfo.make_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">modelinfo.make_model_info()</span></code></a>.</p>
 <p><em>dtype</em> is the desired model precision.  Any numpy dtype for single
 or double precision floats will do, such as ‘f’, ‘float32’ or ‘single’
 for single and ‘d’, ‘float64’ or ‘double’ for double.  Double precision
@@ -3008,8 +2990,11 @@ exist yet if it hasn’t been compiled.</p>
 <dl class="function">
 <dt id="sasmodels.kerneldll.load_dll">
 <code class="descclassname">sasmodels.kerneldll.</code><code class="descname">load_dll</code><span class="sig-paren">(</span><em>source</em>, <em>model_info</em>, <em>dtype=dtype('float64')</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/kerneldll.html#load_dll"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Create and load a dll corresponding to the source, info pair returned
-from <code class="xref py py-func docutils literal notranslate"><span class="pre">sasmodels.generate.make()</span></code> compiled for the target precision.</p>
+<dd><p>Create and load a dll corresponding to the source.</p>
+<p><em>model_info</em> is the info object returned from
+<a class="reference internal" href="#sasmodels.modelinfo.make_model_info" title="sasmodels.modelinfo.make_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">modelinfo.make_model_info()</span></code></a>.</p>
+<p><em>source</em> is returned from <a class="reference internal" href="#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code></a>, as
+<em>make_source(model_info)[‘dll’]</em>.</p>
 <p>See <a class="reference internal" href="#sasmodels.kerneldll.make_dll" title="sasmodels.kerneldll.make_dll"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_dll()</span></code></a> for details on controlling the dll path and the
 allowed floating point precision.</p>
 </dd></dl>
@@ -3038,7 +3023,7 @@ The default is in ~/.sasmodels/compiled_models.</p>
 <p>Calls the kernel with a vector of <span class="math notranslate nohighlight">\(q\)</span> values for a single parameter set.
 Polydispersity is supported by looping over different parameter sets and
 summing the results.  The interface to <a class="reference internal" href="#sasmodels.kernelpy.PyModel" title="sasmodels.kernelpy.PyModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyModel</span></code></a> matches those for
-<code class="xref py py-class docutils literal notranslate"><span class="pre">kernelcl.GpuModel</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">kerneldll.DllModel</span></code>.</p>
+<a class="reference internal" href="#sasmodels.kernelcl.GpuModel" title="sasmodels.kernelcl.GpuModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kernelcl.GpuModel</span></code></a> and <a class="reference internal" href="#sasmodels.kerneldll.DllModel" title="sasmodels.kerneldll.DllModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">kerneldll.DllModel</span></code></a>.</p>
 <dl class="class">
 <dt id="sasmodels.kernelpy.PyInput">
 <em class="property">class </em><code class="descclassname">sasmodels.kernelpy.</code><code class="descname">PyInput</code><span class="sig-paren">(</span><em>q_vectors</em>, <em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/kernelpy.html#PyInput"><span class="viewcode-link">[source]</span></a></dt>
@@ -3051,7 +3036,7 @@ stretching the array to better match the memory architecture.  Additional
 points will be evaluated with <em>q=1e-3</em>.</p>
 <p><em>dtype</em> is the data type for the q vectors. The data type should be
 set to match that of the kernel, which is an attribute of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">GpuProgram</span></code>.  Note that not all kernels support double
+<a class="reference internal" href="#sasmodels.kernelpy.PyModel" title="sasmodels.kernelpy.PyModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyModel</span></code></a>.  Note that not all kernels support double
 precision, so even if the program was created for double precision,
 the <em>GpuProgram.dtype</em> may be single precision.</p>
 <p>Call <a class="reference internal" href="#sasmodels.kernelpy.PyInput.release" title="sasmodels.kernelpy.PyInput.release"><code class="xref py py-meth docutils literal notranslate"><span class="pre">release()</span></code></a> when complete.  Even if not called directly, the
@@ -3208,7 +3193,7 @@ built into the model, and do not need an additional scale.</p>
 </div>
 <p>If model1 is ‘all’, then all except the remaining models will be tested.
 Subgroups are also possible, such as ‘py’, ‘single’ or ‘1d’.  See
-<code class="xref py py-func docutils literal notranslate"><span class="pre">core.list_models()</span></code> for details.</p>
+<a class="reference internal" href="#sasmodels.core.list_models" title="sasmodels.core.list_models"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.list_models()</span></code></a> for details.</p>
 <p>Each model is tested using the default parameters at q=0.1, (qx, qy)=(0.1, 0.1),
 and Fq is called to make sure R_eff, volume and volume ratio are computed.
 The return values at these points are not considered.  The test is only to
@@ -3341,12 +3326,12 @@ as a C function.  If it is defined in C, then set <em>Iq</em> to the body of
 the C function, including the return statement.  This function takes
 values for <em>q</em> and each of the parameters as separate <em>double</em> values
 (which may be converted to float or long double by sasmodels).  All
-source code files listed in <code class="xref py py-attr docutils literal notranslate"><span class="pre">sources</span></code> will be loaded before the
+source code files listed in <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.source" title="sasmodels.modelinfo.ModelInfo.source"><code class="xref py py-attr docutils literal notranslate"><span class="pre">source</span></code></a> will be loaded before the
 <em>Iq</em> function is defined.  If <em>Iq</em> is not present, then sources should
 define <em>static double Iq(double q, double a, double b, …)</em> which
 will return <em>I(q, a, b, …)</em>.  Multiplicity parameters are sent as
 pointers to doubles.  Constants in floating point expressions should
-include the decimal point. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">generate</span></code> for more details. If
+include the decimal point. See <a class="reference internal" href="#module-sasmodels.generate" title="sasmodels.generate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">generate</span></code></a> for more details. If
 <em>have_Fq</em> is True, then Iq should return an interleaved array of
 <span class="math notranslate nohighlight">\([\sum F(q_1), \sum F^2(q_1), \ldots, \sum F(q_n), \sum F^2(q_n)]\)</span>.</p>
 </dd></dl>
@@ -3427,7 +3412,7 @@ arises when the model is constructed using names such as
 <dd><p>Doc string from the top of the model file.  This should be formatted
 using ReStructuredText format, with latex markup in “.. math”
 environments, or in dollar signs.  This will be automatically
-extracted to a .rst file by <code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_docs()</span></code>, then
+extracted to a .rst file by <a class="reference internal" href="#sasmodels.generate.make_doc" title="sasmodels.generate.make_doc"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_doc()</span></code></a>, then
 converted to HTML or PDF by Sphinx.</p>
 </dd></dl>
 
@@ -3443,7 +3428,7 @@ converted to HTML or PDF by Sphinx.</p>
 <dd><p>Returns the form volume for python-based models.  Form volume is needed
 for volume normalization in the polydispersity integral.  If no
 parameters are <em>volume</em> parameters, then form volume is not needed.
-For C-based models, (with <code class="xref py py-attr docutils literal notranslate"><span class="pre">sources</span></code> defined, or with <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.Iq" title="sasmodels.modelinfo.ModelInfo.Iq"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Iq</span></code></a>
+For C-based models, (with <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.source" title="sasmodels.modelinfo.ModelInfo.source"><code class="xref py py-attr docutils literal notranslate"><span class="pre">source</span></code></a> defined, or with <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.Iq" title="sasmodels.modelinfo.ModelInfo.Iq"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Iq</span></code></a>
 defined using a string containing C code), form_volume must also be
 C code, either defined as a string, or in the sources.</p>
 </dd></dl>
@@ -3468,7 +3453,7 @@ the multiplicity.</p>
 <dt id="sasmodels.modelinfo.ModelInfo.hidden">
 <code class="descname">hidden</code><em class="property"> = None</em></dt>
 <dd><p>Different variants require different parameters.  In order to show
-just the parameters needed for the variant selected by <code class="xref py py-attr docutils literal notranslate"><span class="pre">control</span></code>,
+just the parameters needed for the variant selected,
 you should provide a function <em>hidden(control) -&gt; set([‘a’, ‘b’, …])</em>
 indicating which parameters need to be hidden.  For multiplicity
 models, you need to use the complete name of the parameter, including
@@ -3568,7 +3553,7 @@ the SESANS correlation function.  Note: not currently implemented.</p>
 shell volume are needed for volume normalization in the polydispersity
 integral and structure interactions for hollow shapes.  If no
 parameters are <em>volume</em> parameters, then shell volume is not needed.
-For C-based models, (with <code class="xref py py-attr docutils literal notranslate"><span class="pre">sources</span></code> defined, or with <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.Iq" title="sasmodels.modelinfo.ModelInfo.Iq"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Iq</span></code></a>
+For C-based models, (with <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.source" title="sasmodels.modelinfo.ModelInfo.source"><code class="xref py py-attr docutils literal notranslate"><span class="pre">source</span></code></a> defined, or with <a class="reference internal" href="#sasmodels.modelinfo.ModelInfo.Iq" title="sasmodels.modelinfo.ModelInfo.Iq"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Iq</span></code></a>
 defined using a string containing C code), shell_volume must also be
 C code, either defined as a string, or in the sources.</p>
 </dd></dl>
@@ -3603,7 +3588,7 @@ provided in the file.</p>
 <dt id="sasmodels.modelinfo.ModelInfo.tests">
 <code class="descname">tests</code><em class="property"> = None</em></dt>
 <dd><p>The set of tests that must pass.  The format of the tests is described
-in <code class="xref py py-mod docutils literal notranslate"><span class="pre">model_test</span></code>.</p>
+in <a class="reference internal" href="#module-sasmodels.model_test" title="sasmodels.model_test"><code class="xref py py-mod docutils literal notranslate"><span class="pre">model_test</span></code></a>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -3633,7 +3618,7 @@ volume normalization.  Use C syntax for the expressions, with || for or
 
 <dl class="class">
 <dt id="sasmodels.modelinfo.Parameter">
-<em class="property">class </em><code class="descclassname">sasmodels.modelinfo.</code><code class="descname">Parameter</code><span class="sig-paren">(</span><em>name</em>, <em>units=''</em>, <em>default=None</em>, <em>limits=(-inf</em>, <em>inf)</em>, <em>ptype=''</em>, <em>description=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/modelinfo.html#Parameter"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">sasmodels.modelinfo.</code><code class="descname">Parameter</code><span class="sig-paren">(</span><em>name</em>, <em>units=''</em>, <em>default=nan</em>, <em>limits=(-inf</em>, <em>inf)</em>, <em>ptype=''</em>, <em>description=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/modelinfo.html#Parameter"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The available kernel parameters are defined as a list, with each parameter
 defined as a sublist with the following elements:</p>
@@ -3646,9 +3631,9 @@ controls the length.  The attribute <em>id</em> will be created from name
 without the length.</p>
 <p><em>units</em> should be one of <em>degrees</em> for angles, <em>Ang</em> for lengths,
 <em>1e-6/Ang^2</em> for SLDs.</p>
-<p><em>default value</em> will be the initial value for  the model when it
+<p><em>default</em> will be the initial value for the model when it
 is selected, or when an initial value is not otherwise specified.</p>
-<p><em>limits = [lb, ub]</em> are the hard limits on the parameter value, used to
+<p><em>limits ([lb, ub])</em> are the hard limits on the parameter value, used to
 limit the polydispersity density function.  In the fit, the parameter limits
 given to the fit are the limits  on the central value of the parameter.
 If there is polydispersity, it will evaluate parameter values outside
@@ -4182,7 +4167,7 @@ parameters that need to be handled in particular ways.  Much of the
 code is used to figure out what special parameters we have, where to
 find them in the P&#64;S model inputs and how to distribute them to the underlying
 P and S model calculators.</p>
-<p>The parameter packet received by the P&#64;S is a <code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code>
+<p>The parameter packet received by the P&#64;S is a <a class="reference internal" href="#sasmodels.details.CallDetails" title="sasmodels.details.CallDetails"><code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code></a>
 structure along with a data vector. The CallDetails structure indicates which
 parameters are polydisperse, the length of the distribution, and where to
 find it in the data vector.  The distributions are ordered from longest to
@@ -4339,6 +4324,24 @@ built into the model, and do not need an additional scale.</p>
 <dd><p>Structure factor modelling interaction between particles.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="sasmodels.product.ProductModel.dtype">
+<code class="descname">dtype</code><em class="property"> = None</em></dt>
+<dd><p>Model precision. This is not really relevant, since it is the
+individual P and S models that control the effective dtype,
+converting the q-vectors to the correct type when the kernels
+for each are created. Ideally this should be set to the more
+precise type to avoid loss of precision, but precision in q is
+not critical (single is good enough for our purposes), so it just
+uses the precision of the form factor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sasmodels.product.ProductModel.info">
+<code class="descname">info</code><em class="property"> = None</em></dt>
+<dd><p>Combined info plock for the product model</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="sasmodels.product.ProductModel.make_kernel">
 <code class="descname">make_kernel</code><span class="sig-paren">(</span><em>q_vectors</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/product.html#ProductModel.make_kernel"><span class="viewcode-link">[source]</span></a></dt>
@@ -4443,7 +4446,7 @@ See <a class="reference internal" href="#sasmodels.resolution.pinhole_resolution
 <p><em>qy_width</em> slit height in qy</p>
 <p><em>q_calc</em> is the list of points to calculate, or None if this should
 be estimated from the <em>q</em> and <em>q_width</em>.</p>
-<p>The <em>weight_matrix</em> is computed by <code class="xref py py-func docutils literal notranslate"><span class="pre">slit1d_resolution()</span></code></p>
+<p>The <em>weight_matrix</em> is computed by <a class="reference internal" href="#sasmodels.resolution.slit_resolution" title="sasmodels.resolution.slit_resolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">slit_resolution()</span></code></a></p>
 <dl class="method">
 <dt id="sasmodels.resolution.Slit1D.apply">
 <code class="descname">apply</code><span class="sig-paren">(</span><em>theory</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/resolution.html#Slit1D.apply"><span class="viewcode-link">[source]</span></a></dt>
@@ -5829,7 +5832,7 @@ for the individual shapes <strong>sasmodels</strong> also provides automatic sha
 polydispersity, angular dispersion and resolution convolution.  SESANS
 patterns can be computed for any model.</p>
 <p>Models can be written in python or in C.  C models can run on the GPU if
-OpenCL drivers are available.  See <code class="xref py py-mod docutils literal notranslate"><span class="pre">generate</span></code> for details on
+OpenCL drivers are available.  See <a class="reference internal" href="#module-sasmodels.generate" title="sasmodels.generate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">generate</span></code></a> for details on
 defining new models.</p>
 <dl class="function">
 <dt id="sasmodels.data_files">
@@ -5856,10 +5859,7 @@ used directly in setup(…,data_files=…) for setup.py.</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-sasmodels.alignment">sasmodels.alignment module</a></li>
 <li><a class="reference internal" href="#module-sasmodels.bumps_model">sasmodels.bumps_model module</a></li>
-<li><a class="reference internal" href="#module-sasmodels.compare">sasmodels.compare module</a><ul>
-<li><a class="reference internal" href="#program-description">Program description</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-sasmodels.compare">sasmodels.compare module</a></li>
 <li><a class="reference internal" href="#module-sasmodels.compare_many">sasmodels.compare_many module</a></li>
 <li><a class="reference internal" href="#module-sasmodels.conversion_table">sasmodels.conversion_table module</a></li>
 <li><a class="reference internal" href="#module-sasmodels.convert">sasmodels.convert module</a></li>

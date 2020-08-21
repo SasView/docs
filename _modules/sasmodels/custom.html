@@ -43,9 +43,9 @@
 <span class="sd">-------------</span>
 
 <span class="sd">This is a place holder for the custom models namespace.  When models are</span>
-<span class="sd">loaded from a file by :func:`generate.load_kernel_module` they are loaded</span>
-<span class="sd">as if they exist in *sasmodels.custom*.  This package needs to exist for this</span>
-<span class="sd">to occur without error.</span>
+<span class="sd">loaded from a file by :func:`sasmodels.generate.load_kernel_module` they are</span>
+<span class="sd">loaded as if they exist in *sasmodels.custom*.  This package needs to exist</span>
+<span class="sd">for this to occur without error.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
@@ -53,11 +53,20 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">basename</span><span class="p">,</span> <span class="n">splitext</span><span class="p">,</span> <span class="n">join</span> <span class="k">as</span> <span class="n">joinpath</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">dirname</span>
 
+<span class="c1"># pylint: disable=unused-import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+    <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">ModuleType</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="c1"># pylint: enable=unused-import</span>
+
+
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># Python 3.5 and up</span>
     <span class="kn">from</span> <span class="nn">importlib.util</span> <span class="k">import</span> <span class="n">spec_from_file_location</span><span class="p">,</span> <span class="n">module_from_spec</span>  <span class="c1"># type: ignore</span>
     <span class="k">def</span> <span class="nf">load_module_from_path</span><span class="p">(</span><span class="n">fullname</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="c1"># type: (str, str) -&gt; &quot;module&quot;</span>
+        <span class="c1"># type: (str, str) -&gt; ModuleType</span>
         <span class="sd">&quot;&quot;&quot;load module from *path* as *fullname*&quot;&quot;&quot;</span>
         <span class="n">spec</span> <span class="o">=</span> <span class="n">spec_from_file_location</span><span class="p">(</span><span class="n">fullname</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
         <span class="n">module</span> <span class="o">=</span> <span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
@@ -67,7 +76,7 @@
     <span class="c1"># CRUFT: python 2</span>
     <span class="kn">import</span> <span class="nn">imp</span>
 <div class="viewcode-block" id="load_module_from_path"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.custom.html#sasmodels.custom.load_module_from_path">[docs]</a>    <span class="k">def</span> <span class="nf">load_module_from_path</span><span class="p">(</span><span class="n">fullname</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="c1"># type: (str, str) -&gt; &quot;module&quot;</span>
+        <span class="c1"># type: (str, str) -&gt; ModuleType</span>
         <span class="sd">&quot;&quot;&quot;load module from *path* as *fullname*&quot;&quot;&quot;</span>
         <span class="c1"># Clear out old definitions, if any</span>
         <span class="k">if</span> <span class="n">fullname</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
@@ -78,11 +87,11 @@
         <span class="n">module</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="n">fullname</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">module</span></div>
 
-<span class="n">_MODULE_CACHE</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># type: Dict[str, Tuple(&quot;module&quot;, int)]</span>
+<span class="n">_MODULE_CACHE</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># type: Dict[str, Tuple[ModuleType, int]]</span>
 <span class="n">_MODULE_DEPENDS</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># type: Dict[str, List[str]]</span>
 <span class="n">_MODULE_DEPENDS_STACK</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># type: List[str]</span>
 <div class="viewcode-block" id="load_custom_kernel_module"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.custom.html#sasmodels.custom.load_custom_kernel_module">[docs]</a><span class="k">def</span> <span class="nf">load_custom_kernel_module</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="c1"># type: str -&gt; &quot;module&quot;</span>
+    <span class="c1"># type: (str) -&gt; ModuleType</span>
     <span class="sd">&quot;&quot;&quot;load SAS kernel from *path* as *sasmodels.custom.modelname*&quot;&quot;&quot;</span>
     <span class="c1"># Pull off the last .ext if it exists; there may be others</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
@@ -126,7 +135,7 @@
     <span class="k">return</span> <span class="n">_MODULE_CACHE</span><span class="p">[</span><span class="n">path</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="need_reload"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.custom.html#sasmodels.custom.need_reload">[docs]</a><span class="k">def</span> <span class="nf">need_reload</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="c1"># type: str -&gt; bool</span>
+    <span class="c1"># type: (str) -&gt; bool</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return True if any path dependencies have a timestamp newer than the time</span>
 <span class="sd">    when the path was most recently loaded.</span>

@@ -1,0 +1,210 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.sascalc.file_converter.FileConverterUtilities &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.sascalc.file_converter.FileConverterUtilities</h1><div class="highlight"><pre>
+<span></span><span class="c1"># pylint: disable=C0103, I1101</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with file loader specific static utilities.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.file_converter.nxcansas_writer</span> <span class="k">import</span> <span class="n">NXcanSASWriter</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.file_converter.bsl_loader</span> <span class="k">import</span> <span class="n">BSLLoader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.file_converter.otoko_loader</span> <span class="k">import</span> <span class="n">OTOKOLoader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.file_converter.cansas_writer</span> <span class="k">import</span> <span class="n">CansasWriter</span>
+
+<div class="viewcode-block" id="extract_ascii_data"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.FileConverterUtilities.extract_ascii_data">[docs]</a><span class="k">def</span> <span class="nf">extract_ascii_data</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts data from a single-column ASCII file</span>
+
+<span class="sd">    :param filename: The file to load data from</span>
+<span class="sd">    :return: A numpy array containing the extracted data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># Check if file is a BSL or OTOKO header file</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">bsl_metadata</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bsl_metadata</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Error parsing ASII data. </span><span class="si">{}</span><span class="s2"> looks like a BSL or OTOKO &quot;</span>
+                   <span class="s2">&quot;header file.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error reading </span><span class="si">{}</span><span class="s2">: Only one column of data is allowed&quot;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="n">is_float</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">is_float</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_float</span><span class="p">:</span>
+        <span class="n">end_char</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># If lines end with comma or semi-colon, trim the last character</span>
+        <span class="k">if</span> <span class="n">end_char</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Error reading </span><span class="si">{}</span><span class="s2">: Lines must end with a digit, comma &quot;</span>
+                   <span class="s2">&quot;or semi-colon&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_otoko_data"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.FileConverterUtilities.extract_otoko_data">[docs]</a><span class="k">def</span> <span class="nf">extract_otoko_data</span><span class="p">(</span><span class="n">qfile</span><span class="p">,</span> <span class="n">ifile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts data from a 1D OTOKO file</span>
+
+<span class="sd">    :param filename: The OTOKO file to load the data from</span>
+<span class="sd">    :return: A numpy array containing the extracted data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">OTOKOLoader</span><span class="p">(</span><span class="n">qfile</span><span class="p">,</span> <span class="n">ifile</span><span class="p">)</span>
+    <span class="n">otoko_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_otoko_data</span><span class="p">()</span>
+    <span class="n">qdata</span> <span class="o">=</span> <span class="n">otoko_data</span><span class="o">.</span><span class="n">q_axis</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">iqdata</span> <span class="o">=</span> <span class="n">otoko_data</span><span class="o">.</span><span class="n">data_axis</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qdata</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Q-Axis file has multiple frames. Only 1 frame is &quot;</span>
+               <span class="s2">&quot;allowed for the Q-Axis&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">qdata</span> <span class="o">=</span> <span class="n">qdata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">qdata</span><span class="p">,</span> <span class="n">iqdata</span></div>
+
+<div class="viewcode-block" id="convert_2d_data"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.FileConverterUtilities.convert_2d_data">[docs]</a><span class="k">def</span> <span class="nf">convert_2d_data</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper for the NX SAS writer call</span>
+<span class="sd">    Sets external metadata on the dataset first.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">w</span> <span class="o">=</span> <span class="n">NXcanSASWriter</span><span class="p">()</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="convert_to_cansas"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.FileConverterUtilities.convert_to_cansas">[docs]</a><span class="k">def</span> <span class="nf">convert_to_cansas</span><span class="p">(</span><span class="n">frame_data</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">single_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves an array of Data1D objects to a single CanSAS file with multiple</span>
+<span class="sd">    &lt;SasData&gt; elements, or to multiple CanSAS files, each with one</span>
+<span class="sd">    &lt;SasData&gt; element.</span>
+
+<span class="sd">    :param frame_data: If single_file is true, an array of Data1D</span>
+<span class="sd">        objects. If single_file is false, a dictionary of the</span>
+<span class="sd">        form *{frame_number: Data1D}*.</span>
+<span class="sd">    :param filepath: Where to save the CanSAS file</span>
+<span class="sd">    :param single_file: If true, array is saved as a single file,</span>
+<span class="sd">        if false, each item in the array is saved to it&#39;s own file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">CansasWriter</span><span class="p">()</span>
+    <span class="n">entry_attrs</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">run_name</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">entry_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">run_name</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">single_file</span><span class="p">:</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">frame_data</span><span class="p">,</span>
+                     <span class="n">sasentry_attrs</span><span class="o">=</span><span class="n">entry_attrs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Folder and base filename</span>
+        <span class="p">[</span><span class="n">group_path</span><span class="p">,</span> <span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">group_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># File extension</span>
+        <span class="k">for</span> <span class="n">frame_number</span><span class="p">,</span> <span class="n">frame_d</span> <span class="ow">in</span> <span class="n">frame_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Append frame number to base filename</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">group_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame_number</span><span class="p">)</span><span class="o">+</span><span class="n">ext</span><span class="p">)</span>
+            <span class="n">destination</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="p">[</span><span class="n">frame_d</span><span class="p">],</span>
+                         <span class="n">sasentry_attrs</span><span class="o">=</span><span class="n">entry_attrs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="toFloat"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.file_converter.html#sas.sascalc.file_converter.FileConverterUtilities.toFloat">[docs]</a><span class="k">def</span> <span class="nf">toFloat</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dumb string-&gt;float converter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

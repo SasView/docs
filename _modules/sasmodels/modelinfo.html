@@ -58,19 +58,20 @@
 <span class="c1"># Optional typing</span>
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="p">(</span>
+        <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span>
+        <span class="n">Mapping</span><span class="p">)</span>
     <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">ModuleType</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
     <span class="n">Limits</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
     <span class="c1">#LimitsOrChoice = Union[Limits, Tuple[Sequence[str]]]</span>
     <span class="n">ParameterDef</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Limits</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
-    <span class="n">ParameterSetUser</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span>
-    <span class="n">ParameterSet</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="n">ParameterSetUser</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span>
+    <span class="n">ParameterSet</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
     <span class="n">TestInput</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span>
     <span class="n">TestValue</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
     <span class="n">TestCondition</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ParameterSetUser</span><span class="p">,</span> <span class="n">TestInput</span><span class="p">,</span> <span class="n">TestValue</span><span class="p">]</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -170,6 +171,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;expected description to be a string&quot;</span><span class="p">)</span>
 
     <span class="c1"># Parameter id for name[n] does not include [n]</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[str]</span>
     <span class="k">if</span> <span class="s2">&quot;[&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected name[len] for vector parameter </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span>
@@ -226,7 +228,7 @@
         <span class="n">result</span> <span class="o">=</span> <span class="n">partable</span><span class="o">.</span><span class="n">defaults</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lookup</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">partable</span><span class="o">.</span><span class="n">kernel_parameters</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">partable</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">partable</span><span class="o">.</span><span class="n">defaults</span><span class="p">)</span>
         <span class="n">scalars</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lookup</span> <span class="ow">or</span> <span class="n">lookup</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">vectors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -234,20 +236,19 @@
         <span class="c1">#print(&quot;lookup&quot;, lookup)</span>
         <span class="c1">#print(&quot;scalars&quot;, scalars)</span>
         <span class="c1">#print(&quot;vectors&quot;, vectors)</span>
-        <span class="k">if</span> <span class="n">vectors</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">vectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                    <span class="c1"># support for the form</span>
-                    <span class="c1">#    dict(thickness=0, thickness2=50)</span>
-                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lookup</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">length</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-                        <span class="n">key</span> <span class="o">=</span> <span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scalars</span><span class="p">:</span>
-                            <span class="n">scalars</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># supoprt for the form</span>
-                    <span class="c1">#    dict(thickness=[20,10,3])</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                        <span class="n">scalars</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">vectors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                <span class="c1"># support for the form</span>
+                <span class="c1">#    dict(thickness=0, thickness2=50)</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lookup</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">length</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scalars</span><span class="p">:</span>
+                        <span class="n">scalars</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># supoprt for the form</span>
+                <span class="c1">#    dict(thickness=[20,10,3])</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                    <span class="n">scalars</span><span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">scalars</span><span class="p">)</span>
         <span class="c1">#print(&quot;expanded&quot;, result)</span>
 
@@ -260,7 +261,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_par</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="n">new_par</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">new_par</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span></div>
+    <span class="n">new_par</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span>
+    <span class="k">return</span> <span class="n">new_par</span></div>
 
 <div class="viewcode-block" id="suffix_parameter"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.suffix_parameter">[docs]</a><span class="k">def</span> <span class="nf">suffix_parameter</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
     <span class="c1"># type: (Parameter, str) -&gt; Parameter</span>
@@ -270,7 +272,8 @@
     <span class="n">new_par</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">par</span><span class="p">)</span>
     <span class="c1"># If name has the form x[n], replace with x_suffix[n]</span>
     <span class="n">new_par</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">suffix</span> <span class="o">+</span> <span class="n">par</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">par</span><span class="o">.</span><span class="n">id</span><span class="p">):]</span>
-    <span class="n">new_par</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">suffix</span></div>
+    <span class="n">new_par</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">suffix</span>
+    <span class="k">return</span> <span class="n">new_par</span></div>
 
 <div class="viewcode-block" id="Parameter"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.Parameter">[docs]</a><span class="k">class</span> <span class="nc">Parameter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -288,10 +291,10 @@
 <span class="sd">    *units* should be one of *degrees* for angles, *Ang* for lengths,</span>
 <span class="sd">    *1e-6/Ang^2* for SLDs.</span>
 
-<span class="sd">    *default value* will be the initial value for  the model when it</span>
+<span class="sd">    *default* will be the initial value for the model when it</span>
 <span class="sd">    is selected, or when an initial value is not otherwise specified.</span>
 
-<span class="sd">    *limits = [lb, ub]* are the hard limits on the parameter value, used to</span>
+<span class="sd">    *limits ([lb, ub])* are the hard limits on the parameter value, used to</span>
 <span class="sd">    limit the polydispersity density function.  In the fit, the parameter limits</span>
 <span class="sd">    given to the fit are the limits  on the central value of the parameter.</span>
 <span class="sd">    If there is polydispersity, it will evaluate parameter values outside</span>
@@ -354,7 +357,7 @@
 <span class="sd">    parameter table is built using :func:`make_parameter_table` and</span>
 <span class="sd">    :func:`parse_parameter` therein.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span>
                  <span class="n">ptype</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="c1"># type: (str, str, float, Limits, str, str) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="c1"># type: str</span>
@@ -530,11 +533,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">check_angles</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ParameterTable.set_zero_background"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ParameterTable.set_zero_background">[docs]</a>    <span class="k">def</span> <span class="nf">set_zero_background</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># type: () -&gt; None</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default background to zero for this model.  This is done for</span>
 <span class="sd">        structure factor models.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># type: () -&gt; None</span>
         <span class="c1"># Make sure background is the second common parameter.</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;background&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">common_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -605,7 +608,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_set_vector_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># type: () -&gt; List[str]</span>
+        <span class="c1"># type: () -&gt; None</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Walk the list of kernel parameters, setting the length field of the</span>
 <span class="sd">        vector parameters from the upper limit of the reference parameter.</span>
@@ -933,7 +936,7 @@
 
 
 <div class="viewcode-block" id="make_model_info"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.make_model_info">[docs]</a><span class="k">def</span> <span class="nf">make_model_info</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">):</span>
-    <span class="c1"># type: (module) -&gt; ModelInfo</span>
+    <span class="c1"># type: (ModuleType) -&gt; ModelInfo</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract the model definition from the loaded kernel module.</span>
 
@@ -1084,7 +1087,7 @@
     <span class="n">base</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: ParameterTable</span>
     <span class="c1">#: Parameter translation code to convert from *parameters* table from</span>
     <span class="c1">#: caller to the *base* table used to evaluate the model.</span>
-    <span class="n">translation</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: str</span>
+    <span class="n">translation</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Optional[str]</span>
     <span class="c1">#: Composition is None if this is an independent model, or it is a</span>
     <span class="c1">#: tuple with comoposition type (&#39;product&#39; or &#39;misture&#39;) and a list of</span>
     <span class="c1">#: :class:`ModelInfo` blocks for the composed objects.  This allows us</span>
@@ -1094,7 +1097,7 @@
     <span class="c1">#: *sphere*hardsphere* or *cylinder+sphere*.</span>
     <span class="n">composition</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Optional[Tuple[str, List[ModelInfo]]]</span>
     <span class="c1">#: Different variants require different parameters.  In order to show</span>
-    <span class="c1">#: just the parameters needed for the variant selected by :attr:`control`,</span>
+    <span class="c1">#: just the parameters needed for the variant selected,</span>
     <span class="c1">#: you should provide a function *hidden(control) -&gt; set([&#39;a&#39;, &#39;b&#39;, ...])*</span>
     <span class="c1">#: indicating which parameters need to be hidden.  For multiplicity</span>
     <span class="c1">#: models, you need to use the complete name of the parameter, including</span>
@@ -1105,7 +1108,7 @@
     <span class="c1">#: Doc string from the top of the model file.  This should be formatted</span>
     <span class="c1">#: using ReStructuredText format, with latex markup in &quot;.. math&quot;</span>
     <span class="c1">#: environments, or in dollar signs.  This will be automatically</span>
-    <span class="c1">#: extracted to a .rst file by :func:`generate.make_docs`, then</span>
+    <span class="c1">#: extracted to a .rst file by :func:`.generate.make_doc`, then</span>
     <span class="c1">#: converted to HTML or PDF by Sphinx.</span>
     <span class="n">docs</span> <span class="o">=</span> <span class="kc">None</span>             <span class="c1"># type: str</span>
     <span class="c1">#: Location of the model description in the documentation.  This takes the</span>
@@ -1150,7 +1153,7 @@
     <span class="c1">#: Returns the form volume for python-based models.  Form volume is needed</span>
     <span class="c1">#: for volume normalization in the polydispersity integral.  If no</span>
     <span class="c1">#: parameters are *volume* parameters, then form volume is not needed.</span>
-    <span class="c1">#: For C-based models, (with :attr:`sources` defined, or with :attr:`Iq`</span>
+    <span class="c1">#: For C-based models, (with :attr:`source` defined, or with :attr:`Iq`</span>
     <span class="c1">#: defined using a string containing C code), form_volume must also be</span>
     <span class="c1">#: C code, either defined as a string, or in the sources.</span>
     <span class="n">form_volume</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Union[None, str, Callable[[np.ndarray], float]]</span>
@@ -1158,7 +1161,7 @@
     <span class="c1">#: shell volume are needed for volume normalization in the polydispersity</span>
     <span class="c1">#: integral and structure interactions for hollow shapes.  If no</span>
     <span class="c1">#: parameters are *volume* parameters, then shell volume is not needed.</span>
-    <span class="c1">#: For C-based models, (with :attr:`sources` defined, or with :attr:`Iq`</span>
+    <span class="c1">#: For C-based models, (with :attr:`source` defined, or with :attr:`Iq`</span>
     <span class="c1">#: defined using a string containing C code), shell_volume must also be</span>
     <span class="c1">#: C code, either defined as a string, or in the sources.</span>
     <span class="n">shell_volume</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># type: Union[None, str, Callable[[np.ndarray], float]]</span>
@@ -1173,12 +1176,12 @@
     <span class="c1">#: the C function, including the return statement.  This function takes</span>
     <span class="c1">#: values for *q* and each of the parameters as separate *double* values</span>
     <span class="c1">#: (which may be converted to float or long double by sasmodels).  All</span>
-    <span class="c1">#: source code files listed in :attr:`sources` will be loaded before the</span>
+    <span class="c1">#: source code files listed in :attr:`source` will be loaded before the</span>
     <span class="c1">#: *Iq* function is defined.  If *Iq* is not present, then sources should</span>
     <span class="c1">#: define *static double Iq(double q, double a, double b, ...)* which</span>
     <span class="c1">#: will return *I(q, a, b, ...)*.  Multiplicity parameters are sent as</span>
     <span class="c1">#: pointers to doubles.  Constants in floating point expressions should</span>
-    <span class="c1">#: include the decimal point. See :mod:`generate` for more details. If</span>
+    <span class="c1">#: include the decimal point. See :mod:`.generate` for more details. If</span>
     <span class="c1">#: *have_Fq* is True, then Iq should return an interleaved array of</span>
     <span class="c1">#: $[\sum F(q_1), \sum F^2(q_1), \ldots, \sum F(q_n), \sum F^2(q_n)]$.</span>
     <span class="n">Iq</span> <span class="o">=</span> <span class="kc">None</span>               <span class="c1"># type: Union[None, str, Callable[[...], np.ndarray]]</span>
@@ -1206,7 +1209,7 @@
     <span class="c1">#: Line numbers for symbols defining C code</span>
     <span class="n">lineno</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># type: Dict[str, int]</span>
     <span class="c1">#: The set of tests that must pass.  The format of the tests is described</span>
-    <span class="c1">#: in :mod:`model_test`.</span>
+    <span class="c1">#: in :mod:`.model_test`.</span>
     <span class="n">tests</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># type: List[TestCondition]</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

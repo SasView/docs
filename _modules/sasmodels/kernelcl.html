@@ -44,21 +44,21 @@
 <span class="sd">TODO: docs are out of date</span>
 
 <span class="sd">There should be a single GPU environment running on the system.  This</span>
-<span class="sd">environment is constructed on the first call to :func:`env`, and the</span>
+<span class="sd">environment is constructed on the first call to :func:`environment`, and the</span>
 <span class="sd">same environment is returned on each call.</span>
 
 <span class="sd">After retrieving the environment, the next step is to create the kernel.</span>
-<span class="sd">This is done with a call to :meth:`GpuEnvironment.make_kernel`, which</span>
+<span class="sd">This is done with a call to :meth:`GpuEnvironment.compile_program`, which</span>
 <span class="sd">returns the type of data used by the kernel.</span>
 
-<span class="sd">Next a :class:`GpuData` object should be created with the correct kind</span>
+<span class="sd">Next a :class:`GpuInput` object should be created with the correct kind</span>
 <span class="sd">of data.  This data object can be used by multiple kernels, for example,</span>
 <span class="sd">if the target model is a weighted sum of multiple kernels.  The data</span>
 <span class="sd">should include any extra evaluation points required to compute the proper</span>
 <span class="sd">data smearing.  This need not match the square grid for 2D data if there</span>
 <span class="sd">is an index saying which q points are active.</span>
 
-<span class="sd">Together the GpuData, the program, and a device form a :class:`GpuKernel`.</span>
+<span class="sd">Together the GpuInput, the program, and a device form a :class:`GpuKernel`.</span>
 <span class="sd">This kernel is used during fitting, receiving new sets of parameters and</span>
 <span class="sd">evaluating them.  The output value is stored in an output buffer on the</span>
 <span class="sd">devices, where it can be combined with other structure factors and form</span>
@@ -132,7 +132,7 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
     <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
     <span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">CallDetails</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -154,7 +154,7 @@
 
 
 <div class="viewcode-block" id="fix_pyopencl_include"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.kernelcl.fix_pyopencl_include">[docs]</a><span class="k">def</span> <span class="nf">fix_pyopencl_include</span><span class="p">():</span>
-    <span class="c1"># type: (None) -&gt; None</span>
+    <span class="c1"># type: () -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Monkey patch pyopencl to allow spaces in include file path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -446,7 +446,7 @@
 <span class="sd">    GPU wrapper for a single model.</span>
 
 <span class="sd">    *source* and *model_info* are the model source and interface as returned</span>
-<span class="sd">    from :func:`generate.make_source` and :func:`generate.make_model_info`.</span>
+<span class="sd">    from :func:`.generate.make_source` and :func:`.modelinfo.make_model_info`.</span>
 
 <span class="sd">    *dtype* is the desired model precision.  Any numpy dtype for single</span>
 <span class="sd">    or double precision floats will do, such as &#39;f&#39;, &#39;float32&#39; or &#39;single&#39;</span>
@@ -526,9 +526,9 @@
 
 <span class="sd">    *dtype* is the data type for the q vectors. The data type should be</span>
 <span class="sd">    set to match that of the kernel, which is an attribute of</span>
-<span class="sd">    :class:`GpuProgram`.  Note that not all kernels support double</span>
+<span class="sd">    :class:`GpuModel`.  Note that not all kernels support double</span>
 <span class="sd">    precision, so even if the program was created for double precision,</span>
-<span class="sd">    the *GpuProgram.dtype* may be single precision.</span>
+<span class="sd">    the *GpuModel.dtype* may be single precision.</span>
 
 <span class="sd">    Call :meth:`release` when complete.  Even if not called directly, the</span>
 <span class="sd">    buffer will be released when the data object is freed.</span>
@@ -593,8 +593,8 @@
 
 <span class="sd">    *model* is the GpuModel object to call</span>
 
-<span class="sd">    The kernel is derived from :class:`Kernel`, providing the</span>
-<span class="sd">    :meth:`call_kernel` method to evaluate the kernel for a given set of</span>
+<span class="sd">    The kernel is derived from :class:`.kernel.Kernel`, providing the</span>
+<span class="sd">    *_call_kernel()* method to evaluate the kernel for a given set of</span>
 <span class="sd">    parameters.  Because of the need to move the q values to the GPU before</span>
 <span class="sd">    evaluation, the kernel is instantiated for a particular set of q vectors,</span>
 <span class="sd">    and can be called many times without transfering q each time.</span>
@@ -607,7 +607,7 @@
     <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: np.dtype</span>
     <span class="c1">#: Kernel dimensions (1d or 2d).</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># type: str</span>
-    <span class="c1">#: Calculation results, updated after each call to :meth:`_call_kernel`.</span>
+    <span class="c1">#: Calculation results, updated after each call to *_call_kernel()*.</span>
     <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: np.ndarray</span>
     <span class="n">q_input</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: GpuInput</span>
     <span class="n">_result_b</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: cl.Bufferj</span>
@@ -640,7 +640,7 @@
 
     <span class="k">def</span> <span class="nf">_call_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span>
                      <span class="n">radius_effective_mode</span><span class="p">):</span>
-        <span class="c1"># type: (CallDetails, np.ndarray, float, bool, int) -&gt; np.ndarray</span>
+        <span class="c1"># type: (CallDetails, np.ndarray, float, bool, int) -&gt; None</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">environment</span><span class="p">()</span>
         <span class="n">queue</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">queue</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

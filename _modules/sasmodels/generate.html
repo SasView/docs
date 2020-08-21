@@ -147,7 +147,7 @@
 <span class="sd">    cylinder models).  The expression can call C functions, including</span>
 <span class="sd">    those defined in your model file.</span>
 
-<span class="sd">A :class:`modelinfo.ModelInfo` structure is constructed from the kernel meta</span>
+<span class="sd">A :class:`.modelinfo.ModelInfo` structure is constructed from the kernel meta</span>
 <span class="sd">data and returned to the caller.</span>
 
 <span class="sd">Valid inputs should be identified by the *valid* expression.</span>
@@ -182,10 +182,10 @@
 <span class="sd">    FLOAT_SIZE is the number of bytes in the converted variables</span>
 
 <span class="sd">:func:`load_kernel_module` loads the model definition file and</span>
-<span class="sd">:func:`modelinfo.make_model_info` parses it. :func:`make_source`</span>
+<span class="sd">:func:`.modelinfo.make_model_info` parses it. :func:`make_source`</span>
 <span class="sd">converts C-based model definitions to C source code, including the</span>
 <span class="sd">polydispersity integral.  :func:`model_sources` returns the list of</span>
-<span class="sd">source files the model depends on, and :func:`timestamp` returns</span>
+<span class="sd">source files the model depends on, and :func:`ocl_timestamp` returns</span>
 <span class="sd">the latest time stamp amongst the source files (so you can check if</span>
 <span class="sd">the model needs to be rebuilt).</span>
 
@@ -215,7 +215,8 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Dict</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+    <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">ModuleType</span>
     <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
@@ -412,6 +413,7 @@
 <span class="sd">    changed file or dependency.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: what about on-the-fly derived models---tag name with crc32</span>
+    <span class="c1"># TODO: no longer used, and appears to be identical to ocl_timestamp</span>
     <span class="c1"># TODO: fails DRY; templates appear two places.</span>
     <span class="n">model_templates</span> <span class="o">=</span> <span class="p">[</span><span class="n">joinpath</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
                        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;kernel_header.c&#39;</span><span class="p">,</span> <span class="s1">&#39;kernel_iq.c&#39;</span><span class="p">)]</span>
@@ -1138,7 +1140,7 @@
 
 
 <span class="k">def</span> <span class="nf">_kernels</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">call_iq</span><span class="p">,</span> <span class="n">clear_iq</span><span class="p">,</span> <span class="n">call_iqxy</span><span class="p">,</span> <span class="n">clear_iqxy</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="c1"># type: ([str,str], str, str, str) -&gt; List[str]</span>
+    <span class="c1"># type: (Dict[str, str], str, str, str, str, str) -&gt; List[str]</span>
     <span class="n">code</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="n">iq</span> <span class="o">=</span> <span class="p">[</span>
@@ -1177,13 +1179,13 @@
 
 
 <div class="viewcode-block" id="load_kernel_module"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.generate.load_kernel_module">[docs]</a><span class="k">def</span> <span class="nf">load_kernel_module</span><span class="p">(</span><span class="n">model_name</span><span class="p">):</span>
-    <span class="c1"># type: (str) -&gt; module</span>
+    <span class="c1"># type: (str) -&gt; ModuleType</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the kernel module named in *model_name*.</span>
 
 <span class="sd">    If the name ends in *.py* then load it as a custom model using</span>
-<span class="sd">    :func:`sasmodels.custom.load_custom_kernel_module`, otherwise</span>
-<span class="sd">    load it from :mod:`sasmodels.models`.</span>
+<span class="sd">    :func:`.custom.__init__.load_custom_kernel_module`, otherwise</span>
+<span class="sd">    load it as a builtin from *sasmodels.models*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">model_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">):</span>
         <span class="n">kernel_module</span> <span class="o">=</span> <span class="n">load_custom_kernel_module</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>

@@ -44,7 +44,7 @@
 <span class="sd">Calls the kernel with a vector of $q$ values for a single parameter set.</span>
 <span class="sd">Polydispersity is supported by looping over different parameter sets and</span>
 <span class="sd">summing the results.  The interface to :class:`PyModel` matches those for</span>
-<span class="sd">:class:`kernelcl.GpuModel` and :class:`kerneldll.DllModel`.</span>
+<span class="sd">:class:`.kernelcl.GpuModel` and :class:`.kerneldll.DllModel`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
@@ -64,12 +64,11 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
+    <span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">CallDetails</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">details</span>
-    <span class="n">DType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -110,7 +109,7 @@
 
 <span class="sd">    *dtype* is the data type for the q vectors. The data type should be</span>
 <span class="sd">    set to match that of the kernel, which is an attribute of</span>
-<span class="sd">    :class:`GpuProgram`.  Note that not all kernels support double</span>
+<span class="sd">    :class:`PyModel`.  Note that not all kernels support double</span>
 <span class="sd">    precision, so even if the program was created for double precision,</span>
 <span class="sd">    the *GpuProgram.dtype* may be single precision.</span>
 
@@ -156,7 +155,7 @@
 <span class="sd">    Call :meth:`release` when done with the kernel instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">q_input</span><span class="p">):</span>
-        <span class="c1"># type: (callable, ModelInfo, List[np.ndarray]) -&gt; None</span>
+        <span class="c1"># type: (ModelInfo, List[np.ndarray]) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">model_info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span> <span class="o">=</span> <span class="n">q_input</span>
@@ -220,7 +219,7 @@
                         <span class="k">else</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">mode</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_call_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span> <span class="n">radius_effective_mode</span><span class="p">):</span>
-        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool) -&gt; np.ndarray</span>
+        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool) -&gt; None</span>
         <span class="k">if</span> <span class="n">magnetic</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Magnetism not implemented for pure python models&quot;</span><span class="p">)</span>
         <span class="c1">#print(&quot;Calling python kernel&quot;)</span>
@@ -240,16 +239,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">q_input</span> <span class="o">=</span> <span class="kc">None</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">_loops</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span>    <span class="c1"># type: np.ndarray</span>
-           <span class="n">form</span><span class="p">,</span>          <span class="c1"># type: Callable[[], np.ndarray]</span>
-           <span class="n">form_volume</span><span class="p">,</span>   <span class="c1"># type: Callable[[], float]</span>
-           <span class="n">form_radius</span><span class="p">,</span>   <span class="c1"># type: Callable[[], float]</span>
-           <span class="n">nq</span><span class="p">,</span>            <span class="c1"># type: int</span>
-           <span class="n">call_details</span><span class="p">,</span>  <span class="c1"># type: details.CallDetails</span>
-           <span class="n">values</span><span class="p">,</span>        <span class="c1"># type: np.ndarray</span>
-           <span class="n">cutoff</span><span class="p">,</span>        <span class="c1"># type: float</span>
-          <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; None</span>
+<span class="k">def</span> <span class="nf">_loops</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">form_volume</span><span class="p">,</span> <span class="n">form_radius</span><span class="p">,</span> <span class="n">nq</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span>
+           <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">):</span>
+    <span class="c1"># type: (np.ndarray, Callable[[], np.ndarray], Callable[[], float], Callable[[], float], int, CallDetails, np.ndarray, float) -&gt; None</span>
     <span class="c1">################################################################</span>
     <span class="c1">#                                                              #</span>
     <span class="c1">#   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   #</span>

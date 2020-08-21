@@ -50,6 +50,8 @@
 
 <span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.AssociatedComboBox</span> <span class="k">import</span> <span class="n">AssociatedComboBox</span>
 
+<span class="kn">from</span> <span class="nn">sas.sascalc.fit.expression</span> <span class="k">import</span> <span class="n">check_constraints</span>
+
 <span class="n">model_header_captions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Parameter&#39;</span><span class="p">,</span> <span class="s1">&#39;Value&#39;</span><span class="p">,</span> <span class="s1">&#39;Min&#39;</span><span class="p">,</span> <span class="s1">&#39;Max&#39;</span><span class="p">,</span> <span class="s1">&#39;Units&#39;</span><span class="p">]</span>
 
 <span class="n">model_header_tooltips</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Select parameter for fitting&#39;</span><span class="p">,</span>
@@ -639,7 +641,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">theory_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_data</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">res_name</span> <span class="o">=</span> <span class="n">reference_data</span><span class="o">.</span><span class="n">filename</span> <span class="k">if</span> <span class="n">reference_data</span><span class="o">.</span><span class="n">filename</span> <span class="k">else</span> <span class="n">reference_data</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">res_name</span> <span class="o">=</span> <span class="n">reference_data</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">reference_data</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">reference_data</span><span class="o">.</span><span class="n">filename</span>
     <span class="n">residuals</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Residuals for &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">theory_name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="n">res_name</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
     <span class="n">residuals</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">residuals</span><span class="o">.</span><span class="n">name</span>
     <span class="n">residuals</span><span class="o">.</span><span class="n">ytransform</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span>
@@ -929,6 +931,36 @@
             <span class="n">has_poly</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">break</span>
     <span class="k">return</span> <span class="n">has_poly</span></div>
+
+<div class="viewcode-block" id="checkConstraints"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingUtilities.checkConstraints">[docs]</a><span class="k">def</span> <span class="nf">checkConstraints</span><span class="p">(</span><span class="n">symtab</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+    <span class="c1"># type: (Dict[str, float], Sequence[Tuple[str, str]]) -&gt; str</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compile and evaluate the constraints in the context of the initial values</span>
+<span class="sd">    and return the list of errors.</span>
+
+<span class="sd">    Errors are returned as an html string where errors are tagged with &lt;b&gt;</span>
+<span class="sd">    markups:</span>
+<span class="sd">    Unknown symbol: tags unknown symbols in *constraints*</span>
+<span class="sd">    Syntax error: tags the beginning of a syntax error in *constraints*</span>
+<span class="sd">    Cyclic dependency: tags comma separated parameters that have</span>
+<span class="sd">    cyclic dependency</span>
+
+<span class="sd">    The errors are wrapped in a &lt;div class = &quot;error&quot;&gt; and a style header is</span>
+<span class="sd">    added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Note: dict(constraints) will choose the latest definition if</span>
+    <span class="c1"># there are duplicates.</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="s2">&quot;&lt;br&gt;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">check_constraints</span><span class="p">(</span><span class="n">symtab</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">constraints</span><span class="p">),</span>
+                                           <span class="n">html</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="c1"># wrap everything in &lt;div class = &quot;error&quot;&gt;</span>
+    <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="s2">&quot;&lt;div class = </span><span class="se">\&quot;</span><span class="s2">error</span><span class="se">\&quot;</span><span class="s2">&gt;&quot;</span> <span class="o">+</span> <span class="n">errors</span> <span class="o">+</span> <span class="s2">&quot;&lt;/div&gt;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;&lt;style type=</span><span class="se">\&quot;</span><span class="s2">text/css</span><span class="se">\&quot;</span><span class="s2">&gt; div.error b { &quot;</span>\
+                 <span class="s2">&quot;font-weight: normal; color:red;}&lt;/style&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">header</span> <span class="o">+</span> <span class="n">errors</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
 </pre></div>
 
           </div>

@@ -47,7 +47,7 @@
 <span class="sd">list of polydisperse parameters, the number of points in the polydispersity</span>
 <span class="sd">weight distribution, and which parameter is the &quot;theta&quot; parameter for</span>
 <span class="sd">polar coordinate integration.  The :class:`CallDetails` object maintains</span>
-<span class="sd">this data.  Use :func:`build_details` to build a *details* object which</span>
+<span class="sd">this data.  Use :func:`make_details` to build a *details* object which</span>
 <span class="sd">can be passed to one of the computational kernels.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -71,11 +71,10 @@
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Sequence</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span><span class="p">,</span> <span class="n">ParameterTable</span>
+    <span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">Kernel</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ParameterTable</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 
@@ -261,10 +260,8 @@
 
 
 <span class="n">ZEROS</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mf">0.</span><span class="p">]</span><span class="o">*</span><span class="mi">31</span><span class="p">)</span>
-<div class="viewcode-block" id="make_kernel_args"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.details.make_kernel_args">[docs]</a><span class="k">def</span> <span class="nf">make_kernel_args</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="c1"># type: Kernel</span>
-                     <span class="n">mesh</span>    <span class="c1"># type: Tuple[List[np.ndarray], List[np.ndarray]]</span>
-                    <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; Tuple[CallDetails, np.ndarray, bool]</span>
+<div class="viewcode-block" id="make_kernel_args"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.details.make_kernel_args">[docs]</a><span class="k">def</span> <span class="nf">make_kernel_args</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">mesh</span><span class="p">):</span>
+    <span class="c1"># type: (Kernel, Tuple[List[np.ndarray], List[np.ndarray]]) -&gt; Tuple[CallDetails, np.ndarray, bool]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts (value, dispersity, weight) for each parameter into kernel pars.</span>
 
@@ -292,11 +289,8 @@
     <span class="c1">#print(&quot;data&quot;, data)</span>
     <span class="k">return</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">is_magnetic</span></div>
 
-<div class="viewcode-block" id="correct_theta_weights"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.details.correct_theta_weights">[docs]</a><span class="k">def</span> <span class="nf">correct_theta_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="c1"># type: ParameterTable</span>
-                          <span class="n">dispersity</span><span class="p">,</span> <span class="c1"># type: Sequence[np.ndarray]</span>
-                          <span class="n">weights</span>     <span class="c1"># type: Sequence[np.ndarray]</span>
-                         <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; Sequence[np.ndarray]</span>
+<div class="viewcode-block" id="correct_theta_weights"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.details.correct_theta_weights">[docs]</a><span class="k">def</span> <span class="nf">correct_theta_weights</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">dispersity</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="c1"># type: (ParameterTable, Sequence[np.ndarray], Sequence[np.ndarray]) -&gt; Sequence[np.ndarray]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    **Deprecated** Theta weights will be computed in the kernel wrapper if</span>
 <span class="sd">    they are needed.</span>
@@ -348,7 +342,7 @@
 
 
 <div class="viewcode-block" id="dispersion_mesh"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.details.dispersion_mesh">[docs]</a><span class="k">def</span> <span class="nf">dispersion_mesh</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">mesh</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo) -&gt; Tuple[List[np.ndarray], List[np.ndarray]]</span>
+    <span class="c1"># type: (ModelInfo, List[Tuple[float, np.ndarray, np.ndarray]]) -&gt; Tuple[List[np.ndarray], List[np.ndarray]]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a mesh grid of dispersion parameters and weights.</span>
 

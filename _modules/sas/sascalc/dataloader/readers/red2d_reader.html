@@ -49,7 +49,6 @@
 <span class="c1">#copyright 2008, University of Tennessee</span>
 <span class="c1">######################################################################</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -265,7 +264,9 @@
             <span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data_point</span><span class="p">[(</span><span class="mi">4</span> <span class="o">+</span> <span class="n">ver</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">col_num</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="n">ver</span><span class="p">):</span>
             <span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_point</span><span class="p">[(</span><span class="mi">5</span> <span class="o">+</span> <span class="n">ver</span><span class="p">)]</span>
-        <span class="c1">#if col_num &gt; (6 + ver): mask[data_point[(6 + ver)] &lt; 1] = False</span>
+        <span class="c1"># Column &#39;6 + ver&#39; is the shadow factor value. A separate mask column</span>
+        <span class="c1">#   was added to account for self-drawn masks.</span>
+        <span class="c1"># if col_num &gt; (6 + ver): mask[data_point[(6 + ver)] &lt; 1] = False</span>
         <span class="k">if</span> <span class="n">col_num</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">7</span> <span class="o">+</span> <span class="n">ver</span><span class="p">):</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data_point</span><span class="p">[(</span><span class="mi">7</span> <span class="o">+</span> <span class="n">ver</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
         <span class="n">q_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qx_data</span><span class="o">*</span><span class="n">qx_data</span><span class="o">+</span><span class="n">qy_data</span><span class="o">*</span><span class="n">qy_data</span><span class="o">+</span><span class="n">qz_data</span><span class="o">*</span><span class="n">qz_data</span><span class="p">)</span>
@@ -276,30 +277,21 @@
         <span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">qy_data</span><span class="p">)</span>
         <span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">qy_data</span><span class="p">)</span>
 
-        <span class="c1">## calculate the range of the qx and qy_data</span>
-        <span class="n">x_size</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span>
-        <span class="n">y_size</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span>
+        <span class="c1"># Find unique Qx and Qy values for data binning and visualization</span>
+        <span class="c1"># len(x_bins) * len(y_bins) ~= len(qx_data) ~= len(qy_data)</span>
+        <span class="n">x_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">qx_data</span><span class="p">)</span>
+        <span class="n">y_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">qy_data</span><span class="p">)</span>
+        <span class="c1"># For non-uniform qx_data and/or qy_data</span>
+        <span class="c1">#  Cases: Rotated detectors, floating point variations</span>
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_bins</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_bins</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">qx_data</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># qx_data increases along rows =&gt; travel along a single pixel line</span>
+            <span class="n">num_qx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">qx_data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">&lt;</span> <span class="n">qx_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="kc">True</span><span class="p">)))</span>
+            <span class="n">x_bins</span> <span class="o">=</span> <span class="n">qx_data</span><span class="p">[:</span><span class="n">num_qx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># qy_data increases along columns =&gt; transpose qx_data shape</span>
+            <span class="n">qy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">qy_data</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qx_data</span><span class="p">)</span><span class="o">//</span><span class="nb">len</span><span class="p">(</span><span class="n">x_bins</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_bins</span><span class="p">)))</span>
+            <span class="n">y_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">qy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-        <span class="c1"># calculate the number of pixels in the each axes</span>
-        <span class="n">npix_y</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
-        <span class="n">npix_x</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="n">npix_y</span><span class="p">)</span>
-
-        <span class="c1"># calculate the size of bins</span>
-        <span class="n">xstep</span> <span class="o">=</span> <span class="n">x_size</span> <span class="o">/</span> <span class="p">(</span><span class="n">npix_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">ystep</span> <span class="o">=</span> <span class="n">y_size</span> <span class="o">/</span> <span class="p">(</span><span class="n">npix_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="c1"># store x and y axis bin centers in q space</span>
-        <span class="n">x_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">+</span> <span class="n">xstep</span><span class="p">,</span> <span class="n">xstep</span><span class="p">)</span>
-        <span class="n">y_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">+</span> <span class="n">ystep</span><span class="p">,</span> <span class="n">ystep</span><span class="p">)</span>
-
-        <span class="c1"># get the limits of q values</span>
-        <span class="n">xmin</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">-</span> <span class="n">xstep</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="n">xmax</span> <span class="o">=</span> <span class="n">xmax</span> <span class="o">+</span> <span class="n">xstep</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="n">ymin</span> <span class="o">=</span> <span class="n">ymin</span> <span class="o">-</span> <span class="n">ystep</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="n">ymax</span> <span class="o">=</span> <span class="n">ymax</span> <span class="o">+</span> <span class="n">ystep</span> <span class="o">/</span> <span class="mi">2</span>
-
-        <span class="c1">#Store data in outputs</span>
-        <span class="c1">#TODO: Check the lengths</span>
+        <span class="c1"># Store data in outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">err_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
@@ -332,22 +324,18 @@
         <span class="c1"># optional data: if all of dq data == 0, do not pass to output</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dqx_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">qx_data</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dqx_data</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># if no dqx_data, do not pass dqy_data.</span>
-            <span class="c1">#(1 axis dq is not supported yet).</span>
+            <span class="c1"># (1 axis dq is not supported yet).</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dqy_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">qy_data</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dqy_data</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Currently we do not support dq parr, perp.</span>
-                <span class="c1"># tranfer the comp. to cartesian coord. for newer version.</span>
+                <span class="c1"># transfer the comp. to cartesian coord. for newer version.</span>
                 <span class="k">if</span> <span class="n">ver</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">diag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qx_data</span> <span class="o">*</span> <span class="n">qx_data</span> <span class="o">+</span> <span class="n">qy_data</span> <span class="o">*</span> <span class="n">qy_data</span><span class="p">)</span>
                     <span class="n">cos_th</span> <span class="o">=</span> <span class="n">qx_data</span> <span class="o">/</span> <span class="n">diag</span>
                     <span class="n">sin_th</span> <span class="o">=</span> <span class="n">qy_data</span> <span class="o">/</span> <span class="n">diag</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dqx_data</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">)</span> <span class="o">*</span> \
-                                                 <span class="p">(</span><span class="n">dqx_data</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">)</span> \
-                                                 <span class="o">+</span> <span class="p">(</span><span class="n">dqy_data</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">)</span> <span class="o">*</span> \
-                                                  <span class="p">(</span><span class="n">dqy_data</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dqx_data</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">)</span> <span class="o">*</span> \
-                                                 <span class="p">(</span><span class="n">dqx_data</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">)</span> \
-                                                 <span class="o">+</span> <span class="p">(</span><span class="n">dqy_data</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">)</span> <span class="o">*</span> \
-                                                  <span class="p">(</span><span class="n">dqy_data</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">dqx_data</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dqy_data</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">dqx_data</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dqy_data</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">dqx_data</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">dqy_data</span>

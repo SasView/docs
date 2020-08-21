@@ -53,7 +53,7 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
@@ -89,8 +89,35 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiated model for the compute engine, applied to a particular *q*.</span>
 
-<span class="sd">    Subclasses should define :meth:`_call_kernel` to evaluate the kernel over</span>
-<span class="sd">    its inputs.</span>
+<span class="sd">    Subclasses should define *__init__()* to set up the kernel inputs, and</span>
+<span class="sd">    *_call_kernel()* to evaluate the kernel::</span>
+
+<span class="sd">        def __init__(self, ...):</span>
+<span class="sd">            ...</span>
+<span class="sd">            self.q_input = &lt;q-value class with nq attribute&gt;</span>
+<span class="sd">            self.info = &lt;ModelInfo object&gt;</span>
+<span class="sd">            self.dim = &lt;&#39;1d&#39; or &#39;2d&#39;&gt;</span>
+<span class="sd">            self.dtype = &lt;kernel.dtype&gt;</span>
+<span class="sd">            size = 2*self.q_input.nq+4 if self.info.have_Fq else self.q_input.nq+4</span>
+<span class="sd">            size = size + &lt;extra padding if needed for kernel&gt;</span>
+<span class="sd">            self.result = np.empty(size, dtype=self.dtype)</span>
+
+<span class="sd">        def _call_kernel(self, call_details, values, cutoff, magnetic,</span>
+<span class="sd">                        radius_effective_mode):</span>
+<span class="sd">            # type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; None</span>
+<span class="sd">            ... # call &lt;kernel&gt;</span>
+<span class="sd">            nq = self.q_input.nq</span>
+<span class="sd">            if self.info.have_Fq:  # models that compute both F and F^2</span>
+<span class="sd">                end = 2*nq if have_Fq else nq</span>
+<span class="sd">                self.result[0:end:2] = F**2</span>
+<span class="sd">                self.result[1:end:2] = F</span>
+<span class="sd">            else:</span>
+<span class="sd">                end = nq</span>
+<span class="sd">                self.result[0:end] = Fsq</span>
+<span class="sd">            self.result[end + 0] = total_weight</span>
+<span class="sd">            self.result[end + 1] = form_volume</span>
+<span class="sd">            self.result[end + 2] = shell_volume</span>
+<span class="sd">            self.result[end + 3] = radius_effective</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#: Kernel dimension, either &quot;1d&quot; or &quot;2d&quot;.</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: str</span>
@@ -98,9 +125,9 @@
     <span class="n">info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ModelInfo</span>
     <span class="c1">#: Numerical precision for the computation.</span>
     <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: np.dtype</span>
-    <span class="c1">#: q values at which the kernel is to be evaluated</span>
+    <span class="c1">#: Q values at which the kernel is to be evaluated.</span>
     <span class="n">q_input</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Any</span>
-    <span class="c1">#: Place to hold result of :meth:`_call_kernel` for subclass.</span>
+    <span class="c1">#: Place to hold result of *_call_kernel()* for subclass.</span>
     <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: np.ndarray</span>
 
 <div class="viewcode-block" id="Kernel.Iq"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.kernel.Kernel.Iq">[docs]</a>    <span class="k">def</span> <span class="nf">Iq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">):</span>
@@ -223,7 +250,7 @@
 
     <span class="k">def</span> <span class="nf">_call_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span>
                      <span class="n">radius_effective_mode</span><span class="p">):</span>
-        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; np.ndarray</span>
+        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; None</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call the kernel.  Subclasses defining kernels for particular execution</span>
 <span class="sd">        engines need to provide an implementation for this.</span>

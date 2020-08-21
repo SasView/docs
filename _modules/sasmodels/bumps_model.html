@@ -61,7 +61,7 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
     <span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span>
     <span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">KernelModel</span>
     <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
@@ -80,14 +80,12 @@
     <span class="k">pass</span>
 
 
-<span class="k">def</span> <span class="nf">create_parameters</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span>  <span class="c1"># type: ModelInfo</span>
-                      <span class="o">**</span><span class="n">kwargs</span>     <span class="c1"># type: Union[float, str, Parameter]</span>
-                     <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; Tuple[Dict[str, Parameter], Dict[str, str]]</span>
+<span class="k">def</span> <span class="nf">create_parameters</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># type: (ModelInfo, Union[float, str, Parameter]) -&gt; Tuple[Dict[str, Parameter], Dict[str, str]]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate Bumps parameters from the model info.</span>
 
-<span class="sd">    *model_info* is returned from :func:`generate.model_info` on the</span>
+<span class="sd">    *model_info* is returned from :func:`.generate.model_info` on the</span>
 <span class="sd">    model definition module.</span>
 
 <span class="sd">    Any additional *key=value* pairs are initial values for the parameters</span>
@@ -126,7 +124,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Bumps wrapper for a SAS model.</span>
 
-<span class="sd">    *model* is a runnable module as returned from :func:`core.load_model`.</span>
+<span class="sd">    *model* is a runnable module as returned from :func:`.core.load_model`.</span>
 
 <span class="sd">    *cutoff* is the polydispersity weight cutoff.</span>
 
@@ -165,9 +163,9 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Bumps wrapper for a SAS experiment.</span>
 
-<span class="sd">    *data* is a :class:`data.Data1D`, :class:`data.Data2D` or</span>
-<span class="sd">    :class:`data.Sesans` object.  Use :func:`data.empty_data1D` or</span>
-<span class="sd">    :func:`data.empty_data2D` to define $q, \Delta q$ calculation</span>
+<span class="sd">    *data* is a :class:`.data.Data1D`, :class:`.data.Data2D` or</span>
+<span class="sd">    :class:`.data.SesansData` object.  Use :func:`.data.empty_data1D` or</span>
+<span class="sd">    :func:`.data.empty_data2D` to define $q, \Delta q$ calculation</span>
 <span class="sd">    points for displaying the SANS curve when there is no measured data.</span>
 
 <span class="sd">    *model* is a :class:`Model` object.</span>
@@ -179,7 +177,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_cache</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Dict[str, np.ndarray]</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># type: (Data, Model, float) -&gt; None</span>
+        <span class="c1"># type: (Data, Model, float, Optional[str], Optional[Dict[str, Parameter]]) -&gt; None</span>
         <span class="c1"># Allow resolution function to define fittable parameters.  We do this</span>
         <span class="c1"># by creating reference parameters within the resolution object rather</span>
         <span class="c1"># than modifying the object itself to use bumps parameters.  We need</span>
@@ -222,7 +220,7 @@
     <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># type: () -&gt; Union[None, Resolution]</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :class:`sasmodels.Resolution` applied to the data, if any.</span>
+<span class="sd">        :class:`.resolution.Resolution` applied to the data, if any.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
 
@@ -230,7 +228,7 @@
     <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="c1"># type: (Resolution) -&gt; None</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :class:`sasmodels.Resolution` applied to the data, if any.</span>
+<span class="sd">        :class:`.resolution.Resolution` applied to the data, if any.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="n">value</span>
 

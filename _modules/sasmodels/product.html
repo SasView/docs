@@ -56,7 +56,7 @@
 <span class="sd">find them in the P@S model inputs and how to distribute them to the underlying</span>
 <span class="sd">P and S model calculators.</span>
 
-<span class="sd">The parameter packet received by the P@S is a :class:`details.CallDetails`</span>
+<span class="sd">The parameter packet received by the P@S is a :class:`.details.CallDetails`</span>
 <span class="sd">structure along with a data vector. The CallDetails structure indicates which</span>
 <span class="sd">parameters are polydisperse, the length of the distribution, and where to</span>
 <span class="sd">find it in the data vector.  The distributions are ordered from longest to</span>
@@ -165,11 +165,14 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">OrderedDictType</span>
+    <span class="kn">import</span> <span class="nn">typing</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">Parameter</span>
+    <span class="kn">from</span> <span class="nn">.details</span> <span class="k">import</span> <span class="n">CallDetails</span>
+    <span class="n">Parts</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]]</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <span class="c1"># TODO: make shape averages available to constraints</span>
@@ -277,7 +280,6 @@
     <span class="n">model_info</span><span class="o">.</span><span class="n">random</span> <span class="o">=</span> <span class="n">random</span>
     <span class="c1">#model_info.single = p_info.single and s_info.single</span>
     <span class="n">model_info</span><span class="o">.</span><span class="n">structure_factor</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">model_info</span><span class="o">.</span><span class="n">variant_info</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="c1">#model_info.tests = []</span>
     <span class="c1">#model_info.source = []</span>
     <span class="c1"># Remember the component info blocks so we can build the model</span>
@@ -321,24 +323,14 @@
     <span class="n">par</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">vector_length</span>
     <span class="k">return</span> <span class="n">par</span>
 
-<span class="k">def</span> <span class="nf">_intermediates</span><span class="p">(</span>
-        <span class="n">Q</span><span class="p">,</span>                <span class="c1"># type: np.ndarray</span>
-        <span class="n">F</span><span class="p">,</span>                <span class="c1"># type: np.ndarray</span>
-        <span class="n">Fsq</span><span class="p">,</span>              <span class="c1"># type: np.ndarray</span>
-        <span class="n">S</span><span class="p">,</span>                <span class="c1"># type: np.ndarray</span>
-        <span class="n">scale</span><span class="p">,</span>            <span class="c1"># type: float</span>
-        <span class="n">volume</span><span class="p">,</span>           <span class="c1"># type: float</span>
-        <span class="n">volume_ratio</span><span class="p">,</span>     <span class="c1"># type: float</span>
-        <span class="n">radius_effective</span><span class="p">,</span> <span class="c1"># type: float</span>
-        <span class="n">beta_mode</span><span class="p">,</span>        <span class="c1"># type: bool</span>
-        <span class="n">P_intermediate</span><span class="p">,</span>   <span class="c1"># type: Optional[Callable[[], OrderedDict]</span>
-    <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; OrderedDict[str, Union[np.ndarray, float]]</span>
+<span class="k">def</span> <span class="nf">_intermediates</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">Fsq</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">volume_ratio</span><span class="p">,</span> <span class="n">radius_effective</span><span class="p">,</span>
+                   <span class="n">beta_mode</span><span class="p">,</span> <span class="n">P_intermediate</span><span class="p">):</span>
+    <span class="c1"># type: (np.ndarray, np.ndarray, np.ndarray, np.ndarray, float, float, float, float, bool, Optiona[Callable[[], Parts]]) -&gt; Parts</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns intermediate results for beta approximation-enabled product.</span>
 <span class="sd">    The result may be an array or a float.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">parts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># type: Parts</span>
     <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;P(Q)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">Fsq</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">P_intermediate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">parts</span><span class="p">[</span><span class="s2">&quot;P(Q) parts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">P_intermediate</span><span class="p">()</span>
@@ -356,6 +348,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Model definition for product model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ModelInfo</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: KernelModel</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: KernelModel</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: np.dtype</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_info</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
         <span class="c1"># type: (ModelInfo, KernelModel, KernelModel) -&gt; None</span>
         <span class="c1">#: Combined info plock for the product model</span>

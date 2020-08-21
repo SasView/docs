@@ -50,19 +50,19 @@
 <span class="sd">make sure that the model calculations are stable, or if you need to</span>
 <span class="sd">tag the model as double precision only.</span>
 
-<span class="sd">Run using ./compare.sh (Linux, Mac) or compare.bat (Windows) in the</span>
-<span class="sd">sasmodels root to see the command line options.</span>
+<span class="sd">Run using &quot;./sascomp -h&quot; in the sasmodels root to see the command</span>
+<span class="sd">line options. To run from from an installed version of sasmodels,</span>
+<span class="sd">use &quot;python -m sasmodels.compare -h&quot;.</span>
 
 <span class="sd">Note that there is no way within sasmodels to select between an</span>
 <span class="sd">OpenCL CPU device and a GPU device, but you can do so by setting the</span>
-<span class="sd">PYOPENCL_CTX environment variable ahead of time.  Start a python</span>
-<span class="sd">interpreter and enter::</span>
+<span class="sd">SAS_OPENCL environment variable. Start a python interpreter and enter::</span>
 
 <span class="sd">    import pyopencl as cl</span>
 <span class="sd">    cl.create_some_context()</span>
 
 <span class="sd">This will prompt you to select from the available OpenCL devices</span>
-<span class="sd">and tell you which string to use for the PYOPENCL_CTX variable.</span>
+<span class="sd">and tell you which string to use for the SAS_OPENCL variable.</span>
 <span class="sd">On Windows you will need to remove the quotes.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -88,7 +88,7 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 <span class="k">else</span><span class="p">:</span>
@@ -194,16 +194,6 @@
 <span class="s2">    # model timing test requires multiple evals to perform the estimate</span>
 <span class="s2">    sascomp pringle -engine=single,double -timing=100,100 -noplot</span>
 <span class="s2">&quot;&quot;&quot;</span>
-
-<span class="c1"># Update docs with command line usage string.   This is separate from the usual</span>
-<span class="c1"># doc string so that we can display it at run time if there is an error.</span>
-<span class="c1"># lin</span>
-<span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span><span class="vm">__doc__</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
-           <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">Program description</span>
-<span class="s2">-------------------</span>
-
-<span class="s2">&quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">USAGE</span><span class="p">)</span>
 
 <span class="n">kerneldll</span><span class="o">.</span><span class="n">ALLOW_SINGLE_PRECISION_DLLS</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -360,7 +350,6 @@
 
 <span class="k">def</span> <span class="nf">_randomize_one</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="c1"># type: (ModelInfo, str, float) -&gt; float</span>
-    <span class="c1"># type: (ModelInfo, str, str) -&gt; str</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Randomize a single parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -432,7 +421,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="n">limits</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_random_pd</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">is2d</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, Dict[str, float]) -&gt; None</span>
+    <span class="c1"># type: (ModelInfo, Dict[str, float], bool) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a random dispersity distribution for the model.</span>
 
@@ -528,7 +517,7 @@
 
 
 <div class="viewcode-block" id="randomize_pars"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.randomize_pars">[docs]</a><span class="k">def</span> <span class="nf">randomize_pars</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">maxdim</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">is2d</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, ParameterSet, float) -&gt; ParameterSet</span>
+    <span class="c1"># type: (ModelInfo, ParameterSet, float, bool) -&gt; ParameterSet</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate random values for all of the parameters.</span>
 
@@ -558,7 +547,7 @@
             <span class="n">pars</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxdim</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">_swap_pars</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, str, str) -&lt;&gt; None</span>
+    <span class="c1"># type: (ModelInfo, str, str) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Swap polydispersity and magnetism when swapping parameters.</span>
 
@@ -672,7 +661,7 @@
 
 <span class="k">def</span> <span class="nf">_format_par</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">pd</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nsigma</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">pdtype</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">,</span>
                 <span class="n">relative_pd</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">M0</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">mphi</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">mtheta</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
-    <span class="c1"># type: (str, float, float, int, float, str) -&gt; str</span>
+    <span class="c1"># type: (str, float, float, int, float, str, bool, float, float, float) -&gt; str</span>
     <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%g</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pd</span> <span class="o">!=</span> <span class="mf">0.</span>  <span class="ow">and</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">relative_pd</span><span class="p">:</span>
@@ -726,7 +715,7 @@
     <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">average_time</span></div>
 
 <div class="viewcode-block" id="make_data"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.make_data">[docs]</a><span class="k">def</span> <span class="nf">make_data</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
-    <span class="c1"># type: (Dict[str, Any], float) -&gt; Tuple[Data, np.ndarray]</span>
+    <span class="c1"># type: (Dict[str, Any]) -&gt; Tuple[Data, np.ndarray]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate an empty dataset, used with the model to set Q points</span>
 <span class="sd">    and resolution.</span>
@@ -787,7 +776,7 @@
     <span class="k">return</span> <span class="n">calculator</span></div>
 
 <div class="viewcode-block" id="make_engine"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.make_engine">[docs]</a><span class="k">def</span> <span class="nf">make_engine</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">ngauss</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, Data, str, float) -&gt; Calculator</span>
+    <span class="c1"># type: (ModelInfo, Data, str, float, int) -&gt; Calculator</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the appropriate calculation engine for the given datatype.</span>
 
@@ -823,7 +812,7 @@
 
 
 <div class="viewcode-block" id="compare"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.compare">[docs]</a><span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maxdim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="c1"># type: (Dict[str, Any], Optional[Tuple[float, float]]) -&gt; Tuple[float, float]</span>
+    <span class="c1"># type: (Dict[str, Any], Optional[Tuple[float, float]], Optional[float]) -&gt; Tuple[float, float]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preform a comparison using options from the command line.</span>
 
@@ -883,15 +872,15 @@
     <span class="k">return</span> <span class="n">limits</span></div>
 
 <div class="viewcode-block" id="plot_profile"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.plot_profile">[docs]</a><span class="k">def</span> <span class="nf">plot_profile</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, List[Tuple[float, np.ndarray, np.ndarray]]) -&gt; None</span>
+    <span class="c1"># type: (ModelInfo, List[Tuple[float, np.ndarray, np.ndarray]], float) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the profile returned by the model profile method.</span>
 
 <span class="sd">    *model_info* defines model parameters, etc.</span>
 
-<span class="sd">    *mesh* is a list of tuples containing (*value*, *dispersity*, *weights*)</span>
-<span class="sd">    for each parameter, where (*dispersity*, *weights*) pairs are the</span>
-<span class="sd">    distributions to be plotted.</span>
+<span class="sd">    *label* is the legend label for the plotted line.</span>
+
+<span class="sd">    *args* are *parameter=value* pairs for the model profile function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">pylab</span>
 
@@ -912,7 +901,7 @@
 
 
 <div class="viewcode-block" id="run_models"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.run_models">[docs]</a><span class="k">def</span> <span class="nf">run_models</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="c1"># type: (Dict[str, Any]) -&gt; Dict[str, Any]</span>
+    <span class="c1"># type: (Dict[str, Any], bool) -&gt; Dict[str, Any]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process a parameter set, return calculation results and times.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -989,9 +978,9 @@
 
 
 <div class="viewcode-block" id="plot_models"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.plot_models">[docs]</a><span class="k">def</span> <span class="nf">plot_models</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">setnum</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="c1"># type: (Dict[str, Any], Dict[str, Any], Optional[Tuple[float, float]]) -&gt; Tuple[float, float]</span>
+    <span class="c1"># type: (Dict[str, Any], Dict[str, Any], Optional[Tuple[float, float]], int) -&gt; Tuple[float, float]</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot the results from :func:`run_model`.</span>
+<span class="sd">    Plot the results from :func:`run_models`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
@@ -1150,7 +1139,7 @@
 
 
 <div class="viewcode-block" id="get_pars"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.compare.get_pars">[docs]</a><span class="k">def</span> <span class="nf">get_pars</span><span class="p">(</span><span class="n">model_info</span><span class="p">):</span>
-    <span class="c1"># type: (ModelInfo, bool) -&gt; ParameterSet</span>
+    <span class="c1"># type: (ModelInfo) -&gt; ParameterSet</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract default parameters from the model definition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

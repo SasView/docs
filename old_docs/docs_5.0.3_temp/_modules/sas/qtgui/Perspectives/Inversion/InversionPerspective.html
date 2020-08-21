@@ -1,0 +1,1001 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Perspectives.Inversion.InversionPerspective &#8212; SasView 5.0.1 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Inversion.InversionPerspective</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<span class="c1"># sas-global</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="c1"># pr inversion GUI elements</span>
+<span class="kn">from</span> <span class="nn">.InversionUtils</span> <span class="kn">import</span> <span class="n">WIDGETS</span>
+<span class="kn">from</span> <span class="nn">.UI.TabbedInversionUI</span> <span class="kn">import</span> <span class="n">Ui_PrInversion</span>
+<span class="kn">from</span> <span class="nn">.InversionLogic</span> <span class="kn">import</span> <span class="n">InversionLogic</span>
+
+<span class="c1"># pr inversion calculation elements</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.pr.invertor</span> <span class="kn">import</span> <span class="n">Invertor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="c1"># Batch calculation display</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GridPanel</span> <span class="kn">import</span> <span class="n">BatchInversionOutputPanel</span>
+
+
+<div class="viewcode-block" id="is_float"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.is_float">[docs]</a><span class="k">def</span> <span class="nf">is_float</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts text input values to floats. Empty strings throw ValueError&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+<span class="n">NUMBER_OF_TERMS</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">REGULARIZATION</span> <span class="o">=</span> <span class="mf">0.0001</span>
+<span class="n">BACKGROUND_INPUT</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">MAX_DIST</span> <span class="o">=</span> <span class="mf">140.0</span>
+<span class="n">DICT_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Calculator&quot;</span><span class="p">,</span> <span class="s2">&quot;PrPlot&quot;</span><span class="p">,</span> <span class="s2">&quot;DataPlot&quot;</span><span class="p">]</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="InversionWindow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow">[docs]</a><span class="k">class</span> <span class="nc">InversionWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_PrInversion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The main window for the P(r) Inversion perspective.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Inversion&quot;</span>
+    <span class="n">estimateSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="n">estimateNTSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="n">estimateDynamicNTSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="n">estimateDynamicSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="n">calculateSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InversionWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;P(r) Inversion Perspective&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="c1">#Needed for Batch fitting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">communicator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">dataDeletedSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">removeData</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="n">InversionLogic</span><span class="p">()</span>
+
+        <span class="c1"># The window should not close</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allowClose</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Visible data items</span>
+        <span class="c1"># current QStandardItem showing on the panel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Reference to Dmax window for self._data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># p(r) calculator for self._data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span> <span class="o">=</span> <span class="n">Invertor</span><span class="p">()</span>
+        <span class="c1"># Default to background estimate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">est_bck</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># plots of self._data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># suggested nTerms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span> <span class="o">=</span> <span class="n">NUMBER_OF_TERMS</span>
+
+        <span class="c1"># Calculation threads used by all data items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Mapping for all data items</span>
+        <span class="c1"># Dictionary mapping data to all parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">datum</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">updateDataList</span><span class="p">(</span><span class="n">datum</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataDeleted</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Batch fitting parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchResults</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchComplete</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Add validators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupValidators</span><span class="p">()</span>
+        <span class="c1"># Link user interactions with methods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupLinks</span><span class="p">()</span>
+        <span class="c1"># Set values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupModel</span><span class="p">()</span>
+        <span class="c1"># Set up the Widget Map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupMapper</span><span class="p">()</span>
+
+        <span class="c1">#Hidding calculate all buton</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateAllButton</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Set base window state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupWindow</span><span class="p">()</span>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># Base Perspective Class Definitions</span>
+
+<div class="viewcode-block" id="InversionWindow.communicator"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.communicator">[docs]</a>    <span class="k">def</span> <span class="nf">communicator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span></div>
+
+<div class="viewcode-block" id="InversionWindow.allowBatch"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.allowBatch">[docs]</a>    <span class="k">def</span> <span class="nf">allowBatch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="InversionWindow.setClosable"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setClosable">[docs]</a>    <span class="k">def</span> <span class="nf">setClosable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow outsiders close this widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allowClose</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="InversionWindow.isClosable"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.isClosable">[docs]</a>    <span class="k">def</span> <span class="nf">isClosable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow outsiders close this widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowClose</span></div>
+
+<div class="viewcode-block" id="InversionWindow.closeEvent"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite QDialog close method to allow for custom widget close</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Close report widgets before closing/minimizing main widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeDMax</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeBatchResults</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowClose</span><span class="p">:</span>
+            <span class="c1"># reset the closability flag</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setClosable</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># Tell the MdiArea to close the container</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>
+            <span class="c1"># Maybe we should just minimize</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setWindowState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinimized</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.closeDMax"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.closeDMax">[docs]</a>    <span class="k">def</span> <span class="nf">closeDMax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.closeBatchResults"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.closeBatchResults">[docs]</a>    <span class="k">def</span> <span class="nf">closeBatchResults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># Initialization routines</span>
+
+<div class="viewcode-block" id="InversionWindow.setupLinks"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setupLinks">[docs]</a>    <span class="k">def</span> <span class="nf">setupLinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect the use controls to their appropriate methods&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">displayChange</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateAllButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startThreadAll</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateThisButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startThread</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stopCalculation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removeButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">removeData</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateBgd</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggleBgd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manualBgd</span><span class="o">.</span><span class="n">toggled</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toggleBgd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regConstantSuggestionButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">acceptAlpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsSuggestionButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">acceptNoTerms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explorerButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openExplorerWindow</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">backgroundInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_background</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backgroundInput</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minQInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_qmin</span><span class="p">(</span><span class="n">is_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minQInput</span><span class="o">.</span><span class="n">text</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regularizationConstantInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="n">is_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizationConstantInput</span><span class="o">.</span><span class="n">text</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxDistanceInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_dmax</span><span class="p">(</span><span class="n">is_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxDistanceInput</span><span class="o">.</span><span class="n">text</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxQInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_qmax</span><span class="p">(</span><span class="n">is_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxQInput</span><span class="o">.</span><span class="n">text</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slitHeightInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_slit_height</span><span class="p">(</span><span class="n">is_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slitHeightInput</span><span class="o">.</span><span class="n">text</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slitWidthInput</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_slit_width</span><span class="p">(</span><span class="n">is_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slitWidthInput</span><span class="o">.</span><span class="n">text</span><span class="p">())))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateNTSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateNTUpdate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateDynamicNTSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateDynamicNTUpdate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateDynamicSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateDynamicUpdate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateUpdate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calculateUpdate</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxDistanceInput</span><span class="o">.</span><span class="n">textEdited</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">performEstimateDynamic</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.setupMapper"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setupMapper">[docs]</a>    <span class="k">def</span> <span class="nf">setupMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Set up the mapper.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># Filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_FILENAME</span><span class="p">)</span>
+        <span class="c1"># Background</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backgroundInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND_INPUT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimateBgd</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_ESTIMATE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manualBgd</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_MANUAL_INPUT</span><span class="p">)</span>
+
+        <span class="c1"># Qmin/Qmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minQInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxQInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">)</span>
+
+        <span class="c1"># Slit Parameter items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slitWidthInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SLIT_WIDTH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slitHeightInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SLIT_HEIGHT</span><span class="p">)</span>
+
+        <span class="c1"># Parameter Items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizationConstantInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_REGULARIZATION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regConstantSuggestionButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_REGULARIZATION_SUGGEST</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">explorerButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_EXPLORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxDistanceInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_MAX_DIST</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsInput</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NO_TERMS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsSuggestionButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NO_TERMS_SUGGEST</span><span class="p">)</span>
+
+        <span class="c1"># Output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_RG</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iQ0Value</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_I_ZERO</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backgroundValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND_OUTPUT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computationTimeValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_COMP_TIME</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chiDofValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CHI_SQUARED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oscillationValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_OSCILLATION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posFractionValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POS_FRACTION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigmaPosFractionValue</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SIGMA_POS_FRACTION</span><span class="p">)</span>
+
+        <span class="c1"># Main Buttons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">removeButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_REMOVE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateAllButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CALCULATE_ALL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateThisButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CALCULATE_VISIBLE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">helpButton</span><span class="p">,</span> <span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_HELP</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.setupModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setupModel">[docs]</a>    <span class="k">def</span> <span class="nf">setupModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update boxes with initial values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bgd_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">BACKGROUND_INPUT</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND_INPUT</span><span class="p">,</span> <span class="n">bgd_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SLIT_WIDTH</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SLIT_HEIGHT</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">no_terms_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">NUMBER_OF_TERMS</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NO_TERMS</span><span class="p">,</span> <span class="n">no_terms_item</span><span class="p">)</span>
+        <span class="n">reg_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">REGULARIZATION</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_REGULARIZATION</span><span class="p">,</span> <span class="n">reg_item</span><span class="p">)</span>
+        <span class="n">max_dist_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">MAX_DIST</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_MAX_DIST</span><span class="p">,</span> <span class="n">max_dist_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_RG</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_I_ZERO</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">bgd_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">BACKGROUND_INPUT</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND_OUTPUT</span><span class="p">,</span> <span class="n">bgd_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_COMP_TIME</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CHI_SQUARED</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_OSCILLATION</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POS_FRACTION</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span>
+        <span class="n">blank_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SIGMA_POS_FRACTION</span><span class="p">,</span> <span class="n">blank_item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.setupWindow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setupWindow">[docs]</a>    <span class="k">def</span> <span class="nf">setupWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize base window state on init&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enableButtons</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateBgd</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.setupValidators"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setupValidators">[docs]</a>    <span class="k">def</span> <span class="nf">setupValidators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply validators to editable line edits&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regularizationConstantInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxDistanceInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minQInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxQInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slitHeightInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slitWidthInput</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span></div>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># Methods for updating GUI</span>
+
+<div class="viewcode-block" id="InversionWindow.enableButtons"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.enableButtons">[docs]</a>    <span class="k">def</span> <span class="nf">enableButtons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable buttons when data is present, else disable them</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateAllButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+                                           <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span>
+                                           <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateThisButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data_is_loaded</span>
+                                            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span>
+                                            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removeButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">explorerButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopButton</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regConstantSuggestionButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data_is_loaded</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">suggested_alpha</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsSuggestionButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data_is_loaded</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">nfunc</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.populateDataComboBox"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.populateDataComboBox">[docs]</a>    <span class="k">def</span> <span class="nf">populateDataComboBox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a new file name to the data combobox</span>
+<span class="sd">        :param filename: data filename</span>
+<span class="sd">        :param data_ref: QStandardItem reference for data set to be added</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_ref</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.acceptNoTerms"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.acceptNoTerms">[docs]</a>    <span class="k">def</span> <span class="nf">acceptNoTerms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send estimated no of terms to input&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_NO_TERMS</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsSuggestionButton</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="InversionWindow.acceptAlpha"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.acceptAlpha">[docs]</a>    <span class="k">def</span> <span class="nf">acceptAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send estimated alpha to input&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_REGULARIZATION</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">regConstantSuggestionButton</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="InversionWindow.displayChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.displayChange">[docs]</a>    <span class="k">def</span> <span class="nf">displayChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Switch to another item in the data list&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataDeleted</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateDataList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">itemData</span><span class="p">(</span><span class="n">data_index</span><span class="p">))</span></div>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># GUI Interaction Events</span>
+
+<div class="viewcode-block" id="InversionWindow.updateCalculator"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.updateCalculator">[docs]</a>    <span class="k">def</span> <span class="nf">updateCalculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update all p(r) params&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_x</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_y</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_err</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_background</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backgroundInput</span><span class="o">.</span><span class="n">text</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="InversionWindow.set_background"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.set_background">[docs]</a>    <span class="k">def</span> <span class="nf">set_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="n">is_float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.model_changed"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.model_changed">[docs]</a>    <span class="k">def</span> <span class="nf">model_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the values when user makes changes&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Unable to update P</span><span class="si">{r}</span><span class="s2">. The connection between the main GUI &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;and P(r) was severed. Attempting to restart P(r).&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setClosable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">InversionWindow</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(),</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span><span class="o">.</span><span class="n">nfunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNFunc</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span><span class="o">.</span><span class="n">pr_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toLast</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.help"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.help">[docs]</a>    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the P(r) Inversion help browser</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tree_location</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Inversion/pr_help.html&quot;</span>
+
+        <span class="c1"># Actual file anchor will depend on the combo box index</span>
+        <span class="c1"># Note that we can be clusmy here, since bad current_fitter_id</span>
+        <span class="c1"># will just make the page displayed from the top</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">tree_location</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.toggleBgd"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.toggleBgd">[docs]</a>    <span class="k">def</span> <span class="nf">toggleBgd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggle the background between manual and estimated</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimateBgd</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manualBgd</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backgroundInput</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_est_bck</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">manualBgd</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">estimateBgd</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">backgroundInput</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_est_bck</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="InversionWindow.openExplorerWindow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.openExplorerWindow">[docs]</a>    <span class="k">def</span> <span class="nf">openExplorerWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the Explorer window to see correlations between params and results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.DMaxExplorerWidget</span> <span class="kn">import</span> <span class="n">DmaxWindow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span> <span class="o">=</span> <span class="n">DmaxWindow</span><span class="p">(</span><span class="n">pr_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="p">,</span>
+                                     <span class="n">nfunc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getNFunc</span><span class="p">(),</span>
+                                     <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmaxWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.showBatchOutput"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.showBatchOutput">[docs]</a>    <span class="k">def</span> <span class="nf">showBatchOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display the batch output in tabular form</span>
+<span class="sd">        :param output_data: Dictionary mapping filename -&gt; P(r) instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="o">=</span> <span class="n">BatchInversionOutputPanel</span><span class="p">(</span>
+                <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchResults</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span><span class="o">.</span><span class="n">setupTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batchResults</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.stopCalculation"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.stopCalculation">[docs]</a>    <span class="k">def</span> <span class="nf">stopCalculation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stop all threads, return to the base state and update GUI &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopCalcThread</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopEstimationThread</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopEstimateNTThread</span><span class="p">()</span>
+        <span class="c1"># Show any batch calculations that successfully completed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showBatchOutput</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateGuiValues</span><span class="p">()</span></div>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># Response Actions</span>
+
+<div class="viewcode-block" id="InversionWindow.setData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign new data set(s) to the P(r) perspective</span>
+<span class="sd">        Obtain a QStandardItem object and parse it to get Data1D/2D</span>
+<span class="sd">        Pass it over to the calculator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">data_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_item</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the P(r) Perspective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_item</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># Don&#39;t add data if it&#39;s already in</span>
+                <span class="k">continue</span>
+            <span class="c1"># Create initial internal mappings</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;P(r) perspective cannot be computed with 2D data.&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="c1"># Estimate q range</span>
+            <span class="n">qmin</span><span class="p">,</span> <span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">computeDataRange</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_qmin</span><span class="p">(</span><span class="n">qmin</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">set_qmax</span><span class="p">(</span><span class="n">qmax</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">add_errors</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateDataList</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">populateDataComboBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1">#Checking for 1D again to mitigate the case when 2D data is last on the data list</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.updateDataList"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.updateDataList">[docs]</a>    <span class="k">def</span> <span class="nf">updateDataList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataRef</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the current data state of the window into self._data_list&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dataRef</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">[</span><span class="n">dataRef</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">DICT_KEYS</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="p">,</span>
+            <span class="n">DICT_KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span><span class="p">,</span>
+            <span class="n">DICT_KEYS</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span>
+        <span class="p">}</span>
+        <span class="c1"># Update batch results window when finished</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchResults</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showBatchOutput</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.getNFunc"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.getNFunc">[docs]</a>    <span class="k">def</span> <span class="nf">getNFunc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the n_func value from the GUI object&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nfunc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsInput</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Incorrect number of terms specified: </span><span class="si">%s</span><span class="s2">&quot;</span>
+                          <span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsInput</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsInput</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">NUMBER_OF_TERMS</span><span class="p">))</span>
+            <span class="n">nfunc</span> <span class="o">=</span> <span class="n">NUMBER_OF_TERMS</span>
+        <span class="k">return</span> <span class="n">nfunc</span></div>
+
+<div class="viewcode-block" id="InversionWindow.setCurrentData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.setCurrentData">[docs]</a>    <span class="k">def</span> <span class="nf">setCurrentData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the data by reference and display as necessary&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data_ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_ref</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the P(r) Perspective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># Data references</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data_ref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">data_ref</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">[</span><span class="n">data_ref</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DICT_KEYS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">[</span><span class="n">data_ref</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DICT_KEYS</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">[</span><span class="n">data_ref</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">DICT_KEYS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">performEstimate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.updateDynamicGuiValues"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.updateDynamicGuiValues">[docs]</a>    <span class="k">def</span> <span class="nf">updateDynamicGuiValues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">suggested_alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_MAX_DIST</span><span class="p">,</span>
+                            <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_dmax</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regConstantSuggestionButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:-3.2g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsSuggestionButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+             <span class="s2">&quot;</span><span class="si">{:n}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">enableButtons</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.updateGuiValues"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.updateGuiValues">[docs]</a>    <span class="k">def</span> <span class="nf">updateGuiValues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">out</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">cov</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">suggested_alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMIN</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_qmin</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_QMAX</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_qmax</span><span class="p">())))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND_INPUT</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">background</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_BACKGROUND_OUTPUT</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">background</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_COMP_TIME</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">elapsed</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_MAX_DIST</span><span class="p">,</span>
+                           <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_dmax</span><span class="p">())))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">chi2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_CHI_SQUARED</span><span class="p">,</span>
+                               <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">chi2</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_RG</span><span class="p">,</span>
+                               <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">rg</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_I_ZERO</span><span class="p">,</span>
+                               <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span>
+                                   <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">iq0</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_OSCILLATION</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">oscillations</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_POS_FRACTION</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">get_positive</span><span class="p">(</span><span class="n">out</span><span class="p">))))</span>
+            <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">WIDGETS</span><span class="o">.</span><span class="n">W_SIGMA_POS_FRACTION</span><span class="p">,</span>
+                                   <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span>
+                                       <span class="s2">&quot;</span><span class="si">{:.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                           <span class="n">pr</span><span class="o">.</span><span class="n">get_pos_err</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">cov</span><span class="p">))))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span><span class="o">.</span><span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">=</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_RESIDUAL</span>
+            <span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemWithPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotRequestedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="o">.</span><span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">=</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_DEFAULT</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="s2">&quot;Line&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="o">.</span><span class="n">show_errors</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">GuiUtils</span><span class="o">.</span><span class="n">updateModelItemWithPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotRequestedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="p">],</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enableButtons</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.removeData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.removeData">[docs]</a>    <span class="k">def</span> <span class="nf">removeData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove the existing data reference from the P(r) Persepective&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataDeleted</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchResults</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_list</span><span class="p">:</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeDMax</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">itemData</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="c1"># Last file removed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataDeleted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span> <span class="o">=</span> <span class="n">Invertor</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closeBatchResults</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span> <span class="o">=</span> <span class="n">NUMBER_OF_TERMS</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noOfTermsSuggestionButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:n}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">regConstantSuggestionButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:-3.2g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">REGULARIZATION</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateGuiValues</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setupModel</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateGuiValues</span><span class="p">()</span></div>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># Thread Creators</span>
+
+<div class="viewcode-block" id="InversionWindow.startThreadAll"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.startThreadAll">[docs]</a>    <span class="k">def</span> <span class="nf">startThreadAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchComplete</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateAllButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Calculating...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enableButtons</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batchResultsWindow</span> <span class="o">=</span> <span class="n">BatchInversionOutputPanel</span><span class="p">(</span>
+            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batchResults</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">performEstimate</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.startNextBatchItem"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.startNextBatchItem">[docs]</a>    <span class="k">def</span> <span class="nf">startNextBatchItem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataList</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchComplete</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># Add the index before calculating in case calculation fails</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">batchComplete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">performEstimate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If no data sets left, end batch calculation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batchComplete</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculateAllButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Calculate All&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">showBatchOutput</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enableButtons</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.startThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.startThread">[docs]</a>    <span class="k">def</span> <span class="nf">startThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Start a calculation thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.Thread</span> <span class="kn">import</span> <span class="n">CalcPr</span>
+
+        <span class="c1"># Set data before running the calculations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enableButtons</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateCalculator</span><span class="p">()</span>
+        <span class="c1"># Disable calculation buttons to prevent thread interference</span>
+
+        <span class="c1"># If the thread is already started, stop it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopCalcThread</span><span class="p">()</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="c1">#Making sure that nfunc and alpha parameters are correctly initialized</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">suggested_alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span> <span class="o">=</span> <span class="n">CalcPr</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span><span class="p">,</span>
+                                 <span class="n">error_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threadError</span><span class="p">,</span>
+                                 <span class="n">completefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_calculateCompleted</span><span class="p">,</span>
+                                 <span class="n">updatefn</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span><span class="o">.</span><span class="n">ready</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.stopCalcThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.stopCalcThread">[docs]</a>    <span class="k">def</span> <span class="nf">stopCalcThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stops a thread if it exists and is running &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span><span class="o">.</span><span class="n">isrunning</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calcThread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.performEstimateNT"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.performEstimateNT">[docs]</a>    <span class="k">def</span> <span class="nf">performEstimateNT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform parameter estimation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.Thread</span> <span class="kn">import</span> <span class="n">EstimateNT</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateCalculator</span><span class="p">()</span>
+
+        <span class="c1"># If a thread is already started, stop it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopEstimateNTThread</span><span class="p">()</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="c1"># Skip the slit settings for the estimation</span>
+        <span class="c1"># It slows down the application and it doesn&#39;t change the estimates</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">slit_height</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">slit_width</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">nfunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNFunc</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span> <span class="o">=</span> <span class="n">EstimateNT</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">,</span>
+                                             <span class="n">error_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threadError</span><span class="p">,</span>
+                                             <span class="n">completefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateNTCompleted</span><span class="p">,</span>
+                                             <span class="n">updatefn</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span><span class="o">.</span><span class="n">ready</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.performEstimateDynamicNT"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.performEstimateDynamicNT">[docs]</a>    <span class="k">def</span> <span class="nf">performEstimateDynamicNT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform parameter estimation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.Thread</span> <span class="kn">import</span> <span class="n">EstimateNT</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateCalculator</span><span class="p">()</span>
+
+        <span class="c1"># If a thread is already started, stop it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopEstimateNTThread</span><span class="p">()</span>
+
+        <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="c1"># Skip the slit settings for the estimation</span>
+        <span class="c1"># It slows down the application and it doesn&#39;t change the estimates</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">slit_height</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">slit_width</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">nfunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNFunc</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span> <span class="o">=</span> <span class="n">EstimateNT</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">,</span>
+                                             <span class="n">error_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threadError</span><span class="p">,</span>
+                                             <span class="n">completefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateDynamicNTCompleted</span><span class="p">,</span>
+                                             <span class="n">updatefn</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span><span class="o">.</span><span class="n">ready</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.stopEstimateNTThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.stopEstimateNTThread">[docs]</a>    <span class="k">def</span> <span class="nf">stopEstimateNTThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span><span class="o">.</span><span class="n">isrunning</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">estimationThreadNT</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="InversionWindow.performEstimate"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.performEstimate">[docs]</a>    <span class="k">def</span> <span class="nf">performEstimate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Perform parameter estimation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.Thread</span> <span class="kn">import</span> <span class="n">EstimatePr</span>
+
+        <span class="c1"># If a thread is already started, stop it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopEstimationThread</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span> <span class="o">=</span> <span class="n">EstimatePr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">getNFunc</span><span class="p">(),</span>
+                                           <span class="n">error_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threadError</span><span class="p">,</span>
+                                           <span class="n">completefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateCompleted</span><span class="p">,</span>
+                                           <span class="n">updatefn</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span><span class="o">.</span><span class="n">ready</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.performEstimateDynamic"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.performEstimateDynamic">[docs]</a>    <span class="k">def</span> <span class="nf">performEstimateDynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Perform parameter estimation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.Thread</span> <span class="kn">import</span> <span class="n">EstimatePr</span>
+
+        <span class="c1"># If a thread is already started, stop it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopEstimationThread</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span> <span class="o">=</span> <span class="n">EstimatePr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">getNFunc</span><span class="p">(),</span>
+                                           <span class="n">error_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threadError</span><span class="p">,</span>
+                                           <span class="n">completefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimateDynamicCompleted</span><span class="p">,</span>
+                                           <span class="n">updatefn</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span><span class="o">.</span><span class="n">ready</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InversionWindow.stopEstimationThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Inversion.html#sas.qtgui.Perspectives.Inversion.InversionPerspective.InversionWindow.stopEstimationThread">[docs]</a>    <span class="k">def</span> <span class="nf">stopEstimationThread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stop the estimation thread if it exists and is running &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span><span class="o">.</span><span class="n">isrunning</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">estimationThread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+    <span class="c1">######################################################################</span>
+    <span class="c1"># Thread Complete</span>
+
+    <span class="k">def</span> <span class="nf">_estimateCompleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Send a signal to the main thread for model update&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_estimateDynamicCompleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Send a signal to the main thread for model update&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateDynamicSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_estimateUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameter estimation completed,</span>
+<span class="sd">        display the results to the user</span>
+
+<span class="sd">        :param alpha: estimated best alpha</span>
+<span class="sd">        :param elapsed: computation time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">output_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">performEstimateNT</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">performEstimateDynamicNT</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_estimateDynamicUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameter estimation completed,</span>
+<span class="sd">        display the results to the user</span>
+
+<span class="sd">        :param alpha: estimated best alpha</span>
+<span class="sd">        :param elapsed: computation time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">output_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">performEstimateDynamicNT</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_estimateNTCompleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nterms</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Send a signal to the main thread for model update&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateNTSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">nterms</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_estimateDynamicNTCompleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nterms</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Send a signal to the main thread for model update&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimateDynamicNTSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">nterms</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_estimateNTUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameter estimation completed,</span>
+<span class="sd">        display the results to the user</span>
+
+<span class="sd">        :param alpha: estimated best alpha</span>
+<span class="sd">        :param nterms: estimated number of terms</span>
+<span class="sd">        :param elapsed: computation time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nterms</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">output_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">+=</span> <span class="n">elapsed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">suggested_alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span> <span class="o">=</span> <span class="n">nterms</span>
+        <span class="c1"># Save useful info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateGuiValues</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptAlpha</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptNoTerms</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">startThread</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_estimateDynamicNTUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameter estimation completed,</span>
+<span class="sd">        display the results to the user</span>
+
+<span class="sd">        :param alpha: estimated best alpha</span>
+<span class="sd">        :param nterms: estimated number of terms</span>
+<span class="sd">        :param elapsed: computation time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nterms</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">output_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">+=</span> <span class="n">elapsed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="o">.</span><span class="n">suggested_alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nTermsSuggested</span> <span class="o">=</span> <span class="n">nterms</span>
+        <span class="c1"># Save useful info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateDynamicGuiValues</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptAlpha</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptNoTerms</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">startThread</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_calculateCompleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">pr</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Send a signal to the main thread for model update&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">out</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">pr</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_calculateUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method called with the results when the inversion is done</span>
+
+<span class="sd">        :param out: output coefficient for the base functions</span>
+<span class="sd">        :param cov: covariance matrix</span>
+<span class="sd">        :param pr: Invertor instance</span>
+<span class="sd">        :param elapsed: time spent computing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">pr</span><span class="p">,</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">output_tuple</span>
+        <span class="c1"># Save useful info</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">cov</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">out</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="n">elapsed</span>
+
+        <span class="c1"># Save Pr invertor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span> <span class="o">=</span> <span class="n">pr</span>
+
+        <span class="c1"># Update P(r) and fit plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">newPRPlot</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prPlot</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">new1DPlot</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataPlot</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+
+        <span class="c1"># Udpate internals and GUI</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateDataList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batchComplete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataList</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">startNextBatchItem</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isCalculating</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateGuiValues</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_threadError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Call-back method for calculation errors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isBatch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">startNextBatchItem</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stopCalculation</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

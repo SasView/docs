@@ -69,6 +69,13 @@
 <span class="kn">from</span> <span class="nn">docutils.writers.html4css1</span> <span class="k">import</span> <span class="n">HTMLTranslator</span>
 <span class="kn">from</span> <span class="nn">docutils.nodes</span> <span class="k">import</span> <span class="n">SkipNode</span>
 
+<span class="c1"># pylint: disable=unused-import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="c1"># pylint: enable=unused-import</span>
+
 <div class="viewcode-block" id="rst2html"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.rst2html.rst2html">[docs]</a><span class="k">def</span> <span class="nf">rst2html</span><span class="p">(</span><span class="n">rst</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="s2">&quot;whole&quot;</span><span class="p">,</span> <span class="n">math_output</span><span class="o">=</span><span class="s2">&quot;mathjax&quot;</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert restructured text into simple html.</span>

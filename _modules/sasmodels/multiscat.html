@@ -163,6 +163,15 @@
     <span class="n">HAVE_OPENCL</span> <span class="o">=</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">use_opencl</span><span class="p">()</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">HAVE_OPENCL</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># pylint: disable=unused-import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
+    <span class="kn">from</span> <span class="nn">sasmodels.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="c1"># pylint: enable=unused-import</span>
+
 <span class="n">PRECISION</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;f&#39;</span> <span class="k">if</span> <span class="n">HAVE_OPENCL</span> <span class="k">else</span> <span class="s1">&#39;d&#39;</span><span class="p">)</span>  <span class="c1"># &#39;f&#39; or &#39;d&#39;</span>
 <span class="n">USE_FAST</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># OpenCL faster, less accurate math</span>
 

@@ -56,7 +56,7 @@
 
 <span class="sd">:class:`DataMixin` does the real work of interpreting the data and calling</span>
 <span class="sd">the model calculator.  This is used by :class:`DirectModel`, which uses</span>
-<span class="sd">direct parameter values and by :class:`bumps_model.Experiment` which wraps</span>
+<span class="sd">direct parameter values and by :class:`.bumps_model.Experiment` which wraps</span>
 <span class="sd">the parameter values in boxes so that the user can set fitting ranges, etc.</span>
 <span class="sd">on the individual parameters and send the model to the Bumps optimizers.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -74,13 +74,13 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
     <span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">Data</span>
     <span class="kn">from</span> <span class="nn">.kernel</span> <span class="k">import</span> <span class="n">Kernel</span><span class="p">,</span> <span class="n">KernelModel</span>
-    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterSet</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="k">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterSet</span><span class="p">,</span> <span class="n">ModelInfo</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <div class="viewcode-block" id="call_kernel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.direct_model.call_kernel">[docs]</a><span class="k">def</span> <span class="nf">call_kernel</span><span class="p">(</span><span class="n">calculator</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">mono</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -165,7 +165,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_par_weights</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="c1"># type: (Parameter, Dict[str, float]) -&gt; Tuple[float, np.ndarray, np.ndarray]</span>
+    <span class="c1"># type: (Parameter, Dict[str, float], bool) -&gt; Tuple[float, np.ndarray, np.ndarray]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the distribution for parameter *name* given the parameter values</span>
 <span class="sd">    in *pars*.</span>
@@ -224,20 +224,20 @@
 <span class="sd">    particular data set, including calculating Iq and evaluating the</span>
 <span class="sd">    resolution function.  It is used in particular by :class:`DirectModel`,</span>
 <span class="sd">    which evaluates a SAS model parameters as key word arguments to the</span>
-<span class="sd">    calculator method, and by :class:`bumps_model.Experiment`, which wraps the</span>
+<span class="sd">    calculator method, and by :class:`.bumps_model.Experiment`, which wraps the</span>
 <span class="sd">    model and data for use with the Bumps fitting engine.  It is not</span>
-<span class="sd">    currently used by :class:`sasview_model.SasviewModel` since this will</span>
+<span class="sd">    currently used by :class:`.sasview_model.SasviewModel` since this will</span>
 <span class="sd">    require a number of changes to SasView before we can do it.</span>
 
-<span class="sd">    :meth:`_interpret_data` initializes the data structures necessary</span>
+<span class="sd">    *_interpret_data* initializes the data structures necessary</span>
 <span class="sd">    to manage the calculations.  This sets attributes in the child class</span>
 <span class="sd">    such as *data_type* and *resolution*.</span>
 
-<span class="sd">    :meth:`_calc_theory` evaluates the model at the given control values.</span>
+<span class="sd">    *_calc_theory* evaluates the model at the given control values.</span>
 
-<span class="sd">    :meth:`_set_data` sets the intensity data in the data object,</span>
+<span class="sd">    *_set_data* sets the intensity data in the data object,</span>
 <span class="sd">    possibly with random noise added.  This is useful for simulating a</span>
-<span class="sd">    dataset with the results from :meth:`_calc_theory`.</span>
+<span class="sd">    dataset with the results from *_calc_theory*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_interpret_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="c1"># type: (Data, KernelModel) -&gt; None</span>
@@ -326,7 +326,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_kernel</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Iq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dIq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">dIq</span><span class="p">,</span> <span class="n">index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">res</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[Callable[[], OrderedDict]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[Callable[[], OrderedDict]]</span>
 
     <span class="k">def</span> <span class="nf">_set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type: (np.ndarray, Optional[float]) -&gt; None</span>
@@ -396,7 +396,7 @@
 
 <span class="sd">    *data* is 1D SAS, 2D SAS or SESANS data</span>
 
-<span class="sd">    *model* is a model calculator return from :func:`generate.load_model`</span>
+<span class="sd">    *model* is a model calculator return from :func:`.core.load_model`</span>
 
 <span class="sd">    *cutoff* is the polydispersity weight cutoff.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

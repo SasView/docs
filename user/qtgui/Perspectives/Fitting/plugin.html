@@ -54,7 +54,7 @@
 create your own models. This document describes how to create plugin models
 from first principles.</p>
 <p>If you are using SasView and simply want to combine existing models into a new
-plugin, see the <span class="xref std std-ref">Add/Multiply Models</span> tool instead.</p>
+plugin then use the “Add/Multiply Models” menu option instead.</p>
 <p>Models can be of three types:</p>
 <ul class="simple">
 <li>A pure python model : Example -
@@ -75,7 +75,7 @@ the models from anywhere.</p>
 of the sasmodels package.  For SasView on Windows, these will
 be found in <em>C:\Program Files (x86)\SasView\sasmodels-data\models</em>.
 On Mac OSX, these will be within the application bundle as
-<em>/Applications/SasView 4.0.app/Contents/Resources/sasmodels-data/models</em>.</p>
+<em>/Applications/SasView.app/Contents/Resources/sasmodels-data/models</em>.</p>
 <p>Other models are available for download from the
 <a class="reference external" href="http://marketplace.sasview.org/">Model Marketplace</a>. You can contribute your
 own models to the Marketplace as well.</p>
@@ -260,7 +260,7 @@ be included in a C file as <em>source=[‘filename.c’, …]</em> in the same d
 as the model file.</p>
 <p>The new parameters replace <em>radius_polar</em> and <em>radius_equatorial</em> in the
 parameter table.  To have more control over parameter placement, use an
-<em>insert_after={…}</em> argmument to <code class="xref py py-func docutils literal notranslate"><span class="pre">sasmodels.core.reparameterize()</span></code>.
+<em>insert_after={…}</em> argmument to <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.reparameterize" title="sasmodels.core.reparameterize"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.reparameterize()</span></code></a>.
 For each insert location provide a list of new parameter names to insert
 at that location.  For example, <em>{‘’: ‘eccentricity,volume’}</em> inserts
 them both at the beginning (before any parameter), whereas
@@ -408,13 +408,13 @@ structure factor to account for interactions between particles.  See
 <a class="reference internal" href="#form-factors">Form_Factors</a> for more details.</p>
 <p><strong>model_info = …</strong> lets you define a model directly, for example, by
 loading and modifying existing models.  This is done implicitly by
-<a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.load_model_info" title="sasmodels.core.load_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">sasmodels.core.load_model_info()</span></code></a>, which can create a mixture model
+<a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.load_model_info" title="sasmodels.core.load_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model_info()</span></code></a>, which can create a mixture model
 from a pair of existing models.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="k">import</span> <span class="n">load_model_info</span>
 <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;sphere+cylinder&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>See <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ModelInfo" title="sasmodels.modelinfo.ModelInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasmodels.modelinfo.ModelInfo</span></code></a> for details about the model
+<p>See <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.modelinfo.ModelInfo" title="sasmodels.modelinfo.ModelInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">modelinfo.ModelInfo</span></code></a> for details about the model
 attributes that are defined.</p>
 </div>
 <div class="section" id="model-parameters">

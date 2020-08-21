@@ -79,15 +79,16 @@
 
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span>
+    <span class="n">Data</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Data1D&quot;</span><span class="p">,</span> <span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;SesansData&quot;</span><span class="p">]</span>
+    <span class="n">OptArray</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">OptLimits</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">Data</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Data1D&quot;</span><span class="p">,</span> <span class="s2">&quot;Data2D&quot;</span><span class="p">,</span> <span class="s2">&quot;SesansData&quot;</span><span class="p">]</span>
 <span class="c1"># pylint: enable=unused-import</span>
 
 <div class="viewcode-block" id="load_data"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.load_data">[docs]</a><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="c1"># type: (str) -&gt; Data</span>
+    <span class="c1"># type: (str, int) -&gt; Data</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load data using a sasview loader.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -179,13 +180,8 @@
 
 <span class="sd">    *_yaxis*, *_yunit*: label and units for the *y* axis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dy</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="p">):</span>
-        <span class="c1"># type: (...) -&gt; None</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># type: (OptArray, OptArray, OptArray, OptArray) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
@@ -225,7 +221,7 @@
     <span class="n">isSesans</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="n">Data1D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Optional[np.ndarray]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: OptArray</span></div>
 
 <div class="viewcode-block" id="Data2D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.Data2D">[docs]</a><span class="k">class</span> <span class="nc">Data2D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -259,15 +255,8 @@
 
 <span class="sd">    *x_bins*, *y_bins*: grid steps in *x* and *y* directions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                 <span class="n">dz</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="p">):</span>
-        <span class="c1"># type: (...) -&gt; None</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># type: (OptArray, OptArray, OptArray, OptArray, OptArray, OptArray) -&gt; None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">z</span><span class="p">,</span> <span class="n">dz</span>
@@ -350,7 +339,7 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="empty_data1D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data1D">[docs]</a><span class="k">def</span> <span class="nf">empty_data1D</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">dL</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
-    <span class="c1"># type: (np.ndarray, float) -&gt; Data1D</span>
+    <span class="c1"># type: (np.ndarray, float, float, float) -&gt; Data1D</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create empty 1D data using the given *q* as the x value.</span>
 
@@ -382,7 +371,7 @@
 
 
 <div class="viewcode-block" id="empty_data2D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data2D">[docs]</a><span class="k">def</span> <span class="nf">empty_data2D</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-    <span class="c1"># type: (np.ndarray, Optional[np.ndarray], float) -&gt; Data2D</span>
+    <span class="c1"># type: (np.ndarray, OptArray, float) -&gt; Data2D</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create empty 2D data using the given mesh.</span>
 
@@ -424,7 +413,7 @@
 
 
 <div class="viewcode-block" id="plot_data"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.plot_data">[docs]</a><span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="c1"># type: (Data, str, Optional[Tuple[float, float]]) -&gt; None</span>
+    <span class="c1"># type: (Data, str, OptLimits) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot data loaded by the sasview loader.</span>
 
@@ -446,15 +435,9 @@
         <span class="n">_plot_result1D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">limits</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="plot_theory"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.plot_theory">[docs]</a><span class="k">def</span> <span class="nf">plot_theory</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>          <span class="c1"># type: Data</span>
-                <span class="n">theory</span><span class="p">,</span>        <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="n">resid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>    <span class="c1"># type: str</span>
-                <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># type: bool</span>
-                <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-                <span class="n">Iq_calc</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[np.ndarray]</span>
-               <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; None</span>
+<div class="viewcode-block" id="plot_theory"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.plot_theory">[docs]</a><span class="k">def</span> <span class="nf">plot_theory</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iq_calc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (Data, OptArray, OptArray, str, bool, OptLimits, OptArray) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot theory calculation.</span>
 
@@ -500,15 +483,9 @@
 
 
 <span class="nd">@protect</span>
-<span class="k">def</span> <span class="nf">_plot_result1D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>         <span class="c1"># type: Data1D</span>
-                   <span class="n">theory</span><span class="p">,</span>       <span class="c1"># type: Optional[np.ndarray]</span>
-                   <span class="n">resid</span><span class="p">,</span>        <span class="c1"># type: Optional[np.ndarray]</span>
-                   <span class="n">view</span><span class="p">,</span>         <span class="c1"># type: str</span>
-                   <span class="n">use_data</span><span class="p">,</span>     <span class="c1"># type: bool</span>
-                   <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[Tuple[float, float]]</span>
-                   <span class="n">Iq_calc</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># type: Optional[np.ndarray]</span>
-                  <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; None</span>
+<span class="k">def</span> <span class="nf">_plot_result1D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="p">,</span>
+                   <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iq_calc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (Data1D, OptArray, OptArray, str, bool, OptLimits, OptArray) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the data and residuals for 1D data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -606,13 +583,8 @@
 
 
 <span class="nd">@protect</span>
-<span class="k">def</span> <span class="nf">_plot_result_sesans</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>        <span class="c1"># type: SesansData</span>
-                        <span class="n">theory</span><span class="p">,</span>      <span class="c1"># type: Optional[np.ndarray]</span>
-                        <span class="n">resid</span><span class="p">,</span>       <span class="c1"># type: Optional[np.ndarray]</span>
-                        <span class="n">use_data</span><span class="p">,</span>    <span class="c1"># type: bool</span>
-                        <span class="n">limits</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># type: Optional[Tuple[float, float]]</span>
-                       <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; None</span>
+<span class="k">def</span> <span class="nf">_plot_result_sesans</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">use_data</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (SesansData, OptArray, OptArray, bool, OptLimits) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot SESANS results.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -656,14 +628,8 @@
 
 
 <span class="nd">@protect</span>
-<span class="k">def</span> <span class="nf">_plot_result2D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>         <span class="c1"># type: Data2D</span>
-                   <span class="n">theory</span><span class="p">,</span>       <span class="c1"># type: Optional[np.ndarray]</span>
-                   <span class="n">resid</span><span class="p">,</span>        <span class="c1"># type: Optional[np.ndarray]</span>
-                   <span class="n">view</span><span class="p">,</span>         <span class="c1"># type: str</span>
-                   <span class="n">use_data</span><span class="p">,</span>     <span class="c1"># type: bool</span>
-                   <span class="n">limits</span><span class="o">=</span><span class="kc">None</span>   <span class="c1"># type: Optional[Tuple[float, float]]</span>
-                  <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; None</span>
+<span class="k">def</span> <span class="nf">_plot_result2D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">use_data</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (Data2D, OptArray, OptArray, str, bool, OptLimits) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the data and residuals for 2D data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -677,7 +643,7 @@
 
     <span class="c1"># Put theory and data on a common colormap scale</span>
     <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: Optional[np.ndarray]</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: OptArray</span>
     <span class="k">if</span> <span class="n">use_data</span><span class="p">:</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
         <span class="n">datamin</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">target</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
@@ -725,13 +691,8 @@
 
 
 <span class="nd">@protect</span>
-<span class="k">def</span> <span class="nf">_plot_2d_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>       <span class="c1"># type: Data2D</span>
-                    <span class="n">signal</span><span class="p">,</span>     <span class="c1"># type: np.ndarray</span>
-                    <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[float]</span>
-                    <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[float]</span>
-                    <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: str</span>
-                   <span class="p">):</span>
-    <span class="c1"># type: (...) -&gt; Tuple[float, float]</span>
+<span class="k">def</span> <span class="nf">_plot_2d_signal</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># type: (Data2D, np.ndarray, Optional[float], Optional[float], str) -&gt; Tuple[float, float]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the target value for the data.  This could be the data itself,</span>
 <span class="sd">    the theory calculation, or the residuals.</span>
