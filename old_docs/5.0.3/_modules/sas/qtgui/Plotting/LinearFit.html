@@ -1,0 +1,399 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Plotting.LinearFit &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Plotting.LinearFit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Adds a linear fit plot to the chart</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">formatNumber</span><span class="p">,</span> <span class="n">DoubleValidator</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting</span> <span class="kn">import</span> <span class="n">Fittings</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting</span> <span class="kn">import</span> <span class="n">DataTransform</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.LineModel</span> <span class="kn">import</span> <span class="n">LineModel</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="c1"># Local UI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">main_resources_rc</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.UI.LinearFitUI</span> <span class="kn">import</span> <span class="n">Ui_LinearFitUI</span>
+
+<div class="viewcode-block" id="LinearFit"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit">[docs]</a><span class="k">class</span> <span class="nc">LinearFit</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_LinearFitUI</span><span class="p">):</span>
+    <span class="n">updatePlot</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">max_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                 <span class="n">fit_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                 <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LinearFit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># disable the context help icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span>
+
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">max_range</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">fit_range</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_range</span> <span class="o">=</span> <span class="n">max_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_range</span> <span class="o">=</span> <span class="n">fit_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">=</span> <span class="n">xlabel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">=</span> <span class="n">ylabel</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rg_on</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rg_yx</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_on</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Scale dependent content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guiner_box</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">==</span> <span class="s2">&quot;ln(y)&quot;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">==</span> <span class="s2">&quot;ln(y*x)&quot;</span><span class="p">)</span> <span class="ow">and</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;x^(2)&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">==</span> <span class="s2">&quot;ln(y*x)&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label_12</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rod diameter [Å]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rg_yx</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rg_on</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">guiner_box</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;x^(4)&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">==</span> <span class="s2">&quot;y*x^(4)&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bg_on</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_3</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Background&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_is_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;log10(x)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_is_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">==</span> <span class="s2">&quot;log10(y)&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMin</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMax</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">DoubleValidator</span><span class="p">())</span>
+
+        <span class="c1"># Default values in the line edits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtA</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtB</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtAerr</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBerr</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtChi2</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+
+        <span class="c1"># Initial ranges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtRangeMin</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">max_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtRangeMax</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">max_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="c1"># Assure nice display of ranges</span>
+        <span class="n">fr_min</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">fit_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">fr_max</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">fit_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMin</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fr_min</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMax</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fr_max</span><span class="p">))</span>
+
+        <span class="c1"># cast xLabel into html</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\^\((.)\)(.*)&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;&lt;span style=&quot; vertical-align:super;&quot;&gt;\1&lt;/span&gt;\2&#39;</span><span class="p">,</span>
+                      <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblRange</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Fit range of &#39;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">LineModel</span><span class="p">()</span>
+        <span class="c1"># Display the fittings values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getParam</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">getParam</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cstA</span> <span class="o">=</span> <span class="n">Fittings</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_A</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cstB</span> <span class="o">=</span> <span class="n">Fittings</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_B</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">DataTransform</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFixedSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimumSizeHint</span><span class="p">())</span>
+
+        <span class="c1"># connect Fit button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdFit</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LinearFit.setRangeLabel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit.setRangeLabel">[docs]</a>    <span class="k">def</span> <span class="nf">setRangeLabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite default fit range label to correspond to actual unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblRange</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LinearFit.range"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit.range">[docs]</a>    <span class="k">def</span> <span class="nf">range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMin</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMax</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="LinearFit.fit"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs the fit. Receive an event when clicking on</span>
+<span class="sd">        the button Fit.Computes chisqr ,</span>
+<span class="sd">        A and B parameters of the best linear fit y=Ax +B</span>
+<span class="sd">        Push a plottable to the caller</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tempx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tempy</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tempdy</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Checks to assure data correctness</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkFitValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtFitRangeMin</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xminFit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmaxFit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">()</span>
+
+        <span class="n">xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xminFit</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmaxFit</span>
+        <span class="n">xminView</span> <span class="o">=</span> <span class="n">xmin</span>
+        <span class="n">xmaxView</span> <span class="o">=</span> <span class="n">xmax</span>
+
+        <span class="c1"># Set the qmin and qmax in the panel that matches the</span>
+        <span class="c1"># transformed min and max</span>
+        <span class="n">value_xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floatInvTransform</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span>
+        <span class="n">value_xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floatInvTransform</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtRangeMin</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">value_xmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtRangeMax</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">value_xmax</span><span class="p">))</span>
+
+        <span class="n">tempx</span><span class="p">,</span> <span class="n">tempy</span><span class="p">,</span> <span class="n">tempdy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">origData</span><span class="p">()</span>
+
+        <span class="c1"># Find the fitting parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cstA</span> <span class="o">=</span> <span class="n">Fittings</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_A</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cstB</span> <span class="o">=</span> <span class="n">Fittings</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_B</span><span class="p">)</span>
+        <span class="n">tempdy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tempdy</span><span class="p">)</span>
+        <span class="n">tempdy</span><span class="p">[</span><span class="n">tempdy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_is_log</span><span class="p">:</span>
+            <span class="n">xmin</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span>
+            <span class="n">xmax</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span>
+
+        <span class="n">chisqr</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">Fittings</span><span class="o">.</span><span class="n">sasfit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                                           <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cstA</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cstB</span><span class="p">],</span>
+                                           <span class="n">tempx</span><span class="p">,</span> <span class="n">tempy</span><span class="p">,</span> <span class="n">tempdy</span><span class="p">,</span>
+                                           <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
+        <span class="c1"># Use chi2/dof</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tempx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">chisqr</span> <span class="o">=</span> <span class="n">chisqr</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">tempx</span><span class="p">)</span>
+
+        <span class="c1"># Check that cov and out are iterable before displaying them</span>
+        <span class="n">errA</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">errB</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">cstA</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">cstB</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Reset model with the right values of A and B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setParam</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">cstA</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setParam</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">cstB</span><span class="p">))</span>
+
+        <span class="n">tempx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tempy</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">y_model</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># load tempy with the minimum transformation</span>
+        <span class="n">y_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">xmin</span><span class="p">)</span>
+        <span class="n">tempx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xminView</span><span class="p">)</span>
+        <span class="n">tempy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">y_model</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_is_log</span> <span class="k">else</span> <span class="n">y_model</span><span class="p">)</span>
+
+        <span class="c1"># load tempy with the maximum transformation</span>
+        <span class="n">y_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span>
+        <span class="n">tempx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xmaxView</span><span class="p">)</span>
+        <span class="n">tempy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">y_model</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_is_log</span> <span class="k">else</span> <span class="n">y_model</span><span class="p">)</span>
+
+        <span class="c1"># Set the fit parameter display when  FitDialog is opened again</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Avalue</span> <span class="o">=</span> <span class="n">cstA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bvalue</span> <span class="o">=</span> <span class="n">cstB</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ErrAvalue</span> <span class="o">=</span> <span class="n">errA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ErrBvalue</span> <span class="o">=</span> <span class="n">errB</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Chivalue</span> <span class="o">=</span> <span class="n">chisqr</span>
+
+        <span class="c1"># Update the widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtA</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Avalue</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtAerr</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ErrAvalue</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtB</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Bvalue</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBerr</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ErrBvalue</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtChi2</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Chivalue</span><span class="p">))</span>
+
+        <span class="c1"># Possibly Guiner analysis</span>
+        <span class="n">i0</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">cstB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtGuiner_1</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">i0</span><span class="p">))</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">cstB</span><span class="p">)</span> <span class="o">*</span> <span class="n">errB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtGuiner1_Err</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rg_yx</span><span class="p">:</span>
+            <span class="n">rg</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">cstA</span><span class="p">))</span>
+            <span class="n">diam</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">cstA</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">diam</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rg</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">errA</span><span class="p">)</span> <span class="o">/</span> <span class="n">diam</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rg</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">cstA</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">rg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">rg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rg</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">errA</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">rg</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">err</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtGuiner_2</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtGuiner2_Err</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">rg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">floatInvTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xminFit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtGuiner_3</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">rg</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">floatInvTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmaxFit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtGuiner_4</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">tempx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tempx</span><span class="p">)</span>
+        <span class="n">tempy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tempy</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">tempx</span><span class="p">,</span> <span class="n">tempy</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LinearFit.origData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit.origData">[docs]</a>    <span class="k">def</span> <span class="nf">origData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Store the transformed values of view x, y and dy before the fit</span>
+        <span class="n">xmin_check</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xminFit</span><span class="p">)</span>
+        <span class="c1"># Local shortcuts</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dy</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_is_log</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_is_log</span><span class="p">:</span>
+                <span class="n">tempy</span>  <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">xmin_check</span><span class="p">]</span>
+                <span class="n">tempdy</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataTransform</span><span class="o">.</span><span class="n">errToLogX</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">xmin_check</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tempy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                <span class="n">tempdy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">:</span><span class="n">DataTransform</span><span class="o">.</span><span class="n">errToLogX</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">y</span><span class="p">,</span><span class="n">dy</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tempy</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">tempdy</span> <span class="o">=</span> <span class="n">dy</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_is_log</span><span class="p">:</span>
+            <span class="n">tempx</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">xmin_check</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tempx</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tempx</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tempy</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tempdy</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LinearFit.checkFitValues"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit.checkFitValues">[docs]</a>    <span class="k">def</span> <span class="nf">checkFitValues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the validity of input values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">p_white</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span>
+        <span class="n">p_white</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">backgroundRole</span><span class="p">(),</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">white</span><span class="p">)</span>
+        <span class="n">p_pink</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span>
+        <span class="n">p_pink</span><span class="o">.</span><span class="n">setColor</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">backgroundRole</span><span class="p">(),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">setAutoFillBackground</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Check for possible values entered</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_is_log</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setPalette</span><span class="p">(</span><span class="n">p_white</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setPalette</span><span class="p">(</span><span class="n">p_pink</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span></div>
+
+<div class="viewcode-block" id="LinearFit.floatInvTransform"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.LinearFit.LinearFit.floatInvTransform">[docs]</a>    <span class="k">def</span> <span class="nf">floatInvTransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        transform a float.It is used to determine the x.View min and x.View</span>
+<span class="sd">        max for values not in x.  Also used to properly calculate RgQmin,</span>
+<span class="sd">        RgQmax and to update qmin and qmax in the linear range boxes on the</span>
+<span class="sd">        panel.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: refactor this. This is just a hack to make the</span>
+        <span class="c1"># functionality work without rewritting the whole code</span>
+        <span class="c1"># with good design (which really should be done...).</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;x^(2)&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;x^(4)&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;log10(x)&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;ln(x)&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">==</span> <span class="s2">&quot;log10(x^(4))&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">x</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>squarewell &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="stickyhardsphere" href="stickyhardsphere.html" />
+    <link rel="prev" title="hayter_msa" href="hayter_msa.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="stickyhardsphere.html" title="stickyhardsphere"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hayter_msa.html" title="hayter_msa"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/structure-factor.html" accesskey="U">Structure Factors</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="squarewell">
+<span id="id1"></span><h1>squarewell</h1>
+<p>Square well structure factor with Mean Spherical Approximation closure</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="57%" />
+<col width="10%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Description</th>
+<th class="head">Units</th>
+<th class="head">Default value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>radius_effective</td>
+<td>effective radius of hard sphere</td>
+<td>Å</td>
+<td>50</td>
+</tr>
+<tr class="row-odd"><td>volfraction</td>
+<td>volume fraction of spheres</td>
+<td>None</td>
+<td>0.04</td>
+</tr>
+<tr class="row-even"><td>welldepth</td>
+<td>depth of well, epsilon</td>
+<td>kT</td>
+<td>1.5</td>
+</tr>
+<tr class="row-odd"><td>wellwidth</td>
+<td>width of well in diameters (=2R) units, must be &gt; 1</td>
+<td>diameters</td>
+<td>1.2</td>
+</tr>
+</tbody>
+</table>
+<p>The returned value is a dimensionless structure factor, <span class="math notranslate nohighlight">\(S(q)\)</span>.</p>
+<p>Calculates the interparticle structure factor for a hard sphere fluid
+with a narrow, attractive, square well potential. <strong>The Mean Spherical
+Approximation (MSA) closure relationship is used, but it is not the most
+appropriate closure for an attractive interparticle potential.</strong> However,
+the solution has been compared to Monte Carlo simulations for a square
+well fluid and these show the MSA calculation to be limited to well
+depths <span class="math notranslate nohighlight">\(\epsilon &lt; 1.5\)</span> kT and volume fractions <span class="math notranslate nohighlight">\(\phi &lt; 0.08\)</span>.</p>
+<p>Positive well depths correspond to an attractive potential well. Negative
+well depths correspond to a potential “shoulder”, which may or may not be
+physically reasonable. The <a class="reference internal" href="stickyhardsphere.html#stickyhardsphere"><span class="std std-ref">stickyhardsphere</span></a> model may be a better
+choice in some circumstances.</p>
+<p>Computed values may behave badly at extremely small <span class="math notranslate nohighlight">\(qR\)</span>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Earlier versions of SasView did not incorporate the so-called
+<span class="math notranslate nohighlight">\(\beta(q)\)</span> (“beta”) correction [2] for polydispersity and non-sphericity.
+This is only available in SasView versions 5.0 and higher.</p>
+</div>
+<p>The well width <span class="math notranslate nohighlight">\((\lambda)\)</span> is defined as multiples of the particle diameter
+<span class="math notranslate nohighlight">\((2 R)\)</span>.</p>
+<p>The interaction potential is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}U(r) = \begin{cases}
+\infty &amp; r &lt; 2R \\
+-\epsilon &amp; 2R \leq r &lt; 2R\lambda \\
+0 &amp; r \geq 2R\lambda
+\end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> is the distance from the center of a sphere of a radius <span class="math notranslate nohighlight">\(R\)</span>.</p>
+<p>In SasView the effective radius may be calculated from the parameters
+used in the form factor <span class="math notranslate nohighlight">\(P(q)\)</span> that this <span class="math notranslate nohighlight">\(S(q)\)</span> is combined with.</p>
+<p>For 2D data: The 2D scattering intensity is calculated in the same way as 1D,
+where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
+\[q = \sqrt{q_x^2 + q_y^2}\]</div>
+<div class="figure" id="id2">
+<img alt="../../_images/squarewell_autogenfig.png" src="../../_images/squarewell_autogenfig.png" />
+<p class="caption"><span class="caption-number">Fig. 125 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
+</div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" href="../../_downloads/squarewell.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">squarewell.py</span></code></a></p>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li>R V Sharma, K C Sharma, <em>Physica</em>, 89A (1977) 213</li>
+<li>M Kotlarchyk and S-H Chen, <em>J. Chem. Phys.</em>, 79 (1983) 2461-2469</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong></li>
+<li><strong>Last Modified by:</strong></li>
+<li><strong>Last Reviewed by:</strong> Steve King <strong>Date:</strong> March 27, 2019</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hayter_msa.html"
+                        title="previous chapter">hayter_msa</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="stickyhardsphere.html"
+                        title="next chapter">stickyhardsphere</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/user/models/squarewell.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="stickyhardsphere.html" title="stickyhardsphere"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hayter_msa.html" title="hayter_msa"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/structure-factor.html" >Structure Factors</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

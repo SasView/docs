@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.MainWindow.GuiManager &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.MainWindow.GuiManager &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -49,67 +49,63 @@
 <span class="kn">import</span> <span class="nn">webbrowser</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QLocale</span><span class="p">,</span> <span class="n">QUrl</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="k">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QLocale</span><span class="p">,</span> <span class="n">QUrl</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Qt5Agg&quot;</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="k">import</span> <span class="n">reactor</span>
 <span class="c1"># General SAS imports</span>
-<span class="kn">from</span> <span class="nn">sas</span> <span class="kn">import</span> <span class="n">get_local_config</span><span class="p">,</span> <span class="n">get_custom_config</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ConnectionProxy</span> <span class="kn">import</span> <span class="n">ConnectionProxy</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.SasviewLogger</span> <span class="kn">import</span> <span class="n">setup_qt_logging</span>
+<span class="kn">from</span> <span class="nn">sas</span> <span class="k">import</span> <span class="n">get_local_config</span><span class="p">,</span> <span class="n">get_custom_config</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ConnectionProxy</span> <span class="k">import</span> <span class="n">ConnectionProxy</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.SasviewLogger</span> <span class="k">import</span> <span class="n">setup_qt_logging</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.LocalConfig</span> <span class="k">as</span> <span class="nn">LocalConfig</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.ObjectLibrary</span> <span class="k">as</span> <span class="nn">ObjectLibrary</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.TabbedModelEditor</span> <span class="kn">import</span> <span class="n">TabbedModelEditor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.PluginManager</span> <span class="kn">import</span> <span class="n">PluginManager</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GridPanel</span> <span class="kn">import</span> <span class="n">BatchOutputPanel</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ResultPanel</span> <span class="kn">import</span> <span class="n">ResultPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.TabbedModelEditor</span> <span class="k">import</span> <span class="n">TabbedModelEditor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.PluginManager</span> <span class="k">import</span> <span class="n">PluginManager</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GridPanel</span> <span class="k">import</span> <span class="n">BatchOutputPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ResultPanel</span> <span class="k">import</span> <span class="n">ResultPanel</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ReportDialog</span> <span class="kn">import</span> <span class="n">ReportDialog</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.UI.AcknowledgementsUI</span> <span class="kn">import</span> <span class="n">Ui_Acknowledgements</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.AboutBox</span> <span class="kn">import</span> <span class="n">AboutBox</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.WelcomePanel</span> <span class="kn">import</span> <span class="n">WelcomePanel</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.CategoryManager</span> <span class="kn">import</span> <span class="n">CategoryManager</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ReportDialog</span> <span class="k">import</span> <span class="n">ReportDialog</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.Acknowledgements</span> <span class="k">import</span> <span class="n">Acknowledgements</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.AboutBox</span> <span class="k">import</span> <span class="n">AboutBox</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.WelcomePanel</span> <span class="k">import</span> <span class="n">WelcomePanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.CategoryManager</span> <span class="k">import</span> <span class="n">CategoryManager</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataManager</span> <span class="kn">import</span> <span class="n">DataManager</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataManager</span> <span class="k">import</span> <span class="n">DataManager</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.SldPanel</span> <span class="kn">import</span> <span class="n">SldPanel</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.DensityPanel</span> <span class="kn">import</span> <span class="n">DensityPanel</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.KiessigPanel</span> <span class="kn">import</span> <span class="n">KiessigPanel</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.SlitSizeCalculator</span> <span class="kn">import</span> <span class="n">SlitSizeCalculator</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.GenericScatteringCalculator</span> <span class="kn">import</span> <span class="n">GenericScatteringCalculator</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.ResolutionCalculatorPanel</span> <span class="kn">import</span> <span class="n">ResolutionCalculatorPanel</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.DataOperationUtilityPanel</span> <span class="kn">import</span> <span class="n">DataOperationUtilityPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.SldPanel</span> <span class="k">import</span> <span class="n">SldPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.DensityPanel</span> <span class="k">import</span> <span class="n">DensityPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.KiessigPanel</span> <span class="k">import</span> <span class="n">KiessigPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.SlitSizeCalculator</span> <span class="k">import</span> <span class="n">SlitSizeCalculator</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.GenericScatteringCalculator</span> <span class="k">import</span> <span class="n">GenericScatteringCalculator</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.ResolutionCalculatorPanel</span> <span class="k">import</span> <span class="n">ResolutionCalculatorPanel</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Calculators.DataOperationUtilityPanel</span> <span class="k">import</span> <span class="n">DataOperationUtilityPanel</span>
+
+<span class="kn">import</span> <span class="nn">sas.qtgui.Plotting.PlotHelper</span> <span class="k">as</span> <span class="nn">PlotHelper</span>
 
 <span class="c1"># Perspectives</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Perspectives</span> <span class="k">as</span> <span class="nn">Perspectives</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingPerspective</span> <span class="kn">import</span> <span class="n">FittingWindow</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataExplorer</span> <span class="kn">import</span> <span class="n">DataExplorerWindow</span><span class="p">,</span> <span class="n">DEFAULT_PERSPECTIVE</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingPerspective</span> <span class="k">import</span> <span class="n">FittingWindow</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataExplorer</span> <span class="k">import</span> <span class="n">DataExplorerWindow</span><span class="p">,</span> <span class="n">DEFAULT_PERSPECTIVE</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.AddMultEditor</span> <span class="kn">import</span> <span class="n">AddMultEditor</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ImageViewer</span> <span class="kn">import</span> <span class="n">ImageViewer</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.AddMultEditor</span> <span class="k">import</span> <span class="n">AddMultEditor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.ImageViewer</span> <span class="k">import</span> <span class="n">ImageViewer</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.FileConverter</span> <span class="k">import</span> <span class="n">FileConverterWidget</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Acknowledgements"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.Acknowledgements">[docs]</a><span class="k">class</span> <span class="nc">Acknowledgements</span><span class="p">(</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_Acknowledgements</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="c1"># disable the context help icon</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GuiManager"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager">[docs]</a><span class="k">class</span> <span class="nc">GuiManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main SasView window functionality</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the manager as a child of MainWindow.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -137,6 +133,7 @@
 
         <span class="c1"># Currently displayed perspective</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Populate the main window with stuff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidgets</span><span class="p">()</span>
@@ -165,6 +162,9 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Populate the main window with widgets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Preload all perspectives</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadAllPerspectives</span><span class="p">()</span>
+
         <span class="c1"># Add FileDialog widget as docked</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span> <span class="o">=</span> <span class="n">DataExplorerWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_manager</span><span class="p">)</span>
         <span class="n">ObjectLibrary</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">&#39;DataExplorer&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="p">)</span>
@@ -217,21 +217,113 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">SlitSizeCalculator</span> <span class="o">=</span> <span class="n">SlitSizeCalculator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">GENSASCalculator</span> <span class="o">=</span> <span class="n">GenericScatteringCalculator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ResolutionCalculator</span> <span class="o">=</span> <span class="n">ResolutionCalculatorPanel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">DataOperation</span> <span class="o">=</span> <span class="n">DataOperationUtilityPanel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DataOperation</span> <span class="o">=</span> <span class="n">DataOperationUtilityPanel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">FileConverter</span> <span class="o">=</span> <span class="n">FileConverterWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GuiManager.loadAllPerspectives"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.loadAllPerspectives">[docs]</a>    <span class="k">def</span> <span class="nf">loadAllPerspectives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Close any existing perspectives to prevent multiple open instances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeAllPerspectives</span><span class="p">()</span>
+        <span class="c1"># Load all perspectives</span>
+        <span class="n">loaded_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">perspective</span> <span class="ow">in</span> <span class="n">Perspectives</span><span class="o">.</span><span class="n">PERSPECTIVES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">loaded_perspective</span> <span class="o">=</span> <span class="n">perspective</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">loaded_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">loaded_perspective</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unable to load </span><span class="si">{name}</span><span class="s2"> perspective.</span><span class="se">\n</span><span class="si">{e}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span> <span class="o">=</span> <span class="n">loaded_dict</span></div>
+
+<div class="viewcode-block" id="GuiManager.closeAllPerspectives"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.closeAllPerspectives">[docs]</a>    <span class="k">def</span> <span class="nf">closeAllPerspectives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Close all perspectives if they are open</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">perspective</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">perspective</span><span class="o">.</span><span class="n">setClosable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subwindow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">subWindowList</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subwindow</span><span class="p">)</span>
+                    <span class="n">perspective</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unable to close </span><span class="si">{name}</span><span class="s2"> perspective</span><span class="se">\n</span><span class="si">{e}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="GuiManager.addCategories"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.addCategories">[docs]</a>    <span class="k">def</span> <span class="nf">addCategories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make sure categories.json exists and if not compile it and install in ~/.sasview</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">sas.sascalc.fit.models</span> <span class="kn">import</span> <span class="n">ModelManager</span>
-            <span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.CategoryInstaller</span> <span class="kn">import</span> <span class="n">CategoryInstaller</span>
+            <span class="kn">from</span> <span class="nn">sas.sascalc.fit.models</span> <span class="k">import</span> <span class="n">ModelManager</span>
+            <span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.CategoryInstaller</span> <span class="k">import</span> <span class="n">CategoryInstaller</span>
             <span class="n">model_list</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span><span class="o">.</span><span class="n">cat_model_list</span><span class="p">()</span>
             <span class="n">CategoryInstaller</span><span class="o">.</span><span class="n">check_install</span><span class="p">(</span><span class="n">model_list</span><span class="o">=</span><span class="n">model_list</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">traceback</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: could not load SasView models&quot;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="GuiManager.updatePlotItems"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.updatePlotItems">[docs]</a>    <span class="k">def</span> <span class="nf">updatePlotItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graphs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper for adding/removing actions in the windows menu</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plot</span><span class="p">,</span> <span class="n">delete</span> <span class="o">=</span> <span class="n">graphs</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plot</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">delete</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removePlotItemsInWindowsMenu</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addPlotItemsInWindowsMenu</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GuiManager.addPlotItemsInWindowsMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.addPlotItemsInWindowsMenu">[docs]</a>    <span class="k">def</span> <span class="nf">addPlotItemsInWindowsMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dynamically update the QMenu content and assign signals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">plot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">menuWindow</span><span class="o">.</span><span class="n">actions</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="c1"># action with this name already exists</span>
+                <span class="k">return</span>
+
+        <span class="c1"># create action for this plot</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">menuWindow</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># connect action to slot</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">chk</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotSelectedSlot</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="c1"># add action to windows menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">menuWindow</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GuiManager.plotSelectedSlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.plotSelectedSlot">[docs]</a>    <span class="k">def</span> <span class="nf">plotSelectedSlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set focus on the selected plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># loop over all visible plots and find the requested plot</span>
+        <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">PlotHelper</span><span class="o">.</span><span class="n">currentPlots</span><span class="p">():</span>
+            <span class="c1"># take last plot</span>
+            <span class="k">if</span> <span class="n">PlotHelper</span><span class="o">.</span><span class="n">plotById</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">plot_name</span><span class="p">:</span>
+                <span class="c1"># set focus on the plot</span>
+                <span class="c1"># Note: none of the StackOverflow recommended solutions work here!</span>
+                <span class="c1"># neither raise_(), nor showNormal() nor setWindowState(Qt.WindowActive)</span>
+                <span class="n">PlotHelper</span><span class="o">.</span><span class="n">plotById</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span><span class="o">.</span><span class="n">showNormal</span><span class="p">()</span>
+                <span class="n">PlotHelper</span><span class="o">.</span><span class="n">plotById</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
+                <span class="k">return</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="GuiManager.removePlotItemsInWindowsMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.removePlotItemsInWindowsMenu">[docs]</a>    <span class="k">def</span> <span class="nf">removePlotItemsInWindowsMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dynamically update the QMenu content and disconnect signals</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plot</span><span class="p">:</span> <span class="c1"># watch out for quick plots</span>
+            <span class="k">return</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="c1"># loop over actions</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">menuWindow</span><span class="o">.</span><span class="n">actions</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="c1"># disconnect action to slot</span>
+                <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">menuWindow</span><span class="o">.</span><span class="n">removeAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="GuiManager.updateLogContextMenus"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.updateLogContextMenus">[docs]</a>    <span class="k">def</span> <span class="nf">updateLogContextMenus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -292,18 +384,21 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Respond to change of the perspective signal</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Close the previous perspective</span>
+        <span class="c1"># Remove the previous perspective from the window</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clearPerspectiveMenubarOptions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="o">.</span><span class="n">setClosable</span><span class="p">()</span>
+            <span class="c1"># Remove perspective and store in Perspective dictionary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">removeSubWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subwindow</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="c1"># Default perspective</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span> <span class="o">=</span> <span class="n">Perspectives</span><span class="o">.</span><span class="n">PERSPECTIVES</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">perspective_name</span><span class="p">)](</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># Get new perspective</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">perspective_name</span><span class="p">)]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setupPerspectiveMenubarOptions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">subwindow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subwindow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="p">)</span>
 
         <span class="c1"># Resize to the workspace height</span>
         <span class="n">workspace_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">workspace</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
@@ -489,8 +584,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">updateTheoryFromPerspectiveSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateTheoryFromPerspective</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">deleteIntermediateTheoryPlotsSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deleteIntermediateTheoryPlotsByModelID</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotRequestedSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showPlot</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotFromFilenameSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showPlotFromFilename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">updateModelFromDataOperationPanelSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromDataOperationPanel</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotFromNameSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showPlotFromName</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">updateModelFromDataOperationPanelSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromDataOperationPanel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">activeGraphsSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updatePlotItems</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="GuiManager.addTriggers"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.addTriggers">[docs]</a>    <span class="k">def</span> <span class="nf">addTriggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -543,6 +640,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionGeneric_Scattering_Calculator</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionGeneric_Scattering_Calculator</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionPython_Shell_Editor</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionPython_Shell_Editor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionImage_Viewer</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionImage_Viewer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionFile_Converter</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionFile_Converter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionOrientation_Viewer</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionOrientation_Viewer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionFreeze_Theory</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionFreeze_Theory</span><span class="p">)</span>
         <span class="c1"># Fitting</span>
@@ -613,64 +711,54 @@
 <span class="sd">        Menu Save Project</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">saveProject</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">return</span>
 
         <span class="c1"># datasets</span>
         <span class="n">all_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">getSerializedData</span><span class="p">()</span>
-
-        <span class="c1"># fit tabs</span>
-        <span class="n">params</span><span class="o">=</span><span class="p">{}</span>
-        <span class="n">perspective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">perspective</span><span class="p">,</span> <span class="s1">&#39;isSerializable&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">perspective</span><span class="o">.</span><span class="n">isSerializable</span><span class="p">():</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="n">perspective</span><span class="o">.</span><span class="n">serializeAllFitpage</span><span class="p">()</span>
-
-        <span class="c1"># project dictionary structure:</span>
-        <span class="c1"># analysis[data.id] = [{&quot;fit_data&quot;:[data, checkbox, child data],</span>
-        <span class="c1">#                       &quot;fit_params&quot;:[fitpage_state]}</span>
-        <span class="c1"># &quot;fit_params&quot; not present if dataset not sent to fitting</span>
-        <span class="n">analysis</span> <span class="o">=</span> <span class="p">{}</span>
-
+        <span class="n">final_data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">all_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">id</span><span class="o">==</span><span class="s1">&#39;is_batch&#39;</span><span class="p">:</span>
-                <span class="n">analysis</span><span class="p">[</span><span class="s1">&#39;is_batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="n">analysis</span><span class="p">[</span><span class="s1">&#39;batch_grid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_window</span><span class="o">.</span><span class="n">data_dict</span>
-                <span class="k">continue</span>
-            <span class="n">data_content</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fit_data&quot;</span><span class="p">:</span><span class="n">data</span><span class="p">}</span>
-            <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="c1"># this dataset is represented also by the fit tab. Add to it.</span>
-                <span class="n">data_content</span><span class="p">[</span><span class="s2">&quot;fit_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
-            <span class="n">analysis</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_content</span>
+            <span class="n">final_data</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fit_data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">}</span>
 
-        <span class="c1"># standalone constraint pages</span>
-        <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;is_constraint&#39;</span> <span class="ow">in</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="k">continue</span>
-            <span class="n">analysis</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Save from all serializable perspectives</span>
+        <span class="c1"># Analysis should return {data-id: serialized-state}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">per</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadedPerspectives</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">per</span><span class="p">,</span> <span class="s1">&#39;isSerializable&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">per</span><span class="o">.</span><span class="n">isSerializable</span><span class="p">():</span>
+                <span class="n">analysis</span> <span class="o">=</span> <span class="n">per</span><span class="o">.</span><span class="n">serializeAll</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">final_data</span><span class="p">:</span>
+                        <span class="n">final_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s1">&#39;cs_tab&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                        <span class="n">final_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">final_data</span><span class="p">[</span><span class="s1">&#39;is_batch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_batch&#39;</span><span class="p">,</span> <span class="s1">&#39;False&#39;</span><span class="p">)</span>
+        <span class="n">final_data</span><span class="p">[</span><span class="s1">&#39;batch_grid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_window</span><span class="o">.</span><span class="n">data_dict</span>
+        <span class="n">final_data</span><span class="p">[</span><span class="s1">&#39;visible_perspective&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_perspective</span><span class="o">.</span><span class="n">name</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-            <span class="n">GuiUtils</span><span class="o">.</span><span class="n">saveData</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">analysis</span><span class="p">)</span></div>
+            <span class="n">GuiUtils</span><span class="o">.</span><span class="n">saveData</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">final_data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GuiManager.actionSave_Analysis"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.actionSave_Analysis">[docs]</a>    <span class="k">def</span> <span class="nf">actionSave_Analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Menu File/Save Analysis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">per</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">per</span><span class="p">,</span> <span class="n">FittingWindow</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">per</span><span class="p">,</span> <span class="s1">&#39;isSerializable&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">per</span><span class="o">.</span><span class="n">isSerializable</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="c1"># get fit page serialization</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">per</span><span class="o">.</span><span class="n">serializeCurrentFitpage</span><span class="p">()</span>
-        <span class="c1"># Find dataset ids for the current tab</span>
-        <span class="c1"># (can be multiple, if batch)</span>
-        <span class="n">data_id</span> <span class="o">=</span> <span class="n">per</span><span class="o">.</span><span class="n">currentTabDataId</span><span class="p">()</span>
-        <span class="n">tab_id</span> <span class="o">=</span> <span class="n">per</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">tab_id</span>
+        <span class="n">all_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">getSerializedData</span><span class="p">()</span>
         <span class="n">analysis</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">data_id</span><span class="p">:</span>
-            <span class="n">an</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">data_for_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">getDataForID</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-            <span class="n">an</span><span class="p">[</span><span class="s1">&#39;fit_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_for_id</span>
-            <span class="n">an</span><span class="p">[</span><span class="s1">&#39;fit_params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">params</span><span class="p">]</span>
-            <span class="n">analysis</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">an</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">saveAnalysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">tab_id</span><span class="p">)</span></div>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">per</span><span class="o">.</span><span class="n">serializeCurrentPage</span><span class="p">()</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">all_data</span><span class="p">:</span>
+                <span class="n">analysis</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fit_data&#39;</span><span class="p">:</span> <span class="n">all_data</span><span class="p">[</span><span class="nb">id</span><span class="p">]}</span>
+                <span class="n">analysis</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">analysis</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tab_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">per</span><span class="p">,</span>
+                                      <span class="s1">&#39;currentTab&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">per</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">tab_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">saveAnalysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="n">tab_id</span><span class="p">,</span> <span class="n">per</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No analysis was available to be saved.&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GuiManager.actionQuit"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.actionQuit">[docs]</a>    <span class="k">def</span> <span class="nf">actionQuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -697,7 +785,7 @@
 <span class="sd">        can be saved to the clipboard</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">copyFitParamsSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">actionPaste</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1">#self._workspace.actionPaste.setEnabled(True)</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="GuiManager.actionPaste"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.actionPaste">[docs]</a>    <span class="k">def</span> <span class="nf">actionPaste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -860,7 +948,7 @@
 <span class="sd">        Display the Jupyter console as a docked widget.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Import moved here for startup performance reasons</span>
-        <span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.IPythonWidget</span> <span class="kn">import</span> <span class="n">IPythonWidget</span>
+        <span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.IPythonWidget</span> <span class="k">import</span> <span class="n">IPythonWidget</span>
         <span class="n">terminal</span> <span class="o">=</span> <span class="n">IPythonWidget</span><span class="p">()</span>
 
         <span class="c1"># Add the console window as another docked widget</span>
@@ -879,7 +967,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make sasmodels orientation &amp; jitter viewer available</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sasmodels.jitter</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">orientation_run</span>
+        <span class="kn">from</span> <span class="nn">sasmodels.jitter</span> <span class="k">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">orientation_run</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">orientation_run</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
@@ -893,6 +981,16 @@
             <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;darwin&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">image_viewer</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">setNativeMenuBar</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">image_viewer</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+            <span class="k">return</span></div>
+
+<div class="viewcode-block" id="GuiManager.actionFile_Converter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.actionFile_Converter">[docs]</a>    <span class="k">def</span> <span class="nf">actionFile_Converter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shows the File Converter widget.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FileConverter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
             <span class="k">return</span></div>
@@ -1133,19 +1231,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_manager</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">new_datalist_item</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GuiManager.showPlotFromFilename"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.showPlotFromFilename">[docs]</a>    <span class="k">def</span> <span class="nf">showPlotFromFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="GuiManager.showPlotFromName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.showPlotFromName">[docs]</a>    <span class="k">def</span> <span class="nf">showPlotFromName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pass the show plot request to the data explorer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;filesWidget&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">displayFile</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">is_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">displayDataByName</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">is_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GuiManager.showPlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.showPlot">[docs]</a>    <span class="k">def</span> <span class="nf">showPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pass the show plot request to the data explorer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;filesWidget&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">displayData</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filesWidget</span><span class="o">.</span><span class="n">displayData</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="c1"># update windows menu</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addPlotItemsInWindowsMenu</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GuiManager.uncheckAllMenuItems"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.GuiManager.GuiManager.uncheckAllMenuItems">[docs]</a>    <span class="k">def</span> <span class="nf">uncheckAllMenuItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menuObject</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1249,7 +1349,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write custom configuration</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sas</span> <span class="kn">import</span> <span class="n">make_custom_config_path</span>
+        <span class="kn">from</span> <span class="nn">sas</span> <span class="k">import</span> <span class="n">make_custom_config_path</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">make_custom_config_path</span><span class="p">()</span>
         <span class="c1"># Just clobber the file - we already have its content read in</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
@@ -1293,14 +1393,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

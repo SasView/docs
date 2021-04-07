@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sasmodels.generate &#8212; SasView 5.0.3 documentation</title>
+    <title>sasmodels.generate &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
@@ -499,8 +502,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Convert double keyword to float/long double/half.</span>
     <span class="c1"># Accept an &#39;n&#39; # parameter for vector # values, where n is 2, 4, 8 or 16.</span>
-    <span class="c1"># Assume complex numbers are represented as cdouble which is typedef&#39;d</span>
-    <span class="c1"># to double2.</span>
+    <span class="c1"># Assume complex numbers are represented as cdouble.</span>
+    <span class="c1"># TODO: use lookahead so that &quot;typedef complex double cdouble;&quot; converts.</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(^|[^a-zA-Z0-9_]c?)double(([248]|16)?($|[^a-zA-Z0-9_]))&#39;</span><span class="p">,</span>
                     <span class="sa">r</span><span class="s1">&#39;\1</span><span class="si">%s</span><span class="s1">\2&#39;</span><span class="o">%</span><span class="n">type_name</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">_tag_float</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">constant_flag</span><span class="p">)</span>
@@ -748,7 +751,7 @@
         <span class="c1"># split assignment on first equals</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;translation expected &#39;var=expr&#39; but got </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;translation expected &#39;var=expr&#39; but got </span><span class="si">%r</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">line</span><span class="p">)</span>
         <span class="c1"># store parts without assessing whether they are correct</span>
         <span class="n">var</span><span class="p">,</span> <span class="n">expr</span> <span class="o">=</span> <span class="n">parts</span>
         <span class="n">assignments</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">var</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">expr</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
@@ -776,13 +779,13 @@
 
 <span class="sd">    * *subs* = {name: expr, ...} parameter substitution table for calling</span>
 <span class="sd">      into the kernel function</span>
-<span class="sd">    * *vars* = &quot;#define TRANSLATION_VARS(_v) _var_name = expr ....&quot;</span>
+<span class="sd">    * *translation* = &quot;#define TRANSLATION_VARS(_v) _var_name = expr ....&quot;</span>
 <span class="sd">    * *validity* = &quot;#define VALID(_v) ...&quot;</span>
 
 <span class="sd">    The returned *subs* is used to generate the substitions for CALL_VOLUME</span>
 <span class="sd">    etc., parameters, via :func:`_call_pars`.</span>
 
-<span class="sd">    The returned *vars* and *validity* macros need to be included inside</span>
+<span class="sd">    The returned *translation* and *validity* macros need to be included inside</span>
 <span class="sd">    the generated model files.  They are the same for all variants (1D, 2D,</span>
 <span class="sd">    magnetic) so can be defined once along side the parameter table.  Even</span>
 <span class="sd">    though they are expanded independently in each variant.</span>
@@ -812,15 +815,15 @@
     <span class="n">base_table</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">kernel_parameters</span>
     <span class="n">call_pars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">call_table</span><span class="p">)</span>
     <span class="n">base_pars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">base_table</span><span class="p">)</span>
-    <span class="nb">vars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">assigns</span>
-               <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">call_pars</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">base_pars</span><span class="p">)</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">assigns</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">call_pars</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">base_pars</span><span class="p">)</span>
 
     <span class="c1"># Regular expression substition to tag the variables on each RHS.</span>
     <span class="c1"># Don&#39;t want to translate all symbols since they include C constants and</span>
     <span class="c1"># math functions.</span>
     <span class="k">def</span> <span class="nf">id_sub</span><span class="p">(</span><span class="n">match_obj</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">match_obj</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">var_prefix</span> <span class="o">+</span> <span class="n">name</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">call_pars</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">table_id</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">name</span>
@@ -833,7 +836,8 @@
     <span class="n">subs</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">eq</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">assigns</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">base_pars</span><span class="p">)</span>
 
     <span class="c1"># Build TRANSLATION_VARS macros assignments to variables.</span>
-    <span class="n">var_values</span> <span class="o">=</span> <span class="p">[(</span><span class="n">var_prefix</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">eq</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">assigns</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">]</span>
+    <span class="n">var_values</span> <span class="o">=</span> <span class="p">[(</span><span class="n">var_prefix</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">eq</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">assigns</span>
+                  <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
     <span class="n">translation_vars</span> <span class="o">=</span> <span class="n">_build_translation_vars</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">var_values</span><span class="p">)</span>
 
     <span class="c1"># Build VALID macro, with expressions using caller parameters.</span>
@@ -841,7 +845,7 @@
 
     <span class="k">return</span> <span class="n">subs</span><span class="p">,</span> <span class="n">translation_vars</span><span class="p">,</span> <span class="n">validity</span>
 
-<span class="k">def</span> <span class="nf">_build_translation_vars</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="nb">vars</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_build_translation_vars</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Build TRANSLATION_VARS macro for C which builds intermediate values.</span>
 
@@ -852,10 +856,10 @@
 <span class="sd">        #define TRANSLATION_VARS(_v) \</span>
 <span class="sd">         const double _temporary_Re = cbrt(_v.volume/_v.eccentricity/M_4PI_3)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">vars</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">variables</span><span class="p">:</span>
         <span class="c1"># Leave comma off def since last def doesn&#39;t have comma</span>
         <span class="n">defs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const double </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">eq</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;#define TRANSLATION_VARS(</span><span class="si">%s</span><span class="s2">) </span><span class="se">\\\n</span><span class="s2">  &quot;</span><span class="o">%</span><span class="n">table_id</span>
                 <span class="o">+</span> <span class="s2">&quot;; </span><span class="se">\\\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">defs</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1026,7 +1030,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected function I</span><span class="si">%s</span><span class="s2"> for unoriented shape&quot;</span><span class="o">%</span><span class="n">xy_mode</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">base_table</span><span class="o">.</span><span class="n">orientation_parameters</span> <span class="ow">and</span> <span class="n">xy_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;qac&#39;</span><span class="p">,</span> <span class="s1">&#39;qabc&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">xy_mode</span> <span class="o">==</span> <span class="s1">&#39;qxy&#39;</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;oriented shapes should define Iqac or Iqabc&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;oriented shapes should define Iqac or Iqabc&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected Iqac or Iqabc for oriented shape&quot;</span><span class="p">)</span>
 
@@ -1396,14 +1400,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -1,0 +1,222 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hayter_msa &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="squarewell" href="squarewell.html" />
+    <link rel="prev" title="hardsphere" href="hardsphere.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="squarewell.html" title="squarewell"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hardsphere.html" title="hardsphere"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/structure-factor.html" accesskey="U">Structure Factors</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hayter-msa">
+<span id="id1"></span><h1>hayter_msa</h1>
+<p>Hayter-Penfold Rescaled Mean Spherical Approximation (RMSA) structure factor for charged spheres</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="72%" />
+<col width="4%" />
+<col width="10%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Description</th>
+<th class="head">Units</th>
+<th class="head">Default value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>radius_effective</td>
+<td>effective radius of charged sphere</td>
+<td>Å</td>
+<td>20.75</td>
+</tr>
+<tr class="row-odd"><td>volfraction</td>
+<td>volume fraction of spheres</td>
+<td>None</td>
+<td>0.0192</td>
+</tr>
+<tr class="row-even"><td>charge</td>
+<td>charge on sphere (in electrons)</td>
+<td>e</td>
+<td>19</td>
+</tr>
+<tr class="row-odd"><td>temperature</td>
+<td>temperature, in Kelvin, for Debye length calculation</td>
+<td>K</td>
+<td>318.16</td>
+</tr>
+<tr class="row-even"><td>concentration_salt</td>
+<td>conc of salt, moles/litre, 1:1 electolyte, for Debye length</td>
+<td>M</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>dielectconst</td>
+<td>dielectric constant (relative permittivity) of solvent, kappa, default water, for Debye length</td>
+<td>None</td>
+<td>71.08</td>
+</tr>
+</tbody>
+</table>
+<p>The returned value is a dimensionless structure factor, <span class="math notranslate nohighlight">\(S(q)\)</span>.</p>
+<p>Calculates the interparticle structure factor for a system of charged,
+spheroidal, objects in a dielectric medium [1,2]. When combined with an
+appropriate form factor <span class="math notranslate nohighlight">\(P(q)\)</span>, this allows for inclusion of the
+interparticle interference effects due to screened Coulombic
+repulsion between the charged particles.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This routine only works for charged particles! If the charge is set
+to zero the routine may self-destruct! For uncharged particles use
+the <a class="reference internal" href="hardsphere.html#hardsphere"><span class="std std-ref">hardsphere</span></a> <span class="math notranslate nohighlight">\(S(q)\)</span> instead. The upper limit for the charge
+is limited to 200e to avoid numerical instabilities.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Earlier versions of SasView did not incorporate the so-called
+<span class="math notranslate nohighlight">\(\beta(q)\)</span> (“beta”) correction [3] for polydispersity and non-sphericity.
+This is only available in SasView versions 5.0 and higher.</p>
+</div>
+<p>The salt concentration is used to compute the ionic strength of the solution
+which in turn is used to compute the Debye screening length. There is no
+provision for entering the ionic strength directly. <strong>At present the
+counterions are assumed to be monovalent</strong>, though it should be possible
+to simulate the effect of multivalent counterions by increasing the salt
+concentration.</p>
+<p>Over the range 0 - 100 C the dielectric constant <span class="math notranslate nohighlight">\(\kappa\)</span> of water may be
+approximated with a maximum deviation of 0.01 units by the empirical
+formula [4]</p>
+<div class="math notranslate nohighlight">
+\[\kappa = 87.740 - 0.40008 T + 9.398x10^{-4} T^2 - 1.410x10^{-6} T^3\]</div>
+<p>where <span class="math notranslate nohighlight">\(T\)</span> is the temperature in celsius.</p>
+<p>In SasView the effective radius may be calculated from the parameters
+used in the form factor <span class="math notranslate nohighlight">\(P(q)\)</span> that this <span class="math notranslate nohighlight">\(S(q)\)</span> is combined with.</p>
+<p>The computation uses a Taylor series expansion at very small rescaled <span class="math notranslate nohighlight">\(qR\)</span>, to
+avoid some serious rounding error issues, this may result in a minor artefact
+in the transition region under some circumstances.</p>
+<p>For 2D data, the scattering intensity is calculated in the same way as 1D,
+where the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
+\[q = \sqrt{q_x^2 + q_y^2}\]</div>
+<div class="figure" id="id2">
+<img alt="../../_images/hayter_msa_autogenfig.png" src="../../_images/hayter_msa_autogenfig.png" />
+<p class="caption"><span class="caption-number">Fig. 124 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
+</div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" href="../../_downloads/hayter_msa.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">hayter_msa.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/hayter_msa.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">hayter_msa.c</span></code></a></p>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li>J B Hayter and J Penfold, <em>Molecular Physics</em>, 42 (1981) 109-118</li>
+<li>J P Hansen and J B Hayter, <em>Molecular Physics</em>, 46 (1982) 651-656</li>
+<li>M Kotlarchyk and S-H Chen, <em>J. Chem. Phys.</em>, 79 (1983) 2461-2469</li>
+<li>C G Malmberg and A A Maryott, <em>J. Res. Nat. Bureau Standards</em>, 56 (1956) 2641</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong></li>
+<li><strong>Last Modified by:</strong></li>
+<li><strong>Last Reviewed by:</strong> Steve King <strong>Date:</strong> March 28, 2019</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hardsphere.html"
+                        title="previous chapter">hardsphere</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="squarewell.html"
+                        title="next chapter">squarewell</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/user/models/hayter_msa.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="squarewell.html" title="squarewell"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hardsphere.html" title="hardsphere"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/structure-factor.html" >Structure Factors</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

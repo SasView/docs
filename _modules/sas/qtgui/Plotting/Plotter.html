@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Plotting.Plotter &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Plotting.Plotter &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -41,24 +41,25 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.Plotting.Plotter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">matplotlib.font_manager</span> <span class="kn">import</span> <span class="n">FontProperties</span>
+<span class="kn">from</span> <span class="nn">matplotlib.font_manager</span> <span class="k">import</span> <span class="n">FontProperties</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterBase</span> <span class="kn">import</span> <span class="n">PlotterBase</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.AddText</span> <span class="kn">import</span> <span class="n">AddText</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SetGraphRange</span> <span class="kn">import</span> <span class="n">SetGraphRange</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.LinearFit</span> <span class="kn">import</span> <span class="n">LinearFit</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotProperties</span> <span class="kn">import</span> <span class="n">PlotProperties</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.ScaleProperties</span> <span class="kn">import</span> <span class="n">ScaleProperties</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterBase</span> <span class="k">import</span> <span class="n">PlotterBase</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.AddText</span> <span class="k">import</span> <span class="n">AddText</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Binder</span> <span class="k">import</span> <span class="n">BindArtist</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SetGraphRange</span> <span class="k">import</span> <span class="n">SetGraphRange</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.LinearFit</span> <span class="k">import</span> <span class="n">LinearFit</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.QRangeSlider</span> <span class="k">import</span> <span class="n">QRangeSlider</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotProperties</span> <span class="k">import</span> <span class="n">PlotProperties</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.ScaleProperties</span> <span class="k">import</span> <span class="n">ScaleProperties</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Plotting.PlotUtilities</span> <span class="k">as</span> <span class="nn">PlotUtilities</span>
@@ -91,7 +92,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    1D Plot widget for use with a QDialog</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PlotterWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="n">manager</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="n">quickplot</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
@@ -99,8 +100,10 @@
         <span class="c1"># Dictionary of {plot_id:Data1d}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># Dictionaty of {plot_id:line}</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_lines</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Dictionary of slider interactors {plot_id:interactor}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sliders</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="c1"># Window for text add</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addText</span> <span class="o">=</span> <span class="n">AddText</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -110,7 +113,7 @@
 
         <span class="c1"># Data container for the linear fit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[],</span> <span class="n">y</span><span class="o">=</span><span class="p">[],</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="mi">13</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="mi">17</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Fit&quot;</span>
 
         <span class="n">parent</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
@@ -265,6 +268,10 @@
                             <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                             <span class="n">picker</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+        <span class="c1"># Display horizontal axis if requested</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">show_yzero</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
         <span class="c1"># Update the list of data sets (plots) in chart</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
 
@@ -285,6 +292,11 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_fit</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span><span class="p">)</span>
+
+        <span class="c1"># Add q-range sliders</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">show_q_range_sliders</span><span class="p">:</span>
+            <span class="n">sliders</span> <span class="o">=</span> <span class="n">QRangeSlider</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sliders</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">sliders</span>
 
         <span class="c1"># refresh canvas</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
@@ -314,14 +326,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">actionAddText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Add Text&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionRemoveText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Remove Text&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_legend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleLegend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Toggle Legend&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Change Scale&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionSetGraphRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Set Graph Range&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionResetGraphRange</span> <span class="o">=</span>\
             <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Reset Graph Range&quot;</span><span class="p">)</span>
+
         <span class="c1"># Add the title change for dialogs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionWindowTitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Window Title&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleMenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Toggle Navigation Menu&quot;</span><span class="p">)</span>
 
         <span class="c1"># Define the callbacks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionAddText</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onAddText</span><span class="p">)</span>
@@ -329,7 +347,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onScaleChange</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionSetGraphRange</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSetGraphRange</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionResetGraphRange</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onResetGraphRange</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actionWindowTitle</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onWindowsTitle</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionWindowTitle</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onWindowsTitle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleMenu</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onToggleMenu</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_legend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleLegend</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onToggleLegend</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlotterWidget.addPlotsToContextMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.addPlotsToContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">addPlotsToContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -395,7 +416,11 @@
 
         <span class="c1"># Define the callbacks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleGrid</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onGridToggle</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onScaleChange</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onScaleChange</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_legend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleLegend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Toggle Legend&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleLegend</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onToggleLegend</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlotterWidget.onScaleChange"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onScaleChange">[docs]</a>    <span class="k">def</span> <span class="nf">onScaleChange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -474,6 +499,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
             <span class="n">x_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">xrange</span><span class="p">()</span>
             <span class="n">y_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">yrange</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">rangeModified</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_range</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_range</span><span class="p">)</span>
@@ -510,7 +536,7 @@
         <span class="k">if</span> <span class="n">fit_dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
             <span class="k">return</span></div>
 
-<div class="viewcode-block" id="PlotterWidget.replacePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.replacePlot">[docs]</a>    <span class="k">def</span> <span class="nf">replacePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">new_plot</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotterWidget.replacePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.replacePlot">[docs]</a>    <span class="k">def</span> <span class="nf">replacePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">new_plot</span><span class="p">,</span> <span class="n">retain_dimensions</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove plot &#39;id&#39; and add &#39;new_plot&#39; to the chart.</span>
 <span class="sd">        This effectlvely refreshes the chart with changes to one of its plots</span>
@@ -520,9 +546,23 @@
         <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
         <span class="n">new_plot</span><span class="o">.</span><span class="n">xtransform</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">xtransform</span>
         <span class="n">new_plot</span><span class="o">.</span><span class="n">ytransform</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">ytransform</span>
-
+        <span class="c1">#Adding few properties ftom ModifyPlot to preserve them in future changes</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">title</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">custom_color</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">custom_color</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">markersize</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">markersize</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">symbol</span>
+        <span class="c1"># Store user-defined plot range on replot</span>
+        <span class="n">retain_dimensions</span> <span class="o">=</span> <span class="n">retain_dimensions</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">rangeModified</span>
+        <span class="k">if</span> <span class="n">retain_dimensions</span><span class="p">:</span>
+            <span class="n">x_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">viewLim</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">viewLim</span><span class="o">.</span><span class="n">xmax</span><span class="p">)</span>
+            <span class="n">y_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">viewLim</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">viewLim</span><span class="o">.</span><span class="n">ymax</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_plot</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_plot</span><span class="p">)</span>
+        <span class="c1"># Apply user-defined plot range</span>
+        <span class="k">if</span> <span class="n">retain_dimensions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xbound</span><span class="p">(</span><span class="n">x_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ybound</span><span class="p">(</span><span class="n">y_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">rangeModified</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="PlotterWidget.onRemovePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onRemovePlot">[docs]</a>    <span class="k">def</span> <span class="nf">onRemovePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -541,22 +581,23 @@
         <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="k">return</span>
 
-        <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
-
-        <span class="n">plot_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">)</span>
+        <span class="c1"># Remove the plot from the list of plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sliders</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Labels might have been changed</span>
         <span class="n">xl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
         <span class="n">yl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span> <span class="o">=</span> <span class="p">{}</span>
-
         <span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
 
-        <span class="k">for</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">plot_dict</span><span class="p">:</span>
+        <span class="c1"># Recreate Artist bindings after plot clear</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span> <span class="o">=</span> <span class="n">BindArtist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ids</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ids</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">hide_error</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">hide_error</span><span class="p">)</span>
 
         <span class="c1"># Reset the labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xl</span><span class="p">)</span>
@@ -577,7 +618,6 @@
 <span class="sd">        Allows for MPL modifications to the selected plot</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
-        <span class="n">selected_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_lines</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
         <span class="c1"># Old style color - single integer for enum color</span>
         <span class="c1"># New style color - #hhhhhh</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">custom_color</span>
@@ -586,7 +626,6 @@
         <span class="n">marker_size</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">markersize</span>
         <span class="c1"># plot name</span>
         <span class="n">legend</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">title</span>
-
         <span class="n">plotPropertiesWidget</span> <span class="o">=</span> <span class="n">PlotProperties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                                 <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
                                 <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>
@@ -598,7 +637,6 @@
             <span class="n">selected_plot</span><span class="o">.</span><span class="n">custom_color</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">color</span><span class="p">()</span>
             <span class="n">selected_plot</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">marker</span><span class="p">()</span>
             <span class="n">selected_plot</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-
             <span class="c1"># Redraw the plot</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">replacePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">selected_plot</span><span class="p">)</span></div>
 
@@ -624,7 +662,7 @@
             <span class="k">if</span> <span class="n">ids</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">current</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">hide_error</span><span class="p">)</span>                </div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">hide_error</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PlotterWidget.xyTransform"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.xyTransform">[docs]</a>    <span class="k">def</span> <span class="nf">xyTransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xLabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">yLabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -667,9 +705,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1">#Remove another Fit, if exists</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">reset_view</span><span class="p">()</span>
         <span class="c1">#self.offset_graph()</span>
 
@@ -678,8 +713,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Fit&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Fit&#39;</span>
 
-        <span class="c1"># Plot the line</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">hide_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># Replace an existing Fit and ensure the plot range is not reset</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replacePlot</span><span class="p">(</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span> <span class="n">new_plot</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="p">,</span> <span class="n">retain_dimensions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Otherwise, Plot a new line</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">hide_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onToggleLegend"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onToggleLegend">[docs]</a>    <span class="k">def</span> <span class="nf">onToggleLegend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggle legend visibility in the chart</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">showLegend</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">visible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">get_visible</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="ow">not</span> <span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PlotterWidget.onMplMouseDown"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onMplMouseDown">[docs]</a>    <span class="k">def</span> <span class="nf">onMplMouseDown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -853,15 +903,13 @@
 
 
 <div class="viewcode-block" id="Plotter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.Plotter">[docs]</a><span class="k">class</span> <span class="nc">Plotter</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">PlotterWidget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">PlotterWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="n">quickplot</span><span class="p">)</span>
         <span class="n">icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
         <span class="n">icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/res/ball.ico&quot;</span><span class="p">),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span></div>
-
-
 </pre></div>
 
           </div>
@@ -894,14 +942,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

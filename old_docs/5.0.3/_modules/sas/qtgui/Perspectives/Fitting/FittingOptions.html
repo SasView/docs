@@ -1,0 +1,348 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Perspectives.Fitting.FittingOptions &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Fitting.FittingOptions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># global</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">images_rc</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">main_resources_rc</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="kn">from</span> <span class="nn">bumps</span> <span class="kn">import</span> <span class="n">fitters</span>
+<span class="kn">import</span> <span class="nn">bumps.options</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.FittingOptionsUI</span> <span class="kn">import</span> <span class="n">Ui_FittingOptions</span>
+
+<span class="c1"># Set the default optimizer</span>
+<span class="n">fitters</span><span class="o">.</span><span class="n">FIT_DEFAULT_ID</span> <span class="o">=</span> <span class="s1">&#39;lm&#39;</span>
+
+
+<div class="viewcode-block" id="FittingOptions"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions">[docs]</a><span class="k">class</span> <span class="nc">FittingOptions</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_FittingOptions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hard-coded version of the fit options dialog available from BUMPS.</span>
+<span class="sd">    This should be make more &quot;dynamic&quot;.</span>
+<span class="sd">    bumps.options.FIT_FIELDS gives mapping between parameter names, parameter strings and field type</span>
+<span class="sd">    (double line edit, integer line edit, combo box etc.), e.g.::</span>
+
+<span class="sd">        FIT_FIELDS = dict(</span>
+<span class="sd">            samples = (&quot;Samples&quot;, parse_int),</span>
+<span class="sd">            xtol = (&quot;x tolerance&quot;, float),</span>
+<span class="sd">        )</span>
+
+<span class="sd">    bumps.fitters.&lt;algorithm&gt;.settings gives mapping between algorithm, parameter name and default value, e.g.::</span>
+
+<span class="sd">        &gt;&gt;&gt; settings = [(&#39;steps&#39;, 1000), (&#39;starts&#39;, 1), (&#39;radius&#39;, 0.15), (&#39;xtol&#39;, 1e-6), (&#39;ftol&#39;, 1e-8)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fit_option_changed</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FittingOptions</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># disable the context help icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+        <span class="c1"># no reason to have this widget resizable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFixedSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimumSizeHint</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Fit Algorithms&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Fill up the algorithm combo, based on what BUMPS says is available</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">addItems</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FITTERS</span> <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FIT_ACTIVE_IDS</span><span class="p">])</span>
+
+        <span class="c1"># Handle the Apply button click</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onApply</span><span class="p">)</span>
+        <span class="c1"># handle the Help button click</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Help</span><span class="p">)</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onHelp</span><span class="p">)</span>
+
+        <span class="c1"># Handle the combo box changes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onAlgorithmChange</span><span class="p">)</span>
+
+        <span class="c1"># Set the default index</span>
+        <span class="n">default_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FITTERS</span> <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FIT_DEFAULT_ID</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">default_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">default_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">default_index</span><span class="p">)</span>
+        <span class="c1"># previous algorithm choice</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span> <span class="o">=</span> <span class="n">default_index</span>
+
+        <span class="c1"># Assign appropriate validators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assignValidators</span><span class="p">()</span>
+
+        <span class="c1"># Set defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span> <span class="o">=</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FIT_DEFAULT_ID</span>
+
+        <span class="c1"># OK has to be initialized to True, after initial validator setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FittingOptions.assignValidators"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.assignValidators">[docs]</a>    <span class="k">def</span> <span class="nf">assignValidators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use options.FIT_FIELDS to assert which line edit gets what validator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">bumps</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">FIT_FIELDS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="n">f_type</span><span class="p">)</span> <span class="o">=</span> <span class="n">bumps</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">FIT_FIELDS</span><span class="p">[</span><span class="n">option</span><span class="p">]</span>
+            <span class="n">validator</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">f_type</span><span class="p">)</span> <span class="o">==</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">:</span>
+                <span class="n">validator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIntValidator</span><span class="p">()</span>
+                <span class="n">validator</span><span class="o">.</span><span class="n">setBottom</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">f_type</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+                <span class="n">validator</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">()</span>
+                <span class="n">validator</span><span class="o">.</span><span class="n">setBottom</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">fitter_id</span> <span class="ow">in</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FIT_ACTIVE_IDS</span><span class="p">:</span>
+                <span class="n">line_edit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widgetFromOption</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">option</span><span class="p">),</span> <span class="n">current_fitter</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">fitter_id</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">line_edit</span><span class="p">,</span> <span class="s1">&#39;setValidator&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">validator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">line_edit</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">validator</span><span class="p">)</span>
+                    <span class="n">line_edit</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_state</span><span class="p">)</span>
+                    <span class="n">line_edit</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="FittingOptions.check_state"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.check_state">[docs]</a>    <span class="k">def</span> <span class="nf">check_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">sender</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span>
+        <span class="n">validator</span> <span class="o">=</span> <span class="n">sender</span><span class="o">.</span><span class="n">validator</span><span class="p">()</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">sender</span><span class="o">.</span><span class="n">text</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QValidator</span><span class="o">.</span><span class="n">Acceptable</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># default</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;#fff79a&#39;</span> <span class="c1"># yellow</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">sender</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;QLineEdit { background-color: </span><span class="si">%s</span><span class="s1"> }&#39;</span> <span class="o">%</span> <span class="n">color</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FittingOptions.onAlgorithmChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.onAlgorithmChange">[docs]</a>    <span class="k">def</span> <span class="nf">onAlgorithmChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the page in response to combo box index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Find the algorithm ID from name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span> <span class="o">=</span> \
+            <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">fitters</span><span class="o">.</span><span class="n">FITTERS</span> <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">currentText</span><span class="p">())][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># find the right stacked widget</span>
+        <span class="n">widget_name</span> <span class="o">=</span> <span class="s2">&quot;self.page_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span><span class="p">)</span>
+
+        <span class="c1"># Convert the name into widget instance</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">widget_to_activate</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">widget_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># We don&#39;t yet have this optimizer.</span>
+            <span class="c1"># Show message</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;This algorithm has not yet been implemented in SasView.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Please choose a different algorithm&quot;</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                        <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
+                                        <span class="n">msg</span><span class="p">,</span>
+                                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="c1"># Move the index to previous position</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">index_for_this_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stackedWidget</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">widget_to_activate</span><span class="p">)</span>
+
+        <span class="c1"># Select the requested widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stackedWidget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index_for_this_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateWidgetFromBumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assignValidators</span><span class="p">()</span>
+
+        <span class="c1"># OK has to be reinitialized to True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buttonBox</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialogButtonBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># keep reference</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_index</span> <span class="o">=</span> <span class="n">index</span></div>
+
+<div class="viewcode-block" id="FittingOptions.onApply"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.onApply">[docs]</a>    <span class="k">def</span> <span class="nf">onApply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the fitter object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># Find the widget name of the option</span>
+            <span class="c1"># e.g. &#39;samples&#39; for &#39;dream&#39; is &#39;self.samples_dream&#39;</span>
+            <span class="n">widget_name</span> <span class="o">=</span> <span class="s1">&#39;self.&#39;</span><span class="o">+</span><span class="n">option</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">line_edit</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">widget_name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="c1"># Skip bumps monitors</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">line_edit</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">line_edit</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">line_edit</span><span class="o">.</span><span class="n">palette</span><span class="p">()</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPalette</span><span class="o">.</span><span class="n">Background</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;#fff79a&#39;</span><span class="p">:</span>
+                <span class="c1"># Show a custom tooltip and return</span>
+                <span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;&lt;html&gt;&lt;b&gt;Please enter valid values in all fields.&lt;/html&gt;&quot;</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QToolTip</span><span class="o">.</span><span class="n">showText</span><span class="p">(</span><span class="n">line_edit</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">(</span><span class="n">line_edit</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">right</span><span class="p">(),</span> <span class="n">line_edit</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">bottom</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">tooltip</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="c1"># Notify the perspective, so the window title is updated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_option_changed</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+
+        <span class="k">def</span> <span class="nf">bumpsUpdate</span><span class="p">(</span><span class="n">option</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Utility method for bumps state update</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widgetFromOption</span><span class="p">(</span><span class="n">option</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">):</span>
+                    <span class="n">new_value</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">new_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">new_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+                <span class="c1">#new_value = widget.currentText() if isinstance(widget, QtWidgets.QComboBox) \</span>
+                <span class="c1">#    else float(widget.text())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span><span class="p">][</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># Don&#39;t update bumps if widget has bad data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reject</span>
+
+        <span class="c1"># Update the BUMPS singleton</span>
+        <span class="p">[</span><span class="n">bumpsUpdate</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FittingOptions.onHelp"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.onHelp">[docs]</a>    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the &quot;Fitting options&quot; section of help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tree_location</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">HELP_DIRECTORY_LOCATION</span>
+        <span class="n">tree_location</span> <span class="o">+=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Fitting/&quot;</span>
+
+        <span class="c1"># Actual file anchor will depend on the combo box index</span>
+        <span class="c1"># Note that we can be clusmy here, since bad current_fitter_id</span>
+        <span class="c1"># will just make the page displayed from the top</span>
+        <span class="n">helpfile</span> <span class="o">=</span> <span class="s2">&quot;optimizer.html#fit-&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span> 
+        <span class="n">help_location</span> <span class="o">=</span> <span class="n">tree_location</span> <span class="o">+</span> <span class="n">helpfile</span>
+        <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">help_location</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FittingOptions.widgetFromOption"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.widgetFromOption">[docs]</a>    <span class="k">def</span> <span class="nf">widgetFromOption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_id</span><span class="p">,</span> <span class="n">current_fitter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns widget&#39;s element linked to the given option_id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">current_fitter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">current_fitter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_fitter_id</span>
+        <span class="k">if</span> <span class="n">option_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">bumps</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">FIT_FIELDS</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">option</span> <span class="o">=</span> <span class="n">option_id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">current_fitter</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;self.&#39;</span> <span class="o">+</span> <span class="n">option</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FittingOptions.getResults"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.getResults">[docs]</a>    <span class="k">def</span> <span class="nf">getResults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sends back the current choice of parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbAlgorithm</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">algorithm</span></div>
+
+<div class="viewcode-block" id="FittingOptions.updateWidgetFromBumps"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingOptions.FittingOptions.updateWidgetFromBumps">[docs]</a>    <span class="k">def</span> <span class="nf">updateWidgetFromBumps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitter_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given the ID of the current optimizer, fetch the values</span>
+<span class="sd">        and update the widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">fitter_id</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># Find the widget name of the option</span>
+            <span class="c1"># e.g. &#39;samples&#39; for &#39;dream&#39; is &#39;self.samples_dream&#39;</span>
+            <span class="n">widget_name</span> <span class="o">=</span> <span class="s1">&#39;self.&#39;</span><span class="o">+</span><span class="n">option</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">fitter_id</span>
+            <span class="k">if</span> <span class="n">option</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bumps</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">FIT_FIELDS</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bumps</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">FIT_FIELDS</span><span class="p">[</span><span class="n">option</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">bumps</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">ChoiceList</span><span class="p">):</span>
+                <span class="n">control</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">widget_name</span><span class="p">)</span>
+                <span class="n">control</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">control</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="n">option</span><span class="p">])))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">eval</span><span class="p">(</span><span class="n">widget_name</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="n">option</span><span class="p">]))</span>
+
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

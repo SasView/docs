@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>hollow_rectangular_prism &#8212; SasView 5.0.3 documentation</title>
+    <title>hollow_rectangular_prism &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="hollow_rectangular_prism_thin_walls" href="hollow_rectangular_prism_thin_walls.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="core_shell_parallelepiped.html" title="core_shell_parallelepiped"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-parallelepiped.html" accesskey="U">Parallelepiped Functions</a> &#187;</li> 
@@ -135,7 +138,7 @@ possible orientations, giving</p>
 <div class="math notranslate nohighlight">
 \[P(q) =  \frac{1}{V^2} \frac{2}{\pi} \times \, \int_0^{\frac{\pi}{2}} \,
 \int_0^{\frac{\pi}{2}} A_{P\Delta}^2(q) \, \sin\theta \, d\theta \, d\phi\]</div>
-<p>where <span class="math notranslate nohighlight">\(\theta\)</span> is the angle between the <span class="math notranslate nohighlight">\(z\)</span> axis and the longest axis
+<p>where <span class="math notranslate nohighlight">\(\theta\)</span> is the angle between the <span class="math notranslate nohighlight">\(z\)</span> axis and the <span class="math notranslate nohighlight">\(C\)</span> axis
 of the parallelepiped, <span class="math notranslate nohighlight">\(\phi\)</span> is the angle between the scattering vector
 (lying in the <span class="math notranslate nohighlight">\(xy\)</span> plane) and the <span class="math notranslate nohighlight">\(y\)</span> axis, and</p>
 <div class="math notranslate nohighlight">
@@ -147,18 +150,16 @@ A_{P\Delta}(q) &amp; =  A B C
   {\left( q \frac{A}{2} \sin\theta \sin\phi \right)}\right]
   \left[\frac{\sin \bigl( q \frac{B}{2} \sin\theta \cos\phi \bigr)}
   {\left( q \frac{B}{2} \sin\theta \cos\phi \right)}\right] \\
-  &amp; - 8
-  \left(\frac{A}{2}-\Delta\right) \left(\frac{B}{2}-\Delta\right) \left(\frac{C}{2}-\Delta\right)
-  \left[ \frac{\sin \bigl[ q \bigl(\frac{C}{2}-\Delta\bigr) \cos\theta \bigr]}
-  {q \bigl(\frac{C}{2}-\Delta\bigr) \cos\theta} \right]
-  \left[ \frac{\sin \bigl[ q \bigl(\frac{A}{2}-\Delta\bigr) \sin\theta \sin\phi \bigr]}
-  {q \bigl(\frac{A}{2}-\Delta\bigr) \sin\theta \sin\phi} \right]
-  \left[ \frac{\sin \bigl[ q \bigl(\frac{B}{2}-\Delta\bigr) \sin\theta \cos\phi \bigr]}
-  {q \bigl(\frac{B}{2}-\Delta\bigr) \sin\theta \cos\phi} \right]
-\end{align*}</div><p>where <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span> and <span class="math notranslate nohighlight">\(C\)</span> are the external sides of the parallelepiped fulfilling
-<span class="math notranslate nohighlight">\(A \le B \le C\)</span>, and the volume <span class="math notranslate nohighlight">\(V\)</span> of the parallelepiped is</p>
-<div class="math notranslate nohighlight">
-\[V = A B C \, - \, (A - 2\Delta) (B - 2\Delta) (C - 2\Delta)\]</div>
+  &amp; {} - A' B' C'
+  \left[ \frac{\sin \bigl[ q \frac{C'}{2} \cos\theta \bigr]}
+  {q \frac{C'}{2} \cos\theta} \right]
+  \left[ \frac{\sin \bigl[ q \frac{A'}{2} \sin\theta \sin\phi \bigr]}
+  {q \frac{A'}{2} \sin\theta \sin\phi} \right]
+  \left[ \frac{\sin \bigl[ q \frac{B'}{2} \sin\theta \cos\phi \bigr]}
+  {q \frac{B'}{2} \sin\theta \cos\phi} \right]
+\end{align*}</div><p><span class="math notranslate nohighlight">\(A'\)</span>, <span class="math notranslate nohighlight">\(B'\)</span>, <span class="math notranslate nohighlight">\(C'\)</span> are the inner dimensions and <span class="math notranslate nohighlight">\(A = A' + 2\Delta\)</span>,
+<span class="math notranslate nohighlight">\(B = B' + 2\Delta\)</span>, <span class="math notranslate nohighlight">\(C = C' + 2\Delta\)</span> are the outer dimensions of the
+parallelepiped shell, giving a shell volume of <span class="math notranslate nohighlight">\(V = ABC - A'B'C'\)</span>.</p>
 <p>The 1D scattering intensity is then calculated as</p>
 <div class="math notranslate nohighlight">
 \[I(q) = \text{scale} \times V \times (\rho_\text{p} -
@@ -170,7 +171,7 @@ and (if the data are in absolute units) <em>scale</em> represents the volume fra
 the volume of the solvent filled core).</p>
 <p>For 2d data the orientation of the particle is required, described using
 angles <span class="math notranslate nohighlight">\(\theta\)</span>, <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\Psi\)</span> as in the diagrams below, for further details
-of the calculation and angular dispersions see <a class="reference internal" href="../qtgui/Perspectives/Fitting/orientation/orientation.html#orientation"><span class="std std-ref">Oriented particles</span></a> .
+of the calculation and angular dispersions see <a class="reference internal" href="../qtgui/Perspectives/Fitting/orientation/orientation.html#orientation"><span class="std std-ref">Oriented particles</span></a>.
 The angle <span class="math notranslate nohighlight">\(\Psi\)</span> is the rotational angle around the long <em>C</em> axis. For example,
 <span class="math notranslate nohighlight">\(\Psi = 0\)</span> when the <em>B</em> axis is parallel to the <em>x</em>-axis of the detector.</p>
 <p>For 2d, constraints must be applied during fitting to ensure that the inequality
@@ -179,10 +180,11 @@ preserved. The calculation will not report an error if the inequality is <em>not
 preserved, but the results may be not correct.</p>
 <div class="figure" id="id4">
 <img alt="../../_images/parallelepiped_angle_definition.png" src="../../_images/parallelepiped_angle_definition.png" />
-<p class="caption"><span class="caption-number">Fig. 64 </span><span class="caption-text">Definition of the angles for oriented hollow rectangular prism.
-Note that rotation <span class="math notranslate nohighlight">\(\theta\)</span>, initially in the <span class="math notranslate nohighlight">\(xz\)</span> plane, is carried out first, then
-rotation <span class="math notranslate nohighlight">\(\phi\)</span> about the <span class="math notranslate nohighlight">\(z\)</span> axis, finally rotation <span class="math notranslate nohighlight">\(\Psi\)</span> is now around the axis of the prism.
-The neutron or X-ray beam is along the <span class="math notranslate nohighlight">\(z\)</span> axis.</span></p>
+<p class="caption"><span class="caption-number">Fig. 64 </span><span class="caption-text">Definition of the angles for oriented hollow rectangular prism. Note that
+rotation <span class="math notranslate nohighlight">\(\theta\)</span>, initially in the <span class="math notranslate nohighlight">\(xz\)</span> plane, is carried out first,
+then rotation <span class="math notranslate nohighlight">\(\phi\)</span> about the <span class="math notranslate nohighlight">\(z\)</span> axis, finally rotation <span class="math notranslate nohighlight">\(\Psi\)</span> is now
+around the axis of the prism. The neutron or X-ray beam is along the <span class="math notranslate nohighlight">\(z\)</span>
+axis.</span></p>
 </div>
 <div class="figure" id="id5">
 <img alt="../../_images/parallelepiped_angle_projection.png" src="../../_images/parallelepiped_angle_projection.png" />
@@ -197,9 +199,9 @@ of the 1D model to the curves shown in (Nayuk, 2012).</p>
 <p class="caption"><span class="caption-number">Fig. 66 </span><span class="caption-text">1D and 2D plots corresponding to the default parameters of the model.</span></p>
 </div>
 <p><strong>Source</strong></p>
-<p><a class="reference download internal" href="../../_downloads/hollow_rectangular_prism.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">hollow_rectangular_prism.py</span></code></a>
-<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/hollow_rectangular_prism.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">hollow_rectangular_prism.c</span></code></a>
-<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/gauss76.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">gauss76.c</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/7e15695cb53f0a51d9560504b9fde155/hollow_rectangular_prism.py"><code class="xref download docutils literal notranslate"><span class="pre">hollow_rectangular_prism.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/e9d6870cdad87a3866318913787f5364/hollow_rectangular_prism.c"><code class="xref download docutils literal notranslate"><span class="pre">hollow_rectangular_prism.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/8d7f71afcb56f060bc93bd8ec5af0bfd/gauss76.c"><code class="xref download docutils literal notranslate"><span class="pre">gauss76.c</span></code></a></p>
 <p><strong>References</strong></p>
 <p>See also Onsager <a class="footnote-reference" href="#onsager1949" id="id3">[2]</a>.</p>
 <table class="docutils footnote" frame="void" id="nayuk2012" rules="none">
@@ -275,15 +277,15 @@ of the 1D model to the curves shown in (Nayuk, 2012).</p>
         <li class="right" >
           <a href="core_shell_parallelepiped.html" title="core_shell_parallelepiped"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-parallelepiped.html" >Parallelepiped Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

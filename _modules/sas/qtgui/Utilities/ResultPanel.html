@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Utilities.ResultPanel &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Utilities.ResultPanel &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -48,11 +48,11 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">bumps.dream.stats</span> <span class="kn">import</span> <span class="n">var_stats</span><span class="p">,</span> <span class="n">format_vars</span>
+<span class="kn">from</span> <span class="nn">bumps.dream.stats</span> <span class="k">import</span> <span class="n">var_stats</span><span class="p">,</span> <span class="n">format_vars</span>
 
 
 <div class="viewcode-block" id="ResultPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.ResultPanel.ResultPanel">[docs]</a><span class="k">class</span> <span class="nc">ResultPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">):</span>
@@ -67,7 +67,7 @@
     <span class="n">window_name</span> <span class="o">=</span> <span class="s2">&quot;Result panel&quot;</span>
     <span class="n">windowClosedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ResultPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
@@ -79,8 +79,8 @@
 
         <span class="c1"># the following two imports will move to the top once</span>
         <span class="c1"># the monkeypatching is gone</span>
-        <span class="kn">from</span> <span class="nn">bumps.gui.convergence_view</span> <span class="kn">import</span> <span class="n">ConvergenceView</span>
-        <span class="kn">from</span> <span class="nn">bumps.gui.uncertainty_view</span> <span class="kn">import</span> <span class="n">UncertaintyView</span><span class="p">,</span> <span class="n">CorrelationView</span><span class="p">,</span> <span class="n">TraceView</span>
+        <span class="kn">from</span> <span class="nn">bumps.gui.convergence_view</span> <span class="k">import</span> <span class="n">ConvergenceView</span>
+        <span class="kn">from</span> <span class="nn">bumps.gui.uncertainty_view</span> <span class="k">import</span> <span class="n">UncertaintyView</span><span class="p">,</span> <span class="n">CorrelationView</span><span class="p">,</span> <span class="n">TraceView</span>
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">convergenceView</span> <span class="o">=</span> <span class="n">ConvergenceView</span><span class="p">()</span>
@@ -93,7 +93,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Monkeypatching bumps plot viewer to allow Qt</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">PlotView</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">PlotView</span>
         <span class="kn">import</span> <span class="nn">bumps.gui</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;bumps.gui.plot_view&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotView</span></div>
 
@@ -178,14 +178,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -1,0 +1,440 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Perspectives.Fitting.GPUOptions &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Fitting.GPUOptions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># global</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">threads</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span>
+
+<span class="kn">import</span> <span class="nn">sasmodels</span>
+<span class="kn">import</span> <span class="nn">sasmodels.model_test</span>
+<span class="kn">import</span> <span class="nn">sasmodels.kernelcl</span>
+<span class="kn">from</span> <span class="nn">sasmodels.generate</span> <span class="kn">import</span> <span class="n">F32</span><span class="p">,</span> <span class="n">F64</span>
+
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.GPUOptionsUI</span> <span class="kn">import</span> <span class="n">Ui_GPUOptions</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.GPUTestResultsUI</span> <span class="kn">import</span> <span class="n">Ui_GPUTestResults</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_fromUtf8</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="o">.</span><span class="n">fromUtf8</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_fromUtf8</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_encoding</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">,</span> <span class="n">_encoding</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GPUOptions"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions">[docs]</a><span class="k">class</span> <span class="nc">GPUOptions</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_GPUOptions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    OpenCL Dialog to select the desired OpenCL driver</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">clicked</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">sas_open_cl</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cl_options</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">testingDoneSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">testingFailedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GPUOptions</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># disable the context help icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addOpenCLOptions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setFormat</span><span class="p">(</span><span class="s2">&quot; Test %v / %m&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">createLinks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testingDoneSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testCompleted</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testingFailedSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testFailed</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GPUOptions.addOpenCLOptions"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.addOpenCLOptions">[docs]</a>    <span class="k">def</span> <span class="nf">addOpenCLOptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Populate the window with a list of OpenCL options</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get list of openCL options and add to GUI</span>
+        <span class="n">cl_tuple</span> <span class="o">=</span> <span class="n">_get_clinfo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAS_OPENCL&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Keys are the names in the form &quot;platform: device&quot;. Corresponding values are the combined indices, e.g.</span>
+        <span class="c1"># &quot;0:1&quot;, for setting the SAS_OPENCL env.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cl_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">descr</span> <span class="ow">in</span> <span class="n">cl_tuple</span><span class="p">:</span>
+            <span class="c1"># Create an item for each openCL option</span>
+            <span class="n">check_box</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">()</span>
+            <span class="n">check_box</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="n">descr</span><span class="p">))</span>
+            <span class="n">check_box</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;GPUOptions&quot;</span><span class="p">,</span> <span class="n">descr</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optionsLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">check_box</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">title</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                            <span class="n">title</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">clicked</span><span class="p">):</span>
+                <span class="n">check_box</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">clicked</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cl_options</span><span class="p">[</span><span class="n">descr</span><span class="p">]</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openCLCheckBoxGroup</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optionsLayout</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span><span class="o">+</span><span class="mi">10</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.createLinks"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.createLinks">[docs]</a>    <span class="k">def</span> <span class="nf">createLinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Link user interactions to function calls</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testButtonClicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">helpButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">helpButtonClicked</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">openCLCheckBoxGroup</span><span class="o">.</span><span class="n">findChildren</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checked</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.checked"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.checked">[docs]</a>    <span class="k">def</span> <span class="nf">checked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Only allow a single check box to be selected. Uncheck others.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checked</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">openCLCheckBoxGroup</span><span class="o">.</span><span class="n">findChildren</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cl_options</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="n">text</span><span class="p">())]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">box</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="s2">&quot;No OpenCL&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">)):</span>
+                <span class="n">box</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">box</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="n">checked</span> <span class="o">=</span> <span class="n">box</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">checked</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cl_options</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">checked</span><span class="o">.</span><span class="n">text</span><span class="p">())]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="GPUOptions.set_sas_open_cl"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.set_sas_open_cl">[docs]</a>    <span class="k">def</span> <span class="nf">set_sas_open_cl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set SAS_OPENCL value when tests run or OK button clicked</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">no_opencl_msg</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SAS_OPENCL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sas_open_cl</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+                <span class="n">no_opencl_msg</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;SAS_OPENCL&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SAS_OPENCL&quot;</span><span class="p">]</span>
+        <span class="c1"># CRUFT: next version of reset_environment() will return env</span>
+        <span class="n">sasmodels</span><span class="o">.</span><span class="n">sasview_model</span><span class="o">.</span><span class="n">reset_environment</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">no_opencl_msg</span></div>
+
+<div class="viewcode-block" id="GPUOptions.testButtonClicked"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.testButtonClicked">[docs]</a>    <span class="k">def</span> <span class="nf">testButtonClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run sasmodels check from here and report results from</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_tests</span> <span class="o">=</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">model_test</span><span class="o">.</span><span class="n">make_suite</span><span class="p">(</span><span class="s1">&#39;opencl&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+        <span class="n">number_of_tests</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_tests</span><span class="o">.</span><span class="n">_tests</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="n">number_of_tests</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">okButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">no_opencl_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_sas_open_cl</span><span class="p">()</span>
+
+        <span class="n">test_thread</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">deferToThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testThread</span><span class="p">,</span> <span class="n">no_opencl_msg</span><span class="p">)</span>
+        <span class="n">test_thread</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testComplete</span><span class="p">)</span>
+        <span class="n">test_thread</span><span class="o">.</span><span class="n">addErrback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testFail</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.testThread"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.testThread">[docs]</a>    <span class="k">def</span> <span class="nf">testThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_opencl_msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Testing in another thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">environment</span><span class="p">()</span>
+            <span class="n">clinfo</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">F64</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;double&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ctx64</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">F64</span><span class="p">]</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;double&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
+                    <span class="n">ctx64</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">vendor</span><span class="p">,</span>
+                    <span class="n">ctx64</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                    <span class="n">ctx64</span><span class="o">.</span><span class="n">vendor</span><span class="p">,</span>
+                    <span class="n">ctx64</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">ctx64</span><span class="o">.</span><span class="n">version</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">F32</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;single&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ctx32</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">F32</span><span class="p">]</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;single&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
+                    <span class="n">ctx32</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">vendor</span><span class="p">,</span>
+                    <span class="n">ctx32</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                    <span class="n">ctx32</span><span class="o">.</span><span class="n">vendor</span><span class="p">,</span>
+                    <span class="n">ctx32</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">ctx32</span><span class="o">.</span><span class="n">version</span><span class="p">))</span>
+            <span class="c1"># If the same device is used for single and double precision, then</span>
+            <span class="c1"># say so. Whether double is the same as single or single is the</span>
+            <span class="c1"># same as double depends on the order they are listed below.</span>
+            <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">F32</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">F64</span><span class="p">]:</span>
+                <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;double&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;same as single precision&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;exc </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="n">clinfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;double&#39;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span> <span class="s2">&quot;None&quot;</span><span class="p">}</span>
+
+        <span class="n">failures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tests_completed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">counter</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_tests</span><span class="p">):</span>
+            <span class="c1"># update the progress bar</span>
+            <span class="n">reactor</span><span class="o">.</span><span class="n">callFromThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateCounter</span><span class="p">,</span> <span class="n">counter</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">test</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">failures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">test_name</span><span class="p">)</span>
+            <span class="n">tests_completed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+            <span class="s1">&#39;platform&#39;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">(),</span>
+            <span class="s1">&#39;opencl_single&#39;</span><span class="p">:</span> <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;single&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;opencl_double&#39;</span><span class="p">:</span> <span class="n">clinfo</span><span class="p">[</span><span class="s1">&#39;double&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;failing tests&#39;</span><span class="p">:</span> <span class="n">failures</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tests_completed</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; tests completed.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; tests failed.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;Failing tests: &#39;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;failing tests&#39;</span><span class="p">])</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;All tests passed!</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Platform Details:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Sasmodels version: &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Platform used: &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">no_opencl_msg</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OpenCL driver: None&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OpenCL driver: &quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;   single precision: &quot;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;opencl_single&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;   double precision: &quot;</span> <span class="o">+</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;opencl_double&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">msg</span></div>
+
+<div class="viewcode-block" id="GPUOptions.updateCounter"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.updateCounter">[docs]</a>    <span class="k">def</span> <span class="nf">updateCounter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update progress bar with current value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="GPUOptions.testComplete"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.testComplete">[docs]</a>    <span class="k">def</span> <span class="nf">testComplete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Testing done: send signal to main thread with update</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testingDoneSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.testFail"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.testFail">[docs]</a>    <span class="k">def</span> <span class="nf">testFail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Testing failed: log the reason</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">twisted.python.failure</span> <span class="kn">import</span> <span class="n">Failure</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">Failure</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">getErrorMessage</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">testingFailedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.testFailed"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.testFailed">[docs]</a>    <span class="k">def</span> <span class="nf">testFailed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Testing failed: log the reason</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">okButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GPUOptions.testCompleted"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.testCompleted">[docs]</a>    <span class="k">def</span> <span class="nf">testCompleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Respond to successful test completion</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">testButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">okButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">GPUTestResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.helpButtonClicked"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.helpButtonClicked">[docs]</a>    <span class="k">def</span> <span class="nf">helpButtonClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the help menu when the help button is clicked</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">help_location</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">HELP_DIRECTORY_LOCATION</span>
+        <span class="n">help_location</span> <span class="o">+=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Fitting/gpu_setup.html&quot;</span>
+        <span class="n">help_location</span> <span class="o">+=</span> <span class="s2">&quot;#device-selection&quot;</span>
+        <span class="c1"># Display the page in default browser</span>
+        <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">help_location</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GPUOptions.reject"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the window without modifying SAS_OPENCL</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">gpu_options_widget</span><span class="o">.</span><span class="n">open</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GPUOptions.accept"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the window after modifying the SAS_OPENCL value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_sas_open_cl</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeEvent</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GPUOptions.closeEvent"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUOptions.closeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite QDialog close method to allow for custom widget close</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">gpu_options_widget</span> <span class="o">=</span> <span class="n">GPUOptions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GPUTestResults"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.GPUOptions.GPUTestResults">[docs]</a><span class="k">class</span> <span class="nc">GPUTestResults</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_GPUTestResults</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    OpenCL Dialog to modify the OpenCL options</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GPUTestResults</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resultsText</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">&quot;GPUTestResults&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="c1">#self.setFixedSize(self.size())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_clinfo</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read in information about available OpenCL infrastructure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clinfo</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cl_platforms</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pyopencl</span> <span class="k">as</span> <span class="nn">cl</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">cl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to import the pyopencl package.  It may not &quot;</span>
+                    <span class="s2">&quot;have been installed.  If you wish to use OpenCL, try &quot;</span>
+                    <span class="s2">&quot;running pip install --user pyopencl&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cl_platforms</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">get_platforms</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">cl</span><span class="o">.</span><span class="n">LogicError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to fetch the OpenCL platforms.  This likely &quot;</span>
+                        <span class="s2">&quot;means that the opencl drivers for your system are &quot;</span>
+                        <span class="s2">&quot;not installed.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+    <span class="n">p_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">cl_platform</span> <span class="ow">in</span> <span class="n">cl_platforms</span><span class="p">:</span>
+        <span class="n">d_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">cl_devices</span> <span class="o">=</span> <span class="n">cl_platform</span><span class="o">.</span><span class="n">get_devices</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">cl_device</span> <span class="ow">in</span> <span class="n">cl_devices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl_platforms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl_devices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">combined_index</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">p_index</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">d_index</span><span class="p">)])</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cl_platforms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">combined_index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">combined_index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">d_index</span><span class="p">)</span>
+            <span class="n">clinfo</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">combined_index</span><span class="p">,</span> <span class="s2">&quot;: &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">cl_platform</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                     <span class="n">cl_device</span><span class="o">.</span><span class="n">name</span><span class="p">])))</span>
+            <span class="n">d_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">p_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">clinfo</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;No OpenCL&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">clinfo</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

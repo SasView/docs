@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Calculators.DataOperationUtilityPanel &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Calculators.DataOperationUtilityPanel &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -46,24 +46,24 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="kn">import</span> <span class="n">PlotterWidget</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="kn">import</span> <span class="n">Plotter2DWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="k">import</span> <span class="n">PlotterWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="k">import</span> <span class="n">Plotter2DWidget</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 
-<span class="kn">from</span> <span class="nn">.UI.DataOperationUtilityUI</span> <span class="kn">import</span> <span class="n">Ui_DataOperationUtility</span>
+<span class="kn">from</span> <span class="nn">.UI.DataOperationUtilityUI</span> <span class="k">import</span> <span class="n">Ui_DataOperationUtility</span>
 
-<span class="n">BG_WHITE</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(255, 255, 255);&quot;</span>
+<span class="n">BG_WHITE</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);&quot;</span>
 <span class="n">BG_RED</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(244, 170, 164);&quot;</span>
 
 
 <div class="viewcode-block" id="DataOperationUtilityPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel">[docs]</a><span class="k">class</span> <span class="nc">DataOperationUtilityPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_DataOperationUtility</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataOperationUtilityPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">parent</span>
@@ -131,9 +131,9 @@
             <span class="n">list_datafiles</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">key_id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">filenames</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="k">if</span> <span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
                     <span class="c1"># filenames with titles</span>
-                    <span class="n">new_title</span> <span class="o">=</span> <span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span>
+                    <span class="n">new_title</span> <span class="o">=</span> <span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
                     <span class="n">list_datafiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">list_data_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span>
 
@@ -398,8 +398,8 @@
 
         <span class="k">for</span> <span class="n">key_id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="c1"># data with title</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
-                <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
             <span class="c1"># data without title</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">input</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_id</span><span class="p">)</span>
@@ -532,14 +532,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Plotting.PlotterData &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Plotting.PlotterData &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -84,6 +87,19 @@
         <span class="c1"># 2: deletable on model change (Q(I), S(I)...)</span>
         <span class="c1"># 3: separate chart on Show Plot (residuals)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">=</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_DEFAULT</span>
+        <span class="c1"># Q-range slider definitions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_q_range_sliders</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Should sliders be shown?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_update_on_move</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Should the gui update during the move?</span>
+        <span class="c1"># The following q-range slider variables are optional but help tie</span>
+        <span class="c1">#   the slider to a GUI element for 2-way updates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_low_q_input</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Qt input that is tied to low-Q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_high_q_input</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Qt input that is tied to high-Q</span>
+        <span class="c1"># Setters and getters are only needed for inputs that aren&#39;t Q values</span>
+        <span class="c1">#   e.g. Invariant perspective nPts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_low_q_setter</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Callback method to set the low-Q value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_low_q_getter</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Callback method to get the low-Q value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_high_q_setter</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Callback method to set the high-Q value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slider_high_q_getter</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Callback method to get the high-Q value</span>
         
 <div class="viewcode-block" id="Data1D.copy_from_datainfo"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.PlotterData.Data1D.copy_from_datainfo">[docs]</a>    <span class="k">def</span> <span class="nf">copy_from_datainfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data1d</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -427,14 +443,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

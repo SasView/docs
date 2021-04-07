@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Plotting.MaskEditor &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Plotting.MaskEditor &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -41,26 +41,26 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.Plotting.MaskEditor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data2D</span>
 
 <span class="c1"># Local UI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="kn">import</span> <span class="n">main_resources_rc</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.UI.MaskEditorUI</span> <span class="kn">import</span> <span class="n">Ui_MaskEditorUI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="kn">import</span> <span class="n">Plotter2DWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.UI</span> <span class="k">import</span> <span class="n">main_resources_rc</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.UI.MaskEditorUI</span> <span class="k">import</span> <span class="n">Ui_MaskEditorUI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="k">import</span> <span class="n">Plotter2DWidget</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Masks.SectorMask</span> <span class="kn">import</span> <span class="n">SectorMask</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Masks.BoxMask</span> <span class="kn">import</span> <span class="n">BoxMask</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Masks.CircularMask</span> <span class="kn">import</span> <span class="n">CircularMask</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Masks.SectorMask</span> <span class="k">import</span> <span class="n">SectorMask</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Masks.BoxMask</span> <span class="k">import</span> <span class="n">BoxMask</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Masks.CircularMask</span> <span class="k">import</span> <span class="n">CircularMask</span>
 
 
 <div class="viewcode-block" id="MaskEditor"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.MaskEditor.MaskEditor">[docs]</a><span class="k">class</span> <span class="nc">MaskEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_MaskEditorUI</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MaskEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">)</span>
@@ -307,14 +307,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Utilities.PlotView &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Utilities.PlotView &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -41,12 +41,12 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.Utilities.PlotView</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">with_statement</span><span class="p">,</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="c1"># The Figure object is used to create backend-independent plot representations.</span>
-<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="k">import</span> <span class="n">Figure</span>
 <span class="n">GUI_TOOLKIT</span> <span class="o">=</span> <span class="s2">&quot;qt5&quot;</span>
-<span class="kn">from</span> <span class="nn">matplotlib.backends.qt_compat</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.qt_compat</span> <span class="k">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 
 <div class="viewcode-block" id="EmbeddedPylab"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.EmbeddedPylab">[docs]</a><span class="k">class</span> <span class="nc">EmbeddedPylab</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -95,19 +95,19 @@
 <span class="sd">    in matplotlib.backend_bases.* for examples showing how to use matplotlib</span>
 <span class="sd">    with other GUI toolkits.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
         <span class="c1"># delay loading pylab until matplotlib.use() is called</span>
-        <span class="kn">from</span> <span class="nn">matplotlib.backend_bases</span> <span class="kn">import</span> <span class="n">FigureManagerBase</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.backend_bases</span> <span class="k">import</span> <span class="n">FigureManagerBase</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fm</span> <span class="o">=</span> <span class="n">FigureManagerBase</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># delay loading pylab until matplotlib.use() is called</span>
         <span class="kn">import</span> <span class="nn">pylab</span>
-        <span class="kn">from</span> <span class="nn">matplotlib._pylab_helpers</span> <span class="kn">import</span> <span class="n">Gcf</span>
+        <span class="kn">from</span> <span class="nn">matplotlib._pylab_helpers</span> <span class="k">import</span> <span class="n">Gcf</span>
         <span class="n">Gcf</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pylab</span>
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="c1"># delay loading pylab until matplotlib.use() is called</span>
-        <span class="kn">from</span> <span class="nn">matplotlib._pylab_helpers</span> <span class="kn">import</span> <span class="n">Gcf</span>
+        <span class="kn">from</span> <span class="nn">matplotlib._pylab_helpers</span> <span class="k">import</span> <span class="n">Gcf</span>
         <span class="n">Gcf</span><span class="o">.</span><span class="n">_activeQue</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">Gcf</span><span class="o">.</span><span class="n">_activeQue</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">del</span> <span class="n">Gcf</span><span class="o">.</span><span class="n">figs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -231,12 +231,12 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;PlotPanel needs a plot method&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PlotView"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.PlotView">[docs]</a><span class="k">class</span> <span class="nc">PlotView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">_PlotViewShared</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
         <span class="c1">#import matplotlib.backends.backend_qt4agg</span>
         <span class="c1">#matplotlib.backends.backend_qt4agg.DEBUG = True</span>
-        <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvasQTAgg</span> <span class="k">as</span> <span class="n">FigureCanvas</span>
-        <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">NavigationToolbar2QT</span> <span class="k">as</span> <span class="n">Toolbar</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="k">import</span> <span class="n">FigureCanvasQTAgg</span> <span class="k">as</span> <span class="n">FigureCanvas</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="k">import</span> <span class="n">NavigationToolbar2QT</span> <span class="k">as</span> <span class="n">Toolbar</span>
 
         <span class="c1">#QtWidgets.QWidget.__init__(self, *args, **kw)</span>
 
@@ -302,14 +302,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

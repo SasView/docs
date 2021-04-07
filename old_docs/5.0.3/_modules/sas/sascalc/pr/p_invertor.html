@@ -1,0 +1,741 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.sascalc.pr.p_invertor &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.sascalc.pr.p_invertor</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python implementation of the P(r) inversion</span>
+<span class="sd">Pinvertor is the base class for the Invertor class</span>
+<span class="sd">and provides the underlying computations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">timeit</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">calc</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Pinvertor"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor">[docs]</a><span class="k">class</span> <span class="nc">Pinvertor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c1">#q data</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="c1">#I(q) data</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="c1">#dI(q) data</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="c1">#Number of q points</span>
+    <span class="n">npoints</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">#Number of I(q) points</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">#Number of dI(q) points</span>
+    <span class="n">nerr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">#Slit height in units of q [A-1]</span>
+    <span class="n">slit_height</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="c1">#Slit width in units of q [A-1]</span>
+    <span class="n">slit_width</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#Maximum distance between any two points in the system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_dmax</span><span class="p">(</span><span class="mi">180</span><span class="p">)</span>
+        <span class="c1">#Minimum q to include in inversion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_qmin</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="c1">#Maximum q to include in inversion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_qmax</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="c1">#Flag for whether or not to evaluate a constant background</span>
+        <span class="c1">#while inverting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_est_bck</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Pinvertor.residuals"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.residuals">[docs]</a>    <span class="k">def</span> <span class="nf">residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to call to evaluate the residuals for P(r) inversion.</span>
+
+<span class="sd">        :param pars: input parameters.</span>
+<span class="sd">        :return: residuals - list of residuals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+
+        <span class="n">residuals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">25</span>
+        <span class="n">regterm</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">reg_term</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">]</span> <span class="o">-</span> <span class="n">calc</span><span class="o">.</span><span class="n">iq</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">regterm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pinvertor.pr_residuals"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.pr_residuals">[docs]</a>    <span class="k">def</span> <span class="nf">pr_residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to call to evaluate the residuals for P(r) minimization (for testing purposes).</span>
+
+<span class="sd">        :param pars: input parameters.</span>
+<span class="sd">        :return: residuals - list of residuals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+
+        <span class="n">residuals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">25</span>
+        <span class="n">regterm</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">reg_term</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npoints</span><span class="p">]</span> <span class="o">-</span> <span class="n">calc</span><span class="o">.</span><span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">regterm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_x"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_x">[docs]</a>    <span class="k">def</span> <span class="nf">set_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to set the x data.</span>
+
+<span class="sd">        :param data: Array of doubles to set x to.</span>
+<span class="sd">        :return: npoints - Number of entries found, the size of x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;npoints&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_x"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_x">[docs]</a>    <span class="k">def</span> <span class="nf">get_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to get the x data.</span>
+
+<span class="sd">        :param data: Array to place x into</span>
+<span class="sd">        :return: npoints - Number of entries found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ndata</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Pinvertor.get_x: input array too short for data.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_y"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_y">[docs]</a>    <span class="k">def</span> <span class="nf">set_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to set the y data.</span>
+
+<span class="sd">        :param data: Array of doubles to set y to.</span>
+<span class="sd">        :return: ny - Number of entries found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;ny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_y"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_y">[docs]</a>    <span class="k">def</span> <span class="nf">get_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to get the y data.</span>
+
+<span class="sd">        :param data: Array of doubles to place y into.</span>
+<span class="sd">        :return: npoints - Number of entries found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ndata</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Pinvertor.get_y: input array too short for data.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_err"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_err">[docs]</a>    <span class="k">def</span> <span class="nf">set_err</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to set the err data.</span>
+
+<span class="sd">        :param data: Array of doubles to set err to.</span>
+<span class="sd">        :return: nerr - Number of entries found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;err&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;nerr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerr</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_err"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_err">[docs]</a>    <span class="k">def</span> <span class="nf">get_err</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to get the err data.</span>
+
+<span class="sd">        :param data: Array of doubles to place err into.</span>
+<span class="sd">        :return: npoints - number of entries found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ndata</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ndata</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerr</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Pinvertor.get_err: input array too short for data.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">data</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_dmax"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_dmax">[docs]</a>    <span class="k">def</span> <span class="nf">set_dmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_max</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the maximum distance.</span>
+
+<span class="sd">        :param d_max: float to set d_max to.</span>
+<span class="sd">        :return: d_max</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_d_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">d_max</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d_max</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_dmax"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_dmax">[docs]</a>    <span class="k">def</span> <span class="nf">get_dmax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the maximum distance.</span>
+
+<span class="sd">        :return: d_max.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d_max</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_qmin"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_qmin">[docs]</a>    <span class="k">def</span> <span class="nf">set_qmin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the minimum q.</span>
+
+<span class="sd">        :param min_q: float to set q_min to.</span>
+<span class="sd">        :return: q_min.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_q_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">min_q</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_min</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_qmin"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_qmin">[docs]</a>    <span class="k">def</span> <span class="nf">get_qmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the minimum q.</span>
+
+<span class="sd">        :return: q_min.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_min</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_qmax"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_qmax">[docs]</a>    <span class="k">def</span> <span class="nf">set_qmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the maximum q.</span>
+
+<span class="sd">        :param max_q: float to set q_max to.</span>
+<span class="sd">        :return: q_max.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_q_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">max_q</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_max</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_qmax"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_qmax">[docs]</a>    <span class="k">def</span> <span class="nf">get_qmax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the maximum q.</span>
+
+<span class="sd">        :return: q_max.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_max</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_alpha"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_alpha">[docs]</a>    <span class="k">def</span> <span class="nf">set_alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the alpha parameter.</span>
+
+<span class="sd">        :param alpha_: float to set alpha to.</span>
+<span class="sd">        :return: alpha.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_alpha"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_alpha">[docs]</a>    <span class="k">def</span> <span class="nf">get_alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the alpha parameter.</span>
+
+<span class="sd">        :return: alpha.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alpha</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_slit_width"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_slit_width">[docs]</a>    <span class="k">def</span> <span class="nf">set_slit_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slit_width</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the slit width in units of q [A-1].</span>
+
+<span class="sd">        :param slit_width: float to set slit_width to.</span>
+<span class="sd">        :return: slit_width.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;slit_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">slit_width</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_slit_width"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_slit_width">[docs]</a>    <span class="k">def</span> <span class="nf">get_slit_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the slit width.</span>
+
+<span class="sd">        :return: slit_width.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_slit_height"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_slit_height">[docs]</a>    <span class="k">def</span> <span class="nf">set_slit_height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slit_height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the slit height in units of q [A-1].</span>
+
+<span class="sd">        :param slit_height: float to set slit-height to.</span>
+<span class="sd">        :return: slit_height.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;slit_height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">slit_height</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_slit_height"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_slit_height">[docs]</a>    <span class="k">def</span> <span class="nf">get_slit_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the slit height.</span>
+
+<span class="sd">        :return: slit_height.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span></div>
+
+<div class="viewcode-block" id="Pinvertor.set_est_bck"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.set_est_bck">[docs]</a>    <span class="k">def</span> <span class="nf">set_est_bck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">est_bck</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets background flag.</span>
+
+<span class="sd">        :param est_bck: int to set est_bck to.</span>
+<span class="sd">        :return: est_bck.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;est_bck&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">est_bck</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">est_bck</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_est_bck"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_est_bck">[docs]</a>    <span class="k">def</span> <span class="nf">get_est_bck</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets background flag.</span>
+
+<span class="sd">        :return: est_bck.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">est_bck</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_nx"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_nx">[docs]</a>    <span class="k">def</span> <span class="nf">get_nx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of x points.</span>
+
+<span class="sd">        :return: npoints.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_ny"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_ny">[docs]</a>    <span class="k">def</span> <span class="nf">get_ny</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of y points.</span>
+
+<span class="sd">        :return: ny.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_nerr"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_nerr">[docs]</a>    <span class="k">def</span> <span class="nf">get_nerr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of error points.</span>
+
+<span class="sd">        :return: nerr.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerr</span></div>
+
+<div class="viewcode-block" id="Pinvertor.iq"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.iq">[docs]</a>    <span class="k">def</span> <span class="nf">iq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to call to evaluate the scattering intensity.</span>
+
+<span class="sd">        :param pars: c-parameters</span>
+<span class="sd">        :param q: q, scalar or vector.</span>
+
+<span class="sd">        :return: I(q)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+        <span class="n">iq_val</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">iq</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">iq_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asscalar</span><span class="p">(</span><span class="n">iq_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">iq_val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_iq_smeared"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_iq_smeared">[docs]</a>    <span class="k">def</span> <span class="nf">get_iq_smeared</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to call to evaluate the scattering intensity.</span>
+<span class="sd">        The scattering intensity is slit-smeared.</span>
+
+<span class="sd">        :param pars: c-parameters</span>
+<span class="sd">        :param q: q, scalar or vector.</span>
+
+<span class="sd">        :return: I(q), either scalar or vector depending on q.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+
+
+        <span class="n">npts</span> <span class="o">=</span> <span class="mi">21</span>
+        <span class="n">iq_val</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">iq_smeared</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span><span class="p">,</span> <span class="n">npts</span><span class="p">)</span>
+        <span class="c1">#If q was a scalar</span>
+        <span class="k">if</span> <span class="n">iq_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asscalar</span><span class="p">(</span><span class="n">iq_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">iq_val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.pr"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.pr">[docs]</a>    <span class="k">def</span> <span class="nf">pr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to call to evaluate P(r).</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :param r: r-value to evaluate P(r) at.</span>
+
+<span class="sd">        :return: P(r)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">pr_val</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pr_val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1">#scalar</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asscalar</span><span class="p">(</span><span class="n">pr_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pr_val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_pr_err"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_pr_err">[docs]</a>    <span class="k">def</span> <span class="nf">get_pr_err</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">pars_err</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to call to evaluate P(r) with errors.</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :param pars_err: pars_err.</span>
+<span class="sd">        :param r: r-value.</span>
+
+<span class="sd">        :return: (P(r), dP(r))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">pars_err</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">calc</span><span class="o">.</span><span class="n">pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">),</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pars_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars_err</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">calc</span><span class="o">.</span><span class="n">pr_err</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">pars_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pinvertor.is_valid"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the validity of the stored data.</span>
+
+<span class="sd">        :return: Returns the number of points if it&#39;s all good, -1 otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nerr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Pinvertor.basefunc_ft"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.basefunc_ft">[docs]</a>    <span class="k">def</span> <span class="nf">basefunc_ft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the nth Fourier transformed base function.</span>
+
+<span class="sd">        :param d_max: d_max.</span>
+<span class="sd">        :param n: n.</span>
+<span class="sd">        :param q: q, scalar or vector.</span>
+
+<span class="sd">        :return: nth Fourier transformed base function, evaluated at q.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">d_max</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">ortho_val</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">ortho_transformed</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">d_max</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ortho_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1">#If the q input was scalar.</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asscalar</span><span class="p">(</span><span class="n">ortho_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ortho_val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.oscillations"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.oscillations">[docs]</a>    <span class="k">def</span> <span class="nf">oscillations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the oscillation figure of merit for</span>
+<span class="sd">        the given set of coefficients. For a sphere, the oscillation</span>
+<span class="sd">        figure of merit is 1.1.</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :return: oscillation figure of merit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+
+        <span class="n">oscill</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">reg_term</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">int_pr_square</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+        <span class="n">ret_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">oscill</span><span class="o">/</span><span class="n">norm</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span>
+
+        <span class="k">return</span> <span class="n">ret_val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_peaks"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_peaks">[docs]</a>    <span class="k">def</span> <span class="nf">get_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of peaks in the output P(r) distribution</span>
+<span class="sd">        for the given set of coefficients.</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :return: number of P(r) peaks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">npeaks</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">count</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_positive"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_positive">[docs]</a>    <span class="k">def</span> <span class="nf">get_positive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the fraction of P(r) that is positive over</span>
+<span class="sd">        the full range of r for the given set of coefficients.</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :return: fraction of P(r) that is positive.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">fraction</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">positive_integral</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fraction</span></div>
+
+<div class="viewcode-block" id="Pinvertor.get_pos_err"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.get_pos_err">[docs]</a>    <span class="k">def</span> <span class="nf">get_pos_err</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">pars_err</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the fraction of P(r) that is 1 standard deviation</span>
+<span class="sd">        above zero over the full range of r for the given set of coefficients.</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :param pars_err: pars_err.</span>
+
+<span class="sd">        :return: fraction of P(r) that is positive.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">51</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars_err</span><span class="p">)</span>
+        <span class="n">fraction</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">positive_errors</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">pars_err</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fraction</span></div>
+
+<div class="viewcode-block" id="Pinvertor.rg"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.rg">[docs]</a>    <span class="k">def</span> <span class="nf">rg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of the radius of gyration Rg.</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :return: Rg.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">101</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">rg</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.iq0"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.iq0">[docs]</a>    <span class="k">def</span> <span class="nf">iq0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the value of I(q=0).</span>
+
+<span class="sd">        :param pars: c-parameters.</span>
+<span class="sd">        :return: I(q=0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nslice</span> <span class="o">=</span> <span class="mi">101</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">calc</span><span class="o">.</span><span class="n">int_pr</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">nslice</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">val</span></div>
+
+<div class="viewcode-block" id="Pinvertor.accept_q"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.accept_q">[docs]</a>    <span class="k">def</span> <span class="nf">accept_q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check whether a q-value is within acceptable limits.</span>
+
+<span class="sd">        :return: 1 if accepted, 0 if rejected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_qmin</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_qmax</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_qmin</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_qmax</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Pinvertor.check_for_zero"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.pr.html#sas.sascalc.pr.p_invertor.Pinvertor.check_for_zero">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">,</span> <span class="n">nr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns A matrix and b vector for least square problem.</span>
+
+<span class="sd">        :param nfunc: number of base functions.</span>
+<span class="sd">        :param nr: number of r-points used when evaluating reg term.</span>
+<span class="sd">        :param a: A array to fill.</span>
+<span class="sd">        :param b: b vector to fill.</span>
+
+<span class="sd">        :return: 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nfunc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nfunc</span><span class="p">)</span>
+        <span class="n">nr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+        <span class="n">a_obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span> <span class="o">+</span> <span class="n">nr</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">])</span>
+        <span class="n">b_obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span> <span class="o">+</span> <span class="n">nr</span><span class="p">)</span>
+
+        <span class="n">sqrt_alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">est_bck</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_for_zero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Pinvertor.get_matrix: Some I(Q) points have no error.&quot;</span><span class="p">)</span>
+
+        <span class="c1">#Compute A</span>
+        <span class="c1">#Whether or not to use ortho_transformed_smeared.</span>
+        <span class="n">smeared</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">smeared</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">npts</span> <span class="o">=</span> <span class="mi">21</span>
+        <span class="c1">#Get accept_q vector across all q.</span>
+        <span class="n">q_accept_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accept_q</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q_accept_x</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="c1">#In the case of q_min and q_max &lt;= 0, so returns scalar, and returns True</span>
+            <span class="n">q_accept_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="c1">#The x and a that will be used for the first part of &#39;a&#39; calculation, given to ortho_transformed</span>
+        <span class="n">x_use</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">]</span>
+        <span class="n">a_use</span> <span class="o">=</span> <span class="n">a_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nfunc</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">est_bck</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">a_use</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">smeared</span><span class="p">:</span>
+                <span class="n">a_use</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">ortho_transformed_smeared</span><span class="p">(</span><span class="n">x_use</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span>
+                                                                      <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span><span class="p">,</span> <span class="n">npts</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">a_use</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">ortho_transformed</span><span class="p">(</span><span class="n">x_use</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="n">offset</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">[</span><span class="n">q_accept_x</span><span class="p">]</span>
+
+        <span class="n">a_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">a_use</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nfunc</span><span class="p">):</span>
+            <span class="n">i_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+            <span class="c1">#Implementing second stage A as a python vector operation with shape = [nr]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_max</span> <span class="o">/</span> <span class="n">nr</span><span class="p">)</span> <span class="o">*</span> <span class="n">i_r</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="n">offset</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">sqrt_alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_max</span><span class="o">/</span><span class="n">nr</span> <span class="o">*</span> <span class="n">tmp</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">tmp</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">tmp</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="c1">#Res should now be np vector size i_r.</span>
+            <span class="n">a_obj</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="o">+</span><span class="n">nr</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+
+        <span class="c1">#Compute B</span>
+        <span class="n">x_accept_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accept_q</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1">#The part of b used for the vector operations, of the accepted q values.</span>
+        <span class="n">b_used</span> <span class="o">=</span> <span class="n">b_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">]</span>
+        <span class="n">b_used</span><span class="p">[</span><span class="n">x_accept_index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">x_accept_index</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="p">[</span><span class="n">x_accept_index</span><span class="p">]</span>
+        <span class="n">b_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_used</span>
+
+        <span class="k">return</span> <span class="n">a_obj</span><span class="p">,</span> <span class="n">b_obj</span>
+
+    <span class="k">def</span> <span class="nf">_get_invcov_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">,</span> <span class="n">nr</span><span class="p">,</span> <span class="n">a_obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the inverse covariance matrix, defined as inv_cov = a_transposed x a.</span>
+
+<span class="sd">        :param nfunc: number of base functions.</span>
+<span class="sd">        :param nr: number of r-points used when evaluating reg term.</span>
+<span class="sd">        :param a: A array to fill.</span>
+<span class="sd">        :param inv_cov: inverse covariance array to be filled.</span>
+
+<span class="sd">        :return: 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nfunc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nfunc</span><span class="p">)</span>
+        <span class="n">nr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+        <span class="n">cov_obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nfunc</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">])</span>
+        <span class="n">n_a</span> <span class="o">=</span> <span class="n">a_obj</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">n_cov</span> <span class="o">=</span> <span class="n">cov_obj</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">n_a</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">nfunc</span> <span class="o">*</span> <span class="p">(</span><span class="n">nr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Pinvertor._get_invcov_matrix: a array too small.&quot;</span><span class="p">)</span>
+
+        <span class="n">size</span> <span class="o">=</span> <span class="n">nr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span>
+        <span class="n">cov_obj</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a_obj</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">a_obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cov_obj</span>
+
+    <span class="k">def</span> <span class="nf">_get_reg_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfunc</span><span class="p">,</span> <span class="n">nr</span><span class="p">,</span> <span class="n">a_obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes sum_sig and sum_reg of input array given.</span>
+
+<span class="sd">	    :param nfunc: number of base functions.</span>
+<span class="sd">	    :param nr: number of r-points used when evaluating reg term.</span>
+<span class="sd">	    :param a_obj: Array to compute sum_sig and sum_reg of.</span>
+
+<span class="sd">        :return: Tuple of (sum_sig, sum_reg)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nfunc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nfunc</span><span class="p">)</span>
+        <span class="n">nr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">a_obj</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="n">nfunc</span> <span class="o">*</span> <span class="p">(</span><span class="n">nr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Pinvertor._get_reg_size: input array too short for data.&quot;</span><span class="p">)</span>
+
+        <span class="n">a_pass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accept_q</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">a_use</span> <span class="o">=</span> <span class="n">a_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">a_use</span> <span class="o">=</span> <span class="n">a_use</span><span class="p">[</span><span class="n">a_pass</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">sum_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a_use</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sum_reg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a_obj</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="o">+</span><span class="n">nr</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sum_sig</span><span class="p">,</span> <span class="n">sum_reg</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

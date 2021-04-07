@@ -1,0 +1,955 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Calculators.GenericScatteringCalculator &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Calculators.GenericScatteringCalculator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">threads</span>
+
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GenericReader</span> <span class="kn">import</span> <span class="n">GenReader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Detector</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Source</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.calculator</span> <span class="kn">import</span> <span class="n">sas_gen</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterBase</span> <span class="kn">import</span> <span class="n">PlotterBase</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="kn">import</span> <span class="n">Plotter2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="kn">import</span> <span class="n">Plotter</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
+
+<span class="c1"># Local UI</span>
+<span class="kn">from</span> <span class="nn">.UI.GenericScatteringCalculator</span> <span class="kn">import</span> <span class="n">Ui_GenericScatteringCalculator</span>
+
+<span class="n">_Q1D_MIN</span> <span class="o">=</span> <span class="mf">0.001</span>
+
+
+<div class="viewcode-block" id="GenericScatteringCalculator"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator">[docs]</a><span class="k">class</span> <span class="nc">GenericScatteringCalculator</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_GenericScatteringCalculator</span><span class="p">):</span>
+
+    <span class="n">trigger_plot_3d</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="n">calculationFinishedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
+    <span class="n">loadingFinishedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GenericScatteringCalculator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># disable the context help icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">communicator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">GenSAS</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omf_reader</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMFReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sld_reader</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">SLDReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdb_reader</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">PDBReader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_shape</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbShape</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_to_plot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># index for name of graph</span>
+
+        <span class="c1"># combox box</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbOptionsCalc</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># push buttons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdClose</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdHelp</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onHelp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loadFile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCompute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdReset</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onReset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdSave</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSaveFile</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdDraw</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot3d</span><span class="p">(</span><span class="n">has_arrow</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdDrawpoints</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot3d</span><span class="p">(</span><span class="n">has_arrow</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># validators</span>
+        <span class="c1"># scale, volume and background must be positive</span>
+        <span class="n">validat_regex_pos</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="s1">&#39;^[+]?([.]\d+|\d+([.]\d+)?)$&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">validat_regex_pos</span><span class="p">,</span>
+                                                          <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span>
+            <span class="n">validat_regex_pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span>
+            <span class="n">validat_regex_pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="p">))</span>
+
+        <span class="c1"># fraction of spin up between 0 and 1</span>
+        <span class="n">validat_regexbetween0_1</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="s1">&#39;^(0(\.\d*)*|1(\.0+)?)$&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">validat_regexbetween0_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">validat_regexbetween0_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="p">))</span>
+
+        <span class="c1"># 0 &lt; Qmax &lt;= 1000</span>
+        <span class="n">validat_regex_q</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="s1">&#39;^1000$|^[+]?(\d{1,3}([.]\d+)?)$&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">validat_regex_q</span><span class="p">,</span>
+                                                          <span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_value</span><span class="p">)</span>
+
+        <span class="c1"># 2 &lt;= Qbin &lt;= 1000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">(</span><span class="n">validat_regex_q</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_value</span><span class="p">)</span>
+
+        <span class="c1"># plots - 3D in real space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_plot_3d</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot3d</span><span class="p">(</span><span class="n">has_arrow</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># plots - 3D in real space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculationFinishedSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_1_2d</span><span class="p">)</span>
+
+        <span class="c1"># notify main thread about file load complete</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadingFinishedSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complete_loading</span><span class="p">)</span>
+
+        <span class="c1"># TODO the option Ellipsoid has not been implemented</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbShape</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectedshapechange</span><span class="p">)</span>
+
+        <span class="c1"># New font to display angstrom symbol</span>
+        <span class="n">new_font</span> <span class="o">=</span> <span class="s1">&#39;font-family: -apple-system, &quot;Helvetica Neue&quot;, &quot;Ubuntu&quot;;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitSolventSLD</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitVolume</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lbl5</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitMx</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitMy</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitMz</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitNucl</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitx</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnity</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitz</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">new_font</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.selectedshapechange"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.selectedshapechange">[docs]</a>    <span class="k">def</span> <span class="nf">selectedshapechange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        TODO Temporary solution to display information about option &#39;Ellipsoid&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The option Ellipsoid has not been implemented yet.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
+            <span class="s2">&quot;The option Ellipsoid has not been implemented yet.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.loadFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open menu to choose the datafile to load</span>
+<span class="sd">        Only extensions .SLD, .PDB, .OMF, .sld, .pdb, .omf</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Choose a file&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;All supported files (*.OMF *.omf *.SLD *.sld *.pdb *.PDB);;&quot;</span>
+                                          <span class="s2">&quot;OMF files (*.OMF *.omf);;&quot;</span>
+                                          <span class="s2">&quot;SLD files (*.SLD *.sld);;&quot;</span>
+                                          <span class="s2">&quot;PDB files (*.pdb *.PDB);;&quot;</span>
+                                          <span class="s2">&quot;All files (*.*)&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">default_shape</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbShape</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">omf_reader</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
+                    <span class="n">loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omf_reader</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_reader</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
+                    <span class="n">loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_reader</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdb_reader</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
+                    <span class="n">loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdb_reader</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">loader</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># disable some entries depending on type of loaded file</span>
+                <span class="c1"># (according to documentation)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.sld&#39;</span><span class="p">,</span> <span class="s1">&#39;.omf&#39;</span><span class="p">,</span> <span class="s1">&#39;.pdb&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">txtUpTheta</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">isrunning</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Loading...&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
+                    <span class="s2">&quot;Loading File </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">))))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">GenReader</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">),</span> <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+                                        <span class="n">completefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">complete_loading_ex</span><span class="p">,</span>
+                                        <span class="n">updatefn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load_update</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">queue</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">):</span>
+            <span class="n">log_msg</span> <span class="o">=</span> <span class="s2">&quot;Generic SAS Calculator: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_msg</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.load_update"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.load_update">[docs]</a>    <span class="k">def</span> <span class="nf">load_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Legacy function used in GenRead &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">isrunning</span><span class="p">():</span>
+            <span class="n">status_type</span> <span class="o">=</span> <span class="s2">&quot;progress&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status_type</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">status_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.complete_loading_ex"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.complete_loading_ex">[docs]</a>    <span class="k">def</span> <span class="nf">complete_loading_ex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send the finish message from calculate threads to main thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loadingFinishedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.complete_loading"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.complete_loading">[docs]</a>    <span class="k">def</span> <span class="nf">complete_loading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function used in GenRead&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbShape</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">is_pdbdata</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtData</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">omf_reader</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
+                <span class="n">gen</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMF2SLD</span><span class="p">()</span>
+                <span class="n">gen</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="o">=</span> <span class="n">gen</span><span class="o">.</span><span class="n">get_magsld</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_units</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_reader</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdb_reader</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="o">=</span> <span class="n">data</span>
+                <span class="n">is_pdbdata</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># Display combobox of orientation only for pdb data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbOptionsCalc</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">is_pdbdata</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_gui</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">log_msg</span> <span class="o">=</span> <span class="s2">&quot;Loading Error: &quot;</span> \
+                      <span class="s2">&quot;This file format is not supported for GenSAS.&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_msg</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">log_msg</span> <span class="o">=</span> <span class="s2">&quot;Could not find any data&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_msg</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load Complete&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Load&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trigger_plot_3d</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.check_units"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.check_units">[docs]</a>    <span class="k">def</span> <span class="nf">check_units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the units from the OMF file correspond to the default ones</span>
+<span class="sd">        displayed on the interface.</span>
+<span class="sd">        If not, modify the GUI with the correct unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#  TODO: adopt the convention of font and symbol for the updated values</span>
+        <span class="k">if</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMFData</span><span class="p">()</span><span class="o">.</span><span class="n">valueunit</span> <span class="o">!=</span> <span class="s1">&#39;A^(-2)&#39;</span><span class="p">:</span>
+            <span class="n">value_unit</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMFData</span><span class="p">()</span><span class="o">.</span><span class="n">valueunit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitMx</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitMy</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitMz</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitNucl</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value_unit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMFData</span><span class="p">()</span><span class="o">.</span><span class="n">meshunit</span> <span class="o">!=</span> <span class="s1">&#39;A&#39;</span><span class="p">:</span>
+            <span class="n">mesh_unit</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMFData</span><span class="p">()</span><span class="o">.</span><span class="n">meshunit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitx</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">mesh_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unity</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">mesh_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitz</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">mesh_unit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lbl_unitVolume</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">mesh_unit</span><span class="o">+</span><span class="s2">&quot;^3&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.check_value"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.check_value">[docs]</a>    <span class="k">def</span> <span class="nf">check_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check range of text edits for QMax and Number of Qbins &quot;&quot;&quot;</span>
+        <span class="n">text_edit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="p">()</span>
+        <span class="n">text_edit</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;background-color: rgb(255, 255, 255);&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">text_edit</span><span class="o">.</span><span class="n">text</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">text_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="n">text_edit</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
+                    <span class="n">text_edit</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;background-color: rgb(255, 182, 193);&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">text_edit</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;background-color: rgb(255, 255, 255);&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">text_edit</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;background-color: rgb(255, 182, 193);&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s1">&#39;background-color: rgb(255, 255, 255);&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.update_gui"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.update_gui">[docs]</a>    <span class="k">def</span> <span class="nf">update_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the interface with values from loaded data &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">set_is_avg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">set_sld_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;total_volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_n</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">vol_pix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># add condition for activation of save button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdSave</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># activation of 3D plots&#39; buttons (with and without arrows)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdDraw</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdDrawpoints</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSolventSLD</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;solvent_SLD&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># Volume to write to interface: npts x volume of first pixel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_n</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">vol_pix</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_frac_in&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_frac_out&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtUpTheta</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_theta&#39;</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNoPixels</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_n</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNoPixels</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">list_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sld_mx&#39;</span><span class="p">,</span> <span class="s1">&#39;sld_my&#39;</span><span class="p">,</span> <span class="s1">&#39;sld_mz&#39;</span><span class="p">,</span> <span class="s1">&#39;sld_n&#39;</span><span class="p">,</span> <span class="s1">&#39;xnodes&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;ynodes&#39;</span><span class="p">,</span> <span class="s1">&#39;znodes&#39;</span><span class="p">,</span> <span class="s1">&#39;xstepsize&#39;</span><span class="p">,</span> <span class="s1">&#39;ystepsize&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;zstepsize&#39;</span><span class="p">]</span>
+        <span class="n">list_gui_button</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">txtMx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtNucl</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">txtXnodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtYnodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtZnodes</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">txtXstepsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtYstepsize</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">txtZstepsize</span><span class="p">]</span>
+
+        <span class="c1"># Fill right hand side of GUI</span>
+        <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_parameters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">list_gui_button</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">item_for_gui</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">item_for_gui</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="n">list_gui_button</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">item_for_gui</span><span class="p">)</span>
+
+        <span class="c1"># Enable / disable editing of right hand side of GUI</span>
+        <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_parameters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">indx</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="c1"># this condition only applies to Mx,y,z and Nucl</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="n">enable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">pix_type</span> <span class="o">==</span> <span class="s1">&#39;pixel&#39;</span> \
+                         <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">enable</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">is_data</span>
+            <span class="n">list_gui_button</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">enable</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.write_new_values_from_gui"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.write_new_values_from_gui">[docs]</a>    <span class="k">def</span> <span class="nf">write_new_values_from_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        update parameters using modified inputs from GUI</span>
+<span class="sd">        used before computing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtSolventSLD</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;solvent_SLD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSolventSLD</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="c1"># Different condition for total volume to get correct volume after</span>
+        <span class="c1"># applying set_sld_data in compute</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="o">.</span><span class="n">isModified</span><span class="p">()</span> \
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;total_volume&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="o">.</span><span class="n">text</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;total_volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_frac_in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_frac_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtUpTheta</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Up_theta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtUpTheta</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMx</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_mx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtMx</span><span class="o">.</span><span class="n">text</span><span class="p">())</span><span class="o">*</span>\
+                                   <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_mx</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMy</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_my</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtMy</span><span class="o">.</span><span class="n">text</span><span class="p">())</span><span class="o">*</span>\
+                                   <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_my</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMz</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_mz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtMz</span><span class="o">.</span><span class="n">text</span><span class="p">())</span><span class="o">*</span>\
+                                   <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_mz</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtNucl</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNucl</span><span class="o">.</span><span class="n">text</span><span class="p">())</span><span class="o">*</span>\
+                                  <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">sld_n</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtXnodes</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">xnodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtXnodes</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtYnodes</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">ynodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtYnodes</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtZnodes</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">znodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtZnodes</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtXstepsize</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">xstepsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtXstepsize</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtYstepsize</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">ystepsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtYstepsize</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtZstepsize</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">zstepsize</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtZstepsize</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbOptionsCalc</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbOptionsCalc</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.onHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.onHelp">[docs]</a>    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bring up the Generic Scattering calculator Documentation whenever</span>
+<span class="sd">        the HELP button is clicked.</span>
+<span class="sd">        Calls Documentation Window with the path of the location within the</span>
+<span class="sd">        documentation tree (after /doc/ ....&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Calculators/sas_calculator_help.html&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">location</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.onReset"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.onReset">[docs]</a>    <span class="k">def</span> <span class="nf">onReset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reset the inputs of textEdit to default values &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># reset values in textedits</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracIn</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtUpFracOut</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtUpTheta</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtBackground</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtScale</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtSolventSLD</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtTotalVolume</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;216000.0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;50&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0.3&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNoPixels</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;1000&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtMx</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtMy</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtMz</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNucl</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;6.97e-06&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtXnodes</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;10&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtYnodes</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;10&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtZnodes</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;10&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtXstepsize</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;6&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtYstepsize</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;6&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtZstepsize</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;6&quot;</span><span class="p">)</span>
+            <span class="c1"># reset Load button and textedit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtData</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Default SLD Profile&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdLoad</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Load&#39;</span><span class="p">)</span>
+            <span class="c1"># reset option for calculation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbOptionsCalc</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbOptionsCalc</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># reset shape button</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbShape</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbShape</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># reset compute button</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Compute&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># TODO reload default data set</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_sld_data</span><span class="p">()</span>
+
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_default_2d_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copied from previous version</span>
+<span class="sd">        Create 2D data by default</span>
+<span class="sd">        :warning: This data is never plotted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npts_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Data2D</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">is_data</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># # Default values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Detector</span><span class="p">())</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="mi">8000</span>  <span class="c1"># mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">pixel_size</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">pixel_size</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># mm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">beam_center</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">beam_center</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span>
+        <span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">xmax</span>
+        <span class="n">ymax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span>
+        <span class="n">ymin</span> <span class="o">=</span> <span class="o">-</span><span class="n">ymax</span>
+        <span class="n">qstep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">npts_x</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">xmin</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">xmax</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">qstep</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">ymin</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">qstep</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># use data info instead</span>
+        <span class="n">new_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="n">new_y</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># all data require now in 1d array</span>
+        <span class="n">qx_data</span> <span class="o">=</span> <span class="n">new_x</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">qy_data</span> <span class="o">=</span> <span class="n">new_y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">q_data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qx_data</span> <span class="o">*</span> <span class="n">qx_data</span> <span class="o">+</span> <span class="n">qy_data</span> <span class="o">*</span> <span class="n">qy_data</span><span class="p">)</span>
+        <span class="c1"># set all True (standing for unmasked) as default</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qx_data</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">err_data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">qx_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">qy_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">q_data</span> <span class="o">=</span> <span class="n">q_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
+        <span class="c1"># store x and y bin centers in q space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x_bins</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y_bins</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="c1"># max and min taking account of the bin sizes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">xmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="n">ymin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="n">ymax</span>
+
+    <span class="k">def</span> <span class="nf">_create_default_sld_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copied from previous version</span>
+<span class="sd">        Making default sld-data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sld_n_default</span> <span class="o">=</span> <span class="mf">6.97e-06</span>  <span class="c1"># what is this number??</span>
+        <span class="n">omfdata</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMFData</span><span class="p">()</span>
+        <span class="n">omf2sld</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">OMF2SLD</span><span class="p">()</span>
+        <span class="n">omf2sld</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">omfdata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="o">=</span> <span class="n">omf2sld</span><span class="o">.</span><span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">is_data</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;Default SLD Profile&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="o">.</span><span class="n">set_sldn</span><span class="p">(</span><span class="n">sld_n_default</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_default_1d_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copied from previous version</span>
+<span class="sd">        Create 1D data by default</span>
+<span class="sd">        :warning: This data is never plotted.</span>
+<span class="sd">                    residuals.x = data_copy.x[index]</span>
+<span class="sd">            residuals.dy = numpy.ones(len(residuals.y))</span>
+<span class="sd">            residuals.dx = None</span>
+<span class="sd">            residuals.dxl = None</span>
+<span class="sd">            residuals.dxw = None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtQxMax</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npts_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNoQBins</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="c1">#  Default values</span>
+        <span class="n">xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span>
+        <span class="n">xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax_x</span> <span class="o">*</span> <span class="n">_Q1D_MIN</span>
+        <span class="n">qstep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">npts_x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">xmin</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">xmax</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">qstep</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># store x and y bin centers in q space</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">dy</span>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.onCompute"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.onCompute">[docs]</a>    <span class="k">def</span> <span class="nf">onCompute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copied from previous version</span>
+<span class="sd">        Execute the computation of I(qx, qy)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set default data when nothing loaded yet</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_sld_data</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">set_sld_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_new_values_from_gui</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_1d_data</span><span class="p">()</span>
+                <span class="n">i_out</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">[],</span> <span class="n">i_out</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_default_2d_data</span><span class="p">()</span>
+                <span class="n">i_out</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="n">i_out</span><span class="p">]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computation is in progress...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Wait...&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">deferToThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">)</span>
+            <span class="c1"># Add deferred callback for call return</span>
+            <span class="c1">#d.addCallback(self.plot_1_2d)</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateComplete</span><span class="p">)</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">addErrback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculateFailed</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">log_msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">. stop&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_msg</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copied from previous version</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.calculateFailed"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.calculateFailed">[docs]</a>    <span class="k">def</span> <span class="nf">calculateFailed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculate Failed with:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.calculateComplete"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.calculateComplete">[docs]</a>    <span class="k">def</span> <span class="nf">calculateComplete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Notify the main thread</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculationFinishedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.complete"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.complete">[docs]</a>    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gen compute complete function</span>
+<span class="sd">        :Param input: input list [qx_data, qy_data, i_out]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ind</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">update</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># update()</span>
+                    <span class="n">percentage</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">update</span><span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>  <span class="c1"># 0.1</span>
+                <span class="n">inputi</span> <span class="o">=</span> <span class="p">[</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">ind</span><span class="p">:</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[],</span> <span class="nb">input</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">ind</span><span class="p">:</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                <span class="n">outi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">inputi</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">outi</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ind</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">update</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">percentage</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">update</span><span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+                <span class="n">inputi</span> <span class="o">=</span> <span class="p">[</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">ind</span><span class="p">:</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">ind</span><span class="p">:</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                          <span class="nb">input</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">ind</span><span class="p">:</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+                <span class="n">outi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">runXY</span><span class="p">(</span><span class="n">inputi</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">outi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_to_plot</span> <span class="o">=</span> <span class="n">out</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Gen computation completed.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Compute&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.onSaveFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.onSaveFile">[docs]</a>    <span class="k">def</span> <span class="nf">onSaveFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save data as .sld file&quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="p">))</span>
+        <span class="n">default_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;sld_file&#39;</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;parent&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
+            <span class="s1">&#39;directory&#39;</span><span class="p">:</span> <span class="n">default_name</span><span class="p">,</span>
+            <span class="s1">&#39;filter&#39;</span><span class="p">:</span> <span class="s1">&#39;SLD file (*.sld)&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;options&#39;</span><span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">DontUseNativeDialog</span><span class="p">}</span>
+        <span class="c1"># Query user for filename.</span>
+        <span class="n">filename_tuple</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getSaveFileName</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">extension</span><span class="p">:</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;sld&#39;</span><span class="p">))</span>
+                <span class="n">sas_gen</span><span class="o">.</span><span class="n">SLDReader</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.plot3d"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.plot3d">[docs]</a>    <span class="k">def</span> <span class="nf">plot3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">has_arrow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generate 3D plot in real space with or without arrows &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_new_values_from_gui</span><span class="p">()</span>
+        <span class="n">graph_title</span> <span class="o">=</span> <span class="s2">&quot; Graph </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2"> 3D SLD Profile&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">has_arrow</span><span class="p">:</span>
+            <span class="n">graph_title</span> <span class="o">+=</span> <span class="s1">&#39; - Magnetic Vector as Arrow&#39;</span>
+
+        <span class="n">plot3D</span> <span class="o">=</span> <span class="n">Plotter3D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph_title</span><span class="p">)</span>
+        <span class="n">plot3D</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sld_data</span><span class="p">,</span> <span class="n">has_arrow</span><span class="o">=</span><span class="n">has_arrow</span><span class="p">)</span>
+        <span class="n">plot3D</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="GenericScatteringCalculator.plot_1_2d"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.GenericScatteringCalculator.plot_1_2d">[docs]</a>    <span class="k">def</span> <span class="nf">plot_1_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generate 1D or 2D plot, called in Compute&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_avg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_to_plot</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;GenSAS </span><span class="si">{}</span><span class="s2">  #</span><span class="si">{}</span><span class="s2"> 1D&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                                    <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span><span class="p">))</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">rm{Q_</span><span class="si">{x}</span><span class="s1">}&#39;</span><span class="p">,</span> <span class="s1">&#39;\AA^{-1}&#39;</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">rm</span><span class="si">{Intensity}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;cm^{-1}&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">numpy</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_to_plot</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">Data2D</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_to_plot</span><span class="p">,</span>
+                          <span class="n">qx_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span>
+                          <span class="n">qy_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span>
+                          <span class="n">q_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">q_data</span><span class="p">,</span>
+                          <span class="n">xmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymax</span><span class="p">,</span>
+                          <span class="n">ymin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ymax</span><span class="p">,</span>
+                          <span class="n">err_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">err_data</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;GenSAS </span><span class="si">{}</span><span class="s2">  #</span><span class="si">{}</span><span class="s2"> 2D&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
+                                                    <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span><span class="p">))</span>
+            <span class="n">zeros</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">zeros</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph_num</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># TODO</span>
+        <span class="n">new_item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">createModelItemWithPlot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">updateModelFromPerspectiveSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">forcePlotDisplaySignal</span><span class="o">.</span><span class="n">emit</span><span class="p">([</span><span class="n">new_item</span><span class="p">,</span> <span class="n">data</span><span class="p">])</span></div></div>
+
+<div class="viewcode-block" id="Plotter3DWidget"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.Plotter3DWidget">[docs]</a><span class="k">class</span> <span class="nc">Plotter3DWidget</span><span class="p">(</span><span class="n">PlotterBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    3D Plot widget for use with a QDialog</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Plotter3DWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span>  <span class="n">manager</span><span class="o">=</span><span class="n">manager</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; data setter &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="Plotter3DWidget.plot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.Plotter3DWidget.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">has_arrow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot 3D self._data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="c1">#assert(self._data)</span>
+        <span class="c1"># Prepare and show the plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">showPlot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">has_arrow</span><span class="o">=</span><span class="n">has_arrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Plotter3DWidget.showPlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.Plotter3DWidget.showPlot">[docs]</a>    <span class="k">def</span> <span class="nf">showPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">has_arrow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Render and show the current data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If we don&#39;t have any data, skip.</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># This import takes forever - place it here so the main UI starts faster</span>
+        <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+        <span class="n">color_dic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;Other&#39;</span><span class="p">:</span> <span class="s1">&#39;k&#39;</span><span class="p">}</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
+        <span class="n">m_size</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="n">pos_x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos_x</span>
+        <span class="n">pos_y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos_y</span>
+        <span class="n">pos_z</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos_z</span>
+        <span class="n">sld_mx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sld_mx</span>
+        <span class="n">sld_my</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sld_my</span>
+        <span class="n">sld_mz</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sld_mz</span>
+        <span class="n">pix_symbol</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pix_symbol</span>
+        <span class="n">sld_tot</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">sld_mx</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">sld_my</span><span class="p">)</span> <span class="o">+</span> \
+                  <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">sld_mz</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">sld_n</span><span class="p">)</span>
+        <span class="n">is_nonzero</span> <span class="o">=</span> <span class="n">sld_tot</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+        <span class="n">is_zero</span> <span class="o">=</span> <span class="n">sld_tot</span> <span class="o">==</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">pix_type</span> <span class="o">==</span> <span class="s1">&#39;atom&#39;</span><span class="p">:</span>
+            <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span>
+            <span class="n">m_size</span> <span class="o">=</span> <span class="mf">3.5</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">right</span><span class="o">=.</span><span class="mi">8</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=.</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">Axes3D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x ($\A</span><span class="si">{}</span><span class="s1">$)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pos_unit</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;z ($\A</span><span class="si">{}</span><span class="s1">$)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pos_unit</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;y ($\A</span><span class="si">{}</span><span class="s1">$)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pos_unit</span><span class="p">))</span>
+
+        <span class="c1"># I. Plot null points</span>
+        <span class="k">if</span> <span class="n">is_zero</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos_x</span><span class="p">[</span><span class="n">is_zero</span><span class="p">],</span> <span class="n">pos_z</span><span class="p">[</span><span class="n">is_zero</span><span class="p">],</span> <span class="n">pos_y</span><span class="p">[</span><span class="n">is_zero</span><span class="p">],</span>
+                           <span class="n">marker</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span>
+                           <span class="n">markersize</span><span class="o">=</span><span class="n">m_size</span><span class="p">)</span>
+            <span class="n">pos_x</span> <span class="o">=</span> <span class="n">pos_x</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+            <span class="n">pos_y</span> <span class="o">=</span> <span class="n">pos_y</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+            <span class="n">pos_z</span> <span class="o">=</span> <span class="n">pos_z</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+            <span class="n">sld_mx</span> <span class="o">=</span> <span class="n">sld_mx</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+            <span class="n">sld_my</span> <span class="o">=</span> <span class="n">sld_my</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+            <span class="n">sld_mz</span> <span class="o">=</span> <span class="n">sld_mz</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+            <span class="n">pix_symbol</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pix_symbol</span><span class="p">[</span><span class="n">is_nonzero</span><span class="p">]</span>
+        <span class="c1"># II. Plot selective points in color</span>
+        <span class="n">other_color</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pix_symbol</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">color_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">chosen_color</span> <span class="o">=</span> <span class="n">pix_symbol</span> <span class="o">==</span> <span class="n">key</span>
+            <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">chosen_color</span><span class="p">):</span>
+                <span class="n">other_color</span> <span class="o">=</span> <span class="n">other_color</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">chosen_color</span><span class="o">!=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">color_dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos_x</span><span class="p">[</span><span class="n">chosen_color</span><span class="p">],</span> <span class="n">pos_z</span><span class="p">[</span><span class="n">chosen_color</span><span class="p">],</span>
+                         <span class="n">pos_y</span><span class="p">[</span><span class="n">chosen_color</span><span class="p">],</span> <span class="n">marker</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                         <span class="n">markeredgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="n">m_size</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="c1"># III. Plot All others</span>
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">other_color</span><span class="p">):</span>
+            <span class="n">a_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">pix_type</span> <span class="o">==</span> <span class="s1">&#39;atom&#39;</span><span class="p">:</span>
+                <span class="c1"># Get atom names not in the list</span>
+                <span class="n">a_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">symb</span> <span class="k">for</span> <span class="n">symb</span> <span class="ow">in</span> <span class="n">pix_symbol</span> \
+                           <span class="k">if</span> <span class="n">symb</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">color_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+                <span class="n">a_name</span> <span class="o">=</span> <span class="n">a_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">a_names</span><span class="p">:</span>
+                    <span class="n">new_name</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">name</span>
+                    <span class="k">if</span> <span class="n">a_name</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">a_name</span> <span class="o">+=</span> <span class="n">new_name</span>
+            <span class="c1"># plot in black</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos_x</span><span class="p">[</span><span class="n">other_color</span><span class="p">],</span> <span class="n">pos_z</span><span class="p">[</span><span class="n">other_color</span><span class="p">],</span>
+                         <span class="n">pos_y</span><span class="p">[</span><span class="n">other_color</span><span class="p">],</span> <span class="n">marker</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                         <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="n">m_size</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">a_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">pix_type</span> <span class="o">==</span> <span class="s1">&#39;atom&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+        <span class="c1"># IV. Draws atomic bond with grey lines if any</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">has_conect</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">line_x</span><span class="p">)):</span>
+                <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">line_x</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">line_z</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span>
+                             <span class="n">data</span><span class="o">.</span><span class="n">line_y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span>
+                             <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="c1"># V. Draws magnetic vectors</span>
+        <span class="k">if</span> <span class="n">has_arrow</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">_draw_arrow</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                <span class="c1"># import moved here for performance reasons</span>
+                <span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Arrow3D</span> <span class="kn">import</span> <span class="n">Arrow3D</span>
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                draw magnetic vectors w/arrow</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="n">max_mx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">sld_mx</span><span class="p">))</span>
+                <span class="n">max_my</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">sld_my</span><span class="p">))</span>
+                <span class="n">max_mz</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">sld_mz</span><span class="p">))</span>
+                <span class="n">max_m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_mx</span><span class="p">,</span> <span class="n">max_my</span><span class="p">,</span> <span class="n">max_mz</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">max_step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">xstepsize</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ystepsize</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">zstepsize</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">max_step</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="n">max_step</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">max_step</span> <span class="o">=</span> <span class="mi">5</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">max_m</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">unit_x2</span> <span class="o">=</span> <span class="n">sld_mx</span> <span class="o">/</span> <span class="n">max_m</span>
+                        <span class="n">unit_y2</span> <span class="o">=</span> <span class="n">sld_my</span> <span class="o">/</span> <span class="n">max_m</span>
+                        <span class="n">unit_z2</span> <span class="o">=</span> <span class="n">sld_mz</span> <span class="o">/</span> <span class="n">max_m</span>
+                        <span class="c1"># 0.8 is for avoiding the color becomes white=(1,1,1))</span>
+                        <span class="n">color_x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">unit_x2</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span>
+                        <span class="n">color_y</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">unit_y2</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span>
+                        <span class="n">color_z</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">unit_z2</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span>
+                        <span class="n">x2</span> <span class="o">=</span> <span class="n">pos_x</span> <span class="o">+</span> <span class="n">unit_x2</span> <span class="o">*</span> <span class="n">max_step</span>
+                        <span class="n">y2</span> <span class="o">=</span> <span class="n">pos_y</span> <span class="o">+</span> <span class="n">unit_y2</span> <span class="o">*</span> <span class="n">max_step</span>
+                        <span class="n">z2</span> <span class="o">=</span> <span class="n">pos_z</span> <span class="o">+</span> <span class="n">unit_z2</span> <span class="o">*</span> <span class="n">max_step</span>
+                        <span class="n">x_arrow</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">x2</span><span class="p">))</span>
+                        <span class="n">y_arrow</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">pos_y</span><span class="p">,</span> <span class="n">y2</span><span class="p">))</span>
+                        <span class="n">z_arrow</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">pos_z</span><span class="p">,</span> <span class="n">z2</span><span class="p">))</span>
+                        <span class="n">colors</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">color_x</span><span class="p">,</span> <span class="n">color_y</span><span class="p">,</span> <span class="n">color_z</span><span class="p">))</span>
+                        <span class="n">arrows</span> <span class="o">=</span> <span class="n">Arrow3D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">x_arrow</span><span class="p">,</span> <span class="n">z_arrow</span><span class="p">,</span> <span class="n">y_arrow</span><span class="p">,</span>
+                                        <span class="n">colors</span><span class="p">,</span> <span class="n">mutation_scale</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                        <span class="n">arrowstyle</span><span class="o">=</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">arrows</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="n">log_msg</span> <span class="o">=</span> <span class="s2">&quot;Arrow Drawing completed.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_msg</span><span class="p">)</span>
+            <span class="n">log_msg</span> <span class="o">=</span> <span class="s2">&quot;Arrow Drawing is in progress...&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">log_msg</span><span class="p">)</span>
+
+            <span class="c1"># Defer the drawing of arrows to another thread</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">deferToThread</span><span class="p">(</span><span class="n">_draw_arrow</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">resizing</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Plotter3DWidget.createContextMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.Plotter3DWidget.createContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">createContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define common context menu and associated actions for the MPL widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultContextMenu</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Plotter3DWidget.createContextMenuQuick"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.Plotter3DWidget.createContextMenuQuick">[docs]</a>    <span class="k">def</span> <span class="nf">createContextMenuQuick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define context menu and associated actions for the quickplot MPL widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div></div>
+
+
+<div class="viewcode-block" id="Plotter3D"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.GenericScatteringCalculator.Plotter3D">[docs]</a><span class="k">class</span> <span class="nc">Plotter3D</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Plotter3DWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">graph_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_title</span> <span class="o">=</span> <span class="n">graph_title</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">Plotter3DWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_title</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sasmodels.multiscat &#8212; SasView 5.0.3 documentation</title>
+    <title>sasmodels.multiscat &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
@@ -135,7 +138,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="c1">#import time</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">pi</span>
@@ -164,13 +167,13 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">HAVE_OPENCL</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="c1"># pylint: disable=unused-import</span>
+<span class="c1"># pylint: disable=unused-import,ungrouped-imports</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
     <span class="kn">from</span> <span class="nn">sasmodels.modelinfo</span> <span class="k">import</span> <span class="n">ModelInfo</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-<span class="c1"># pylint: enable=unused-import</span>
+<span class="c1"># pylint: enable=unused-import,ungrouped-imports</span>
 
 <span class="n">PRECISION</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;f&#39;</span> <span class="k">if</span> <span class="n">HAVE_OPENCL</span> <span class="k">else</span> <span class="s1">&#39;d&#39;</span><span class="p">)</span>  <span class="c1"># &#39;f&#39; or &#39;d&#39;</span>
 <span class="n">USE_FAST</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># OpenCL faster, less accurate math</span>
@@ -270,8 +273,9 @@
     <span class="n">polyval1f</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">polyval1d</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">PRECISION</span><span class="p">):</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">environment</span><span class="p">()</span>
-        <span class="n">context</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">OpenclCalculator</span><span class="o">.</span><span class="n">polyval1f</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">program</span> <span class="o">=</span> <span class="n">sasmodels</span><span class="o">.</span><span class="n">kernelcl</span><span class="o">.</span><span class="n">compile_model</span><span class="p">(</span>
@@ -290,7 +294,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">complex_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">polyval1</span> <span class="o">=</span> <span class="n">OpenclCalculator</span><span class="o">.</span><span class="n">polyval1d</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_queue</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">queue</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plan</span> <span class="o">=</span> <span class="n">pyfft</span><span class="o">.</span><span class="n">cl</span><span class="o">.</span><span class="n">Plan</span><span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OpenclCalculator.fft"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.multiscat.OpenclCalculator.fft">[docs]</a>    <span class="k">def</span> <span class="nf">fft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Iq</span><span class="p">):</span>
@@ -585,8 +589,73 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># circular average, no anti-aliasing</span>
         <span class="n">Iq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">Iqxy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_norm</span>
-        <span class="k">return</span> <span class="n">Iq</span></div></div>
+        <span class="k">return</span> <span class="n">Iq</span></div>
 
+<div class="viewcode-block" id="MultipleScattering.plot_and_save_powers"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.multiscat.MultipleScattering.plot_and_save_powers">[docs]</a>    <span class="k">def</span> <span class="nf">plot_and_save_powers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">pylab</span>
+        <span class="n">probability</span><span class="p">,</span> <span class="n">coverage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probability</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">scattering_coeffs</span><span class="p">(</span><span class="n">probability</span><span class="p">,</span> <span class="n">coverage</span><span class="p">)</span>
+
+        <span class="c1"># cribbed from MultipleScattering.apply</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is2d</span><span class="p">:</span>
+            <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">theory</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theory</span><span class="p">)</span>
+        <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">Iq_calc</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nq</span><span class="p">)</span>
+
+        <span class="c1"># Compute the scattering powers for 1, 2, ... n scattering events</span>
+        <span class="n">powers</span> <span class="o">=</span> <span class="n">scattering_powers</span><span class="p">(</span><span class="n">Iq_calc</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+
+        <span class="c1">#plotxy(Iqxy); import pylab; pylab.figure()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is2d</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">outfile</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">Ipower</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">Ipower</span> <span class="ow">in</span> <span class="n">powers</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;_powers.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">Iq_calc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+                <span class="n">plotxy</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">Iq_calc</span><span class="p">)</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;single scattering F&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">powers</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                    <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                    <span class="n">plotxy</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">v</span><span class="o">+</span><span class="n">background</span><span class="p">)</span>
+                    <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;multiple scattering F^</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                <span class="n">plotxy</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Iqxy</span><span class="o">+</span><span class="n">background</span><span class="p">)</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;total scattering for p=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                    <span class="n">plotxy</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">result</span><span class="p">)</span>
+                    <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;total scattering with resolution&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q</span>
+            <span class="n">Iq_powers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">radial_profile</span><span class="p">(</span><span class="n">Iqxy</span><span class="p">)</span> <span class="k">for</span> <span class="n">Iqxy</span> <span class="ow">in</span> <span class="n">powers</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">outfile</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">q</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Iq</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                <span class="c1"># circular average, no anti-aliasing for individual powers</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">q</span><span class="p">]</span> <span class="o">+</span> <span class="n">Iq_powers</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;_powers.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+                <span class="c1"># Plot 2D pattern for total scattering</span>
+                <span class="n">plotxy</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Iqxy</span><span class="o">+</span><span class="n">background</span><span class="p">)</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;total scattering for p=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+                <span class="c1"># Plot 1D pattern for partial scattering</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Iq</span><span class="o">+</span><span class="n">background</span><span class="p">,</span>
+                             <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total for p=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">pylab</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total with dQ&quot;</span><span class="p">)</span>
+                <span class="c1">#new_annulus = annular_average(self._radius, self.Iqxy, self._edges)</span>
+                <span class="c1">#pylab.loglog(q, new_annulus+background, label=&quot;new total for p=%g&quot;%probability)</span>
+                <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Ipower</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">Iq_powers</span><span class="p">)):</span>
+                    <span class="n">pylab</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">Ipower</span><span class="o">+</span><span class="n">background</span><span class="p">,</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;scattering^</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;total scattering for p=</span><span class="si">%g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
+        <span class="n">pylab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
 
 <div class="viewcode-block" id="annular_average"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.multiscat.annular_average">[docs]</a><span class="k">def</span> <span class="nf">annular_average</span><span class="p">(</span><span class="n">qxy</span><span class="p">,</span> <span class="n">Iqxy</span><span class="p">,</span> <span class="n">qbins</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -685,71 +754,7 @@
     <span class="n">pars</span><span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">theory</span> <span class="o">=</span> <span class="n">call_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">pars</span><span class="p">)</span>
     <span class="n">Iq</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">theory</span><span class="p">)</span> <span class="o">+</span> <span class="n">bg</span>
-    <span class="n">_plot_and_save_powers</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">outfile</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bg</span><span class="p">)</span></div>
-
-<span class="k">def</span> <span class="nf">_plot_and_save_powers</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                          <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">pylab</span>
-    <span class="n">probability</span><span class="p">,</span> <span class="n">coverage</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">probability</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">coverage</span>
-    <span class="n">weights</span> <span class="o">=</span> <span class="n">scattering_coeffs</span><span class="p">(</span><span class="n">probability</span><span class="p">,</span> <span class="n">coverage</span><span class="p">)</span>
-
-    <span class="c1"># cribbed from MultipleScattering.apply</span>
-    <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">is2d</span><span class="p">:</span>
-        <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">theory</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">_radius</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">q_calc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theory</span><span class="p">)</span>
-    <span class="n">Iq_calc</span> <span class="o">=</span> <span class="n">Iq_calc</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">nq</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">nq</span><span class="p">)</span>
-
-    <span class="c1"># Compute the scattering powers for 1, 2, ... n scattering events</span>
-    <span class="n">powers</span> <span class="o">=</span> <span class="n">scattering_powers</span><span class="p">(</span><span class="n">Iq_calc</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
-
-    <span class="c1">#plotxy(Iqxy); import pylab; pylab.figure()</span>
-    <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">is2d</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">outfile</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">Ipower</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">Ipower</span> <span class="ow">in</span> <span class="n">powers</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;_powers.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">Iq_calc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
-            <span class="n">plotxy</span><span class="p">((</span><span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">Iq_calc</span><span class="p">)</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;single scattering F&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">powers</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-                <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-                <span class="n">plotxy</span><span class="p">((</span><span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">v</span><span class="o">+</span><span class="n">background</span><span class="p">)</span>
-                <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;multiple scattering F^</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-            <span class="n">plotxy</span><span class="p">((</span><span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">res</span><span class="o">.</span><span class="n">Iqxy</span><span class="o">+</span><span class="n">background</span><span class="p">)</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;total scattering for p=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">resolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-                <span class="n">plotxy</span><span class="p">((</span><span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">result</span><span class="p">)</span>
-                <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;total scattering with resolution&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">_q</span>
-        <span class="n">Iq_powers</span> <span class="o">=</span> <span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">radial_profile</span><span class="p">(</span><span class="n">Iqxy</span><span class="p">)</span> <span class="k">for</span> <span class="n">Iqxy</span> <span class="ow">in</span> <span class="n">powers</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">outfile</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">q</span><span class="p">,</span> <span class="n">theory</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">Iq</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="c1"># circular average, no anti-aliasing for individual powers</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">q</span><span class="p">]</span> <span class="o">+</span> <span class="n">Iq_powers</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">outfile</span> <span class="o">+</span> <span class="s2">&quot;_powers.txt&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
-            <span class="c1"># Plot 2D pattern for total scattering</span>
-            <span class="n">plotxy</span><span class="p">((</span><span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">_q_steps</span><span class="p">),</span> <span class="n">res</span><span class="o">.</span><span class="n">Iqxy</span><span class="o">+</span><span class="n">background</span><span class="p">)</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;total scattering for p=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-
-            <span class="c1"># Plot 1D pattern for partial scattering</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">Iq</span><span class="o">+</span><span class="n">background</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total for p=</span><span class="si">%g</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">probability</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">resolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">pylab</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total with dQ&quot;</span><span class="p">)</span>
-            <span class="c1">#new_annulus = annular_average(res._radius, res.Iqxy, res._edges)</span>
-            <span class="c1">#pylab.loglog(q, new_annulus+background, label=&quot;new total for p=%g&quot;%probability)</span>
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Ipower</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">Iq_powers</span><span class="p">)):</span>
-                <span class="n">pylab</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">Ipower</span><span class="o">+</span><span class="n">background</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;scattering^</span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-            <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;total scattering for p=</span><span class="si">%g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">probability</span><span class="p">)</span>
-    <span class="n">pylab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">plot_and_save_powers</span><span class="p">(</span><span class="n">theory</span><span class="p">,</span> <span class="n">Iq</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">outfile</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">bg</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="plotxy"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.multiscat.plotxy">[docs]</a><span class="k">def</span> <span class="nf">plotxy</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">Iq</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot q, Iq or (qx, qy), Iqxy.&quot;&quot;&quot;</span>
@@ -796,14 +801,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

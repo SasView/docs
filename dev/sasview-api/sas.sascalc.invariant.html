@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.sascalc.invariant package &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.sascalc.invariant package &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sas.sascalc.pr package" href="sas.sascalc.pr.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="sas.sascalc.fit.html" title="sas.sascalc.fit package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -77,7 +80,7 @@
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.Extrapolator.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>power=None</em>, <em>qmin=None</em>, <em>qmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#Extrapolator.fit"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Fit data for y = ax + b  return a and b</p>
+<dd><p>Fit data for <span class="math notranslate nohighlight">\(y = ax + b\)</span>  return <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -104,7 +107,9 @@ function</p>
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.Guinier.evaluate_model">
 <code class="descname">evaluate_model</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#Guinier.evaluate_model"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>return F(x)= scale* e-((radius*x)**2/3)</p>
+<dd><p>return calculated I(q) for the model</p>
+<p>Calculates the Guinier expression
+<span class="math notranslate nohighlight">\(F(x)= s * \exp\left(-(r x)^{2/3}\right)\)</span></p>
 </dd></dl>
 
 <dl class="method">
@@ -163,6 +168,11 @@ the user provide background and scale values.</td>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="sas.sascalc.invariant.invariant.InvariantCalculator.background">
+<code class="descname">background</code></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.InvariantCalculator.get_data">
 <code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.get_data"><span class="viewcode-link">[source]</span></a></dt>
@@ -263,13 +273,13 @@ properly apply to the data</td>
 
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.InvariantCalculator.get_qstar_high">
-<code class="descname">get_qstar_high</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.get_qstar_high"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descname">get_qstar_high</code><span class="sig-paren">(</span><em>high_q_limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.get_qstar_high"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Compute the invariant for extrapolated data at high q range.</p>
-<dl class="docutils">
-<dt>Implementation:</dt>
-<dd>data = self._get_extra_data_high()
-return self._get_qstar()</dd>
-</dl>
+<p>Implementation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_extra_data_high</span><span class="p">()</span>
+<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_qstar</span><span class="p">()</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -282,13 +292,13 @@ return self._get_qstar()</dd>
 
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.InvariantCalculator.get_qstar_low">
-<code class="descname">get_qstar_low</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.get_qstar_low"><span class="viewcode-link">[source]</span></a></dt>
+<code class="descname">get_qstar_low</code><span class="sig-paren">(</span><em>low_q_limit=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.get_qstar_low"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Compute the invariant for extrapolated data at low q range.</p>
-<dl class="docutils">
-<dt>Implementation:</dt>
-<dd>data = self._get_extra_data_low()
-return self._get_qstar()</dd>
-</dl>
+<p>Implementation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_extra_data_low</span><span class="p">()</span>
+<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_qstar</span><span class="p">()</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -324,25 +334,27 @@ smeared.</p>
 <p>Historically, Sv was computed with the invariant and the Porod
 constant so as not to have to know the contrast in order to get the
 Sv as:</p>
-<blockquote>
-<div>surface = (pi * V * (1- V) * porod_const) / q_star</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">surface</span> <span class="o">=</span> <span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">V</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="n">porod_const</span><span class="p">)</span> <span class="o">/</span> <span class="n">q_star</span>
+</pre></div>
+</div>
 <p>However, that turns out to be a pointless exercise since it
 also requires a knowledge of the volume fractions and from the
-volumer fraction and the invariant the contrast can be calculated as:</p>
-<blockquote>
-<div>contrast**2 = q_star / (2 * pi**2 * V * (1- V))</div></blockquote>
+volume fraction and the invariant the contrast can be calculated
+as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">contrast</span><span class="o">**</span><span class="mi">2</span> <span class="o">=</span> <span class="n">q_star</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">V</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">V</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>Thus either way, mathematically it is always identical to computing
 with only the contrast and the Porod Constant. up to and including
 SasView versions 4.2.2 and 5.0.1 the implementation used the traditional
 circular approach.</p>
-<dl class="docutils">
-<dt>Implementation: ::</dt>
-<dd><p class="first">Given the above, as of SasView 4.3 and 5.0.2 we compute Sv simply
-from the Porod Constant and the contrast between the two phases as:</p>
-<blockquote class="last">
-<div>surface = porod_const / (2 * pi contrast**2)</div></blockquote>
-</dd>
-</dl>
+<p>Implementation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Given</span> <span class="n">the</span> <span class="n">above</span><span class="p">,</span> <span class="k">as</span> <span class="n">of</span> <span class="n">SasView</span> <span class="mf">4.3</span> <span class="ow">and</span> <span class="mf">5.0</span><span class="o">.</span><span class="mi">2</span> <span class="n">we</span> <span class="n">compute</span> <span class="n">Sv</span> <span class="n">simply</span>
+<span class="kn">from</span> <span class="nn">the</span> <span class="n">Porod</span> <span class="n">Constant</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">contrast</span> <span class="n">between</span> <span class="n">the</span> <span class="n">two</span> <span class="n">phases</span> <span class="k">as</span><span class="p">:</span>
+
+<span class="n">surface</span> <span class="o">=</span> <span class="n">porod_const</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="n">contrast</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -371,17 +383,15 @@ from the contrast and porod_constant wich are currently user inputs
 with no option for any uncertainty so no uncertainty can be calculated.
 However we include the uncertainty computation for future use if and
 when these values get an uncertainty. This is given as:</p>
-<blockquote>
-<div>ds = sqrt[(s’_cp)**2 * dcp**2 + (s’_contrast)**2 * dcontrast**2]
-where s’_x is the partial derivative of S with respect to x</div></blockquote>
-<dl class="docutils">
-<dt>which gives (this should be checked before using in anger)</dt>
-<dd><dl class="first last docutils">
-<dt>ds = sqrt((dporod_const**2 * contrast**2 + 4 * (porod_const *</dt>
-<dd>dcontrast)**2) / (4 * pi**2 * contrast**6))</dd>
-</dl>
-</dd>
-</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">[(</span><span class="n">s</span><span class="s1">&#39;_cp)**2 * dcp**2 + (s&#39;</span><span class="n">_contrast</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">dcontrast</span><span class="o">**</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where s’_x is the partial derivative of S with respect to x</p>
+<p>which gives (this should be checked before using in anger):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">dporod_const</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">contrast</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">porod_const</span> <span class="o">*</span>
+              <span class="n">dcontrast</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">contrast</span><span class="o">**</span><span class="mi">6</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>We also assume some users will never enter a value for uncertainty so
 allow for None even when it is an option.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -407,7 +417,7 @@ the invariant.</li>
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.InvariantCalculator.get_volume_fraction">
 <code class="descname">get_volume_fraction</code><span class="sig-paren">(</span><em>contrast</em>, <em>extrapolation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.get_volume_fraction"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Compute volume fraction is deduced as follow:</p>
+<dd><p>Compute volume fraction is deduced as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q_star</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">contrast</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span> <span class="n">volume</span><span class="p">(</span> <span class="mi">1</span><span class="o">-</span> <span class="n">volume</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">q_star</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">pi</span><span class="o">*|</span><span class="n">contrast</span><span class="o">|</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">we</span> <span class="n">get</span> <span class="mi">2</span> <span class="n">values</span> <span class="n">of</span> <span class="n">volume</span><span class="p">:</span>
@@ -449,19 +459,22 @@ contrast unit is 1/A^(2)= 10^(16)cm^(2)</li>
 <dd><p>Compute uncertainty on volume value as well as the volume fraction
 This uncertainty is given by the following equation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sigV</span> <span class="o">=</span> <span class="n">dV</span><span class="o">/</span><span class="n">dq_star</span> <span class="o">*</span> <span class="n">sigq_star</span>
-
-<span class="n">so</span> <span class="n">that</span>
-<span class="n">sigV</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">sigq_star</span><span class="p">)</span> <span class="o">/</span><span class="p">(</span><span class="n">q_star</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
-
-<span class="k">for</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">q_star</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">pi</span><span class="o">*|</span><span class="n">contrast</span><span class="o">|</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-
-<span class="mi">10</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span> <span class="n">converts</span> <span class="kn">from</span> <span class="nn">cm</span><span class="o">^-</span><span class="mi">1</span> <span class="n">to</span> <span class="n">A</span><span class="o">^-</span><span class="mi">1</span>
-<span class="n">q_star</span><span class="p">:</span> <span class="n">the</span> <span class="n">invariant</span><span class="p">,</span> <span class="ow">in</span> <span class="n">cm</span><span class="o">^-</span><span class="mi">1</span><span class="n">A</span><span class="o">^-</span><span class="mi">3</span><span class="p">,</span> <span class="n">including</span> <span class="n">extrapolated</span> <span class="n">values</span>
-    <span class="k">if</span> <span class="n">they</span> <span class="n">have</span> <span class="n">been</span> <span class="n">requested</span>
-<span class="n">dq_star</span><span class="p">:</span> <span class="n">the</span> <span class="n">invariant</span> <span class="n">uncertainty</span>
-<span class="n">dV</span><span class="p">:</span> <span class="n">the</span> <span class="n">volume</span> <span class="n">uncertainty</span>
 </pre></div>
 </div>
+<p>so that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sigV</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">sigq_star</span><span class="p">)</span> <span class="o">/</span><span class="p">(</span><span class="n">q_star</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">q_star</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">pi</span><span class="o">*|</span><span class="n">contrast</span><span class="o">|</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li>10^(-8) converts from cm^-1 to A^-1</li>
+<li>q_star: the invariant, in cm^-1A^-3, including extrapolated values
+if they have been requested</li>
+<li>dq_star: the invariant uncertainty</li>
+<li>dV: the volume uncertainty</li>
+</ul>
 <p>The uncertainty will be set to -1 if it can’t be computed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -479,6 +492,16 @@ This uncertainty is given by the following equation:</p>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="sas.sascalc.invariant.invariant.InvariantCalculator.scale">
+<code class="descname">scale</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.sascalc.invariant.invariant.InvariantCalculator.set_data">
+<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/invariant/invariant.html#InvariantCalculator.set_data"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="sas.sascalc.invariant.invariant.InvariantCalculator.set_extrapolation">
@@ -542,7 +565,7 @@ function</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> – q-value</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">log(q)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\log(q)\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -665,7 +688,7 @@ different invariant objects to call the same function</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <h3><a href="../../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sas.sascalc.invariant package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -720,7 +743,7 @@ different invariant objects to call the same function</p>
         <li class="right" >
           <a href="sas.sascalc.fit.html" title="sas.sascalc.fit package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -728,8 +751,8 @@ different invariant objects to call the same function</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

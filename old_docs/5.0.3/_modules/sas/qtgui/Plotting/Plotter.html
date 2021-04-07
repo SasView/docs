@@ -1,0 +1,907 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Plotting.Plotter &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Plotting.Plotter</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib.font_manager</span> <span class="kn">import</span> <span class="n">FontProperties</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterBase</span> <span class="kn">import</span> <span class="n">PlotterBase</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.AddText</span> <span class="kn">import</span> <span class="n">AddText</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SetGraphRange</span> <span class="kn">import</span> <span class="n">SetGraphRange</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.LinearFit</span> <span class="kn">import</span> <span class="n">LinearFit</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotProperties</span> <span class="kn">import</span> <span class="n">PlotProperties</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.ScaleProperties</span> <span class="kn">import</span> <span class="n">ScaleProperties</span>
+
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Plotting.PlotUtilities</span> <span class="k">as</span> <span class="nn">PlotUtilities</span>
+
+<span class="k">def</span> <span class="nf">_legendResize</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    resize factor for the legend, based on total canvas width</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The factor 4.0 was chosen to look similar in size/ratio to what we had in 4.x</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;manager&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">manager</span> <span class="ow">is</span> <span class="kc">None</span> \
+        <span class="ow">or</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">screen_width</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">screen_width</span>
+    <span class="n">screen_height</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">screen_height</span>
+    <span class="n">screen_factor</span> <span class="o">=</span> <span class="n">screen_width</span> <span class="o">*</span> <span class="n">screen_height</span>
+
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">denomintor</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">width</span><span class="o">/</span><span class="n">denomintor</span> <span class="o">+</span> <span class="n">factor</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#Function inferred based on tests for several resolutions</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3e-6</span><span class="o">*</span><span class="n">screen_factor</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">width</span><span class="o">/</span><span class="mi">640</span>
+    <span class="k">return</span> <span class="n">scale_factor</span>
+
+<div class="viewcode-block" id="PlotterWidget"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget">[docs]</a><span class="k">class</span> <span class="nc">PlotterWidget</span><span class="p">(</span><span class="n">PlotterBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    1D Plot widget for use with a QDialog</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PlotterWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="n">manager</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="n">quickplot</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+        <span class="c1"># Dictionary of {plot_id:Data1d}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Dictionaty of {plot_id:line}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_lines</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Window for text add</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addText</span> <span class="o">=</span> <span class="n">AddText</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Log-ness of the axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xLogLabel</span> <span class="o">=</span> <span class="s2">&quot;log10(x)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yLogLabel</span> <span class="o">=</span> <span class="s2">&quot;log10(y)&quot;</span>
+
+        <span class="c1"># Data container for the linear fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[],</span> <span class="n">y</span><span class="o">=</span><span class="p">[],</span> <span class="n">dy</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="mi">13</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Fit&quot;</span>
+
+        <span class="n">parent</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; data setter &quot;&quot;&quot;</span>
+        <span class="c1">#self._data = value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_xunit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">_xunit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_xaxis</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_yunit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">_yunit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_yaxis</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">scale</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yscale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PlotterWidget.plot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hide_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new plot of self._data to the chart.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># just refresh</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Data1D</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">is_fit</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">id</span><span class="o">==</span><span class="s2">&quot;fit&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_fit</span><span class="p">:</span>
+            <span class="c1"># make sure we have some function to operate on</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">xtransform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">xtransform</span><span class="o">=</span><span class="s1">&#39;x&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">xtransform</span> <span class="o">=</span> <span class="s1">&#39;log10(x)&#39;</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ytransform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">isSesans</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">ytransform</span><span class="o">=</span><span class="s1">&#39;y&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">ytransform</span> <span class="o">=</span> <span class="s1">&#39;log10(y)&#39;</span>
+            <span class="c1">#Added condition to Dmax explorer from P(r) perspective</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">_xaxis</span> <span class="o">==</span> <span class="s1">&#39;D_</span><span class="si">{max}</span><span class="s1">&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+            <span class="c1"># Transform data if required.</span>
+            <span class="k">if</span> <span class="n">transform</span> <span class="ow">and</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">xtransform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ytransform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span><span class="p">,</span> <span class="n">xscale</span><span class="p">,</span> <span class="n">yscale</span> <span class="o">=</span> \
+                    <span class="n">GuiUtils</span><span class="o">.</span><span class="n">xyTransform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">xtransform</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ytransform</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">xscale</span> <span class="o">!=</span> <span class="s1">&#39;log&#39;</span> <span class="ow">and</span> <span class="n">xscale</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span> <span class="o">=</span> <span class="n">xscale</span>
+                <span class="k">if</span> <span class="n">yscale</span> <span class="o">!=</span> <span class="s1">&#39;log&#39;</span> <span class="ow">and</span> <span class="n">yscale</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yscale</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">yscale</span> <span class="o">=</span> <span class="n">yscale</span>
+
+                <span class="c1"># Redefine the Scale properties dialog</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">ScaleProperties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                        <span class="n">init_scale_x</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">xtransform</span><span class="p">,</span>
+                                        <span class="n">init_scale_y</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">ytransform</span><span class="p">)</span>
+
+        <span class="c1"># Shortcuts</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="c1"># Marker symbol. Passed marker is one of matplotlib.markers characters</span>
+        <span class="c1"># Alternatively, picked up from Data1D as an int index of PlotUtilities.SHAPES dict</span>
+        <span class="k">if</span> <span class="n">marker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">marker</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">symbol</span>
+            <span class="c1"># Try name first</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">marker</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">PlotUtilities</span><span class="o">.</span><span class="n">SHAPES</span><span class="p">)[</span><span class="n">marker</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">marker</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">PlotUtilities</span><span class="o">.</span><span class="n">SHAPES</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="n">marker</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">marker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="c1"># Plot name</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Error marker toggle</span>
+        <span class="k">if</span> <span class="n">hide_error</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hide_error</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">hide_error</span>
+
+        <span class="c1"># Plot color</span>
+        <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">custom_color</span>
+
+        <span class="n">color</span> <span class="o">=</span> <span class="n">PlotUtilities</span><span class="o">.</span><span class="n">getValidColor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">custom_color</span> <span class="o">=</span> <span class="n">color</span>
+
+        <span class="n">markersize</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">markersize</span>
+
+        <span class="c1"># Include scaling (log vs. linear)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xscale</span><span class="p">,</span> <span class="n">nonposx</span><span class="o">=</span><span class="s1">&#39;clip&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yscale</span><span class="p">,</span> <span class="n">nonposy</span><span class="o">=</span><span class="s1">&#39;clip&#39;</span><span class="p">)</span>
+
+        <span class="c1"># define the ranges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span> <span class="o">=</span> <span class="n">SetGraphRange</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">x_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">(),</span> <span class="n">y_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span>
+
+        <span class="c1"># Draw non-standard markers</span>
+        <span class="n">l_width</span> <span class="o">=</span> <span class="n">markersize</span> <span class="o">*</span> <span class="mf">0.4</span>
+        <span class="k">if</span> <span class="n">marker</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span> <span class="ow">or</span> <span class="n">marker</span> <span class="o">==</span> <span class="s1">&#39;--&#39;</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">l_width</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                             <span class="n">linestyle</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="n">marker</span> <span class="o">==</span> <span class="s1">&#39;vline&#39;</span><span class="p">:</span>
+            <span class="n">y_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="mf">9.0</span><span class="o">/</span><span class="mf">10.0</span> <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                            <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">l_width</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">marker</span> <span class="o">==</span> <span class="s1">&#39;step&#39;</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                                <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">l_width</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># plot data with/without errorbars</span>
+            <span class="k">if</span> <span class="n">hide_error</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span>
+                        <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">,</span> <span class="n">picker</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dy</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dy</span>
+                <span class="c1"># Convert tuple (lo,hi) to array [(x-lo),(hi-x)]</span>
+                <span class="k">if</span> <span class="n">dy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(()):</span>
+                    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">dy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+                <span class="n">line</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                            <span class="n">yerr</span><span class="o">=</span><span class="n">dy</span><span class="p">,</span>
+                            <span class="n">xerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">capsize</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                            <span class="n">barsabove</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                            <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>
+                            <span class="n">markersize</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span>
+                            <span class="n">lolims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">uplims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">xlolims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xuplims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">,</span>
+                            <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="n">picker</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Update the list of data sets (plots) in chart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_lines</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+
+        <span class="c1"># Now add the legend with some customizations.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">showLegend</span><span class="p">:</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">_legendResize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="n">width</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">set_picker</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Current labels for axes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_fit</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_fit</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span><span class="p">)</span>
+
+        <span class="c1"># refresh canvas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onResize"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onResize">[docs]</a>    <span class="k">def</span> <span class="nf">onResize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resize the legend window/font on canvas resize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">showLegend</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">_legendResize</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="c1"># resize the legend to follow the canvas width.</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">prop</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="n">width</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.createContextMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.createContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">createContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define common context menu and associated actions for the MPL widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultContextMenu</span><span class="p">()</span>
+
+        <span class="c1"># Separate plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addPlotsToContextMenu</span><span class="p">()</span>
+
+        <span class="c1"># Additional menu items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionAddText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Add Text&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionRemoveText</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Remove Text&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Change Scale&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionSetGraphRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Set Graph Range&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionResetGraphRange</span> <span class="o">=</span>\
+            <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Reset Graph Range&quot;</span><span class="p">)</span>
+        <span class="c1"># Add the title change for dialogs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionWindowTitle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Window Title&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Define the callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionAddText</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onAddText</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionRemoveText</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onRemoveText</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onScaleChange</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionSetGraphRange</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSetGraphRange</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionResetGraphRange</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onResetGraphRange</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionWindowTitle</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onWindowsTitle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.addPlotsToContextMenu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.addPlotsToContextMenu">[docs]</a>    <span class="k">def</span> <span class="nf">addPlotsToContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds operations on all plotted sets of data to the context menu</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">plot</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">plot</span><span class="o">.</span><span class="n">title</span>
+            <span class="n">plot_menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s1">&#39;&amp;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionDataInfo</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;DataInfo&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionDataInfo</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onDataInfo</span><span class="p">,</span> <span class="n">plot</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionSavePointsAsFile</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Save Points as a File&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionSavePointsAsFile</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSavePoints</span><span class="p">,</span> <span class="n">plot</span><span class="p">))</span>
+            <span class="n">plot_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="s1">&#39;fit&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionLinearFit</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;&amp;Linear Fit&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionLinearFit</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onLinearFit</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+                <span class="n">plot_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionRemovePlot</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Remove&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionRemovePlot</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onRemovePlot</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">plot</span><span class="o">.</span><span class="n">is_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionFreeze</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;&amp;Freeze&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionFreeze</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFreeze</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+            <span class="n">plot_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">is_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionHideError</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Hide Error Bar&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">dy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">plot</span><span class="o">.</span><span class="n">dy</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">hide_error</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">actionHideError</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Show Error Bar&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">actionHideError</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actionHideError</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onToggleHideError</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+                <span class="n">plot_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionModifyPlot</span> <span class="o">=</span> <span class="n">plot_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s1">&#39;&amp;Modify Plot Property&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actionModifyPlot</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onModifyPlot</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.createContextMenuQuick"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.createContextMenuQuick">[docs]</a>    <span class="k">def</span> <span class="nf">createContextMenuQuick</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define context menu and associated actions for the quickplot MPL widget</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Default actions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultContextMenu</span><span class="p">()</span>
+
+        <span class="c1"># Additional actions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleGrid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Toggle Grid On/Off&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contextMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Change Scale&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Define the callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionToggleGrid</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onGridToggle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeScale</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onScaleChange</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onScaleChange"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onScaleChange">[docs]</a>    <span class="k">def</span> <span class="nf">onScaleChange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show a dialog allowing axes rescaling</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xLogLabel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLogLabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">getValues</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">xtransform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xLogLabel</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">ytransform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLogLabel</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyTransform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xLogLabel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yLogLabel</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onAddText"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onAddText">[docs]</a>    <span class="k">def</span> <span class="nf">onAddText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show a dialog allowing adding custom text to the chart</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">addText</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Retrieve the new text, its font and color</span>
+        <span class="n">extra_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addText</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">extra_font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addText</span><span class="o">.</span><span class="n">font</span><span class="p">()</span>
+        <span class="n">extra_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addText</span><span class="o">.</span><span class="n">color</span><span class="p">()</span>
+
+        <span class="c1"># Place the text on the screen at the click location</span>
+        <span class="n">pos_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_click</span>
+        <span class="n">pos_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_click</span>
+
+        <span class="c1"># Map QFont onto MPL font</span>
+        <span class="n">mpl_font</span> <span class="o">=</span> <span class="n">FontProperties</span><span class="p">()</span>
+        <span class="n">mpl_font</span><span class="o">.</span><span class="n">set_size</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">extra_font</span><span class="o">.</span><span class="n">pointSize</span><span class="p">()))</span>
+        <span class="n">mpl_font</span><span class="o">.</span><span class="n">set_family</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">extra_font</span><span class="o">.</span><span class="n">family</span><span class="p">()))</span>
+        <span class="n">mpl_font</span><span class="o">.</span><span class="n">set_weight</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">extra_font</span><span class="o">.</span><span class="n">weight</span><span class="p">()))</span>
+        <span class="c1"># MPL style names</span>
+        <span class="n">styles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;italic&#39;</span><span class="p">,</span> <span class="s1">&#39;oblique&#39;</span><span class="p">]</span>
+        <span class="c1"># QFont::Style maps directly onto the above</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mpl_font</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="n">styles</span><span class="p">[</span><span class="n">extra_font</span><span class="o">.</span><span class="n">style</span><span class="p">()])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span>
+                                    <span class="n">pos_y</span><span class="p">,</span>
+                                    <span class="n">extra_text</span><span class="p">,</span>
+                                    <span class="n">color</span><span class="o">=</span><span class="n">extra_color</span><span class="p">,</span>
+                                    <span class="n">fontproperties</span><span class="o">=</span><span class="n">mpl_font</span><span class="p">)</span>
+
+            <span class="c1"># Update the list of annotations</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">textList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onRemoveText"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onRemoveText">[docs]</a>    <span class="k">def</span> <span class="nf">onRemoveText</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove the most recently added text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_text</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">textList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_text</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textList</span><span class="p">[</span><span class="n">num_text</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">text_remove</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Text got already deleted somehow</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">textList</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onSetGraphRange"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onSetGraphRange">[docs]</a>    <span class="k">def</span> <span class="nf">onSetGraphRange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show a dialog allowing setting the chart ranges</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># min and max of data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+            <span class="n">x_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">xrange</span><span class="p">()</span>
+            <span class="n">y_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setRange</span><span class="o">.</span><span class="n">yrange</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_range</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_range</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onResetGraphRange"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onResetGraphRange">[docs]</a>    <span class="k">def</span> <span class="nf">onResetGraphRange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the chart X and Y ranges to their original values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">x_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+            <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">x_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">x_range</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">y_range</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onLinearFit"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onLinearFit">[docs]</a>    <span class="k">def</span> <span class="nf">onLinearFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates and displays a simple linear fit for the selected plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+
+        <span class="n">maxrange</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">selected_plot</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">selected_plot</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">fitrange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+
+        <span class="n">fit_dialog</span> <span class="o">=</span> <span class="n">LinearFit</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">selected_plot</span><span class="p">,</span>
+                    <span class="n">max_range</span><span class="o">=</span><span class="n">maxrange</span><span class="p">,</span>
+                    <span class="n">fit_range</span><span class="o">=</span><span class="n">fitrange</span><span class="p">,</span>
+                    <span class="n">xlabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xLogLabel</span><span class="p">,</span>
+                    <span class="n">ylabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">yLogLabel</span><span class="p">)</span>
+        <span class="n">fit_dialog</span><span class="o">.</span><span class="n">updatePlot</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFitDisplay</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fit_dialog</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+            <span class="k">return</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.replacePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.replacePlot">[docs]</a>    <span class="k">def</span> <span class="nf">replacePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">new_plot</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove plot &#39;id&#39; and add &#39;new_plot&#39; to the chart.</span>
+<span class="sd">        This effectlvely refreshes the chart with changes to one of its plots</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Pull the current transform settings from the old plot</span>
+        <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">xtransform</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">xtransform</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">ytransform</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">ytransform</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">new_plot</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onRemovePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onRemovePlot">[docs]</a>    <span class="k">def</span> <span class="nf">onRemovePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Responds to the plot delete action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># last plot: graph is empty must be the panel must be destroyed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.removePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.removePlot">[docs]</a>    <span class="k">def</span> <span class="nf">removePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes the selected plot from the chart</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">return</span>
+
+        <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+
+        <span class="n">plot_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">)</span>
+
+        <span class="c1"># Labels might have been changed</span>
+        <span class="n">xl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="n">yl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">plot_dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ids</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">hide_error</span><span class="p">)</span>
+
+        <span class="c1"># Reset the labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xl</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">yl</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onFreeze"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onFreeze">[docs]</a>    <span class="k">def</span> <span class="nf">onFreeze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Freezes the selected plot to a separate chart</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">data_list</span><span class="o">=</span><span class="p">{</span><span class="nb">id</span><span class="p">:</span><span class="n">plot</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">freezeDataToItem</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onModifyPlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onModifyPlot">[docs]</a>    <span class="k">def</span> <span class="nf">onModifyPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allows for MPL modifications to the selected plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">selected_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_lines</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="c1"># Old style color - single integer for enum color</span>
+        <span class="c1"># New style color - #hhhhhh</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">custom_color</span>
+        <span class="c1"># marker symbol and size</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">symbol</span>
+        <span class="n">marker_size</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">markersize</span>
+        <span class="c1"># plot name</span>
+        <span class="n">legend</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">title</span>
+
+        <span class="n">plotPropertiesWidget</span> <span class="o">=</span> <span class="n">PlotProperties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                                <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>
+                                <span class="n">marker_size</span><span class="o">=</span><span class="n">marker_size</span><span class="p">,</span>
+                                <span class="n">legend</span><span class="o">=</span><span class="n">legend</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+            <span class="c1"># Update Data1d</span>
+            <span class="n">selected_plot</span><span class="o">.</span><span class="n">markersize</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">markersize</span><span class="p">()</span>
+            <span class="n">selected_plot</span><span class="o">.</span><span class="n">custom_color</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">color</span><span class="p">()</span>
+            <span class="n">selected_plot</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">marker</span><span class="p">()</span>
+            <span class="n">selected_plot</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">plotPropertiesWidget</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+            <span class="c1"># Redraw the plot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replacePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">selected_plot</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onToggleHideError"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onToggleHideError">[docs]</a>    <span class="k">def</span> <span class="nf">onToggleHideError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toggles hide error/show error menu item</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">selected_plot</span><span class="o">.</span><span class="n">hide_error</span>
+
+        <span class="c1"># Flip the flag</span>
+        <span class="n">selected_plot</span><span class="o">.</span><span class="n">hide_error</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">current</span>
+
+        <span class="n">plot_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Clean the canvas</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">cla</span><span class="p">()</span>
+
+        <span class="c1"># Recreate the plots but reverse the error flag for the current</span>
+        <span class="k">for</span> <span class="n">ids</span> <span class="ow">in</span> <span class="n">plot_dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ids</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">current</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">],</span> <span class="n">hide_error</span><span class="o">=</span><span class="n">plot_dict</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">hide_error</span><span class="p">)</span>                </div>
+
+<div class="viewcode-block" id="PlotterWidget.xyTransform"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.xyTransform">[docs]</a>    <span class="k">def</span> <span class="nf">xyTransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xLabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">yLabel</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms x and y in View and set the scale</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Transform all the plots on the chart</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">current_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">current_plot</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;fit&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">new_xlabel</span><span class="p">,</span> <span class="n">new_ylabel</span><span class="p">,</span> <span class="n">xscale</span><span class="p">,</span> <span class="n">yscale</span> <span class="o">=</span>\
+                <span class="n">GuiUtils</span><span class="o">.</span><span class="n">xyTransform</span><span class="p">(</span><span class="n">current_plot</span><span class="p">,</span> <span class="n">xLabel</span><span class="p">,</span> <span class="n">yLabel</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span> <span class="o">=</span> <span class="n">xscale</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yscale</span> <span class="o">=</span> <span class="n">yscale</span>
+
+            <span class="c1"># Plot the updated chart</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+            <span class="c1"># This assignment will wrap the label in Latex &quot;$&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xLabel</span> <span class="o">=</span> <span class="n">new_xlabel</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yLabel</span> <span class="o">=</span> <span class="n">new_ylabel</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">current_plot</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">pass</span> <span class="c1"># debug hook</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onFitDisplay"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onFitDisplay">[docs]</a>    <span class="k">def</span> <span class="nf">onFitDisplay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a linear fitting line to the chart</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create new data structure with fitting result</span>
+        <span class="n">tempx</span> <span class="o">=</span> <span class="n">fit_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tempy</span> <span class="o">=</span> <span class="n">fit_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">tempx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">tempy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">#Remove another Fit, if exists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">removePlot</span><span class="p">(</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">reset_view</span><span class="p">()</span>
+        <span class="c1">#self.offset_graph()</span>
+
+        <span class="c1"># Set plot properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;fit&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Fit&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Fit&#39;</span>
+
+        <span class="c1"># Plot the line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">hide_error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onMplMouseDown"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onMplMouseDown">[docs]</a>    <span class="k">def</span> <span class="nf">onMplMouseDown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Left button down and ready to drag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check that the LEFT button was pressed</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">textList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span> <span class="c1"># If user has clicked on text</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selectedText</span> <span class="o">=</span> <span class="n">text</span>
+                <span class="k">return</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_click</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">)</span>  <span class="c1"># / size_x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_click</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">)</span>  <span class="c1"># / size_y</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">x_str</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_click</span><span class="p">)</span>
+        <span class="n">y_str</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_click</span><span class="p">)</span>
+        <span class="n">coord_str</span> <span class="o">=</span> <span class="s2">&quot;x: </span><span class="si">{}</span><span class="s2">, y: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x_str</span><span class="p">,</span> <span class="n">y_str</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">coord_str</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onMplMouseUp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onMplMouseUp">[docs]</a>    <span class="k">def</span> <span class="nf">onMplMouseUp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the data coordinates of the click</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_click</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_click</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span>
+
+        <span class="c1"># Check that the LEFT button was released</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedText</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">#release the legend</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gotLegend</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gotLegend</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onMplMouseMotion"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onMplMouseMotion">[docs]</a>    <span class="k">def</span> <span class="nf">onMplMouseMotion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the left button is press and the mouse in moving.</span>
+<span class="sd">        Compute delta for x and y coordinates and then perform the drag</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gotLegend</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onLegendMotion</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1">#if self.leftdown and self.selectedText is not None:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">leftdown</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedText</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># User has clicked on text and is dragging</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># User has dragged outside of axes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedText</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Only move text if mouse is within axes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selectedText</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onMplPick"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onMplPick">[docs]</a>    <span class="k">def</span> <span class="nf">onMplPick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On pick legend</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">legend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">artist</span> <span class="o">!=</span> <span class="n">legend</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># Get the box of the legend.</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">()</span>
+        <span class="c1"># Get mouse coordinates at time of pick.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_x</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">mouseevent</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mouse_y</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">mouseevent</span><span class="o">.</span><span class="n">y</span>
+        <span class="c1"># Get legend coordinates at time of pick.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legend_x</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">xmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legend_y</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">ymin</span>
+        <span class="c1"># Indicate we picked up the legend.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gotLegend</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+        <span class="c1">#self.legend.legendPatch.set_alpha(0.5)</span>
+
+<div class="viewcode-block" id="PlotterWidget.onLegendMotion"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onLegendMotion">[docs]</a>    <span class="k">def</span> <span class="nf">onLegendMotion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On legend in motion</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># Event occurred inside a plotting area</span>
+        <span class="n">lo_x</span><span class="p">,</span> <span class="n">hi_x</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+        <span class="n">lo_y</span><span class="p">,</span> <span class="n">hi_y</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+        <span class="c1"># How much the mouse moved.</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">mouse_diff_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_x</span> <span class="o">-</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">mouse_diff_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mouse_y</span> <span class="o">-</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span>
+        <span class="c1"># Put back inside</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">lo_x</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">lo_x</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">hi_x</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">hi_x</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">lo_y</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">lo_y</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">hi_y</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">hi_y</span>
+        <span class="c1"># Move the legend from its previous location by that same amount</span>
+        <span class="n">loc_in_canvas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend_x</span> <span class="o">-</span> <span class="n">mouse_diff_x</span><span class="p">,</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">legend_y</span> <span class="o">-</span> <span class="n">mouse_diff_y</span>
+        <span class="c1"># Transform into legend coordinate system</span>
+        <span class="n">trans_axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span>
+        <span class="n">loc_in_norm_axes</span> <span class="o">=</span> <span class="n">trans_axes</span><span class="o">.</span><span class="n">transform_point</span><span class="p">(</span><span class="n">loc_in_canvas</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legend_pos_loc</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">loc_in_norm_axes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend_pos_loc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PlotterWidget.onMplWheel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.PlotterWidget.onMplWheel">[docs]</a>    <span class="k">def</span> <span class="nf">onMplWheel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process mouse wheel as zoom events</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">step</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Event occurred inside a plotting area</span>
+            <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+            <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">PlotUtilities</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span>
+                              <span class="n">pt</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xscale</span><span class="p">())</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="ow">or</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scale_xlo</span> <span class="o">=</span> <span class="n">lo</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scale_xhi</span> <span class="o">=</span> <span class="n">hi</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+
+            <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+            <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">PlotUtilities</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">pt</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">,</span>
+                              <span class="n">scale</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yscale</span><span class="p">())</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">yscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="ow">or</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ylo</span> <span class="o">=</span> <span class="n">lo</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scale_yhi</span> <span class="o">=</span> <span class="n">hi</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check if zoom happens in the axes</span>
+            <span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span>
+
+            <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
+                <span class="n">insidex</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">insidex</span><span class="p">:</span>
+                    <span class="n">xdata</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span><span class="o">.</span><span class="n">transform_point</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                <span class="n">insidey</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">insidey</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span><span class="o">.</span><span class="n">transform_point</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">xdata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">PlotUtilities</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span>
+                                  <span class="n">bal</span><span class="o">=</span><span class="n">xdata</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xscale</span><span class="p">())</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">xscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="ow">or</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scale_xlo</span> <span class="o">=</span> <span class="n">lo</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scale_xhi</span> <span class="o">=</span> <span class="n">hi</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">ydata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+                <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">PlotUtilities</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">bal</span><span class="o">=</span><span class="n">ydata</span><span class="p">,</span>
+                                  <span class="n">scale</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yscale</span><span class="p">())</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">yscale</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="ow">or</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ylo</span> <span class="o">=</span> <span class="n">lo</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scale_yhi</span> <span class="o">=</span> <span class="n">hi</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="Plotter"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Plotting.html#sas.qtgui.Plotting.Plotter.Plotter">[docs]</a><span class="k">class</span> <span class="nc">Plotter</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">PlotterWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">PlotterWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="n">quickplot</span><span class="p">)</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
+        <span class="n">icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;:/res/ball.ico&quot;</span><span class="p">),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

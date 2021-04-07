@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sasmodels package &#8212; SasView 5.0.3 documentation</title>
+    <title>sasmodels package &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sasmodels.custom package" href="sasmodels.custom.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="modules.html" title="sasmodels"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
@@ -319,18 +322,6 @@ cylinder radius in this case).</p>
 <dt id="sasmodels.compare.delay">
 <code class="descclassname">sasmodels.compare.</code><code class="descname">delay</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/compare.html#delay"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return number date-time delta as number seconds</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="sasmodels.compare.eval_ctypes">
-<code class="descclassname">sasmodels.compare.</code><code class="descname">eval_ctypes</code><span class="sig-paren">(</span><em>model_info</em>, <em>data</em>, <em>dtype='double'</em>, <em>cutoff=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/compare.html#eval_ctypes"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return a model calculator using the DLL calculation engine.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="sasmodels.compare.eval_opencl">
-<code class="descclassname">sasmodels.compare.</code><code class="descname">eval_opencl</code><span class="sig-paren">(</span><em>model_info</em>, <em>data</em>, <em>dtype='single'</em>, <em>cutoff=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/compare.html#eval_opencl"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return a model calculator using the OpenCL calculation engine.</p>
 </dd></dl>
 
 <dl class="function">
@@ -4015,6 +4006,11 @@ default values for <em>qmin</em>, <em>qmax</em> and <em>nq</em>.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="sasmodels.multiscat.MultipleScattering.plot_and_save_powers">
+<code class="descname">plot_and_save_powers</code><span class="sig-paren">(</span><em>theory</em>, <em>result</em>, <em>plot=True</em>, <em>outfile=''</em>, <em>background=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/multiscat.html#MultipleScattering.plot_and_save_powers"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="sasmodels.multiscat.MultipleScattering.radial_profile">
 <code class="descname">radial_profile</code><span class="sig-paren">(</span><em>Iqxy</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sasmodels/multiscat.html#MultipleScattering.radial_profile"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Compute that radial profile for the given Iqxy grid.  The grid should
@@ -5504,7 +5500,7 @@ Bessel function of the first kind and first order.</p>
 of 1 at <span class="math notranslate nohighlight">\(x=0\)</span>, where <span class="math notranslate nohighlight">\(J_1(x)\)</span> is the Bessel function of first kind
 and first order.</dd>
 <dt>gauss76.n, gauss76.z[i], gauss76.w[i]:</dt>
-<dd><p class="first">Points <span class="math notranslate nohighlight">\(z_i\)</span> and weights <span class="math notranslate nohighlight">\(w_i\)</span> for 76-point Gaussian quadrature, respectively,
+<dd><p class="first">Points <span class="math notranslate nohighlight">\(z_i\)</span> and weights <span class="math notranslate nohighlight">\(w_i\)</span> for <span class="math notranslate nohighlight">\(n=76\)</span> point Gaussian quadrature,
 computing <span class="math notranslate nohighlight">\(\int_{-1}^1 f(z)\,dz \approx \sum_{i=1}^{76} w_i\,f(z_i)\)</span>.
 When translating the model to C, include ‘lib/gauss76.c’ in the source
 and use <code class="code docutils literal notranslate"><span class="pre">GAUSS_N</span></code>, <code class="code docutils literal notranslate"><span class="pre">GAUSS_Z</span></code>, and <code class="code docutils literal notranslate"><span class="pre">GAUSS_W</span></code>.</p>
@@ -5852,7 +5848,7 @@ used directly in setup(…,data_files=…) for setup.py.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <h3><a href="../../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sasmodels package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -5963,14 +5959,14 @@ used directly in setup(…,data_files=…) for setup.py.</p>
         <li class="right" >
           <a href="modules.html" title="sasmodels"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

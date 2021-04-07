@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Polydispersity &amp; Orientational Distributions &#8212; SasView 5.0.3 documentation</title>
+    <title>Polydispersity &amp; Orientational Distributions &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
     <link rel="next" title="Oriented particles" href="../orientation/orientation.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="../fitting_sq.html" title="Fitting Models with Structure Factors"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li> 
@@ -114,15 +117,33 @@ SasView models.</p>
 <div class="section" id="suggested-applications">
 <h2>Suggested Applications</h2>
 <p>If applying polydispersion to parameters describing particle sizes, consider using
-the Lognormal or Schulz distributions.</p>
+the <em>Lognormal</em> or <em>Schulz</em> distributions.</p>
 <p>If applying polydispersion to parameters describing interfacial thicknesses
-or angular orientations, consider using the Gaussian or Boltzmann distributions.</p>
-<p>If applying polydispersion to parameters describing angles, use the Uniform
-distribution. Beware of using distributions that are always positive (eg, the
-Lognormal) because angles can be negative!</p>
-<p>The array distribution provides a very simple means of implementing a user-
+or orientations, consider using the <em>Gaussian</em> or <em>Boltzmann</em> distributions.</p>
+<p>If applying polydispersion to parameters describing angles, use the <em>Uniform</em>
+distribution.</p>
+<p>The <em>Array</em> distribution provides a very simple means of implementing a user-
 defined distribution, but without any fittable parameters. Greater flexibility
-is conferred by the user-defined distribution.</p>
+is conferred by the <em>User-defined</em> distribution.</p>
+</div>
+<div class="section" id="usage-notes">
+<h2>Usage Notes</h2>
+<p>Beware of using distributions that are always positive (eg, the <em>Lognormal</em>) for
+angles because angles can be negative! If in doubt, plot the polydispersity data
+for the model and check!</p>
+<p>The parameter bounds (ie, Min/Max) for polydispersion should be specified under the
+Polydispersity tab on the FitPage. They are not formally linked to the bounds for
+the parameter to which polydispersion is being applied that appear under the Model
+tab. In other words, bounds on a <em>radius</em> parameter under Model are not the same as
+bounds on a <em>distribution of radius</em> parameter under Polydispersity, and vice versa.</p>
+<p>If a distribution exceeds its parameter bounds those weights outside the bounds are
+excluded and the distribution is normalized such that the sum of the remaining
+weights in the truncated distribution equal one.</p>
+<p>Whilst PD values for ‘size’ parameters are in proportion to the mean, with values
+normally lying in the range 0 – 1, PD values for ‘angular’ parameters represent the
+actual width of the distribution in degrees, so values as high as 5 or 10 degrees
+maybe necessary to describe oriented systems. Again, plotting the relevant
+polydispersity data will easily show if a sensible value is being used.</p>
 </div>
 <div class="section" id="uniform-distribution">
 <h2>Uniform Distribution</h2>
@@ -450,10 +471,11 @@ deviation of the Lognormal distribution.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../../../../index.html">Table Of Contents</a></h3>
+  <h3><a href="../../../../../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Polydispersity &amp; Orientational Distributions</a><ul>
 <li><a class="reference internal" href="#suggested-applications">Suggested Applications</a></li>
+<li><a class="reference internal" href="#usage-notes">Usage Notes</a></li>
 <li><a class="reference internal" href="#uniform-distribution">Uniform Distribution</a></li>
 <li><a class="reference internal" href="#rectangular-distribution">Rectangular Distribution</a></li>
 <li><a class="reference internal" href="#gaussian-distribution">Gaussian Distribution</a></li>
@@ -511,15 +533,15 @@ deviation of the Lognormal distribution.</p>
         <li class="right" >
           <a href="../fitting_sq.html" title="Fitting Models with Structure Factors"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../fitting.html" >Fitting Documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

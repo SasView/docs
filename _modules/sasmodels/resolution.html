@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sasmodels.resolution &#8212; SasView 5.0.3 documentation</title>
+    <title>sasmodels.resolution &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
@@ -128,17 +131,18 @@
                        <span class="k">if</span> <span class="n">q_calc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">q_calc</span><span class="p">))</span>
 
         <span class="c1"># Protect against models which are not defined for very low q.  Limit</span>
-        <span class="c1"># the smallest q value evaluated to 0.02*min.  Note that negative q</span>
-        <span class="c1"># values are trimmed even for broad resolution.  Although not possible</span>
-        <span class="c1"># from the geometry, they may appear since we are using a truncated</span>
-        <span class="c1"># gaussian to represent resolution rather than a skew distribution.</span>
-        <span class="c1">#cutoff = MINIMUM_ABSOLUTE_Q*np.min(self.q)</span>
-        <span class="c1">#self.q_calc = self.q_calc[self.q_calc &gt;= cutoff]</span>
+        <span class="c1"># the smallest q value evaluated (in absolute) to 0.02*min</span>
+        <span class="n">cutoff</span> <span class="o">=</span> <span class="n">MINIMUM_ABSOLUTE_Q</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span><span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">cutoff</span><span class="p">]</span>
 
         <span class="c1"># Build weight matrix from calculated q values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight_matrix</span> <span class="o">=</span> <span class="n">pinhole_resolution</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">q_width</span><span class="p">,</span> <span class="n">MINIMUM_RESOLUTION</span><span class="p">),</span>
             <span class="n">nsigma</span><span class="o">=</span><span class="n">nsigma</span><span class="p">)</span>
+
+        <span class="c1"># Force positive q, even for events measured on the opposite side of</span>
+        <span class="c1"># the beam stop.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_calc</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Pinhole1D.apply"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.resolution.Pinhole1D.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theory</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">apply_resolution_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_matrix</span><span class="p">,</span> <span class="n">theory</span><span class="p">)</span></div></div>
@@ -589,7 +593,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">romberg</span>  <span class="c1"># type: ignore</span>
 
-    <span class="n">par_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">form</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">])</span>
+    <span class="n">par_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">form</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_set</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pars</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">par_set</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bad parameters: [</span><span class="si">%s</span><span class="s2">] not in [</span><span class="si">%s</span><span class="s2">]&quot;</span>
@@ -644,7 +648,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">romberg</span>  <span class="c1"># type: ignore</span>
 
-    <span class="n">par_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">form</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">])</span>
+    <span class="n">par_set</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">form</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">call_parameters</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">par_set</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pars</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">par_set</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;bad parameters: [</span><span class="si">%s</span><span class="s2">] not in [</span><span class="si">%s</span><span class="s2">]&quot;</span>
@@ -1147,7 +1151,7 @@
         <span class="n">pars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;length&#39;</span><span class="p">:</span><span class="mi">210</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;background&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
     <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;teubner_strey&#39;</span><span class="p">:</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a2&#39;</span><span class="p">:</span><span class="mf">0.003</span><span class="p">,</span> <span class="s1">&#39;c1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1e4</span><span class="p">,</span> <span class="s1">&#39;c2&#39;</span><span class="p">:</span><span class="mf">1e10</span><span class="p">,</span> <span class="s1">&#39;background&#39;</span><span class="p">:</span><span class="mf">0.312643</span><span class="p">}</span>
-    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;sphere&#39;</span> <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;spherepy&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;sphere&#39;</span><span class="p">,</span> <span class="s1">&#39;spherepy&#39;</span><span class="p">):</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="n">TEST_PARS_SLIT_SPHERE</span>
     <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;ellipsoid&#39;</span><span class="p">:</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="p">{</span>
@@ -1251,14 +1255,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sasmodels.convert &#8212; SasView 5.0.3 documentation</title>
+    <title>sasmodels.convert &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
@@ -527,7 +530,8 @@
         <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;rpa&#39;</span><span class="p">:</span>
             <span class="c1"># convert scattering lengths from femtometers to centimeters</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="s2">&quot;L1&quot;</span><span class="p">,</span> <span class="s2">&quot;L2&quot;</span><span class="p">,</span> <span class="s2">&quot;L3&quot;</span><span class="p">,</span> <span class="s2">&quot;L4&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">oldpars</span><span class="p">:</span> <span class="n">oldpars</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">1e-13</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">oldpars</span><span class="p">:</span>
+                    <span class="n">oldpars</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">1e-13</span>
             <span class="k">if</span> <span class="n">pars</span><span class="p">[</span><span class="s1">&#39;case_num&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;Phi&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">):</span>
@@ -662,7 +666,7 @@
     <span class="k">if</span> <span class="n">old_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">pars</span> <span class="o">=</span> <span class="n">compare</span><span class="o">.</span><span class="n">get_pars</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">use_demo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="n">compare</span><span class="o">.</span><span class="n">get_pars</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">pars</span> <span class="o">=</span> <span class="n">compare</span><span class="o">.</span><span class="n">randomize_pars</span><span class="p">(</span><span class="n">model_info</span><span class="p">,</span> <span class="n">pars</span><span class="p">)</span>
@@ -731,14 +735,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

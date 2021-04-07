@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Utilities package &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Utilities package &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sas.sascalc package" href="sas.sascalc.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="sas.qtgui.UnitTesting.html" title="sas.qtgui.UnitTesting package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -52,8 +55,84 @@
 <div class="section" id="submodules">
 <h2>Submodules</h2>
 </div>
-<div class="section" id="sas-qtgui-utilities-addmulteditor-module">
-<h2>sas.qtgui.Utilities.AddMultEditor module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.AddMultEditor">
+<span id="sas-qtgui-utilities-addmulteditor-module"></span><h2>sas.qtgui.Utilities.AddMultEditor module</h2>
+<p>Widget for simple add / multiply editor.</p>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.AddMultEditor.</code><code class="descname">AddMultEditor</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.AddMultEditorUI.Ui_AddMultEditorUI</span></code></p>
+<p>Dialog for easy custom composite models.  Provides a Dialog panel
+to choose two existing models (including pre-existing Plugin Models which
+may themselves be composite models) as well as an operation on those models
+(add or multiply) the resulting model will add a scale parameter and a
+background parameter.
+The user can also give a brief help for the model in the description box and
+must provide a unique name which is verified before the new model is saved.</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.onApply">
+<code class="descname">onApply</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.onApply"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Validity check, save model to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.onHelp">
+<code class="descname">onHelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.onHelp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display related help section</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.onNameCheck">
+<code class="descname">onNameCheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.onNameCheck"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check if proposed new model name does not already exists
+(if the overwriting is not allowed).
+If not an error message not show error message is displayed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.onOperatorChange">
+<code class="descname">onOperatorChange</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.onOperatorChange"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to operator combo box changes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.onOverwrite">
+<code class="descname">onOverwrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.onOverwrite"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Modify state on checkbox change</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.readModels">
+<code class="descname">readModels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.readModels"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generate list of models</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.setupModels">
+<code class="descname">setupModels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.setupModels"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Add list of models to ‘Model1’ and ‘Model2’ comboboxes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.setupSignals">
+<code class="descname">setupSignals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.setupSignals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Signals from various elements</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.updateModels">
+<code class="descname">updateModels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.updateModels"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Update contents of comboboxes with new plugin models</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.AddMultEditor.AddMultEditor.write_new_model_to_file">
+<code class="descname">write_new_model_to_file</code><span class="sig-paren">(</span><em>fname</em>, <em>model1_name</em>, <em>model2_name</em>, <em>operator</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/AddMultEditor.html#AddMultEditor.write_new_model_to_file"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Write and Save file</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.CategoryInstaller">
 <span id="sas-qtgui-utilities-categoryinstaller-module"></span><h2>sas.qtgui.Utilities.CategoryInstaller module</h2>
@@ -117,11 +196,220 @@ compile it and install
 </dd></dl>
 
 </div>
-<div class="section" id="sas-qtgui-utilities-fileconverter-module">
-<h2>sas.qtgui.Utilities.FileConverter module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.FileConverter">
+<span id="sas-qtgui-utilities-fileconverter-module"></span><h2>sas.qtgui.Utilities.FileConverter module</h2>
+<p>File Converter Widget</p>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.FileConverter.</code><code class="descname">FileConverterWidget</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.FileConverterUI.Ui_FileConverterUI</span></code></p>
+<p>Class to describe the behaviour of the File Converter widget</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.addSlots">
+<code class="descname">addSlots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.addSlots"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create callbacks for UI elements and outside signals</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.askFrameRange">
+<code class="descname">askFrameRange</code><span class="sig-paren">(</span><em>n_frames=1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.askFrameRange"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display a dialog asking the user to input the range of frames they
+would like to export</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n_frames</strong> – How many frames the loaded data file has</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A dictionary containing the parameters input by the user</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.convert1Ddata">
+<code class="descname">convert1Ddata</code><span class="sig-paren">(</span><em>qdata</em>, <em>iqdata</em>, <em>ofile</em>, <em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.convert1Ddata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Formats a 1D array of q_axis data and a 2D array of I axis data (where
+each row of iqdata is a separate row), into an array of Data1D objects</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.extractBSLdata">
+<code class="descname">extractBSLdata</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.extractBSLdata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Extracts data from a 2D BSL file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> – The header file to extract the data from</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return x_data:</th><td class="field-body">A 1D array containing all the x coordinates of the data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return y_data:</th><td class="field-body">A 1D array containing all the y coordinates of the data</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return frame_data:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">A dictionary of the form <em>{frame_number: data}</em>,
+where data is a 2D numpy array containing the intensity data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.getDetectorMetadata">
+<code class="descname">getDetectorMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.getDetectorMetadata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read the detector metadata fields and put them in the dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.getMetadata">
+<code class="descname">getMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.getMetadata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>metadata getter</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.getSampleMetadata">
+<code class="descname">getSampleMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.getSampleMetadata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read the sample metadata fields and put them in the dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.getSourceMetadata">
+<code class="descname">getSourceMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.getSourceMetadata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read the source metadata fields and put them in the dictionary</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onConvert">
+<code class="descname">onConvert</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onConvert"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Call the conversion method (and update DataExplorer with converted data)?</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onHelp">
+<code class="descname">onHelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onHelp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display online help related to the file converter</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onIFileOpen">
+<code class="descname">onIFileOpen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onIFileOpen"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the path chooser for file with I</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onInputFormat">
+<code class="descname">onInputFormat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onInputFormat"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Enable/disable UI items based on input format spec</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onNewFile">
+<code class="descname">onNewFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onNewFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>show the save new file widget</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onNewFileEdited">
+<code class="descname">onNewFileEdited</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onNewFileEdited"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Update the output file state on direct field edit</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.onQFileOpen">
+<code class="descname">onQFileOpen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.onQFileOpen"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the path chooser for file with Q</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.openFile">
+<code class="descname">openFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.openFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the path chooser for existent file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.readMetadata">
+<code class="descname">readMetadata</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.readMetadata"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read the metadata fields and put them in the dictionary</p>
+<p>This reads the UI elements directly, but we don’t
+have a clear MVP distinction in this widgets, so there.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.setValidators">
+<code class="descname">setValidators</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.setValidators"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Apply validators for double precision numbers to numerical fields</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FileConverter.FileConverterWidget.updateConvertState">
+<code class="descname">updateConvertState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FileConverter.html#FileConverterWidget.updateConvertState"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Asserts presece of files for coversion.
+If all present -&gt; enable the Convert button.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="sas-qtgui-utilities-frameselect-module">
-<h2>sas.qtgui.Utilities.FrameSelect module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.FrameSelect">
+<span id="sas-qtgui-utilities-frameselect-module"></span><h2>sas.qtgui.Utilities.FrameSelect module</h2>
+<p>FrameSelect class describes behaviour of the FrameSelect dialog</p>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.FrameSelect.</code><code class="descname">FrameSelect</code><span class="sig-paren">(</span><em>parent=None</em>, <em>frames=1</em>, <em>isBSL=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.FrameSelectUI.Ui_FrameSelect</span></code></p>
+<p>Class to describe the behaviour of the Frame Selector widget</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.addSlots">
+<code class="descname">addSlots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.addSlots"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Describe behaviour of OK and Cancel buttons</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.addState">
+<code class="descname">addState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.addState"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Minor bookkeeping</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.addText">
+<code class="descname">addText</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.addText"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Initialize view</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.getFrames">
+<code class="descname">getFrames</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.getFrames"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Accessor for state values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.onFirstChanged">
+<code class="descname">onFirstChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.onFirstChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Manage view-model sync</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.onIncrementChanged">
+<code class="descname">onIncrementChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.onIncrementChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Manage view-model sync</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.onLastChanged">
+<code class="descname">onLastChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.onLastChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Manage view-model sync</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.FrameSelect.FrameSelect.updateDisplay">
+<code class="descname">updateDisplay</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/FrameSelect.html#FrameSelect.updateDisplay"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>manage model-view sync</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.GenericReader">
 <span id="sas-qtgui-utilities-genericreader-module"></span><h2>sas.qtgui.Utilities.GenericReader module</h2>
@@ -146,12 +434,356 @@ compile it and install
 </dd></dl>
 
 </div>
-<div class="section" id="sas-qtgui-utilities-gridpanel-module">
-<h2>sas.qtgui.Utilities.GridPanel module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.GridPanel">
+<span id="sas-qtgui-utilities-gridpanel-module"></span><h2>sas.qtgui.Utilities.GridPanel module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.GridPanel.</code><code class="descname">BatchInversionOutputPanel</code><span class="sig-paren">(</span><em>parent=None</em>, <em>output_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchInversionOutputPanel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sas.qtgui.Utilities.GridPanel.BatchOutputPanel" title="sas.qtgui.Utilities.GridPanel.BatchOutputPanel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.GridPanel.BatchOutputPanel</span></code></a></p>
+<p>Class for stateless grid-like printout of P(r) parameters for any number
+of data sets</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel.closeEvent">
+<code class="descname">closeEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchInversionOutputPanel.closeEvent"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Tell the parent window the window closed</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel.onHelp">
+<em class="property">classmethod </em><code class="descname">onHelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchInversionOutputPanel.onHelp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Open a local url in the default browser</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchInversionOutputPanel.setupTable">
+<code class="descname">setupTable</code><span class="sig-paren">(</span><em>widget=None</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchInversionOutputPanel.setupTable"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create tablewidget items and show them, based on params</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.GridPanel.</code><code class="descname">BatchOutputPanel</code><span class="sig-paren">(</span><em>parent=None</em>, <em>output_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.GridPanelUI.Ui_GridPanelUI</span></code></p>
+<p>Class for stateless grid-like printout of model parameters for mutiple models</p>
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.ERROR_COLUMN_CAPTION">
+<code class="descname">ERROR_COLUMN_CAPTION</code><em class="property"> = ' (Err)'</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.IS_WIN">
+<code class="descname">IS_WIN</code><em class="property"> = False</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.actionLoadData">
+<code class="descname">actionLoadData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.actionLoadData"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Open file load dialog and load a .csv file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.actionSaveFile">
+<code class="descname">actionSaveFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.actionSaveFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generate a .csv file and dump it do disk</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.actionSendToExcel">
+<code class="descname">actionSendToExcel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.actionSendToExcel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Generates a .csv file and opens the default CSV reader</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.addFitResults">
+<code class="descname">addFitResults</code><span class="sig-paren">(</span><em>results</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.addFitResults"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a new tab with batch fitting results</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.addTabPage">
+<code class="descname">addTabPage</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.addTabPage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Add new tab page with QTableWidget</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.addToolbarActions">
+<code class="descname">addToolbarActions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.addToolbarActions"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Assing actions and callbacks to the File menu items</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.closeEvent">
+<code class="descname">closeEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.closeEvent"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Overwrite QDialog close method to allow for custom widget close</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.currentTable">
+<code class="descname">currentTable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.currentTable"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the currently shown QTabWidget</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.dataFromTable">
+<em class="property">classmethod </em><code class="descname">dataFromTable</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.dataFromTable"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Creates a dictionary {&lt;parameter&gt;:[list of values]} from the parameter table</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.onHelp">
+<em class="property">classmethod </em><code class="descname">onHelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.onHelp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Open a local url in the default browser</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.onPlot">
+<code class="descname">onPlot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.onPlot"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Plot selected fits by sending signal to the parent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.setupTable">
+<code class="descname">setupTable</code><span class="sig-paren">(</span><em>widget=None</em>, <em>data=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.setupTable"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create tablewidget items and show them, based on params</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.setupTableFromCSV">
+<code class="descname">setupTableFromCSV</code><span class="sig-paren">(</span><em>csv_data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.setupTableFromCSV"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create tablewidget items and show them, based on params</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.showContextMenu">
+<code class="descname">showContextMenu</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.showContextMenu"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show context specific menu in the tab table widget.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.windowClosedSignal">
+<code class="descname">windowClosedSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.GridPanel.BatchOutputPanel.writeBatchToFile">
+<em class="property">classmethod </em><code class="descname">writeBatchToFile</code><span class="sig-paren">(</span><em>data</em>, <em>tmpfile</em>, <em>details=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GridPanel.html#BatchOutputPanel.writeBatchToFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Helper to write result from batch into cvs file</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.GuiUtils">
 <span id="sas-qtgui-utilities-guiutils-module"></span><h2>sas.qtgui.Utilities.GuiUtils module</h2>
 <p>Global defaults and various utility functions usable by the general GUI</p>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">Communicate</code><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#Communicate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QObject</span></code></p>
+<p>Utility class for tracking of the Qt signals</p>
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.SaveFitParamsSignal">
+<code class="descname">SaveFitParamsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.activeGraphName">
+<code class="descname">activeGraphName</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.activeGraphsSignal">
+<code class="descname">activeGraphsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.changeDataExplorerTabSignal">
+<code class="descname">changeDataExplorerTabSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.copyExcelFitParamsSignal">
+<code class="descname">copyExcelFitParamsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.copyFitParamsSignal">
+<code class="descname">copyFitParamsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.copyLatexFitParamsSignal">
+<code class="descname">copyLatexFitParamsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.customModelDirectoryChanged">
+<code class="descname">customModelDirectoryChanged</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.dataDeletedSignal">
+<code class="descname">dataDeletedSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.deleteIntermediateTheoryPlotsSignal">
+<code class="descname">deleteIntermediateTheoryPlotsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.extMaskEditorSignal">
+<code class="descname">extMaskEditorSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.fileDataReceivedSignal">
+<code class="descname">fileDataReceivedSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.fileReadSignal">
+<code class="descname">fileReadSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.forcePlotDisplaySignal">
+<code class="descname">forcePlotDisplaySignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.maskEditorSignal">
+<code class="descname">maskEditorSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.pasteFitParamsSignal">
+<code class="descname">pasteFitParamsSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.perspectiveChangedSignal">
+<code class="descname">perspectiveChangedSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.plotFromNameSignal">
+<code class="descname">plotFromNameSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.plotRequestedSignal">
+<code class="descname">plotRequestedSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.plotUpdateSignal">
+<code class="descname">plotUpdateSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.progressBarUpdateSignal">
+<code class="descname">progressBarUpdateSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.resultPlotUpdateSignal">
+<code class="descname">resultPlotUpdateSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.sendDataToGridSignal">
+<code class="descname">sendDataToGridSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.sendDataToPanelSignal">
+<code class="descname">sendDataToPanelSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.statusBarUpdateSignal">
+<code class="descname">statusBarUpdateSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.updateMaskedDataSignal">
+<code class="descname">updateMaskedDataSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.updateModelCategoriesSignal">
+<code class="descname">updateModelCategoriesSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.updateModelFromDataOperationPanelSignal">
+<code class="descname">updateModelFromDataOperationPanelSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.updateModelFromPerspectiveSignal">
+<code class="descname">updateModelFromPerspectiveSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.updatePerspectiveWithDataSignal">
+<code class="descname">updatePerspectiveWithDataSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.GuiUtils.Communicate.updateTheoryFromPerspectiveSignal">
+<code class="descname">updateTheoryFromPerspectiveSignal</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sas.qtgui.Utilities.GuiUtils.DoubleValidator">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">DoubleValidator</code><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#DoubleValidator"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtGui.QDoubleValidator</span></code></p>
+<p>Allow only dots as decimal separator</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GuiUtils.DoubleValidator.fixup">
+<code class="descname">fixup</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#DoubleValidator.fixup"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Correct (remove) potential preexisting content</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GuiUtils.DoubleValidator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>input</em>, <em>pos</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#DoubleValidator.validate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return invalid for commas</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sas.qtgui.Utilities.GuiUtils.FormulaValidator">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">FormulaValidator</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#FormulaValidator"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtGui.QValidator</span></code></p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GuiUtils.FormulaValidator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>self</em>, <em>str</em>, <em>int</em><span class="sig-paren">)</span> &#x2192; Tuple[QValidator.State, str, int]<a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#FormulaValidator.validate"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sas.qtgui.Utilities.GuiUtils.HashableStandardItem">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">HashableStandardItem</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#HashableStandardItem"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtGui.QStandardItem</span></code></p>
+<p>Subclassed standard item with reimplemented __hash__
+to allow for use as an index.</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.GuiUtils.HashableStandardItem.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#HashableStandardItem.clone"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Assure __hash__ is cloned as well</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="sas.qtgui.Utilities.GuiUtils.checkModel">
 <code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">checkModel</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#checkModel"><span class="viewcode-link">[source]</span></a></dt>
@@ -312,6 +944,12 @@ Check the URL first, though.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="sas.qtgui.Utilities.GuiUtils.plotsOfType">
+<code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">plotsOfType</code><span class="sig-paren">(</span><em>model</em>, <em>datatype=&lt;class 'sas.qtgui.Plotting.PlotterData.Data1D'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#plotsOfType"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns the list of plots for the whole model of type <cite>datatype</cite></p>
+</dd></dl>
+
+<dl class="function">
 <dt id="sas.qtgui.Utilities.GuiUtils.readDataFromFile">
 <code class="descclassname">sas.qtgui.Utilities.GuiUtils.</code><code class="descname">readDataFromFile</code><span class="sig-paren">(</span><em>fp</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/GuiUtils.html#readDataFromFile"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Reads in Data1D/Data2 datasets from the file.
@@ -409,11 +1047,129 @@ Adds ‘update_data’ to that row.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="sas-qtgui-utilities-ipythonwidget-module">
-<h2>sas.qtgui.Utilities.IPythonWidget module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.IPythonWidget">
+<span id="sas-qtgui-utilities-ipythonwidget-module"></span><h2>sas.qtgui.Utilities.IPythonWidget module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.IPythonWidget.IPythonWidget">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.IPythonWidget.</code><code class="descname">IPythonWidget</code><span class="sig-paren">(</span><em>parent=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/IPythonWidget.html#IPythonWidget"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">qtconsole.rich_jupyter_widget.RichJupyterWidget</span></code></p>
+</dd></dl>
+
 </div>
-<div class="section" id="sas-qtgui-utilities-imageviewer-module">
-<h2>sas.qtgui.Utilities.ImageViewer module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.ImageViewer">
+<span id="sas-qtgui-utilities-imageviewer-module"></span><h2>sas.qtgui.Utilities.ImageViewer module</h2>
+<p>Image viewer widget.</p>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.ImageViewer.</code><code class="descname">ImageViewer</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.ImageViewerUI.Ui_ImageViewerUI</span></code></p>
+<p>Implemented as QMainWindow to enable easy menus</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.actionConvertToData">
+<code class="descname">actionConvertToData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.actionConvertToData"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the options dialog and if accepted, send data to conversion</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.actionCopyImage">
+<code class="descname">actionCopyImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.actionCopyImage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Copy MPL widget area to buffer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.actionHowTo">
+<code class="descname">actionHowTo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.actionHowTo"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Send the image viewer help URL to the help viewer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.actionLoadImage">
+<code class="descname">actionLoadImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.actionLoadImage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Image loader given files extensions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.actionPrintImage">
+<code class="descname">actionPrintImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.actionPrintImage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display printer dialog and print the MPL widget area</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.actionSaveImage">
+<code class="descname">actionSaveImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.actionSaveImage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Use the internal MPL method for saving to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.addPlotter">
+<code class="descname">addPlotter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.addPlotter"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Add a new plotter to the frame</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.addTriggers">
+<code class="descname">addTriggers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.addTriggers"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Trigger definitions for all menu/toolbar actions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.convertImage">
+<code class="descname">convertImage</code><span class="sig-paren">(</span><em>rgb</em>, <em>xmin</em>, <em>xmax</em>, <em>ymin</em>, <em>ymax</em>, <em>zscale</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.convertImage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Convert image to data2D</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.disableMenus">
+<code class="descname">disableMenus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.disableMenus"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>All menu items but “Load File” and “Help” should be disabled
+when no data is present</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.enableMenus">
+<code class="descname">enableMenus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.enableMenus"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Enable all menu items when data is present</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.rgb2gray">
+<code class="descname">rgb2gray</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.rgb2gray"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>RGB to Grey</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewer.showImage">
+<code class="descname">showImage</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewer.showImage"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the requested image in the main frame</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewerOptions">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.ImageViewer.</code><code class="descname">ImageViewerOptions</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewerOptions"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.ImageViewerOptionsUI.Ui_ImageViewerOptionsUI</span></code></p>
+<p>Logics for the image viewer options UI</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewerOptions.addDefaults">
+<code class="descname">addDefaults</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewerOptions.addDefaults"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Fill out textedits with default values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewerOptions.addValidators">
+<code class="descname">addValidators</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewerOptions.addValidators"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Define simple validators on line edits</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ImageViewer.ImageViewerOptions.getState">
+<code class="descname">getState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ImageViewer.html#ImageViewerOptions.getState"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>return current state of the widget</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.LocalConfig">
 <span id="sas-qtgui-utilities-localconfig-module"></span><h2>sas.qtgui.Utilities.LocalConfig module</h2>
@@ -425,8 +1181,47 @@ Adds ‘update_data’ to that row.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="sas-qtgui-utilities-modeleditor-module">
-<h2>sas.qtgui.Utilities.ModelEditor module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.ModelEditor">
+<span id="sas-qtgui-utilities-modeleditor-module"></span><h2>sas.qtgui.Utilities.ModelEditor module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.ModelEditor.ModelEditor">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.ModelEditor.</code><code class="descname">ModelEditor</code><span class="sig-paren">(</span><em>parent=None</em>, <em>is_python=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ModelEditor.html#ModelEditor"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.ModelEditor.Ui_ModelEditor</span></code></p>
+<p>Class describing the “advanced” model editor.
+This is a simple text browser allowing for editing python and
+supporting simple highlighting.</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ModelEditor.ModelEditor.addSignals">
+<code class="descname">addSignals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ModelEditor.html#ModelEditor.addSignals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to signals in the widget</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ModelEditor.ModelEditor.getModel">
+<code class="descname">getModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ModelEditor.html#ModelEditor.getModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return the current model, as displayed in the window</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.ModelEditor.ModelEditor.modelModified">
+<code class="descname">modelModified</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ModelEditor.ModelEditor.onEdit">
+<code class="descname">onEdit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ModelEditor.html#ModelEditor.onEdit"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to changes in the text browser.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ModelEditor.ModelEditor.setupWidgets">
+<code class="descname">setupWidgets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ModelEditor.html#ModelEditor.setupWidgets"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Set up dialog widgets.
+Here - just the highlighter connected to the text edit.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.ObjectLibrary">
 <span id="sas-qtgui-utilities-objectlibrary-module"></span><h2>sas.qtgui.Utilities.ObjectLibrary module</h2>
@@ -456,17 +1251,255 @@ Adds ‘update_data’ to that row.</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="sas-qtgui-utilities-plotview-module">
-<h2>sas.qtgui.Utilities.PlotView module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.PlotView">
+<span id="sas-qtgui-utilities-plotview-module"></span><h2>sas.qtgui.Utilities.PlotView module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.PlotView.EmbeddedPylab">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.PlotView.</code><code class="descname">EmbeddedPylab</code><span class="sig-paren">(</span><em>canvas</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PlotView.html#EmbeddedPylab"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Define a ‘with’ context manager that lets you use pylab commands to
+plot on an embedded canvas.  This is useful for wrapping existing
+scripts in a GUI, and benefits from being more familiar than the
+underlying object oriented interface.</p>
+<p>As a convenience, the pylab module is returned on entry.</p>
+<p><em>Example</em></p>
+<p>The following example shows how to use the WxAgg backend in a wx panel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib.backends.backend_wxagg</span> <span class="k">import</span> <span class="n">FigureCanvasWxAgg</span> <span class="k">as</span> <span class="n">FigureCanvas</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_wxagg</span> <span class="k">import</span> <span class="n">NavigationToolbar2WxAgg</span> <span class="k">as</span> <span class="n">Toolbar</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="k">import</span> <span class="n">Figure</span>
+
+<span class="k">class</span> <span class="nc">PlotPanel</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="n">figure</span> <span class="o">=</span> <span class="n">Figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">72</span><span class="p">)</span>
+        <span class="n">canvas</span> <span class="o">=</span> <span class="n">FigureCanvas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_ANY</span><span class="p">,</span> <span class="n">figure</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pylab_interface</span> <span class="o">=</span> <span class="n">EmbeddedPylab</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+
+        <span class="c1"># Instantiate the matplotlib navigation toolbar and explicitly show it.</span>
+        <span class="n">mpl_toolbar</span> <span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+        <span class="n">mpl_toolbar</span><span class="o">.</span><span class="n">Realize</span><span class="p">()</span>
+
+        <span class="c1"># Create a vertical box sizer to manage the widgets in the main panel.</span>
+        <span class="n">sizer</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+        <span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">LEFT</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">mpl_toolbar</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="o">|</span><span class="n">wx</span><span class="o">.</span><span class="n">ALL</span><span class="p">,</span> <span class="n">border</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Associate the sizer with its container.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetSizer</span><span class="p">(</span><span class="n">sizer</span><span class="p">)</span>
+        <span class="n">sizer</span><span class="o">.</span><span class="n">Fit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">pylab_interface</span> <span class="k">as</span> <span class="n">pylab</span><span class="p">:</span>
+            <span class="n">pylab</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+            <span class="n">pylab</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="sas-qtgui-utilities-plugindefinition-module">
-<h2>sas.qtgui.Utilities.PluginDefinition module</h2>
+<p>Similar patterns should work for the other backends.  Check the source code
+in matplotlib.backend_bases.* for examples showing how to use matplotlib
+with other GUI toolkits.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="sas.qtgui.Utilities.PlotView.PlotView">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.PlotView.</code><code class="descname">PlotView</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PlotView.html#PlotView"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QWidget</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.PlotView._PlotViewShared</span></code></p>
+</dd></dl>
+
 </div>
-<div class="section" id="sas-qtgui-utilities-pluginmanager-module">
-<h2>sas.qtgui.Utilities.PluginManager module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.PluginDefinition">
+<span id="sas-qtgui-utilities-plugindefinition-module"></span><h2>sas.qtgui.Utilities.PluginDefinition module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.PluginDefinition.</code><code class="descname">PluginDefinition</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.PluginDefinitionUI.Ui_PluginDefinition</span></code></p>
+<p>Class describing the “simple” plugin editor.
+This is a simple series of widgets allowing for specifying
+model form and parameters.</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.addSignals">
+<code class="descname">addSignals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.addSignals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Define slots for widget signals</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.addTooltip">
+<code class="descname">addTooltip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.addTooltip"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Add the default tooltip to the text field</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.addWidgets">
+<code class="descname">addWidgets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.addWidgets"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Initialize various widgets in the dialog</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.getModel">
+<code class="descname">getModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.getModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return the current plugin model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.initializeModel">
+<code class="descname">initializeModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.initializeModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Define the dictionary for internal data representation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.modelModified">
+<code class="descname">modelModified</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.onDescriptionChanged">
+<code class="descname">onDescriptionChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.onDescriptionChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to changes in plugin description</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.onFunctionChanged">
+<code class="descname">onFunctionChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.onFunctionChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to changes in function body</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.onOverwrite">
+<code class="descname">onOverwrite</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.onOverwrite"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to change in file overwrite checkbox</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.onParamsChanged">
+<code class="descname">onParamsChanged</code><span class="sig-paren">(</span><em>row</em>, <em>column</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.onParamsChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to changes in non-polydisperse parameter table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.onParamsPDChanged">
+<code class="descname">onParamsPDChanged</code><span class="sig-paren">(</span><em>row</em>, <em>column</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.onParamsPDChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to changes in non-polydisperse parameter table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginDefinition.PluginDefinition.onPluginNameChanged">
+<code class="descname">onPluginNameChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginDefinition.html#PluginDefinition.onPluginNameChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to changes in plugin name</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-sas.qtgui.Utilities.PluginManager">
+<span id="sas-qtgui-utilities-pluginmanager-module"></span><h2>sas.qtgui.Utilities.PluginManager module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.PluginManager.</code><code class="descname">PluginManager</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.PluginManagerUI.Ui_PluginManagerUI</span></code></p>
+<p>Class describing the model plugin manager.
+This is a simple list widget allowing for viewing/adding/deleting custom models.</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.addSignals">
+<code class="descname">addSignals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.addSignals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Define slots for widget signals</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onAdd">
+<code class="descname">onAdd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onAdd"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the add new model dialog</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onAddFile">
+<code class="descname">onAddFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onAddFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Open system Load FIle dialog, load a plugin and put it in the plugin directory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onDelete">
+<code class="descname">onDelete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onDelete"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Remove the file containing the selected plugin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onDuplicate">
+<code class="descname">onDuplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onDuplicate"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Creates a copy of the selected model(s)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onEdit">
+<code class="descname">onEdit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onEdit"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the edit existing model dialog</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onHelp">
+<code class="descname">onHelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onHelp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Show the help page in the default browser</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.onSelectionChanged">
+<code class="descname">onSelectionChanged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.onSelectionChanged"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Respond to row selection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PluginManager.PluginManager.readModels">
+<code class="descname">readModels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PluginManager.html#PluginManager.readModels"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Read in custom models from the default location</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.PythonSyntax">
 <span id="sas-qtgui-utilities-pythonsyntax-module"></span><h2>sas.qtgui.Utilities.PythonSyntax module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.PythonSyntax.</code><code class="descname">PythonHighlighter</code><span class="sig-paren">(</span><em>document</em>, <em>is_python=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PythonSyntax.html#PythonHighlighter"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtGui.QSyntaxHighlighter</span></code></p>
+<p>Syntax highlighter for the Python language.</p>
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.braces">
+<code class="descname">braces</code><em class="property"> = ['\\{', '\\}', '\\(', '\\)', '\\[', '\\]']</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.c_keywords">
+<code class="descname">c_keywords</code><em class="property"> = ['auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern', 'float', 'for', 'goto', 'if', 'int', 'long', 'register', 'return', 'short', 'signed', 'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while']</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.highlightBlock">
+<code class="descname">highlightBlock</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PythonSyntax.html#PythonHighlighter.highlightBlock"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Apply syntax highlighting to the given block of text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.match_multiline">
+<code class="descname">match_multiline</code><span class="sig-paren">(</span><em>text</em>, <em>delimiter</em>, <em>in_state</em>, <em>style</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PythonSyntax.html#PythonHighlighter.match_multiline"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Do highlighting of multi-line strings. <code class="docutils literal notranslate"><span class="pre">delimiter</span></code> should be a
+<code class="docutils literal notranslate"><span class="pre">QRegExp</span></code> for triple-single-quotes or triple-double-quotes, and
+<code class="docutils literal notranslate"><span class="pre">in_state</span></code> should be a unique integer to represent the corresponding
+state changes when inside those strings. Returns True if we’re still
+inside a multi-line string when this function is finished.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.operators">
+<code class="descname">operators</code><em class="property"> = ['=', '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', '\\+', '-', '\\*', '/', '//', '\\%', '\\*\\*', '\\+=', '-=', '\\*=', '/=', '\\%=', '\\^', '\\|', '\\&amp;', '\\~', '&gt;&gt;', '&lt;&lt;']</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.PythonSyntax.PythonHighlighter.python_keywords">
+<code class="descname">python_keywords</code><em class="property"> = ['and', 'assert', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'exec', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'not', 'or', 'pass', 'print', 'raise', 'return', 'try', 'while', 'yield', 'None', 'True', 'False']</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="sas.qtgui.Utilities.PythonSyntax.format">
 <code class="descclassname">sas.qtgui.Utilities.PythonSyntax.</code><code class="descname">format</code><span class="sig-paren">(</span><em>color</em>, <em>style=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/PythonSyntax.html#format"><span class="viewcode-link">[source]</span></a></dt>
@@ -474,18 +1507,306 @@ Adds ‘update_data’ to that row.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="sas-qtgui-utilities-reportdialog-module">
-<h2>sas.qtgui.Utilities.ReportDialog module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.ReportDialog">
+<span id="sas-qtgui-utilities-reportdialog-module"></span><h2>sas.qtgui.Utilities.ReportDialog module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.ReportDialog.</code><code class="descname">ReportDialog</code><span class="sig-paren">(</span><em>parent=None</em>, <em>report_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.ReportDialogUI.Ui_ReportDialogUI</span></code></p>
+<p>Class for stateless grid-like printout of model parameters for mutiple models</p>
+<dl class="staticmethod">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.HTML2PDF">
+<em class="property">static </em><code class="descname">HTML2PDF</code><span class="sig-paren">(</span><em>data</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.HTML2PDF"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Create a PDF file from html source string.
+Returns True is the file creation was successful.
+: data: html string
+: filename: name of file to be saved</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.getPictures">
+<code class="descname">getPictures</code><span class="sig-paren">(</span><em>basename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.getPictures"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Returns list of saved MPL figures</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.onHTMLSave">
+<em class="property">static </em><code class="descname">onHTMLSave</code><span class="sig-paren">(</span><em>html</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.onHTMLSave"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>HTML file write</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.onPrint">
+<code class="descname">onPrint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.onPrint"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display the print dialog and send the report to printer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.onSave">
+<code class="descname">onSave</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.onSave"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display the Save As… prompt and save the report if instructed so</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.onTXTSave">
+<em class="property">static </em><code class="descname">onTXTSave</code><span class="sig-paren">(</span><em>data</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.onTXTSave"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Simple txt file serialization</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ReportDialog.ReportDialog.setupDialog">
+<code class="descname">setupDialog</code><span class="sig-paren">(</span><em>output=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ReportDialog.html#ReportDialog.setupDialog"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Display the HTML content in the browser.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities.ResultPanel">
 <span id="sas-qtgui-utilities-resultpanel-module"></span><h2>sas.qtgui.Utilities.ResultPanel module</h2>
 <p>FitPanel class contains fields allowing to fit  models and  data</p>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.ResultPanel.ResultPanel">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.ResultPanel.</code><code class="descname">ResultPanel</code><span class="sig-paren">(</span><em>parent</em>, <em>manager=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ResultPanel.html#ResultPanel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QTabWidget</span></code></p>
+<p>FitPanel class contains fields allowing to fit  models and  data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">For Fit to be performed the user should check at least one parameter
+on fit Panel window.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ResultPanel.ResultPanel.closeEvent">
+<code class="descname">closeEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ResultPanel.html#ResultPanel.closeEvent"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Overwrite QDialog close method to allow for custom widget close</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ResultPanel.ResultPanel.onPlotResults">
+<code class="descname">onPlotResults</code><span class="sig-paren">(</span><em>results</em>, <em>optimizer='Unknown'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ResultPanel.html#ResultPanel.onPlotResults"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.ResultPanel.ResultPanel.updateBumps">
+<code class="descname">updateBumps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/ResultPanel.html#ResultPanel.updateBumps"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Monkeypatching bumps plot viewer to allow Qt</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.ResultPanel.ResultPanel.windowClosedSignal">
+<code class="descname">windowClosedSignal</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.ResultPanel.ResultPanel.window_name">
+<code class="descname">window_name</code><em class="property"> = 'Result panel'</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="sas-qtgui-utilities-sasviewlogger-module">
-<h2>sas.qtgui.Utilities.SasviewLogger module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.SasviewLogger">
+<span id="sas-qtgui-utilities-sasviewlogger-module"></span><h2>sas.qtgui.Utilities.SasviewLogger module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.SasviewLogger.QtHandler">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.SasviewLogger.</code><code class="descname">QtHandler</code><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/SasviewLogger.html#QtHandler"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QObject</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code></p>
+<p>Version of logging handler “emitting” the message to custom stdout()</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.SasviewLogger.QtHandler.emit">
+<code class="descname">emit</code><span class="sig-paren">(</span><em>record</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/SasviewLogger.html#QtHandler.emit"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Do whatever it takes to actually log the specified logging record.</p>
+<p>This version is intended to be implemented by subclasses and so
+raises a NotImplementedError.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sas.qtgui.Utilities.SasviewLogger.QtHandler.messageWritten">
+<code class="descname">messageWritten</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="sas.qtgui.Utilities.SasviewLogger.setup_qt_logging">
+<code class="descclassname">sas.qtgui.Utilities.SasviewLogger.</code><code class="descname">setup_qt_logging</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/SasviewLogger.html#setup_qt_logging"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="sas-qtgui-utilities-tabbedmodeleditor-module">
-<h2>sas.qtgui.Utilities.TabbedModelEditor module</h2>
+<div class="section" id="module-sas.qtgui.Utilities.TabbedModelEditor">
+<span id="sas-qtgui-utilities-tabbedmodeleditor-module"></span><h2>sas.qtgui.Utilities.TabbedModelEditor module</h2>
+<dl class="class">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor">
+<em class="property">class </em><code class="descclassname">sas.qtgui.Utilities.TabbedModelEditor.</code><code class="descname">TabbedModelEditor</code><span class="sig-paren">(</span><em>parent=None</em>, <em>edit_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.qtgui.Utilities.UI.TabbedModelEditor.Ui_TabbedModelEditor</span></code></p>
+<p>Model editor “container” class describing interaction between
+plugin definition widget and model editor widget.
+Once the model is defined, it can be saved as a plugin.</p>
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.addSignals">
+<code class="descname">addSignals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.addSignals"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Define slots for common widget signals</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.addWidgets">
+<code class="descname">addWidgets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.addWidgets"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Populate tabs with widgets</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.canWriteModel">
+<code class="descname">canWriteModel</code><span class="sig-paren">(</span><em>model=None</em>, <em>full_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.canWriteModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Determine if the current plugin can be written to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.closeEvent">
+<code class="descname">closeEvent</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.closeEvent"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Overwrite the close even to assure intent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.editorModelModified">
+<code class="descname">editorModelModified</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.editorModelModified"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>User modified the model in the Model Editor.
+Disable the plugin editor and show that the model is changed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.generateModel">
+<code class="descname">generateModel</code><span class="sig-paren">(</span><em>model</em>, <em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.generateModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>generate model from the current plugin state</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.getModel">
+<code class="descname">getModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.getModel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Retrieves plugin model from the currently open tab</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.getParamHelper">
+<em class="property">classmethod </em><code class="descname">getParamHelper</code><span class="sig-paren">(</span><em>param_str</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.getParamHelper"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>yield a sequence of name, value pairs for the parameters in param_str</p>
+<p>Parameters can be defined by one per line by name=value, or multiple
+on the same line by separating the pairs by semicolon or comma.  The
+value is optional and defaults to “1.0”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.isModelCorrect">
+<code class="descname">isModelCorrect</code><span class="sig-paren">(</span><em>full_path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.isModelCorrect"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Run the sasmodels method for model check
+and return True if the model is good.
+False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.loadFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Performs the load operation and updates the view</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.onApply">
+<code class="descname">onApply</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.onApply"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Write the plugin and update the model editor if plugin editor open
+Write/overwrite the plugin if model editor open</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.onCancel">
+<code class="descname">onCancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.onCancel"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Accept if document not modified, confirm intent otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.onHelp">
+<code class="descname">onHelp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.onHelp"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bring up the Model Editor Documentation whenever
+the HELP button is clicked.
+Calls Documentation Window with the path of the location within the
+documentation tree (after /doc/ ….”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.onLoad">
+<code class="descname">onLoad</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.onLoad"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Loads a model plugin file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.onModifiedExit">
+<code class="descname">onModifiedExit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.onModifiedExit"><span class="viewcode-link">[source]</span></a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.pluginTitleSet">
+<code class="descname">pluginTitleSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.pluginTitleSet"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>User modified the model name.
+Display the model name in the window title
+and allow for model save.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.saveClose">
+<code class="descname">saveClose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.saveClose"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Check if file needs saving before closing or model reloading</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.setPluginActive">
+<code class="descname">setPluginActive</code><span class="sig-paren">(</span><em>is_active=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.setPluginActive"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Enablement control for all the controls on the simple plugin editor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.setTabEdited">
+<code class="descname">setTabEdited</code><span class="sig-paren">(</span><em>is_edited</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.setTabEdited"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Change the widget name to indicate unsaved state
+Unsaved state: add “*” to filename display
+saved state: remove “*” from filename display</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.strFromParamDict">
+<em class="property">classmethod </em><code class="descname">strFromParamDict</code><span class="sig-paren">(</span><em>param_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.strFromParamDict"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Creates string from parameter dictionary</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span><span class="s1">&#39;value&#39;</span><span class="p">),</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span><span class="s1">&#39;value&#39;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.updateFromEditor">
+<code class="descname">updateFromEditor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.updateFromEditor"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Save the current state of the Model Editor</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.updateFromPlugin">
+<code class="descname">updateFromPlugin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.updateFromPlugin"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Write the plugin and update the model editor</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sas.qtgui.Utilities.TabbedModelEditor.TabbedModelEditor.writeFile">
+<em class="property">classmethod </em><code class="descname">writeFile</code><span class="sig-paren">(</span><em>fname</em>, <em>model_str=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/qtgui/Utilities/TabbedModelEditor.html#TabbedModelEditor.writeFile"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Write model content to file “fname”</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-sas.qtgui.Utilities">
 <span id="module-contents"></span><h2>Module contents</h2>
@@ -498,32 +1819,32 @@ Adds ‘update_data’ to that row.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <h3><a href="../../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sas.qtgui.Utilities package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-addmulteditor-module">sas.qtgui.Utilities.AddMultEditor module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.AddMultEditor">sas.qtgui.Utilities.AddMultEditor module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.CategoryInstaller">sas.qtgui.Utilities.CategoryInstaller module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.ConnectionProxy">sas.qtgui.Utilities.ConnectionProxy module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.CustomDir">sas.qtgui.Utilities.CustomDir module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-fileconverter-module">sas.qtgui.Utilities.FileConverter module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-frameselect-module">sas.qtgui.Utilities.FrameSelect module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.FileConverter">sas.qtgui.Utilities.FileConverter module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.FrameSelect">sas.qtgui.Utilities.FrameSelect module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.GenericReader">sas.qtgui.Utilities.GenericReader module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-gridpanel-module">sas.qtgui.Utilities.GridPanel module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.GridPanel">sas.qtgui.Utilities.GridPanel module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.GuiUtils">sas.qtgui.Utilities.GuiUtils module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-ipythonwidget-module">sas.qtgui.Utilities.IPythonWidget module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-imageviewer-module">sas.qtgui.Utilities.ImageViewer module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.IPythonWidget">sas.qtgui.Utilities.IPythonWidget module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.ImageViewer">sas.qtgui.Utilities.ImageViewer module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.LocalConfig">sas.qtgui.Utilities.LocalConfig module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-modeleditor-module">sas.qtgui.Utilities.ModelEditor module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.ModelEditor">sas.qtgui.Utilities.ModelEditor module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.ObjectLibrary">sas.qtgui.Utilities.ObjectLibrary module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-plotview-module">sas.qtgui.Utilities.PlotView module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-plugindefinition-module">sas.qtgui.Utilities.PluginDefinition module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-pluginmanager-module">sas.qtgui.Utilities.PluginManager module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.PlotView">sas.qtgui.Utilities.PlotView module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.PluginDefinition">sas.qtgui.Utilities.PluginDefinition module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.PluginManager">sas.qtgui.Utilities.PluginManager module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.PythonSyntax">sas.qtgui.Utilities.PythonSyntax module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-reportdialog-module">sas.qtgui.Utilities.ReportDialog module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.ReportDialog">sas.qtgui.Utilities.ReportDialog module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities.ResultPanel">sas.qtgui.Utilities.ResultPanel module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-sasviewlogger-module">sas.qtgui.Utilities.SasviewLogger module</a></li>
-<li><a class="reference internal" href="#sas-qtgui-utilities-tabbedmodeleditor-module">sas.qtgui.Utilities.TabbedModelEditor module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.SasviewLogger">sas.qtgui.Utilities.SasviewLogger module</a></li>
+<li><a class="reference internal" href="#module-sas.qtgui.Utilities.TabbedModelEditor">sas.qtgui.Utilities.TabbedModelEditor module</a></li>
 <li><a class="reference internal" href="#module-sas.qtgui.Utilities">Module contents</a></li>
 </ul>
 </li>
@@ -573,7 +1894,7 @@ Adds ‘update_data’ to that row.</p>
         <li class="right" >
           <a href="sas.qtgui.UnitTesting.html" title="sas.qtgui.UnitTesting package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -581,8 +1902,8 @@ Adds ‘update_data’ to that row.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.MainWindow.DataExplorer &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.MainWindow.DataExplorer &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -41,46 +41,51 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.MainWindow.DataExplorer</h1><div class="highlight"><pre>
-<span></span><span class="c1"># global</span>
+<span></span><span class="c1"># pylint: disable=E501, E203, E701</span>
+<span class="c1"># global</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">threads</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="k">import</span> <span class="n">threads</span>
 
 <span class="c1"># SASCALC</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.loader</span> <span class="kn">import</span> <span class="n">Loader</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.loader</span> <span class="k">import</span> <span class="n">Loader</span>
 
 <span class="c1"># QTGUI</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Plotting.PlotHelper</span> <span class="k">as</span> <span class="nn">PlotHelper</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="kn">import</span> <span class="n">Plotter</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="kn">import</span> <span class="n">Plotter2D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.MaskEditor</span> <span class="kn">import</span> <span class="n">MaskEditor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="k">import</span> <span class="n">Plotter</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="k">import</span> <span class="n">Plotter2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.MaskEditor</span> <span class="k">import</span> <span class="n">MaskEditor</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataManager</span> <span class="kn">import</span> <span class="n">DataManager</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DroppableDataLoadWidget</span> <span class="kn">import</span> <span class="n">DroppableDataLoadWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DataManager</span> <span class="k">import</span> <span class="n">DataManager</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.DroppableDataLoadWidget</span> <span class="k">import</span> <span class="n">DroppableDataLoadWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.MainWindow.NameChanger</span> <span class="k">import</span> <span class="n">ChangeName</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Perspectives</span> <span class="k">as</span> <span class="nn">Perspectives</span>
 
 <span class="n">DEFAULT_PERSPECTIVE</span> <span class="o">=</span> <span class="s2">&quot;Fitting&quot;</span>
+<span class="n">ANALYSIS_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fitting (*.fitv)&#39;</span><span class="p">,</span> <span class="s1">&#39;Inversion (*.pr)&#39;</span><span class="p">,</span> <span class="s1">&#39;Invariant (*.inv)&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;Corfunc (*.crf)&#39;</span><span class="p">,</span> <span class="s1">&#39;All Files (*.*)&#39;</span><span class="p">]</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="DataExplorerWindow"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow">[docs]</a><span class="k">class</span> <span class="nc">DataExplorerWindow</span><span class="p">(</span><span class="n">DroppableDataLoadWidget</span><span class="p">):</span>
     <span class="c1"># The controller which is responsible for managing signal slots connections</span>
     <span class="c1"># for the gui and providing an interface to the data model.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">guimanager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">guimanager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataExplorerWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">guimanager</span><span class="p">)</span>
 
         <span class="c1"># Main model for keeping loaded data</span>
@@ -138,7 +143,6 @@
         <span class="c1"># Connect the comboboxes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbSelect</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectData</span><span class="p">)</span>
 
-        <span class="c1">#self.closeEvent.connect(self.closeEvent)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onTabSwitch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">fileReadSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loadFromURL</span><span class="p">)</span>
@@ -161,8 +165,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data_proxy</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_proxy</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 
+        <span class="c1"># Slots for model changes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFileListChanged</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFileListChanged</span><span class="p">)</span>
+
         <span class="c1"># Don&#39;t show &quot;empty&quot; rows with data objects</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_proxy</span><span class="o">.</span><span class="n">setFilterRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^()]&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create a window to allow the display name to change</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nameChangeBox</span> <span class="o">=</span> <span class="n">ChangeName</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># The Data viewer is QTreeView showing the proxy model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">treeView</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_proxy</span><span class="p">)</span>
@@ -201,7 +212,7 @@
 <span class="sd">        0: data tab</span>
 <span class="sd">        1: theory tab</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span><span class="p">(</span><span class="n">tab</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">tab</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.displayHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.displayHelp">[docs]</a>    <span class="k">def</span> <span class="nf">displayHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -311,20 +322,22 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">default_project_location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="c1"># Delete all data and initialize all perspectives</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">deleteAllItems</span><span class="p">()</span>
-            <span class="c1"># Currently project load is available only for fitting</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">currentText</span> <span class="o">!=</span> <span class="n">DEFAULT_PERSPECTIVE</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">DEFAULT_PERSPECTIVE</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">loadAllPerspectives</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initPerspectives</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">readProject</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.loadAnalysis"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.loadAnalysis">[docs]</a>    <span class="k">def</span> <span class="nf">loadAnalysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when the &quot;Open Analysis&quot; menu item chosen.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_filter</span> <span class="o">=</span> <span class="s1">&#39;;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ANALYSIS_TYPES</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;parent&#39;</span>    <span class="p">:</span> <span class="bp">self</span><span class="p">,</span>
             <span class="s1">&#39;caption&#39;</span>   <span class="p">:</span> <span class="s1">&#39;Open Analysis&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;filter&#39;</span>    <span class="p">:</span> <span class="s1">&#39;Project (*.fitv);;All files (*.*)&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filter&#39;</span>    <span class="p">:</span> <span class="n">file_filter</span><span class="p">,</span>
             <span class="s1">&#39;options&#39;</span>   <span class="p">:</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">DontUseNativeDialog</span>
         <span class="p">}</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -354,13 +367,13 @@
 
         <span class="k">return</span> <span class="n">filename</span></div>
 
-<div class="viewcode-block" id="DataExplorerWindow.saveAsAnalysisFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.saveAsAnalysisFile">[docs]</a>    <span class="k">def</span> <span class="nf">saveAsAnalysisFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="DataExplorerWindow.saveAsAnalysisFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.saveAsAnalysisFile">[docs]</a>    <span class="k">def</span> <span class="nf">saveAsAnalysisFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;fitv&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the save as... dialog and return the chosen filepath</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">default_name</span> <span class="o">=</span> <span class="s2">&quot;FitPage&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tab_id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.fitv&quot;</span>
+        <span class="n">default_name</span> <span class="o">=</span> <span class="s2">&quot;Analysis&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tab_id</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span>
 
-        <span class="n">wildcard</span> <span class="o">=</span> <span class="s2">&quot;fitv files (*.fitv)&quot;</span>
+        <span class="n">wildcard</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> files (*.</span><span class="si">{0}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extension</span><span class="p">)</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;caption&#39;</span>   <span class="p">:</span> <span class="s1">&#39;Save As&#39;</span><span class="p">,</span>
             <span class="s1">&#39;directory&#39;</span> <span class="p">:</span> <span class="n">default_name</span><span class="p">,</span>
@@ -372,16 +385,16 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">filename_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">filename</span></div>
 
-<div class="viewcode-block" id="DataExplorerWindow.saveAnalysis"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.saveAnalysis">[docs]</a>    <span class="k">def</span> <span class="nf">saveAnalysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tab_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="DataExplorerWindow.saveAnalysis"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.saveAnalysis">[docs]</a>    <span class="k">def</span> <span class="nf">saveAnalysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tab_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;fitv&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called when the &quot;Save Analysis&quot; menu item chosen.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveAsAnalysisFile</span><span class="p">(</span><span class="n">tab_id</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveAsAnalysisFile</span><span class="p">(</span><span class="n">tab_id</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">extension</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;fitv&#39;</span><span class="p">))</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">ext</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;Saving analysis... </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
@@ -400,9 +413,9 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
             <span class="c1"># Now, all plots under this item</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filename</span>
-            <span class="n">all_data</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-            <span class="n">other_datas</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">all_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">other_datas</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
             <span class="c1"># skip the main plot</span>
             <span class="n">other_datas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">other_datas</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
             <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">other_datas</span><span class="p">:</span>
@@ -427,14 +440,37 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
             <span class="c1"># Now, all plots under this item</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+            <span class="c1">######################################################</span>
+            <span class="c1"># Reset all slider values in data so save/load does not choke on them</span>
+            <span class="c1"># Remove once slider definition moved out of PlotterData</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_low_q_setter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_high_q_setter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_low_q_input</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_high_q_input</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_update_on_move</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_low_q_getter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">slider_high_q_getter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1">######################################################</span>
             <span class="n">is_checked</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span>
             <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;checked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_checked</span>
             <span class="n">other_datas</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="c1"># save underlying theories</span>
-            <span class="n">other_datas</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+            <span class="n">other_datas</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
             <span class="c1"># skip the main plot</span>
             <span class="n">other_datas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">other_datas</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">datas</span> <span class="ow">in</span> <span class="n">other_datas</span><span class="p">:</span>
+                <span class="c1">######################################################</span>
+                <span class="c1"># Reset all slider values in data so save/load does not choke on them</span>
+                <span class="c1"># Remove once slider definition moved out of PlotterData</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_low_q_setter</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_high_q_setter</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_low_q_input</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_high_q_input</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_update_on_move</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_low_q_getter</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">datas</span><span class="o">.</span><span class="n">slider_high_q_getter</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1">######################################################</span>
             <span class="n">all_data</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">other_datas</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">all_data</span></div>
 
@@ -449,10 +485,10 @@
                 <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
                 <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">:</span> <span class="k">continue</span>
                 <span class="c1"># We found the dataset - save it.</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
                 <span class="n">is_checked</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span>
                 <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;checked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_checked</span>
-                <span class="n">other_datas</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+                <span class="n">other_datas</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
                 <span class="c1"># skip the main plot</span>
                 <span class="n">other_datas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">other_datas</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
                 <span class="n">all_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">other_datas</span><span class="p">]</span>
@@ -464,7 +500,6 @@
         <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
-                <span class="n">properties</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
                 <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">:</span> <span class="k">continue</span>
@@ -507,7 +542,7 @@
 
 <div class="viewcode-block" id="DataExplorerWindow.readProject"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.readProject">[docs]</a>    <span class="k">def</span> <span class="nf">readProject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read out datasets and fitpages from file</span>
+<span class="sd">        Read out datasets and perspective information from file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Find out the filetype based on extension</span>
         <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -519,7 +554,7 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
                 <span class="c1"># disregard malformed SVS and try to recover whatever</span>
                 <span class="c1"># is available</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error while reading the project file: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error while reading the project file: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">pass</span>
             <span class="c1"># Convert fitpage properties and update the dict</span>
@@ -527,7 +562,7 @@
                 <span class="n">all_data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">convertFromSVS</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
                 <span class="c1"># disregard malformed SVS and try to recover regardless</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error while converting the project file: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error while converting the project file: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
@@ -537,28 +572,41 @@
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
                     <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Project load failed with &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
                     <span class="k">return</span>
+        <span class="n">cs_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">visible_perspective</span> <span class="o">=</span> <span class="n">DEFAULT_PERSPECTIVE</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;is_batch&#39;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">chkBatch</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span> <span class="k">if</span> <span class="n">value</span><span class="o">==</span><span class="s1">&#39;True&#39;</span> <span class="k">else</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s1">&#39;batch_grid&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_data</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="n">grid_pages</span> <span class="o">=</span> <span class="n">all_data</span><span class="p">[</span><span class="s1">&#39;batch_grid&#39;</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">grid_name</span><span class="p">,</span> <span class="n">grid_page</span> <span class="ow">in</span> <span class="n">grid_pages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">grid_page</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid_name</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">showBatchOutput</span><span class="p">(</span><span class="n">grid_page</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;is_batch&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chkBatch</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;batch_grid&#39;</span> <span class="ow">in</span> <span class="n">all_data</span><span class="p">:</span>
+                    <span class="n">grid_pages</span> <span class="o">=</span> <span class="n">all_data</span><span class="p">[</span><span class="s1">&#39;batch_grid&#39;</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">grid_name</span><span class="p">,</span> <span class="n">grid_page</span> <span class="ow">in</span> <span class="n">grid_pages</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">grid_page</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grid_name</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">showBatchOutput</span><span class="p">(</span><span class="n">grid_page</span><span class="p">)</span>
                 <span class="k">continue</span>
+            <span class="c1"># Store constraint pages until all individual fits are open</span>
             <span class="k">if</span> <span class="s1">&#39;cs_tab&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">cs_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="k">continue</span>
+            <span class="c1"># Load last visible perspective as stored in project file</span>
+            <span class="k">if</span> <span class="s1">&#39;visible_perspective&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">visible_perspective</span> <span class="o">=</span> <span class="n">value</span>
             <span class="c1"># send newly created items to the perspective</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">updatePerspectiveWithProperties</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
+        <span class="c1"># Set to fitting perspective and load in Batch and C&amp;S Pages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">DEFAULT_PERSPECTIVE</span><span class="p">))</span>
         <span class="c1"># See if there are any batch pages defined and create them, if so</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateWithBatchPages</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
-
+        <span class="c1"># Get the constraint dict and apply it</span>
+        <span class="n">constraint_dict</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">getConstraints</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">updateFromConstraints</span><span class="p">(</span><span class="n">constraint_dict</span><span class="p">)</span>
         <span class="c1"># Only now can we create/assign C&amp;S pages.</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="s1">&#39;cs_tab&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">updatePerspectiveWithProperties</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cs_keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updatePerspectiveWithProperties</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">all_data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+        <span class="c1"># Set to perspective shown when project was saved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">visible_perspective</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.updateWithBatchPages"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.updateWithBatchPages">[docs]</a>    <span class="k">def</span> <span class="nf">updateWithBatchPages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -595,11 +643,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s1">&#39;fit_data&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-            <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;fit_data&#39;</span><span class="p">]}</span>
+            <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;fit_data&#39;</span><span class="p">]}</span>
             <span class="c1"># Create new model items in the data explorer</span>
             <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateModelFromData</span><span class="p">(</span><span class="n">data_dict</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="s1">&#39;fit_params&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">DEFAULT_PERSPECTIVE</span><span class="p">))</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;fit_params&#39;</span><span class="p">]</span>
             <span class="c1"># Make the perspective read the rest of the read data</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -609,7 +658,7 @@
                 <span class="c1"># if so, skip the update</span>
                 <span class="k">if</span> <span class="n">page</span><span class="p">[</span><span class="s1">&#39;is_batch_fitting&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span>
                     <span class="k">continue</span>
-                <span class="n">tab_index</span><span class="o">=</span><span class="kc">None</span>
+                <span class="n">tab_index</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="s1">&#39;tab_index&#39;</span> <span class="ow">in</span> <span class="n">page</span><span class="p">:</span>
                     <span class="n">tab_index</span> <span class="o">=</span> <span class="n">page</span><span class="p">[</span><span class="s1">&#39;tab_index&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">tab_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tab_index</span><span class="p">)</span>
@@ -617,13 +666,26 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">sendItemToPerspective</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tab_index</span><span class="o">=</span><span class="n">tab_index</span><span class="p">)</span>
                 <span class="c1"># Assign parameters to the most recent (current) page.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">updateFromParameters</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;pr_params&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s1">&#39;Inversion&#39;</span><span class="p">))</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;pr_params&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sendItemToPerspective</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">updateFromParameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;invar_params&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s1">&#39;Invariant&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sendItemToPerspective</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">updateFromParameters</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;invar_params&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;corfunc_params&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="s1">&#39;Corfunc&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sendItemToPerspective</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">updateFromParameters</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;corfunc_params&#39;</span><span class="p">])</span>
         <span class="k">if</span> <span class="s1">&#39;cs_tab&#39;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">and</span> <span class="s1">&#39;is_constraint&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
             <span class="c1"># Create a C&amp;S page</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">addConstraintTab</span><span class="p">()</span>
             <span class="c1"># Modify the tab</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">updateFromParameters</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-        <span class="k">pass</span> <span class="c1"># debugger</span></div>
+        <span class="k">pass</span>  <span class="c1"># debugger</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.updateModelFromData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.updateModelFromData">[docs]</a>    <span class="k">def</span> <span class="nf">updateModelFromData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -638,10 +700,10 @@
             <span class="c1"># add the main index</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span> <span class="k">continue</span>
             <span class="n">new_data</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Data1D</span> <span class="k">as</span> <span class="n">old_data1d</span>
-            <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="kn">import</span> <span class="n">Data2D</span> <span class="k">as</span> <span class="n">old_data2d</span>
+            <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Data1D</span> <span class="k">as</span> <span class="n">old_data1d</span>
+            <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.data_info</span> <span class="k">import</span> <span class="n">Data2D</span> <span class="k">as</span> <span class="n">old_data2d</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="p">(</span><span class="n">old_data1d</span><span class="p">,</span> <span class="n">old_data2d</span><span class="p">)):</span>
-                <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">create_gui_data</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">create_gui_data</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">new_data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;id&#39;</span><span class="p">):</span>
                 <span class="n">new_data</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
                 <span class="n">new_data</span><span class="o">.</span><span class="n">group_id</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group_id</span>
@@ -649,7 +711,7 @@
             <span class="c1"># make sure the ID is retained</span>
             <span class="n">properties</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">is_checked</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="s1">&#39;checked&#39;</span><span class="p">]</span>
-            <span class="n">new_item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">createModelItemWithPlot</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">new_data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">new_item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">createModelItemWithPlot</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">new_data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">new_item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">is_checked</span><span class="p">)</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span>
@@ -659,7 +721,7 @@
                 <span class="n">new_item</span><span class="o">.</span><span class="n">setChild</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">(</span><span class="s2">&quot;FIT RESULTS&quot;</span><span class="p">))</span>
 
             <span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">data_list</span><span class="o">=</span><span class="p">{</span><span class="n">new_data</span><span class="o">.</span><span class="n">id</span><span class="p">:</span><span class="n">new_data</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">data_list</span><span class="o">=</span><span class="p">{</span><span class="n">new_data</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">new_data</span><span class="p">})</span>
 
             <span class="c1"># Add the underlying data</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
@@ -677,10 +739,10 @@
         <span class="n">delete_msg</span> <span class="o">=</span> <span class="s2">&quot;This operation will delete the checked data sets and all the dependents.&quot;</span> <span class="o">+</span>\
                      <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Do you want to continue?&quot;</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                           <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
-                                           <span class="n">delete_msg</span><span class="p">,</span>
-                                           <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">,</span>
-                                           <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
+                                               <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
+                                               <span class="n">delete_msg</span><span class="p">,</span>
+                                               <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">,</span>
+                                               <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">:</span>
             <span class="k">return</span>
@@ -720,10 +782,10 @@
         <span class="n">delete_msg</span> <span class="o">=</span> <span class="s2">&quot;This operation will delete the checked data sets and all the dependents.&quot;</span> <span class="o">+</span>\
                      <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Do you want to continue?&quot;</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                           <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
-                                           <span class="n">delete_msg</span><span class="p">,</span>
-                                           <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">,</span>
-                                           <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
+                                               <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
+                                               <span class="n">delete_msg</span><span class="p">,</span>
+                                               <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">,</span>
+                                               <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">:</span>
             <span class="k">return</span>
@@ -741,6 +803,7 @@
                 <span class="c1"># Delete these rows from the model</span>
                 <span class="n">deleted_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
                 <span class="n">deleted_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">closePlotsForItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
                 <span class="c1"># Decrement index since we just deleted it</span>
@@ -767,33 +830,35 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
-
-        <span class="c1"># Which perspective has been selected?</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">allowBatch</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">(),</span> <span class="s1">&#39;title&#39;</span><span class="p">):</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="c1">#Check that you have only one box item checked when swaping data</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chkSwap</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">allowBatch</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">(),</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">windowTitle</span><span class="p">()</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; does not allow multiple data.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; does not allow replacing multiple data.&quot;</span>
             <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
             <span class="k">return</span>
 
         <span class="c1"># Notify the GuiManager about the send request</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">data_item</span><span class="o">=</span><span class="n">selected_items</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chkBatch</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chkSwap</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">swapData</span><span class="p">(</span><span class="n">selected_items</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">data_item</span><span class="o">=</span><span class="n">selected_items</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chkBatch</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> perspective returned the following message: </span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> perspective returned the following message: </span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
             <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.sendItemToPerspective"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.sendItemToPerspective">[docs]</a>    <span class="k">def</span> <span class="nf">sendItemToPerspective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">tab_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -809,14 +874,14 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">data_item</span><span class="o">=</span><span class="n">selected_items</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tab_index</span><span class="o">=</span><span class="n">tab_index</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> perspective returned the following message: </span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> perspective returned the following message: </span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perspective</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
             <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Critical</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.freezeCheckedData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.freezeCheckedData">[docs]</a>    <span class="k">def</span> <span class="nf">freezeCheckedData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -835,19 +900,19 @@
             <span class="c1"># Look for checked inner items</span>
             <span class="n">inner_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">while</span> <span class="n">inner_index</span> <span class="o">&lt;</span> <span class="n">outer_item</span><span class="o">.</span><span class="n">rowCount</span><span class="p">():</span>
-               <span class="n">inner_item</span> <span class="o">=</span> <span class="n">outer_item</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">inner_index</span><span class="p">)</span>
-               <span class="n">inner_index</span> <span class="o">+=</span> <span class="mi">1</span>
-               <span class="k">if</span> <span class="ow">not</span> <span class="n">inner_item</span><span class="p">:</span>
-                   <span class="k">continue</span>
-               <span class="k">if</span> <span class="ow">not</span> <span class="n">inner_item</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">():</span>
-                   <span class="k">continue</span>
-               <span class="k">if</span> <span class="n">inner_item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
-                   <span class="k">continue</span>
-               <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">beginResetModel</span><span class="p">()</span>
-               <span class="n">theories_copied</span> <span class="o">+=</span> <span class="mi">1</span>
-               <span class="n">new_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloneTheory</span><span class="p">(</span><span class="n">inner_item</span><span class="p">)</span>
-               <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
-               <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">endResetModel</span><span class="p">()</span>
+                <span class="n">inner_item</span> <span class="o">=</span> <span class="n">outer_item</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">inner_index</span><span class="p">)</span>
+                <span class="n">inner_index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">inner_item</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">inner_item</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">():</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">inner_item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">beginResetModel</span><span class="p">()</span>
+                <span class="n">theories_copied</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">new_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloneTheory</span><span class="p">(</span><span class="n">inner_item</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">appendRow</span><span class="p">(</span><span class="n">new_item</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">endResetModel</span><span class="p">()</span>
 
         <span class="n">freeze_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">theories_copied</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -877,8 +942,7 @@
             <span class="n">outer_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">outer_index</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">outer_item</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">outer_item</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">()</span> <span class="ow">and</span> \
-                   <span class="n">outer_item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">outer_item</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">()</span> <span class="ow">and</span> <span class="n">outer_item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">beginResetModel</span><span class="p">()</span>
                 <span class="n">theories_copied</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">new_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloneTheory</span><span class="p">(</span><span class="n">outer_item</span><span class="p">)</span>
@@ -923,7 +987,7 @@
             <span class="n">new_item</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;Circle&#39;</span>
             <span class="n">new_item</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">new_name</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="c1">#no data here, pass</span>
+            <span class="c1"># no data here, pass</span>
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">new_item</span></div>
 
@@ -953,11 +1017,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataExplorerWindow.updateGraphCount"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.updateGraphCount">[docs]</a>    <span class="k">def</span> <span class="nf">updateGraphCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph_list</span><span class="p">):</span>
+<div class="viewcode-block" id="DataExplorerWindow.updateGraphCount"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.updateGraphCount">[docs]</a>    <span class="k">def</span> <span class="nf">updateGraphCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graphs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modify the graph name combo and potentially remove</span>
 <span class="sd">        deleted graphs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">graph2</span><span class="p">,</span> <span class="n">delete</span> <span class="o">=</span> <span class="n">graphs</span>
+        <span class="n">graph_list</span> <span class="o">=</span> <span class="n">PlotHelper</span><span class="o">.</span><span class="n">currentPlots</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateGraphCombo</span><span class="p">(</span><span class="n">graph_list</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_plots</span><span class="p">:</span>
@@ -985,24 +1051,28 @@
 <span class="sd">        Notify the gui manager about the new perspective chosen.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">perspectiveChangedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbFitting</span><span class="o">.</span><span class="n">itemText</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chkBatch</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">allowBatch</span><span class="p">())</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chkBatch</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">allowBatch</span><span class="p">())</span>
+        <span class="c1"># Deactivate and uncheck the swap data option if the current perspective does not allow it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chkSwap</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">allowSwap</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">allowSwap</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chkSwap</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataExplorerWindow.itemFromFilename"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.itemFromFilename">[docs]</a>    <span class="k">def</span> <span class="nf">itemFromFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="DataExplorerWindow.itemFromDisplayName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.itemFromDisplayName">[docs]</a>    <span class="k">def</span> <span class="nf">itemFromDisplayName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves model item corresponding to the given filename</span>
+<span class="sd">        Retrieves model item corresponding to the given display name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">itemFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">itemFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 
-<div class="viewcode-block" id="DataExplorerWindow.displayFile"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.displayFile">[docs]</a>    <span class="k">def</span> <span class="nf">displayFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataExplorerWindow.displayDataByName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.displayDataByName">[docs]</a>    <span class="k">def</span> <span class="nf">displayDataByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forces display of charts for the given filename</span>
+<span class="sd">        Forces display of charts for the given name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="k">if</span> <span class="n">is_data</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span>
         <span class="c1"># Now query the model item for available plots</span>
-        <span class="n">plots</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromDisplayName</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="c1"># Each fitpage contains the name based on fit widget number</span>
-        <span class="n">fitpage_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;M&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">fitpage_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;M&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="n">new_plots</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="n">plot</span><span class="p">):</span>
@@ -1012,16 +1082,16 @@
             <span class="n">match</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">theory_plot_ID_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">plot</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
             <span class="c1"># 2nd match group contains the identifier for the intermediate</span>
             <span class="c1"># result, if present (e.g. &quot;[P(Q)]&quot;)</span>
-            <span class="k">if</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="c1"># Don&#39;t include plots from different fitpages,</span>
             <span class="c1"># but always include the original data</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">fitpage_name</span> <span class="ow">in</span> <span class="n">plot</span><span class="o">.</span><span class="n">name</span>
-                    <span class="ow">or</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">plot</span><span class="o">.</span><span class="n">name</span>
-                    <span class="ow">or</span> <span class="n">filename</span> <span class="o">==</span> <span class="n">plot</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
+                    <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plot</span><span class="o">.</span><span class="n">name</span>
+                    <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="n">plot</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
                 <span class="c1"># Residuals get their own plot</span>
                 <span class="k">if</span> <span class="n">plot</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">==</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_RESIDUAL</span><span class="p">:</span>
-                    <span class="n">plot</span><span class="o">.</span><span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span>
+                    <span class="n">plot</span><span class="o">.</span><span class="n">yscale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">([(</span><span class="n">item</span><span class="p">,</span> <span class="n">plot</span><span class="p">)])</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">new_plots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item</span><span class="p">,</span> <span class="n">plot</span><span class="p">))</span>
@@ -1034,7 +1104,7 @@
 <span class="sd">        Forces display of charts for the given data set</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># data_list = [QStandardItem, Data1D/Data2D]</span>
-        <span class="n">plot_to_show</span> <span class="o">=</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">plots_to_show</span> <span class="o">=</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">plot_item</span> <span class="o">=</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># plots to show</span>
@@ -1046,7 +1116,7 @@
             <span class="c1"># Try the current item</span>
             <span class="n">main_data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">plot_item</span><span class="p">)</span>
         <span class="c1"># 1D dependent plots of 2D sets - special treatment</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main_data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_to_show</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main_data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plots_to_show</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Data1D</span><span class="p">):</span>
             <span class="n">main_data</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Make sure main data for 2D is always displayed</span>
@@ -1057,23 +1127,44 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">([(</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">main_data</span><span class="p">)])</span>
 
-        <span class="c1"># Check if this is merely a plot update</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="n">plot_to_show</span><span class="p">):</span>
-            <span class="k">return</span>
+        <span class="n">append</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">plot_to_append_to</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">plot_to_show</span> <span class="ow">in</span> <span class="n">plots_to_show</span><span class="p">:</span>
+            <span class="c1"># Check if this plot already exists</span>
+            <span class="n">shown</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="n">plot_to_show</span><span class="p">)</span>
+            <span class="c1"># Retain append status throughout loop</span>
+            <span class="n">append</span> <span class="o">=</span> <span class="n">shown</span> <span class="k">if</span> <span class="n">shown</span> <span class="k">else</span> <span class="n">append</span>
 
-        <span class="c1"># Residuals get their own plot</span>
-        <span class="k">if</span> <span class="n">plot_to_show</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">==</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_RESIDUAL</span><span class="p">:</span>
-            <span class="n">plot_to_show</span><span class="o">.</span><span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">([(</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">plot_to_show</span><span class="p">)])</span>
-        <span class="k">elif</span> <span class="n">plot_to_show</span><span class="o">.</span><span class="n">plot_role</span> <span class="o">==</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_DELETABLE</span><span class="p">:</span>
-            <span class="c1"># No plot</span>
-            <span class="k">return</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Plots with main data points on the same chart</span>
-            <span class="c1"># Get the main data plot</span>
-            <span class="k">if</span> <span class="n">main_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isPlotShown</span><span class="p">(</span><span class="n">main_data</span><span class="p">):</span>
-                <span class="n">new_plots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">main_data</span><span class="p">))</span>
-            <span class="n">new_plots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">plot_to_show</span><span class="p">))</span>
+            <span class="n">plot_name</span> <span class="o">=</span> <span class="n">plot_to_show</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="n">plot_to_show</span><span class="o">.</span><span class="n">plot_role</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">role</span> <span class="o">==</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_RESIDUAL</span> <span class="ow">and</span> <span class="n">shown</span><span class="p">)</span> <span class="ow">or</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_DELETABLE</span><span class="p">:</span>
+                <span class="c1"># Nothing to do if separate plot already shown or to be deleted</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">role</span> <span class="o">==</span> <span class="n">Data1D</span><span class="o">.</span><span class="n">ROLE_RESIDUAL</span><span class="p">:</span>
+                <span class="c1"># Residual plots should always be separate</span>
+                <span class="n">plot_to_show</span><span class="o">.</span><span class="n">yscale</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">([(</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">plot_to_show</span><span class="p">)])</span>
+            <span class="k">elif</span> <span class="n">append</span><span class="p">:</span>
+                <span class="c1"># Assume all other plots sent together should be on the same chart if a previous plot exists</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_to_append_to</span><span class="p">:</span>
+                    <span class="n">plot_to_append_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_plots</span><span class="p">[</span><span class="n">plot_name</span><span class="p">]</span>
+                <span class="c1"># Remove existing if already exists</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">appendOrUpdatePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_to_show</span><span class="p">,</span> <span class="n">plot_to_append_to</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Plots with main data points on the same chart</span>
+                <span class="c1"># Get the main data plot unless data is 2D which is plotted earlier</span>
+                <span class="k">if</span> <span class="n">main_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main_data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+                    <span class="n">new_plots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">main_data</span><span class="p">))</span>
+                <span class="n">new_plots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">plot_item</span><span class="p">,</span> <span class="n">plot_to_show</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+            <span class="c1"># Append any plots handled in loop before an existing plot was found</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">plot_set</span> <span class="ow">in</span> <span class="n">new_plots</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">appendOrUpdatePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_set</span><span class="p">,</span> <span class="n">plot_to_append_to</span><span class="p">)</span>
+            <span class="c1"># Clear list of any potential new plots now that they&#39;re appended to the existing plot</span>
+            <span class="n">new_plots</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">if</span> <span class="n">new_plots</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">(</span><span class="n">new_plots</span><span class="p">)</span></div>
 
@@ -1084,6 +1175,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">ids_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_plots</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+                    <span class="c1">#if val.data[0].plot_role != Data1D.ROLE_DATA]</span>
 
         <span class="k">return</span> <span class="n">plot</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">ids_vals</span></div>
 
@@ -1096,19 +1188,19 @@
         <span class="n">plot2D</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_set</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">plot2D</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">active_plots</span><span class="p">[</span><span class="n">plot2D</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot2D</span></div>
-        <span class="c1">#============================================</span>
+        <span class="c1"># ============================================</span>
         <span class="c1"># Experimental hook for silx charts</span>
-        <span class="c1">#============================================</span>
-        <span class="c1">## Attach silx</span>
-        <span class="c1">#from silx.gui import qt</span>
-        <span class="c1">#from silx.gui.plot import StackView</span>
-        <span class="c1">#sv = StackView()</span>
-        <span class="c1">#sv.setColormap(&quot;jet&quot;, autoscale=True)</span>
-        <span class="c1">#sv.setStack(plot_set.data.reshape(1,100,100))</span>
-        <span class="c1">##sv.setLabels([&quot;x: -10 to 10 (200 samples)&quot;,</span>
-        <span class="c1">##              &quot;y: -10 to 5 (150 samples)&quot;])</span>
-        <span class="c1">#sv.show()</span>
-        <span class="c1">#============================================</span>
+        <span class="c1"># ============================================</span>
+        <span class="c1"># # Attach silx</span>
+        <span class="c1"># from silx.gui import qt</span>
+        <span class="c1"># from silx.gui.plot import StackView</span>
+        <span class="c1"># sv = StackView()</span>
+        <span class="c1"># sv.setColormap(&quot;jet&quot;, autoscale=True)</span>
+        <span class="c1"># sv.setStack(plot_set.data.reshape(1,100,100))</span>
+        <span class="c1"># #sv.setLabels([&quot;x: -10 to 10 (200 samples)&quot;,</span>
+        <span class="c1"># #              &quot;y: -10 to 5 (150 samples)&quot;])</span>
+        <span class="c1"># sv.show()</span>
+        <span class="c1"># ============================================</span>
 
 <div class="viewcode-block" id="DataExplorerWindow.plotData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plots</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1118,7 +1210,7 @@
         <span class="c1"># All same-type charts in one plot</span>
         <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">plot_set</span> <span class="ow">in</span> <span class="n">plots</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_set</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;new_plot&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s1">&#39;new_plot&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
                     <span class="n">new_plot</span> <span class="o">=</span> <span class="n">Plotter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                     <span class="n">new_plot</span><span class="o">.</span><span class="n">item</span> <span class="o">=</span> <span class="n">item</span>
                 <span class="n">new_plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_set</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
@@ -1133,7 +1225,7 @@
         <span class="k">if</span> <span class="s1">&#39;new_plot&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span> <span class="ow">and</span> \
             <span class="nb">hasattr</span><span class="p">(</span><span class="n">new_plot</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span> <span class="ow">and</span> \
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_plot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Data1D</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">new_plot</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addPlot</span><span class="p">(</span><span class="n">new_plot</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.newPlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.newPlot">[docs]</a>    <span class="k">def</span> <span class="nf">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1170,7 +1262,7 @@
         <span class="n">new_plot</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 
         <span class="c1"># Update the plot widgets dict</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_widgets</span><span class="p">[</span><span class="n">title</span><span class="p">]</span><span class="o">=</span><span class="n">plot_widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_widgets</span><span class="p">[</span><span class="n">title</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_widget</span>
 
         <span class="c1"># Update the active chart list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">active_plots</span><span class="p">[</span><span class="n">new_plot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_plot</span></div>
@@ -1188,7 +1280,7 @@
         <span class="c1"># old plot data</span>
         <span class="n">plot_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbgraph</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">plot_id</span> <span class="ow">in</span> <span class="n">PlotHelper</span><span class="o">.</span><span class="n">currentPlots</span><span class="p">(),</span> <span class="s2">&quot;No such plot: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">plot_id</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">plot_id</span> <span class="ow">in</span> <span class="n">PlotHelper</span><span class="o">.</span><span class="n">currentPlots</span><span class="p">(),</span> <span class="s2">&quot;No such plot: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">plot_id</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -1199,12 +1291,20 @@
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">plot_set</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">old_plot</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                 <span class="n">old_plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_set</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="DataExplorerWindow.appendOrUpdatePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.appendOrUpdatePlot">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">appendOrUpdatePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plot</span><span class="o">.</span><span class="n">plot_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">plot</span><span class="o">.</span><span class="n">replacePlot</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="DataExplorerWindow.updatePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.updatePlot">[docs]</a>    <span class="k">def</span> <span class="nf">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Modify existing plot for immediate response and returns True.</span>
 <span class="sd">        Returns false, if the plot does not exist already.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span> <span class="c1"># there might be a list or a single value being passed</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># there might be a list or a single value being passed</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -1289,11 +1389,6 @@
 
                 <span class="n">output_objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">p_file</span><span class="p">)</span>
 
-                <span class="c1"># Some loaders return a list and some just a single Data1D object.</span>
-                <span class="c1"># Standardize.</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_objects</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">output_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_objects</span><span class="p">]</span>
-
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">output_objects</span><span class="p">:</span>
                     <span class="c1"># cast sascalc.dataloader.data_info.Data1D into</span>
                     <span class="c1"># sasgui.guiframe.dataFitting.Data1D</span>
@@ -1303,7 +1398,7 @@
 
                     <span class="c1"># Model update should be protected</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">lock</span><span class="p">()</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">updateModel</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">p_file</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">updateModel</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">new_data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="c1">#self.model.reset()</span>
                     <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="o">.</span><span class="n">unlock</span><span class="p">()</span>
@@ -1311,17 +1406,17 @@
                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;errors&#39;</span><span class="p">):</span>
                         <span class="k">for</span> <span class="n">error_data</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
                             <span class="n">data_error</span> <span class="o">=</span> <span class="kc">True</span>
-                            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Error: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_data</span><span class="p">)</span>
+                            <span class="n">error_message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Error: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_data</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
 
                         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Loader returned an invalid object:</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
                         <span class="n">data_error</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">]))</span>
 
                 <span class="n">any_error</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">any_error</span> <span class="ow">or</span> <span class="n">error_message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">any_error</span> <span class="ow">or</span> <span class="n">data_error</span> <span class="ow">or</span> <span class="n">error_message</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">error_message</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                     <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                     <span class="n">error</span> <span class="o">+=</span> <span class="s2">&quot;while loading Data: </span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
@@ -1381,7 +1476,7 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">checked</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
 
         <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">dimension</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dimension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
@@ -1442,6 +1537,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create a custom menu based on actions defined in the UI file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionSelect</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionDeselect</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionChangeName</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionDataInfo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionSaveAs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionQuickPlot</span><span class="p">)</span>
@@ -1453,8 +1552,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionDelete</span><span class="p">)</span>
 
-
         <span class="c1"># Define the callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionSelect</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFileListSelected</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionDeselect</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onFileListDeselected</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeName</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeName</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionDataInfo</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showDataInfo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionSaveAs</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">saveDataAs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionQuickPlot</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quickDataPlot</span><span class="p">)</span>
@@ -1482,6 +1583,15 @@
         <span class="n">is_2D</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">model_item</span><span class="p">),</span> <span class="n">Data2D</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionQuick3DPlot</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">is_2D</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionEditMask</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">is_2D</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionSelect</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Name Changing</span>
+        <span class="c1"># Disallow name changes after the data has been assigned any plots to prevent orphans</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">getChildrenFromItem</span><span class="p">(</span><span class="n">model_item</span><span class="p">))</span>
+        <span class="n">hashables</span> <span class="o">=</span> <span class="p">[</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">HashableStandardItem</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeName</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hashables</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Do not allow name change for lower level plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionChangeName</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">model_item</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Freezing</span>
         <span class="c1"># check that the selection has inner items</span>
@@ -1492,6 +1602,25 @@
 
         <span class="c1"># Fire up the menu</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context_menu</span><span class="o">.</span><span class="n">exec_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_view</span><span class="o">.</span><span class="n">mapToGlobal</span><span class="p">(</span><span class="n">position</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="DataExplorerWindow.changeName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.changeName">[docs]</a>    <span class="k">def</span> <span class="nf">changeName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a modal window that can change the display name of the selected data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_view</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_view</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
+
+        <span class="c1"># Get the model item and update the name change box</span>
+        <span class="n">model_item</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">itemFromIndex</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+
+        <span class="c1"># Do not allow name changes after the data has plots assigned</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">getChildrenFromItem</span><span class="p">(</span><span class="n">model_item</span><span class="p">))</span>
+        <span class="n">hashables</span> <span class="o">=</span> <span class="p">[</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">HashableStandardItem</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hashables</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nameChangeBox</span><span class="o">.</span><span class="n">model_item</span> <span class="o">=</span> <span class="n">model_item</span>
+            <span class="c1"># Open the window</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nameChangeBox</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.showDataInfo"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.showDataInfo">[docs]</a>    <span class="k">def</span> <span class="nf">showDataInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1506,16 +1635,16 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
             <span class="n">text_to_show</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">retrieveData1d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="c1"># Hardcoded sizes to enable full width rendering with default font</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">420</span><span class="p">,</span><span class="mi">600</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">420</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">text_to_show</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">retrieveData2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="c1"># Hardcoded sizes to enable full width rendering with default font</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">700</span><span class="p">,</span><span class="mi">600</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">700</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Window</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s2">&quot;:/res/ball.ico&quot;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Data Info: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Data Info: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">txt_widget</span><span class="o">.</span><span class="n">insertPlainText</span><span class="p">(</span><span class="n">text_to_show</span><span class="p">)</span>
 
@@ -1552,12 +1681,11 @@
 
         <span class="n">method_name</span> <span class="o">=</span> <span class="s1">&#39;Plotter&#39;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
-            <span class="n">method_name</span><span class="o">=</span><span class="s1">&#39;Plotter2D&#39;</span>
+            <span class="n">method_name</span> <span class="o">=</span> <span class="s1">&#39;Plotter2D&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">new_plot</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">method_name</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_plot</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="c1">#new_plot.plot(marker=&#39;o&#39;)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">new_plot</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 
         <span class="c1"># Update the global plot counter</span>
         <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Plot &quot;</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">name</span>
@@ -1597,7 +1725,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
         <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Information</span><span class="p">)</span>
-        <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error: cannot apply mask.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error: cannot apply mask.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
                     <span class="s2">&quot;Please select a 2D dataset.&quot;</span><span class="p">)</span>
         <span class="n">msg</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
 
@@ -1616,7 +1744,8 @@
                 <span class="c1"># If data is still not right, complain</span>
                 <span class="n">msg</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
                 <span class="k">return</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">]))</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
             <span class="k">return</span>
 
@@ -1654,7 +1783,7 @@
             <span class="n">data</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="s1">&#39;Circle&#39;</span>
             <span class="n">data</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">new_name</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="c1">#no data here, pass</span>
+            <span class="c1"># no data here, pass</span>
             <span class="k">pass</span>
         <span class="n">new_item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">createModelItemWithPlot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
 
@@ -1688,10 +1817,13 @@
         <span class="n">deleted_items</span> <span class="o">+=</span> <span class="n">deleted_theory_items</span>
         <span class="n">deleted_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">deleted_items</span><span class="p">]</span>
         <span class="n">deleted_names</span> <span class="o">+=</span> <span class="n">deleted_theory_items</span>
+        <span class="c1"># Close all active plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeAllPlots</span><span class="p">()</span>
         <span class="c1"># Let others know we deleted data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">dataDeletedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">deleted_items</span><span class="p">)</span>
         <span class="c1"># update stored_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">update_stored_data</span><span class="p">(</span><span class="n">deleted_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">delete_data</span><span class="p">(</span><span class="n">data_id</span><span class="o">=</span><span class="p">[],</span> <span class="n">theory_id</span><span class="o">=</span><span class="p">[],</span> <span class="n">delete_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Clear the model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -1706,10 +1838,10 @@
                      <span class="s2">&quot;and all the dependents.&quot;</span> <span class="o">+</span>\
                      <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Do you want to continue?&quot;</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">question</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                           <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
-                                           <span class="n">delete_msg</span><span class="p">,</span>
-                                           <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">,</span>
-                                           <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
+                                               <span class="s1">&#39;Warning&#39;</span><span class="p">,</span>
+                                               <span class="n">delete_msg</span><span class="p">,</span>
+                                               <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Yes</span><span class="p">,</span>
+                                               <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span><span class="p">:</span>
             <span class="k">return</span>
@@ -1810,13 +1942,12 @@
                     <span class="c1"># try to delete the plot</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">plotter</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                        <span class="c1">#self.parent.workspace().removeSubWindow(plotter)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">plot_widgets</span><span class="p">[</span><span class="n">plot_name</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">plot_widgets</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">plot_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
                         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Closing of </span><span class="si">%s</span><span class="s2"> failed:</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">plot_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)))</span>
 
-        <span class="k">pass</span> <span class="c1"># debugger anchor</span></div>
+        <span class="k">pass</span>  <span class="c1"># debugger anchor</span></div>
 
 <div class="viewcode-block" id="DataExplorerWindow.onAnalysisUpdate"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.onAnalysisUpdate">[docs]</a>    <span class="k">def</span> <span class="nf">onAnalysisUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_perspective</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1833,9 +1964,6 @@
 <span class="sd">        Post message to status bar and update the data manager</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
-
-        <span class="c1"># Reset the model so the view gets updated.</span>
-        <span class="c1">#self.model.reset()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">progressBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="n">output_data</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1870,7 +1998,8 @@
         <span class="n">checkbox_item</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">checkbox_item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">p_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">checkbox_item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p_file</span><span class="p">))</span>
+            <span class="n">p_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">p_file</span><span class="p">)</span> <span class="k">else</span> <span class="n">p_file</span>
+            <span class="n">checkbox_item</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">p_file</span><span class="p">)</span>
 
         <span class="c1"># Add the actual Data1D/Data2D object</span>
         <span class="n">object_item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">HashableStandardItem</span><span class="p">()</span>
@@ -1950,7 +2079,41 @@
                         <span class="n">items_to_delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items_to_delete</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">row</span><span class="p">())</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">theory_model</span><span class="o">.</span><span class="n">removeRow</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">row</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="DataExplorerWindow.onFileListSelected"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.onFileListSelected">[docs]</a>    <span class="k">def</span> <span class="nf">onFileListSelected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Slot for actionSelect</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCheckItems</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataExplorerWindow.onFileListDeselected"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.onFileListDeselected">[docs]</a>    <span class="k">def</span> <span class="nf">onFileListDeselected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Slot for actionDeselect</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCheckItems</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataExplorerWindow.onFileListChanged"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.onFileListChanged">[docs]</a>    <span class="k">def</span> <span class="nf">onFileListChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Slot for model (data/theory) changes.</span>
+<span class="sd">        Currently only reacting to checkbox selection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_view</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCheckItems</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="DataExplorerWindow.setCheckItems"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.MainWindow.html#sas.qtgui.MainWindow.DataExplorer.DataExplorerWindow.setCheckItems">[docs]</a>    <span class="k">def</span> <span class="nf">setCheckItems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets requested checkbox status on selected indices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_view</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_view</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">():</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">itemFromIndex</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">():</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -1983,14 +2146,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

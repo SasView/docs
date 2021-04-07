@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Perspectives.Fitting.FittingPerspective &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Perspectives.Fitting.FittingPerspective &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -41,24 +41,27 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.Perspectives.Fitting.FittingPerspective</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span></span><span class="kn">from</span> <span class="nn">distutils.command.config</span> <span class="k">import</span> <span class="n">config</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">bumps</span> <span class="kn">import</span> <span class="n">options</span>
-<span class="kn">from</span> <span class="nn">bumps</span> <span class="kn">import</span> <span class="n">fitters</span>
+<span class="kn">from</span> <span class="nn">bumps</span> <span class="k">import</span> <span class="n">options</span>
+<span class="kn">from</span> <span class="nn">bumps</span> <span class="k">import</span> <span class="n">fitters</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.LocalConfig</span> <span class="k">as</span> <span class="nn">LocalConfig</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.ObjectLibrary</span> <span class="k">as</span> <span class="nn">ObjectLibrary</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="k">import</span> <span class="n">Constraint</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingWidget</span> <span class="kn">import</span> <span class="n">FittingWidget</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ConstraintWidget</span> <span class="kn">import</span> <span class="n">ConstraintWidget</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingOptions</span> <span class="kn">import</span> <span class="n">FittingOptions</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.GPUOptions</span> <span class="kn">import</span> <span class="n">GPUOptions</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingWidget</span> <span class="k">import</span> <span class="n">FittingWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ConstraintWidget</span> <span class="k">import</span> <span class="n">ConstraintWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingOptions</span> <span class="k">import</span> <span class="n">FittingOptions</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.GPUOptions</span> <span class="k">import</span> <span class="n">GPUOptions</span>
 
 <div class="viewcode-block" id="FittingWindow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow">[docs]</a><span class="k">class</span> <span class="nc">FittingWindow</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -68,7 +71,8 @@
     <span class="n">fittingStoppedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Fitting&quot;</span> <span class="c1"># For displaying in the combo box in DataExplorer</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;fitv&quot;</span>  <span class="c1"># Extension used for saving analyses</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">FittingWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -161,28 +165,23 @@
 <div class="viewcode-block" id="FittingWindow.onLatexCopy"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.onLatexCopy">[docs]</a>    <span class="k">def</span> <span class="nf">onLatexCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">onCopyToClipboard</span><span class="p">(</span><span class="s2">&quot;Latex&quot;</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="FittingWindow.serializeAll"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.serializeAll">[docs]</a>    <span class="k">def</span> <span class="nf">serializeAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serializeAllFitpage</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="FittingWindow.serializeAllFitpage"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.serializeAllFitpage">[docs]</a>    <span class="k">def</span> <span class="nf">serializeAllFitpage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># serialize all active fitpages and return</span>
         <span class="c1"># a dictionary: {data_id: fitpage_state}</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">):</span>
-            <span class="n">tab_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSerializedFitpage</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;data_id&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tab_data</span><span class="p">:</span> <span class="k">continue</span>
-            <span class="nb">id</span> <span class="o">=</span> <span class="n">tab_data</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-                        <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab_data</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab_data</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-                    <span class="n">params</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab_data</span><span class="p">)</span>
+            <span class="n">tab_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSerializedFitpage</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tab_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">state</span><span class="p">:</span>
+                    <span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">params</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab_data</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">params</span></div>
+                    <span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">state</span></div>
 
-<div class="viewcode-block" id="FittingWindow.serializeCurrentFitpage"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.serializeCurrentFitpage">[docs]</a>    <span class="k">def</span> <span class="nf">serializeCurrentFitpage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FittingWindow.serializeCurrentPage"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.serializeCurrentPage">[docs]</a>    <span class="k">def</span> <span class="nf">serializeCurrentPage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># serialize current(active) fitpage</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSerializedFitpage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentTab</span><span class="p">)</span></div>
 
@@ -190,6 +189,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get serialize requested fit tab</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">fitpage_state</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">getFitPage</span><span class="p">()</span>
         <span class="n">fitpage_state</span> <span class="o">+=</span> <span class="n">tab</span><span class="o">.</span><span class="n">getFitModel</span><span class="p">()</span>
         <span class="c1"># put the text into dictionary</span>
@@ -198,7 +198,19 @@
             <span class="c1">#content = line.split(&#39;,&#39;)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">line_dict</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="k">return</span> <span class="n">line_dict</span></div>
+
+        <span class="k">if</span> <span class="s1">&#39;data_id&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line_dict</span><span class="p">:</span> <span class="k">return</span> <span class="n">state</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">line_dict</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="nb">id</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;is_constraint&#39;</span> <span class="ow">in</span> <span class="n">line_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">line_dict</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">state</span> <span class="ow">and</span> <span class="s1">&#39;fit-params&#39;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fit_params&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">line_dict</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fit_params&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">line_dict</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">state</span></div>
 
 <div class="viewcode-block" id="FittingWindow.currentTabDataId"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.currentTabDataId">[docs]</a>    <span class="k">def</span> <span class="nf">currentTabDataId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -219,6 +231,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">createPageForParameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="FittingWindow.updateFromConstraints"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.updateFromConstraints">[docs]</a>    <span class="k">def</span> <span class="nf">updateFromConstraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates all tabs with constraints present in *constraint_dict*, where</span>
+<span class="sd">        *constraint_dict*  keys are the fit page name, and the value is a</span>
+<span class="sd">        list of constraints. A constraint is represented by a list [value,</span>
+<span class="sd">        param, value_ex, validate, function] of attributes of a Constraint</span>
+<span class="sd">        object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">fit_page_name</span><span class="p">,</span> <span class="n">constraint_list</span> <span class="ow">in</span> <span class="n">constraint_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTabByName</span><span class="p">(</span><span class="n">fit_page_name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">constraint_param</span> <span class="ow">in</span> <span class="n">constraint_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">constraint_param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">constraint_param</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">constraint</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">()</span>
+                    <span class="n">constraint</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">constraint_param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">constraint</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">constraint_param</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                    <span class="n">constraint</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">constraint_param</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">constraint</span><span class="o">.</span><span class="n">value_ex</span> <span class="o">=</span> <span class="n">constraint_param</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">constraint</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="n">constraint_param</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="n">tab</span><span class="o">.</span><span class="n">addConstraintToRow</span><span class="p">(</span><span class="n">constraint</span><span class="o">=</span><span class="n">constraint</span><span class="p">,</span>
+                                           <span class="n">row</span><span class="o">=</span><span class="n">tab</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span>
+                                               <span class="n">constraint_param</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
 <div class="viewcode-block" id="FittingWindow.onParamSave"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.onParamSave">[docs]</a>    <span class="k">def</span> <span class="nf">onParamSave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">onCopyToClipboard</span><span class="p">(</span><span class="s2">&quot;Save&quot;</span><span class="p">)</span></div>
 
@@ -230,8 +264,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_close</span><span class="p">:</span>
             <span class="c1"># reset the closability flag</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setClosable</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="c1"># Tell the MdiArea to close the container</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="c1"># Tell the MdiArea to close the container if it is visible</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Maybe we should just minimize</span>
@@ -255,15 +290,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">updateFitDict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">)</span>
-        <span class="c1">#self.maxIndex += 1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">maxIndex</span> <span class="o">=</span> <span class="n">tab_index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxIndex</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">tab</span><span class="o">.</span><span class="n">tab_id</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
         <span class="n">icon</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">is_batch</span><span class="p">:</span>
             <span class="n">icon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="s2">&quot;src/sas/qtgui/images/icons/layers.svg&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">icon</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">)</span>
         <span class="c1"># Show the new tab</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentWidget</span><span class="p">(</span><span class="n">tab</span><span class="p">);</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentWidget</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
         <span class="c1"># Notify listeners</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabsModifiedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
 
@@ -313,6 +347,20 @@
         <span class="n">page_name</span> <span class="o">=</span> <span class="s2">&quot;Const. &amp; Simul. Fit&quot;</span>
         <span class="k">return</span> <span class="n">page_name</span></div>
 
+<div class="viewcode-block" id="FittingWindow.closeTabByIndex"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.closeTabByIndex">[docs]</a>    <span class="k">def</span> <span class="nf">closeTabByIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close/delete a tab with the given index.</span>
+<span class="sd">        No checks on validity of the index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ObjectLibrary</span><span class="o">.</span><span class="n">deleteObjectByRef</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removeTab</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabsModifiedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="c1"># The tab might have already been deleted previously</span>
+            <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="FittingWindow.resetTab"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.resetTab">[docs]</a>    <span class="k">def</span> <span class="nf">resetTab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a new tab and removes the last tab</span>
@@ -330,19 +378,11 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update local bookkeeping on tab close</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#assert len(self.tabs) &gt;= index</span>
         <span class="c1"># don&#39;t remove the last tab</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resetTab</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
             <span class="k">return</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">ObjectLibrary</span><span class="o">.</span><span class="n">deleteObjectByRef</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">removeTab</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tabsModifiedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-            <span class="c1"># The tab might have already been deleted previously</span>
-            <span class="k">pass</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closeTabByIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWindow.closeTabByName"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.closeTabByName">[docs]</a>    <span class="k">def</span> <span class="nf">closeTabByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -371,6 +411,12 @@
 <div class="viewcode-block" id="FittingWindow.allowBatch"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.allowBatch">[docs]</a>    <span class="k">def</span> <span class="nf">allowBatch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Tell the caller that we accept multiple data instances</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="FittingWindow.allowSwap"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.allowSwap">[docs]</a>    <span class="k">def</span> <span class="nf">allowSwap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tell the caller that you can swap data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -406,9 +452,14 @@
             <span class="c1"># Find the first unassigned tab.</span>
             <span class="c1"># If none, open a new tab.</span>
             <span class="n">available_tabs</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span><span class="o">.</span><span class="n">acceptsData</span><span class="p">()</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">]</span>
+            <span class="n">tab_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span><span class="o">.</span><span class="n">tab_id</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">tab_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">addFit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="n">is_batch</span><span class="p">,</span> <span class="n">tab_index</span><span class="o">=</span><span class="n">tab_index</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">tab_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tab_ids</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">addFit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="n">is_batch</span><span class="p">,</span> <span class="n">tab_index</span><span class="o">=</span><span class="n">tab_index</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">tab_index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">swapData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
                 <span class="k">return</span>
             <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">available_tabs</span><span class="p">):</span>
                 <span class="n">first_good_tab</span> <span class="o">=</span> <span class="n">available_tabs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -417,6 +468,26 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">updateFitDict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">addFit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="n">is_batch</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FittingWindow.swapData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.swapData">[docs]</a>    <span class="k">def</span> <span class="nf">swapData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replace the data from the current fitting tab</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">(),</span> <span class="n">FittingWidget</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Current tab is not  a fitting widget&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Incorrect type passed to the Fitting Perspective&quot;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">is_batch_fitting</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Data in Batch Fitting cannot be swapped&quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">currentTab</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">tab_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateFitDict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tab_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWindow.onFittingOptionsChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.onFittingOptionsChange">[docs]</a>    <span class="k">def</span> <span class="nf">onFittingOptionsChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fit_engine</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -474,8 +545,59 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the tab widget currently shown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span>
 
+<div class="viewcode-block" id="FittingWindow.getFitTabs"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.getFitTabs">[docs]</a>    <span class="k">def</span> <span class="nf">getFitTabs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the list of fitting tabs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">tab</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">FittingWidget</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="FittingWindow.getActiveConstraintList"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.getActiveConstraintList">[docs]</a>    <span class="k">def</span> <span class="nf">getActiveConstraintList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of the constraints for all fitting tabs. Constraints</span>
+<span class="sd">        are a tuple of strings (parameter, expression) e.g. (&#39;M1.scale&#39;,</span>
+<span class="sd">        &#39;M2.scale + 2&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFitTabs</span><span class="p">():</span>
+            <span class="n">tab_name</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">modelName</span><span class="p">()</span>
+            <span class="n">tab_constraints</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">getConstraintsForModel</span><span class="p">()</span>
+            <span class="n">constraints</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">tab_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">par</span><span class="p">,</span> <span class="n">expr</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">par</span><span class="p">,</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">tab_constraints</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constraints</span></div>
+
+<div class="viewcode-block" id="FittingWindow.getSymbolDictForConstraints"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.getSymbolDictForConstraints">[docs]</a>    <span class="k">def</span> <span class="nf">getSymbolDictForConstraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a dictionary containing all the symbols in  all constrained tabs</span>
+<span class="sd">        and their values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">symbol_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFitTabs</span><span class="p">():</span>
+            <span class="n">symbol_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">getSymbolDict</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">symbol_dict</span></div>
+
+<div class="viewcode-block" id="FittingWindow.getConstraintTab"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.getConstraintTab">[docs]</a>    <span class="k">def</span> <span class="nf">getConstraintTab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the constraint tab, or None if no constraint tab is active</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">ConstraintWidget</span><span class="p">)</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">):</span>
+            <span class="n">constraint_tab</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">tab</span>
+                                  <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span>
+                                  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">ConstraintWidget</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">constraint_tab</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">constraint_tab</span></div>
+
+<div class="viewcode-block" id="FittingWindow.getTabByName"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingPerspective.FittingWindow.getTabByName">[docs]</a>    <span class="k">def</span> <span class="nf">getTabByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the tab with with attribute name *name*</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tab</span><span class="o">.</span><span class="n">modelName</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">tab</span>
+        <span class="k">return</span> <span class="kc">None</span></div></div>
 </pre></div>
 
           </div>
@@ -508,14 +630,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

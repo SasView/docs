@@ -1,0 +1,196 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>lamellar &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="lamellar_hg" href="lamellar_hg.html" />
+    <link rel="prev" title="Lamellae Functions" href="../qtgui/Perspectives/Fitting/models/shape-lamellae.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lamellar_hg.html" title="lamellar_hg"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../qtgui/Perspectives/Fitting/models/shape-lamellae.html" title="Lamellae Functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-lamellae.html" accesskey="U">Lamellae Functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lamellar">
+<span id="id1"></span><h1>lamellar</h1>
+<p>Lyotropic lamellar phase with uniform SLD and random distribution</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="48%" />
+<col width="17%" />
+<col width="19%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Description</th>
+<th class="head">Units</th>
+<th class="head">Default value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>scale</td>
+<td>Scale factor or Volume fraction</td>
+<td>None</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>background</td>
+<td>Source background</td>
+<td>cm<sup>-1</sup></td>
+<td>0.001</td>
+</tr>
+<tr class="row-even"><td>thickness</td>
+<td>total layer thickness</td>
+<td>Å</td>
+<td>50</td>
+</tr>
+<tr class="row-odd"><td>sld</td>
+<td>Layer scattering length density</td>
+<td>10<sup>-6</sup>Å<sup>-2</sup></td>
+<td>1</td>
+</tr>
+<tr class="row-even"><td>sld_solvent</td>
+<td>Solvent scattering length density</td>
+<td>10<sup>-6</sup>Å<sup>-2</sup></td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+<p>The returned value is scaled to units of cm<sup>-1</sup> sr<sup>-1</sup>, absolute scale.</p>
+<p>Polydispersity in the bilayer thickness can be applied from the GUI.</p>
+<p><strong>Definition</strong></p>
+<p>The scattering intensity <span class="math notranslate nohighlight">\(I(q)\)</span> for dilute, randomly oriented,
+“infinitely large” sheets or lamellae is</p>
+<div class="math notranslate nohighlight">
+\[I(q) = \text{scale}\frac{2\pi P(q)}{q^2\delta} + \text{background}\]</div>
+<p>The form factor is</p>
+<div class="math notranslate nohighlight">
+\[P(q) = \frac{2\Delta\rho^2}{q^2}(1-\cos(q\delta))
+     = \frac{4\Delta\rho^2}{q^2}\sin^2\left(\frac{q\delta}{2}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\delta\)</span> is the total layer thickness and <span class="math notranslate nohighlight">\(\Delta\rho\)</span> is the
+scattering length density difference.</p>
+<p>This is the limiting form for a spherical shell of infinitely large radius.
+Note that the division by <span class="math notranslate nohighlight">\(\delta\)</span> means that <span class="math notranslate nohighlight">\(scale\)</span> in sasview is the
+volume fraction of sheet, <span class="math notranslate nohighlight">\(\phi = S\delta\)</span> where <span class="math notranslate nohighlight">\(S\)</span> is the area of sheet
+per unit volume. <span class="math notranslate nohighlight">\(S\)</span> is half the Porod surface area per unit volume of a
+thicker layer (as that would include both faces of the sheet).</p>
+<p>The 2D scattering intensity is calculated in the same way as 1D, where
+the <span class="math notranslate nohighlight">\(q\)</span> vector is defined as</p>
+<div class="math notranslate nohighlight">
+\[q = \sqrt{q_x^2 + q_y^2}\]</div>
+<div class="figure" id="id2">
+<img alt="../../_images/lamellar_autogenfig.png" src="../../_images/lamellar_autogenfig.png" />
+<p class="caption"><span class="caption-number">Fig. 46 </span><span class="caption-text">1D plot corresponding to the default parameters of the model.</span></p>
+</div>
+<p><strong>Source</strong></p>
+<p><a class="reference download internal" href="../../_downloads/lamellar.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">lamellar.py</span></code></a></p>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li>F Nallet, R Laversanne, and D Roux, <em>J. Phys. II France</em>, 3, (1993) 487-502</li>
+<li>J Berghausen, J Zipfel, P Lindner, W Richtering, <em>J. Phys. Chem. B</em>, 105, (2001) 11081-11088</li>
+</ol>
+<p><strong>Authorship and Verification</strong></p>
+<ul class="simple">
+<li><strong>Author:</strong></li>
+<li><strong>Last Modified by:</strong></li>
+<li><strong>Last Reviewed by:</strong></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../qtgui/Perspectives/Fitting/models/shape-lamellae.html"
+                        title="previous chapter">Lamellae Functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lamellar_hg.html"
+                        title="next chapter">lamellar_hg</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/user/models/lamellar.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lamellar_hg.html" title="lamellar_hg"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../qtgui/Perspectives/Fitting/models/shape-lamellae.html" title="Lamellae Functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-lamellae.html" >Lamellae Functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

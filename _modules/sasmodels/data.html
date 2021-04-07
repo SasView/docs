@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sasmodels.data &#8212; SasView 5.0.3 documentation</title>
+    <title>sasmodels.data &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li> 
       </ul>
@@ -221,7 +224,7 @@
     <span class="n">isSesans</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="n">Data1D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: OptArray</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: OptArray</span></div>
 
 <div class="viewcode-block" id="Data2D"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.data.Data2D">[docs]</a><span class="k">class</span> <span class="nc">Data2D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -643,7 +646,7 @@
 
     <span class="c1"># Put theory and data on a common colormap scale</span>
     <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: OptArray</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: OptArray</span>
     <span class="k">if</span> <span class="n">use_data</span><span class="p">:</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
         <span class="n">datamin</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">target</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span> <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
@@ -738,7 +741,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">vmin_scaled</span><span class="p">,</span> <span class="n">vmax_scaled</span> <span class="o">=</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span>
     <span class="c1">#nx, ny = len(data.x_bins), len(data.y_bins)</span>
-    <span class="n">x_bins</span><span class="p">,</span> <span class="n">y_bins</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">_build_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">plottable</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">_build_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">plottable</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span>
                <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span>
                <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">],</span>
@@ -759,8 +762,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># No qx or qy given in a vector format</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span> <span class="ow">is</span> <span class="kc">None</span> \
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">plottable</span>
 
     <span class="c1"># maximum # of loops to fillup_pixels</span>
@@ -777,15 +780,13 @@
     <span class="n">weights_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
     <span class="c1"># get histogram of ones w/len(data); this will provide</span>
     <span class="c1">#the weights of data on each bins</span>
-    <span class="n">weights</span><span class="p">,</span> <span class="n">xedges</span><span class="p">,</span> <span class="n">yedges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span>
-                                             <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span>
-                                             <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">x_bins</span><span class="p">],</span>
-                                             <span class="n">weights</span><span class="o">=</span><span class="n">weights_data</span><span class="p">)</span>
+    <span class="n">weights</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">x_bins</span><span class="p">],</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">weights_data</span><span class="p">)</span>
     <span class="c1"># get histogram of data, all points into a bin in a way of summing</span>
-    <span class="n">image</span><span class="p">,</span> <span class="n">xedges</span><span class="p">,</span> <span class="n">yedges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span>
-                                           <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span>
-                                           <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">x_bins</span><span class="p">],</span>
-                                           <span class="n">weights</span><span class="o">=</span><span class="n">plottable</span><span class="p">)</span>
+    <span class="n">image</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">x_bins</span><span class="p">],</span>
+        <span class="n">weights</span><span class="o">=</span><span class="n">plottable</span><span class="p">)</span>
     <span class="c1"># Now, normalize the image by weights only for weights&gt;1:</span>
     <span class="c1"># If weight == 1, there is only one data point in the bin so</span>
     <span class="c1"># that no normalization is required.</span>
@@ -858,57 +859,54 @@
 <span class="sd">    :return: image (2d array )</span>
 
 <span class="sd">    :TODO: Find better way to do for-loop below</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># No image matrix given</span>
-    <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> \
-            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> \
-            <span class="ow">or</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span>
+            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">image</span>
     <span class="c1"># Get bin size in y and x directions</span>
-    <span class="n">len_y</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-    <span class="n">len_x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">len_x</span><span class="p">,</span> <span class="n">len_y</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">temp_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">len_y</span><span class="p">,</span> <span class="n">len_x</span><span class="p">])</span>
     <span class="n">weit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">len_y</span><span class="p">,</span> <span class="n">len_x</span><span class="p">])</span>
     <span class="c1"># do for-loop for all pixels</span>
-    <span class="k">for</span> <span class="n">n_y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)):</span>
-        <span class="k">for</span> <span class="n">n_x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+    <span class="k">for</span> <span class="n">n_y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_y</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n_x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_x</span><span class="p">):</span>
             <span class="c1"># find only null pixels</span>
             <span class="k">if</span> <span class="n">weights</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]):</span>
                 <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># find 4 nearest neighbors</span>
-                <span class="c1"># check where or not it is at the corner</span>
-                <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="n">len_x</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="c1"># go 4 next nearest neighbors when no non-zero</span>
-                <span class="c1"># neighbor exists</span>
-                <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> \
-                        <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> \
-                        <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="n">len_x</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> \
-                        <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="n">len_x</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> \
-                        <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
-                    <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># find 4 nearest neighbors</span>
+            <span class="c1"># check where or not it is at the corner</span>
+            <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="n">len_x</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># go 4 next nearest neighbors when no non-zero</span>
+            <span class="c1"># neighbor exists</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">n_y</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="mi">0</span>
+                    <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="mi">0</span>
+                    <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="n">len_x</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">n_y</span> <span class="o">!=</span> <span class="n">len_y</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_x</span> <span class="o">!=</span> <span class="n">len_x</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])):</span>
+                <span class="n">temp_image</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">image</span><span class="p">[</span><span class="n">n_y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">n_x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">weit</span><span class="p">[</span><span class="n">n_y</span><span class="p">][</span><span class="n">n_x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="c1"># get it normalized</span>
     <span class="n">ind</span> <span class="o">=</span> <span class="p">(</span><span class="n">weit</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
@@ -963,14 +961,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

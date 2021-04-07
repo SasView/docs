@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.sascalc.dataloader.readers.cansas_reader_HDF5 &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.sascalc.dataloader.readers.cansas_reader_HDF5 &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
   </head><body>
@@ -26,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -124,19 +127,19 @@
                 <span class="c1"># Load the data file</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">extension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NXcanSAS Reader could not load file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                             <span class="n">basename</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
                         <span class="k">raise</span> <span class="n">DefaultReaderException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">raise</span> <span class="n">FileContentsException</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">FileContentsException</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># Read in all child elements of top level SASroot</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">read_children</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="p">,</span> <span class="p">[])</span>
                     <span class="c1"># Add the last data set to the list of outputs</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">add_data_set</span><span class="p">()</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">FileContentsException</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">FileContentsException</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
                 <span class="k">finally</span><span class="p">:</span>
                     <span class="c1"># Close the data file</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -222,7 +225,7 @@
 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
                 <span class="c1"># If this is a dataset, store the data appropriately</span>
-                <span class="n">data_set</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">data_set</span> <span class="o">=</span> <span class="n">value</span><span class="p">[()]</span>
                 <span class="n">unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="c1"># Put scalars into lists to be sure they are iterable</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">data_set</span><span class="p">):</span>
@@ -371,19 +374,26 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">=</span> <span class="n">data_set</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">=</span> <span class="n">data_set</span>
-        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">or</span>
-                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
-                <span class="c1"># All q data in a single array</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                    <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span>
-                  <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span>
-                  <span class="bp">self</span><span class="o">.</span><span class="n">q_resolution_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s2">&quot;Q_y&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                    <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">[</span><span class="mi">1</span><span class="p">])):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_uncertainty_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">current_dataset</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;Qy&#39;</span><span class="p">:</span>
@@ -825,14 +835,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

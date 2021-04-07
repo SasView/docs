@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.sascalc.dataloader package &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.sascalc.dataloader package &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="sas.sascalc.dataloader.readers package" href="sas.sascalc.dataloader.readers.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="sas.sascalc.data_util.html" title="sas.sascalc.data_util package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -1146,16 +1149,15 @@ find new readers/writers.
 <dl class="method">
 <dt id="sas.sascalc.dataloader.loader.Registry.load">
 <code class="descname">load</code><span class="sig-paren">(</span><em>path</em>, <em>format=None</em>, <em>debug=False</em>, <em>use_defaults=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/loader.html#Registry.load"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Call the loader for the file type of path.
-:param path: file path
-:param format: explicit extension, to force the use</p>
-<blockquote>
-<div>of a particular reader</div></blockquote>
+<dd><p>Call the loader for the file type of path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> – file path</li>
+<li><strong>format</strong> – explicit extension, to force the use of a particular
+reader</li>
 <li><strong>debug</strong> – when True, print the traceback for each loader that fails</li>
 <li><strong>use_defaults</strong> – Flag to use the default readers as a backup if the
 main reader fails or no reader exists</li>
@@ -1350,14 +1352,14 @@ and (phi_max-phi_min) should not be larger than pi</p>
 
 <dl class="class">
 <dt id="sas.sascalc.dataloader.manipulations.SlabX">
-<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.manipulations.</code><code class="descname">SlabX</code><span class="sig-paren">(</span><em>x_min=0.0</em>, <em>x_max=0.0</em>, <em>y_min=0.0</em>, <em>y_max=0.0</em>, <em>bin_width=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/manipulations.html#SlabX"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.manipulations.</code><code class="descname">SlabX</code><span class="sig-paren">(</span><em>x_min=0.0</em>, <em>x_max=0.0</em>, <em>y_min=0.0</em>, <em>y_max=0.0</em>, <em>bin_width=0.001</em>, <em>fold=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/manipulations.html#SlabX"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.dataloader.manipulations._Slab</span></code></p>
 <p>Compute average I(Qx) for a region of interest</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="sas.sascalc.dataloader.manipulations.SlabY">
-<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.manipulations.</code><code class="descname">SlabY</code><span class="sig-paren">(</span><em>x_min=0.0</em>, <em>x_max=0.0</em>, <em>y_min=0.0</em>, <em>y_max=0.0</em>, <em>bin_width=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/manipulations.html#SlabY"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="descclassname">sas.sascalc.dataloader.manipulations.</code><code class="descname">SlabY</code><span class="sig-paren">(</span><em>x_min=0.0</em>, <em>x_max=0.0</em>, <em>y_min=0.0</em>, <em>y_max=0.0</em>, <em>bin_width=0.001</em>, <em>fold=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/sas/sascalc/dataloader/manipulations.html#SlabY"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sas.sascalc.dataloader.manipulations._Slab</span></code></p>
 <p>Compute average I(Qy) for a region of interest</p>
 </dd></dl>
@@ -1509,7 +1511,7 @@ This is mainly used by the Readers</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <h3><a href="../../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">sas.sascalc.dataloader package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -1568,7 +1570,7 @@ This is mainly used by the Readers</p>
         <li class="right" >
           <a href="sas.sascalc.data_util.html" title="sas.sascalc.data_util package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
@@ -1576,8 +1578,8 @@ This is mainly used by the Readers</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

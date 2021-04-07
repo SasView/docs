@@ -1,0 +1,164 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Perspectives.Fitting.FitPage &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Fitting.FitPage</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Container class for fitting widget state storage</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FitPage"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FitPage.FitPage">[docs]</a><span class="k">class</span> <span class="nc">FitPage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Container for all data related to the current fit page</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MIN_RANGE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">MAX_RANGE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">NPTS</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">NPTS_FIT</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">LOG_POINTS</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">WEIGHTING</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">SMEARING_OPTION</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">SMEARING_ACCURACY</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">SMEARING_MIN</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">SMEARING_MAX</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define the dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Main tab</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_category</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_model</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_factor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters_to_fit</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># QModels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poly_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">magnetism_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Displayed values - tab #1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_polydisperse</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is2D</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_magnetism</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displayed_values</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chi2</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Fit options - tab #2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_options</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Smearing options - tab #3</span>
+        <span class="c1"># Should this be just part of self.fit_options?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smearing_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Polydispersity - tab #4</span>
+        <span class="c1">#self.poly</span>
+
+        <span class="c1"># Magnetism - tab #5</span>
+        <span class="c1">#self.magnetism</span>
+
+        <span class="c1"># Algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="FitPage.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FitPage.FitPage.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize the current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FitPage.load"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FitPage.FitPage.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve serialized state from specified location</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FitPage.saveAsXML"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FitPage.FitPage.saveAsXML">[docs]</a>    <span class="k">def</span> <span class="nf">saveAsXML</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize the current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Connect to PageState.to_xml(), which serializes</span>
+        <span class="c1"># to the existing XML with file I(Q)</span>
+        <span class="k">pass</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

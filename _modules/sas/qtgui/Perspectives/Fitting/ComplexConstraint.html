@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Perspectives.Fitting.ComplexConstraint &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Perspectives.Fitting.ComplexConstraint &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -48,26 +48,26 @@
 
 <span class="c1"># numpy methods required for the validator! Don&#39;t remove.</span>
 <span class="c1"># pylint: disable=unused-import,unused-wildcard-import,redefined-builtin</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="o">*</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 <span class="kn">import</span> <span class="nn">webbrowser</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting</span> <span class="kn">import</span> <span class="n">FittingUtilities</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting</span> <span class="k">import</span> <span class="n">FittingUtilities</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="kn">import</span> <span class="n">Constraint</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="k">import</span> <span class="n">Constraint</span>
 
 <span class="c1">#ALLOWED_OPERATORS = [&#39;=&#39;,&#39;&lt;&#39;,&#39;&gt;&#39;,&#39;&gt;=&#39;,&#39;&lt;=&#39;]</span>
 <span class="n">ALLOWED_OPERATORS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;=&#39;</span><span class="p">]</span>
 
 <span class="c1"># Local UI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.ComplexConstraintUI</span> <span class="kn">import</span> <span class="n">Ui_ComplexConstraintUI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.ComplexConstraintUI</span> <span class="k">import</span> <span class="n">Ui_ComplexConstraintUI</span>
 
 <div class="viewcode-block" id="ComplexConstraint"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint">[docs]</a><span class="k">class</span> <span class="nc">ComplexConstraint</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_ComplexConstraintUI</span><span class="p">):</span>
     <span class="n">constraintReadySignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tabs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tabs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ComplexConstraint</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -85,6 +85,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_constraint</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">all_menu</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">warning</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lblWarning</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setupData</span><span class="p">()</span>
@@ -123,6 +124,9 @@
 <span class="sd">        Setup widgets based on current parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">insertItems</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">)</span>
+        <span class="c1"># add an `All` option in the lhs if there are more than 3 tabs</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;All&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbModel2</span><span class="o">.</span><span class="n">insertItems</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setupParamWidgets</span><span class="p">()</span>
@@ -142,18 +146,37 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fill out comboboxes and set labels with non-constrained parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Store previously select parameter</span>
+        <span class="n">previous_param1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="c1"># Clear the combobox</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="n">tab_index1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
-        <span class="n">items1</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">tab_index1</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">tab_index1</span><span class="p">]</span><span class="o">.</span><span class="n">paramHasConstraint</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
+        <span class="c1"># Populate the left combobox parameter arbitrarily with the parameters</span>
+        <span class="c1"># from the first tab if `All` option is selected</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;All&quot;</span><span class="p">:</span>
+            <span class="n">items1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">main_params_to_fit</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tab_index1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">items1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">tab_index1</span><span class="p">]</span><span class="o">.</span><span class="n">main_params_to_fit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">items1</span><span class="p">)</span>
+        <span class="c1"># Show the previously selected parameter if available</span>
+        <span class="k">if</span> <span class="n">previous_param1</span> <span class="ow">in</span> <span class="n">items1</span><span class="p">:</span>
+            <span class="n">index1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">previous_param1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index1</span><span class="p">)</span>
 
-        <span class="c1"># M2 doesn&#39;t have to be non-constrained</span>
+        <span class="c1"># Store previously select parameter</span>
+        <span class="n">previous_param2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="c1"># M2 has to be non-constrained</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="n">tab_index2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel2</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
-        <span class="n">items2</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">tab_index2</span><span class="p">]]</span>
+        <span class="n">items2</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">tab_index2</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">tab_index2</span><span class="p">]</span><span class="o">.</span><span class="n">paramHasConstraint</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">items2</span><span class="p">)</span>
+        <span class="c1"># Show the previously selected parameter if available</span>
+        <span class="k">if</span> <span class="n">previous_param2</span> <span class="ow">in</span> <span class="n">items2</span><span class="p">:</span>
+            <span class="n">index2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">previous_param2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index2</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">txtParam</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">[</span><span class="n">tab_index1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtParam</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+                              <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">ALLOWED_OPERATORS</span><span class="p">)</span>
@@ -166,22 +189,26 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdOK</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdAddAll</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;No parameters in model &quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>\
-                <span class="s2">&quot; are available for constraining.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lblWarning</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+                <span class="s2">&quot; are available for constraining.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span>\
+                <span class="s2">&quot;Please select at least one parameter for fitting when adding a constraint.&quot;</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdOK</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdAddAll</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lblWarning</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblWarning</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+
+        <span class="c1"># disable Aplly all if `All` option on lhs has been selected</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;All&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdAddAll</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdAddAll</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ComplexConstraint.setupTooltip"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint.setupTooltip">[docs]</a>    <span class="k">def</span> <span class="nf">setupTooltip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Tooltip for txtConstraint</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
-        <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_names</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
-        <span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;E.g.</span><span class="se">\n</span><span class="si">%s</span><span class="s2"> = 2.0 * (</span><span class="si">%s</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
-        <span class="n">tooltip</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> = sqrt(</span><span class="si">%s</span><span class="s2">) + 5&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+        <span class="n">tooltip</span> <span class="o">=</span> <span class="s2">&quot;E.g. M1:scale = 2.0 * M2.scale</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">tooltip</span> <span class="o">+=</span> <span class="s2">&quot;M1:scale = sqrt(M2.scale) + 5&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">txtConstraint</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">tooltip</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ComplexConstraint.onParamIndexChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint.onParamIndexChange">[docs]</a>    <span class="k">def</span> <span class="nf">onParamIndexChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -200,7 +227,7 @@
         <span class="n">params_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">param1</span><span class="p">,</span> <span class="n">param2</span><span class="p">]</span>
         <span class="n">all_pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span><span class="o">.</span><span class="n">model_parameters</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">]</span>
         <span class="n">is2Ds</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span><span class="o">.</span><span class="n">is2D</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">]</span>
-        <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span>
         <span class="k">for</span> <span class="n">pars</span><span class="p">,</span> <span class="n">is2D</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">all_pars</span><span class="p">,</span> <span class="n">is2Ds</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">FittingUtilities</span><span class="o">.</span><span class="n">isParamPolydisperse</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">is2D</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params_list</span><span class="p">]):</span>
                 <span class="c1"># no parameters are pd - reset the text to not show the warning</span>
@@ -288,7 +315,8 @@
         <span class="n">param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtConstraint</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="n">value_ex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="n">value_ex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
         <span class="n">model1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
         <span class="n">operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
 
@@ -301,15 +329,69 @@
 
         <span class="k">return</span> <span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">con</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="ComplexConstraint.constraintIsRedefined"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint.constraintIsRedefined">[docs]</a>    <span class="k">def</span> <span class="nf">constraintIsRedefined</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cons_tuple</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Warn the user when a constraint is being redefined</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get the the parameter that is being redefined</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="n">cons_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">param</span>
+        <span class="c1"># get a list of all constrained parameters</span>
+        <span class="n">tab_index1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">tab_index1</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">tab_index1</span><span class="p">]</span><span class="o">.</span><span class="n">paramHasConstraint</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
+        <span class="c1"># loop over the list of constrained parameters to check for redefinition</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">param</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
 <div class="viewcode-block" id="ComplexConstraint.onApply"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint.onApply">[docs]</a>    <span class="k">def</span> <span class="nf">onApply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Respond to Add constraint action.</span>
 <span class="sd">        Send a signal that the constraint is ready to be applied</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the combobox is set to `All` just call `applyAcrossTabs` and</span>
+        <span class="c1"># return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;All&quot;</span><span class="p">:</span>
+            <span class="c1"># exclude the tab on the lhs</span>
+            <span class="n">tabs</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span> <span class="k">if</span>
+                    <span class="n">tab</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">applyAcrossTabs</span><span class="p">(</span><span class="n">tabs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbParam1</span><span class="o">.</span><span class="n">currentText</span><span class="p">(),</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">txtConstraint</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setupParamWidgets</span><span class="p">()</span>
+            <span class="k">return</span>
+
         <span class="n">cons_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraint</span><span class="p">()</span>
+        <span class="c1">#check if constraint has been redefined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraintIsRedefined</span><span class="p">(</span><span class="n">cons_tuple</span><span class="p">):</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;Warning: parameter &quot;</span> <span class="o">+</span> \
+                  <span class="n">cons_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">cons_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">param</span> <span class="o">+</span>\
+                  <span class="s2">&quot; has been redefined.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span> <span class="o">=</span> <span class="n">txt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">constraintReadySignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">cons_tuple</span><span class="p">)</span>
         <span class="c1"># reload the comboboxes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setupParamWidgets</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">constraint_accepted</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setupParamWidgets</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ComplexConstraint.applyAcrossTabs"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint.applyAcrossTabs">[docs]</a>    <span class="k">def</span> <span class="nf">applyAcrossTabs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabs</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">expr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply constraints across tabs, e.g. all `scale` parameters</span>
+<span class="sd">        constrained to an expression. *tabs* is a list of active fit tabs</span>
+<span class="sd">        for which the parameter string *param* will be constrained to the</span>
+<span class="sd">        *expr* string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="n">tabs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="s2">&quot;kernel_module&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">tab</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+                    <span class="n">value_ex</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span><span class="n">param</span>
+                    <span class="n">constraint</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">param</span><span class="o">=</span><span class="n">param</span><span class="p">,</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">param</span><span class="p">,</span>
+                                            <span class="n">func</span><span class="o">=</span><span class="n">expr</span><span class="p">,</span>
+                                            <span class="n">value_ex</span><span class="o">=</span><span class="n">value_ex</span><span class="p">,</span>
+                                            <span class="n">operator</span><span class="o">=</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">constraintReadySignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">tab</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                     <span class="n">constraint</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="ComplexConstraint.onSetAll"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ComplexConstraint.ComplexConstraint.onSetAll">[docs]</a>    <span class="k">def</span> <span class="nf">onSetAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -318,8 +400,10 @@
         <span class="c1"># loop over parameters in constrained model</span>
         <span class="n">index1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel1</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
         <span class="n">index2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbModel2</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
-        <span class="n">items1</span> <span class="o">=</span> <span class="p">[</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span><span class="o">.</span><span class="n">paramHasConstraint</span><span class="p">(</span><span class="n">param</span><span class="p">)]</span>
+        <span class="n">items1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">[</span><span class="n">index1</span><span class="p">]</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">params</span>
         <span class="n">items2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">index2</span><span class="p">]</span>
+        <span class="c1"># create an empty list to store redefined constraints</span>
+        <span class="n">redefined_constraints</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items2</span><span class="p">:</span> <span class="k">continue</span>
             <span class="n">param</span> <span class="o">=</span> <span class="n">item</span>
@@ -336,6 +420,23 @@
                              <span class="n">value_ex</span><span class="o">=</span><span class="n">value_ex</span><span class="p">,</span>
                              <span class="n">operator</span><span class="o">=</span><span class="n">operator</span><span class="p">)</span>
 
+            <span class="c1"># check for redefined constraints and add them to the list</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraintIsRedefined</span><span class="p">((</span><span class="n">model1</span><span class="p">,</span> <span class="n">con</span><span class="p">)):</span>
+                <span class="n">redefined_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model1</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">param</span><span class="p">)</span>
+            <span class="c1"># warn the user if constraints have been redefined</span>
+            <span class="k">if</span> <span class="n">redefined_constraints</span><span class="p">:</span>
+                <span class="n">constraint_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">redefined_constraint</span> <span class="ow">in</span> <span class="n">redefined_constraints</span><span class="p">:</span>
+                    <span class="n">constraint_txt</span> <span class="o">+=</span> <span class="n">redefined_constraint</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="s2">&quot;Warning: parameters &quot;</span> <span class="o">+</span>\
+                    <span class="n">constraint_txt</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span>\
+                    <span class="s2">&quot; have been redefined.&quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">redefined_constraints</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="s2">&quot;parameter&quot;</span><span class="p">)</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="s2">&quot;been&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span> <span class="o">=</span> <span class="n">txt</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">redefining_warning</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">constraintReadySignal</span><span class="o">.</span><span class="n">emit</span><span class="p">((</span><span class="n">model1</span><span class="p">,</span> <span class="n">con</span><span class="p">))</span>
 
         <span class="c1"># reload the comboboxes</span>
@@ -346,12 +447,9 @@
 <span class="sd">        Display related help section</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tree_location</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Perspectives/Fitting/&quot;</span>
-
         <span class="n">helpfile</span> <span class="o">=</span> <span class="s2">&quot;fitting_help.html#simultaneous-fits-with-constraints&quot;</span>
         <span class="n">help_location</span> <span class="o">=</span> <span class="n">tree_location</span> <span class="o">+</span> <span class="n">helpfile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">help_location</span><span class="p">)</span></div></div>
-
-
 </pre></div>
 
           </div>
@@ -384,14 +482,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

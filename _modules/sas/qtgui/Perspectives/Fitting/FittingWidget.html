@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Perspectives.Fitting.FittingWidget &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Perspectives.Fitting.FittingWidget &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -44,54 +44,54 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">threads</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="k">import</span> <span class="n">threads</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">webbrowser</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="kn">import</span> <span class="n">generate</span>
-<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="kn">import</span> <span class="n">modelinfo</span>
-<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="kn">import</span> <span class="n">load_standard_models</span>
-<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="kn">import</span> <span class="n">MultiplicationModel</span>
-<span class="kn">from</span> <span class="nn">sasmodels.weights</span> <span class="kn">import</span> <span class="n">MODELS</span> <span class="k">as</span> <span class="n">POLYDISPERSITY_MODELS</span>
+<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="k">import</span> <span class="n">generate</span>
+<span class="kn">from</span> <span class="nn">sasmodels</span> <span class="k">import</span> <span class="n">modelinfo</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">load_standard_models</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">MultiplicationModel</span>
+<span class="kn">from</span> <span class="nn">sasmodels.weights</span> <span class="k">import</span> <span class="n">MODELS</span> <span class="k">as</span> <span class="n">POLYDISPERSITY_MODELS</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.fit.BumpsFitting</span> <span class="kn">import</span> <span class="n">BumpsFit</span> <span class="k">as</span> <span class="n">Fit</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.fit.pagestate</span> <span class="kn">import</span> <span class="n">PageState</span>
-<span class="kn">from</span> <span class="nn">sas.sascalc.fit</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.fit.BumpsFitting</span> <span class="k">import</span> <span class="n">BumpsFit</span> <span class="k">as</span> <span class="n">Fit</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.fit.pagestate</span> <span class="k">import</span> <span class="n">PageState</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.fit</span> <span class="k">import</span> <span class="n">models</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.LocalConfig</span> <span class="k">as</span> <span class="nn">LocalConfig</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.CategoryInstaller</span> <span class="kn">import</span> <span class="n">CategoryInstaller</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="kn">import</span> <span class="n">PlotterWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.CategoryInstaller</span> <span class="k">import</span> <span class="n">CategoryInstaller</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="k">import</span> <span class="n">PlotterWidget</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.FittingWidgetUI</span> <span class="kn">import</span> <span class="n">Ui_FittingWidgetUI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FitThread</span> <span class="kn">import</span> <span class="n">FitThread</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ConsoleUpdate</span> <span class="kn">import</span> <span class="n">ConsoleUpdate</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.FittingWidgetUI</span> <span class="k">import</span> <span class="n">Ui_FittingWidgetUI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FitThread</span> <span class="k">import</span> <span class="n">FitThread</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ConsoleUpdate</span> <span class="k">import</span> <span class="n">ConsoleUpdate</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ModelThread</span> <span class="kn">import</span> <span class="n">Calc1D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ModelThread</span> <span class="kn">import</span> <span class="n">Calc2D</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingLogic</span> <span class="kn">import</span> <span class="n">FittingLogic</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting</span> <span class="kn">import</span> <span class="n">FittingUtilities</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.SmearingWidget</span> <span class="kn">import</span> <span class="n">SmearingWidget</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.OptionsWidget</span> <span class="kn">import</span> <span class="n">OptionsWidget</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FitPage</span> <span class="kn">import</span> <span class="n">FitPage</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ViewDelegate</span> <span class="kn">import</span> <span class="n">ModelViewDelegate</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ViewDelegate</span> <span class="kn">import</span> <span class="n">PolyViewDelegate</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ViewDelegate</span> <span class="kn">import</span> <span class="n">MagnetismViewDelegate</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="kn">import</span> <span class="n">Constraint</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.MultiConstraint</span> <span class="kn">import</span> <span class="n">MultiConstraint</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ReportPageLogic</span> <span class="kn">import</span> <span class="n">ReportPageLogic</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.OrderWidget</span> <span class="kn">import</span> <span class="n">OrderWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ModelThread</span> <span class="k">import</span> <span class="n">Calc1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ModelThread</span> <span class="k">import</span> <span class="n">Calc2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingLogic</span> <span class="k">import</span> <span class="n">FittingLogic</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting</span> <span class="k">import</span> <span class="n">FittingUtilities</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.SmearingWidget</span> <span class="k">import</span> <span class="n">SmearingWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.OptionsWidget</span> <span class="k">import</span> <span class="n">OptionsWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FitPage</span> <span class="k">import</span> <span class="n">FitPage</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ViewDelegate</span> <span class="k">import</span> <span class="n">ModelViewDelegate</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ViewDelegate</span> <span class="k">import</span> <span class="n">PolyViewDelegate</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ViewDelegate</span> <span class="k">import</span> <span class="n">MagnetismViewDelegate</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="k">import</span> <span class="n">Constraint</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.MultiConstraint</span> <span class="k">import</span> <span class="n">MultiConstraint</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ReportPageLogic</span> <span class="k">import</span> <span class="n">ReportPageLogic</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.OrderWidget</span> <span class="k">import</span> <span class="n">OrderWidget</span>
 
 <span class="n">TAB_MAGNETISM</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">TAB_POLY</span> <span class="o">=</span> <span class="mi">3</span>
@@ -106,7 +106,7 @@
 
 <span class="c1"># CRUFT: remove when new release of sasmodels is available</span>
 <span class="c1"># https://github.com/SasView/sasview/pull/181#discussion_r218135162</span>
-<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="kn">import</span> <span class="n">SasviewModel</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sasview_model</span> <span class="k">import</span> <span class="n">SasviewModel</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">SasviewModel</span><span class="p">,</span> <span class="s1">&#39;get_weights&#39;</span><span class="p">):</span>
 <div class="viewcode-block" id="get_weights"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.get_weights">[docs]</a>    <span class="k">def</span> <span class="nf">get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -125,7 +125,7 @@
 <span class="sd">    Subclass from QStandardItemModel to allow displaying tooltips in</span>
 <span class="sd">    QTableView model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ToolTippedItemModel.headerData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.ToolTippedItemModel.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
@@ -155,7 +155,7 @@
 
     <span class="n">MAGNETIC_MODELS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sphere&#39;</span><span class="p">,</span> <span class="s1">&#39;core_shell_sphere&#39;</span><span class="p">,</span> <span class="s1">&#39;core_multi_shell&#39;</span><span class="p">,</span> <span class="s1">&#39;cylinder&#39;</span><span class="p">,</span> <span class="s1">&#39;parallelepiped&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tab_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tab_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">FittingWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -253,6 +253,8 @@
             <span class="k">for</span> <span class="n">data_item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">logic</span> <span class="o">=</span> <span class="n">FittingLogic</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">data_item</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logic</span><span class="p">)</span>
+            <span class="c1"># Option widget logic was destroyed - reestablish</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># update the ordering tab</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">order_widget</span><span class="o">.</span><span class="n">updateData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_data</span><span class="p">)</span>
 
@@ -262,7 +264,8 @@
 
         <span class="c1"># Let others know we&#39;re full of data now</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span> <span class="o">=</span> <span class="kc">True</span>
-
+        <span class="c1"># Reset the smearer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smearing_widget</span><span class="o">.</span><span class="n">resetSmearer</span><span class="p">()</span>
         <span class="c1"># Enable/disable UI components</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setEnablementOnDataLoad</span><span class="p">()</span>
 
@@ -353,6 +356,9 @@
 
         <span class="c1"># Fitting just ran - don&#39;t recalculate chi2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fitResults</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Current parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_parameters</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># signal communicator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span></div>
@@ -488,10 +494,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Tag along functionality</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Data loaded from: &quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lblFilename</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lblFilename</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lblFilename</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateQRange</span><span class="p">()</span>
         <span class="c1"># Switch off Data2D control</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chk2DView</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -502,8 +508,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batch_fitting</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lblFilename</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">dataitem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_data</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">dataitem</span><span class="p">)</span><span class="o">.</span><span class="n">filename</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cbFileNames</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">dataitem</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbFileNames</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cbFileNames</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">chkChainFit</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">chkChainFit</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -547,7 +553,13 @@
         <span class="sd">&quot;&quot;&quot; Enable/disable the polydispersity tab &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabFitting</span><span class="o">.</span><span class="n">setTabEnabled</span><span class="p">(</span><span class="n">TAB_POLY</span><span class="p">,</span> <span class="n">isChecked</span><span class="p">)</span>
         <span class="c1"># Check if any parameters are ready for fitting</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cmdFit</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">haveParamsToFit</span><span class="p">())</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdFit</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">haveParamsToFit</span><span class="p">())</span>
+        <span class="c1"># Set sasmodel polydispersity to 0 if polydispersity is unchecked, if not use Qmodel values</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poly_model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.width&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">setParam</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">value</span> <span class="k">if</span> <span class="n">isChecked</span> <span class="k">else</span> <span class="mi">0</span><span class="p">))</span></div>
+
 
 <div class="viewcode-block" id="FittingWidget.toggleMagnetism"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.toggleMagnetism">[docs]</a>    <span class="k">def</span> <span class="nf">toggleMagnetism</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">isChecked</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enable/disable the magnetism tab &quot;&quot;&quot;</span>
@@ -639,6 +651,8 @@
 
         <span class="c1"># Signals from separate tabs asking for replot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">plot_signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onOptionsUpdate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">txtMinRange</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">updateMinQ</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">txtMaxRange</span><span class="o">.</span><span class="n">editingFinished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">updateMaxQ</span><span class="p">)</span>
 
         <span class="c1"># Signals from other widgets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">customModelDirectoryChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCustomModelChange</span><span class="p">)</span>
@@ -823,18 +837,53 @@
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">columnCount</span><span class="p">()):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">setForeground</span><span class="p">(</span><span class="n">brush</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+            <span class="c1"># Allow the user to interact or not with the fields depending on</span>
+            <span class="c1"># whether the parameter is constrained or not</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">setEditable</span><span class="p">(</span><span class="n">fields_enabled</span><span class="p">)</span>
+        <span class="c1"># Force checkbox selection when parameter is constrained and disable</span>
+        <span class="c1"># checkbox interaction</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fields_enabled</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Enable checkbox interaction</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWidget.addConstraintToRow"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.addConstraintToRow">[docs]</a>    <span class="k">def</span> <span class="nf">addConstraintToRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adds the constraint object to requested row</span>
+<span class="sd">        Adds the constraint object to requested row. The constraint is first</span>
+<span class="sd">        checked for errors, and a  message box interrupting flow is</span>
+<span class="sd">        displayed, with the reason of the failure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create a new item and add the Constraint object as a child</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">Constraint</span><span class="p">)</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">row</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
+        <span class="c1"># Error checking</span>
+        <span class="c1"># First, get a list of constraints and symbols</span>
+        <span class="n">constraint_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">getActiveConstraintList</span><span class="p">()</span>
+        <span class="n">symbol_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">getSymbolDictForConstraints</span><span class="p">()</span>
+        <span class="n">constraint_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">modelName</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">constraint</span><span class="o">.</span><span class="n">param</span><span class="p">,</span>
+                                <span class="n">constraint</span><span class="o">.</span><span class="n">func</span><span class="p">))</span>
+        <span class="c1"># Call the error checking function</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">FittingUtilities</span><span class="o">.</span><span class="n">checkConstraints</span><span class="p">(</span><span class="n">symbol_dict</span><span class="p">,</span> <span class="n">constraint_list</span><span class="p">)</span>
+        <span class="c1"># get the constraint tab</span>
+        <span class="n">constraint_tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">getConstraintTab</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="c1"># Display the message box</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;Inconsistent constraint&quot;</span><span class="p">,</span>
+                <span class="n">errors</span><span class="p">,</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="c1"># Check if there is a constraint tab</span>
+            <span class="k">if</span> <span class="n">constraint_tab</span><span class="p">:</span>
+                <span class="c1"># Set the constraint_accepted flag to False to inform the</span>
+                <span class="c1"># constraint tab that the constraint was not accepted</span>
+                <span class="n">constraint_tab</span><span class="o">.</span><span class="n">constraint_accepted</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">()</span>
         <span class="n">item</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">setChild</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
@@ -845,7 +894,14 @@
         <span class="n">font</span><span class="o">.</span><span class="n">setItalic</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">brush</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modifyViewOnRow</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s1">&#39;Constraint added&#39;</span><span class="p">)</span></div>
+        <span class="c1"># update the main parameter list so the constrained parameter gets</span>
+        <span class="c1"># updated when fitting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkboxSelected</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s1">&#39;Constraint added&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">constraint_tab</span><span class="p">:</span>
+            <span class="c1"># Set the constraint_accepted flag to True to inform the</span>
+            <span class="c1"># constraint tab that the constraint was accepted</span>
+            <span class="n">constraint_tab</span><span class="o">.</span><span class="n">constraint_accepted</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="FittingWidget.addSimpleConstraint"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.addSimpleConstraint">[docs]</a>    <span class="k">def</span> <span class="nf">addSimpleConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1051,25 +1107,35 @@
 <span class="sd">        Selected parameter is chosen for fitting</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">status</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setParameterSelection</span><span class="p">(</span><span class="n">status</span><span class="p">)</span></div>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">itemFromIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setParameterSelection</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWidget.deselectParameters"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.deselectParameters">[docs]</a>    <span class="k">def</span> <span class="nf">deselectParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Selected parameters are removed for fitting</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">status</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setParameterSelection</span><span class="p">(</span><span class="n">status</span><span class="p">)</span></div>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">itemFromIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setParameterSelection</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWidget.selectedParameters"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.selectedParameters">[docs]</a>    <span class="k">def</span> <span class="nf">selectedParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns list of selected (highlighted) parameters &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstParams</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectedRows</span><span class="p">()</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">row</span><span class="p">())]</span></div>
 
-<div class="viewcode-block" id="FittingWidget.setParameterSelection"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.setParameterSelection">[docs]</a>    <span class="k">def</span> <span class="nf">setParameterSelection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">):</span>
+<div class="viewcode-block" id="FittingWidget.setParameterSelection"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.setParameterSelection">[docs]</a>    <span class="k">def</span> <span class="nf">setParameterSelection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Selected parameters are chosen for fitting</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Convert to proper indices and set requested enablement</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># We only want to select/deselect all items if</span>
+        <span class="c1"># `item` is also selected!</span>
+        <span class="c1"># Otherwise things get confusing.</span>
+        <span class="c1"># https://github.com/SasView/sasview/issues/1676</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedParameters</span><span class="p">():</span>
+            <span class="k">return</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectedParameters</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">status</span><span class="p">)</span></div>
 
@@ -1098,6 +1164,19 @@
                     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">param_number</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowHasActiveComplexConstraint</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">params</span></div>
 
+<div class="viewcode-block" id="FittingWidget.getFullConstraintNameListForModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.getFullConstraintNameListForModel">[docs]</a>    <span class="k">def</span> <span class="nf">getFullConstraintNameListForModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of tuples. Each tuple contains constraints mapped as</span>
+<span class="sd">        (&#39;constrained parameter&#39;, &#39;function to constrain&#39;)</span>
+<span class="sd">        e.g. [(&#39;sld&#39;,&#39;5*M2.sld_solvent&#39;)].</span>
+<span class="sd">        Returns a list of all constraints, not only active ones</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">(),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">param_number</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowHasConstraint</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
 <div class="viewcode-block" id="FittingWidget.getConstraintObjectsForModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.getConstraintObjectsForModel">[docs]</a>    <span class="k">def</span> <span class="nf">getConstraintObjectsForModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns Constraint objects present on the whole model</span>
@@ -1120,15 +1199,16 @@
         <span class="k">if</span> <span class="n">multi_constraints</span><span class="p">:</span>
             <span class="c1"># Let users choose what to do</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The current fit contains constraints relying on other fit pages.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Parameters with those constraints are:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>\
-                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">cons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cons</span> <span class="ow">in</span> <span class="n">multi_constraints</span><span class="p">])</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Would you like to remove these constraints or cancel fitting?&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;Parameters with those constraints are:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+                    <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">cons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cons</span> <span class="ow">in</span> <span class="n">multi_constraints</span><span class="p">]))</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Would you like to deactivate these constraints or &quot;</span>
+                    <span class="s2">&quot;cancel fitting?&quot;</span><span class="p">)</span>
             <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Existing Constraints&quot;</span><span class="p">)</span>
             <span class="c1"># custom buttons</span>
-            <span class="n">button_remove</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Remove&quot;</span><span class="p">)</span>
+            <span class="n">button_remove</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Deactivate&quot;</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">addButton</span><span class="p">(</span><span class="n">button_remove</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">YesRole</span><span class="p">)</span>
             <span class="n">button_cancel</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Cancel&quot;</span><span class="p">)</span>
             <span class="n">msgbox</span><span class="o">.</span><span class="n">addButton</span><span class="p">(</span><span class="n">button_cancel</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">RejectRole</span><span class="p">)</span>
@@ -1137,9 +1217,15 @@
                 <span class="c1"># cancel fit</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fitting cancelled&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># remove constraint</span>
+                <span class="n">constraint_tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span><span class="n">getConstraintTab</span><span class="p">()</span>
                 <span class="k">for</span> <span class="n">cons</span> <span class="ow">in</span> <span class="n">multi_constraints</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">deleteConstraintOnParameter</span><span class="p">(</span><span class="n">param</span><span class="o">=</span><span class="n">cons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="c1"># deactivate the constraint</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span><span class="n">cons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">getConstraintForRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="c1"># uncheck in the constraint tab</span>
+                    <span class="k">if</span> <span class="n">constraint_tab</span><span class="p">:</span>
+                        <span class="n">constraint_tab</span><span class="o">.</span><span class="n">uncheckConstraint</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">cons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="c1"># re-read the constraints</span>
                 <span class="n">constraints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getComplexConstraintsForModel</span><span class="p">()</span>
 
@@ -1210,7 +1296,11 @@
         <span class="n">structure</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbStructureFactor</span><span class="o">.</span><span class="n">isEnabled</span><span class="p">():</span>
             <span class="n">structure</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbStructureFactor</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">respondToModelStructure</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">structure_factor</span><span class="o">=</span><span class="n">structure</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">respondToModelStructure</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">structure_factor</span><span class="o">=</span><span class="n">structure</span><span class="p">)</span>
+
+        <span class="c1"># paste parameters from previous state</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updatePageWithParameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_parameters</span><span class="p">,</span> <span class="n">warn_user</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWidget.onSelectBatchFilename"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.onSelectBatchFilename">[docs]</a>    <span class="k">def</span> <span class="nf">onSelectBatchFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1423,22 +1513,20 @@
             <span class="n">parameter_name</span> <span class="o">=</span> <span class="n">parameter_name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="n">delegate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstPoly</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span>
+        <span class="n">parameter_name_w</span> <span class="o">=</span> <span class="n">parameter_name</span> <span class="o">+</span> <span class="s1">&#39;.width&#39;</span>
 
         <span class="c1"># Extract changed value.</span>
         <span class="k">if</span> <span class="n">model_column</span> <span class="o">==</span> <span class="n">delegate</span><span class="o">.</span><span class="n">poly_parameter</span><span class="p">:</span>
             <span class="c1"># Is the parameter checked for fitting?</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span>
-            <span class="n">parameter_name_w</span> <span class="o">=</span> <span class="n">parameter_name</span> <span class="o">+</span> <span class="s1">&#39;.width&#39;</span>
             <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">poly_params_to_fit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter_name_w</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">parameter_name_w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly_params_to_fit</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">poly_params_to_fit</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">parameter_name_w</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdFit</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">haveParamsToFit</span><span class="p">())</span>
-            <span class="c1"># force data update</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">parameter_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">delegate</span><span class="o">.</span><span class="n">columnDict</span><span class="p">()[</span><span class="n">delegate</span><span class="o">.</span><span class="n">poly_pd</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">poly_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">updateData</span><span class="p">()</span>
+            <span class="c1"># Update state stack</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateUndo</span><span class="p">()</span>
 
         <span class="k">elif</span> <span class="n">model_column</span> <span class="ow">in</span> <span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">poly_min</span><span class="p">,</span> <span class="n">delegate</span><span class="o">.</span><span class="n">poly_max</span><span class="p">]:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -1447,7 +1535,7 @@
                 <span class="c1"># Can&#39;t be converted properly, bring back the old value and exit</span>
                 <span class="k">return</span>
 
-            <span class="n">current_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">details</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span>
+            <span class="n">current_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">details</span><span class="p">[</span><span class="n">parameter_name_w</span><span class="p">]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_poly_error_column</span><span class="p">:</span>
                 <span class="c1"># err column changes the indexing</span>
                 <span class="n">current_details</span><span class="p">[</span><span class="n">model_column</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -1471,6 +1559,7 @@
                 <span class="k">return</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">parameter_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">delegate</span><span class="o">.</span><span class="n">columnDict</span><span class="p">()[</span><span class="n">model_column</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">poly_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">setParam</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
             <span class="c1"># Update plot</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">updateData</span><span class="p">()</span>
@@ -1714,9 +1803,6 @@
 
             <span class="c1"># Switch indexes</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_index</span> <span class="o">=</span> <span class="n">res_index</span>
-            <span class="c1"># Recompute Q ranges</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">q_range_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_range_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">computeDataRange</span><span class="p">()</span>
 
             <span class="c1"># Recalculate theories</span>
             <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete1D</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete2D</span>
@@ -2144,7 +2230,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recalculatePlotData</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_requestPlots</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_item</span><span class="o">.</span><span class="n">model</span><span class="p">())</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_requestPlots</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_data</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theory_item</span><span class="o">.</span><span class="n">model</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="FittingWidget.showPlot"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.showPlot">[docs]</a>    <span class="k">def</span> <span class="nf">showPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2154,7 +2240,7 @@
         <span class="n">data_to_show</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="c1"># Any models for this page</span>
         <span class="n">current_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_index</span><span class="p">]</span>
-        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_requestPlots</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">current_index</span><span class="o">.</span><span class="n">model</span><span class="p">())</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_requestPlots</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">current_index</span><span class="o">.</span><span class="n">model</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">item</span><span class="p">:</span>
             <span class="c1"># fit+data has not been shown - show just data</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">plotRequestedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">([</span><span class="n">item</span><span class="p">,</span> <span class="n">data_to_show</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_id</span><span class="p">)</span></div>
@@ -2164,7 +2250,7 @@
 <span class="sd">        Emits plotRequestedSignal for all plots found in the given model under the provided item name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fitpage_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">plots</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromFilename</span><span class="p">(</span><span class="n">item_name</span><span class="p">,</span> <span class="n">item_model</span><span class="p">)</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">plotsFromDisplayName</span><span class="p">(</span><span class="n">item_name</span><span class="p">,</span> <span class="n">item_model</span><span class="p">)</span>
         <span class="c1"># Has the fitted data been shown?</span>
         <span class="n">data_shown</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2212,7 +2298,7 @@
             <span class="n">interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">qmin</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">qmax</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">npts</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q_range_min</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">q_range_max</span><span class="p">,</span>
-                                   <span class="n">num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">npts</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                   <span class="n">num</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">npts</span><span class="p">),</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">createDefault1dData</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWidget.readCategoryInfo"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.readCategoryInfo">[docs]</a>    <span class="k">def</span> <span class="nf">readCategoryInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2288,6 +2374,9 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds weighting contribution to fitting data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">:</span>
+            <span class="c1"># no weighing for theories (dy = 0)</span>
+            <span class="k">return</span> <span class="n">data</span>
         <span class="n">new_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="c1"># Send original data for weighting</span>
         <span class="n">weight</span> <span class="o">=</span> <span class="n">FittingUtilities</span><span class="o">.</span><span class="n">getWeight</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">is2d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is2D</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weighting</span><span class="p">)</span>
@@ -2385,7 +2474,11 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t find the model &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
                 <span class="k">return</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;model_info&#39;</span><span class="p">):</span>
+            <span class="c1"># for sum/multiply models</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span> <span class="o">=</span> <span class="n">kernel_module</span><span class="o">.</span><span class="n">model_info</span><span class="o">.</span><span class="n">parameters</span>
+
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">):</span>
             <span class="c1"># built-in and custom models</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span> <span class="o">=</span> <span class="n">modelinfo</span><span class="o">.</span><span class="n">make_parameter_table</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">kernel_module</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="p">[]))</span>
 
@@ -2477,7 +2570,7 @@
 <span class="sd">        Only show volfraction once if it appears in both P and S models.</span>
 <span class="sd">        Issues SV:1280, SV:1295, SM:219, SM:199, SM:101</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">sasmodels.product</span> <span class="kn">import</span> <span class="n">VOLFRAC_ID</span><span class="p">,</span> <span class="n">RADIUS_ID</span><span class="p">,</span> <span class="n">RADIUS_MODE_ID</span><span class="p">,</span> <span class="n">STRUCTURE_MODE_ID</span>
+        <span class="kn">from</span> <span class="nn">sasmodels.product</span> <span class="k">import</span> <span class="n">VOLFRAC_ID</span><span class="p">,</span> <span class="n">RADIUS_ID</span><span class="p">,</span> <span class="n">RADIUS_MODE_ID</span><span class="p">,</span> <span class="n">STRUCTURE_MODE_ID</span>
 
         <span class="n">product_params</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">p_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span>
@@ -2594,7 +2687,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">recalculatePlotData</span><span class="p">()</span>
 
         <span class="c1"># Update state stack</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">updateUndo</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateUndo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParameterDict</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FittingWidget.processEffectiveRadius"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.processEffectiveRadius">[docs]</a>    <span class="k">def</span> <span class="nf">processEffectiveRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2659,14 +2753,17 @@
 <div class="viewcode-block" id="FittingWidget.isCheckable"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.isCheckable">[docs]</a>    <span class="k">def</span> <span class="nf">isCheckable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">isCheckable</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FittingWidget.selectCheckbox"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.selectCheckbox">[docs]</a>    <span class="k">def</span> <span class="nf">selectCheckbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="FittingWidget.changeCheckboxStatus"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.changeCheckboxStatus">[docs]</a>    <span class="k">def</span> <span class="nf">changeCheckboxStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">checkbox_status</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select the checkbox in given row.</span>
+<span class="sd">        Checks/unchecks the checkbox at given row</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="mi">0</span><span class="o">&lt;=</span> <span class="n">row</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">itemFromIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">checkbox_status</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FittingWidget.checkboxSelected"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.checkboxSelected">[docs]</a>    <span class="k">def</span> <span class="nf">checkboxSelected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="c1"># Assure we&#39;re dealing with checkboxes</span>
@@ -2676,7 +2773,9 @@
 
         <span class="c1"># If multiple rows selected - toggle all of them, filtering uncheckable</span>
         <span class="c1"># Convert to proper indices and set requested enablement</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setParameterSelection</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+        <span class="c1"># Careful with `item` NOT being selected. This means we only want to</span>
+        <span class="c1"># select that one item.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setParameterSelection</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="n">item</span><span class="p">)</span>
 
         <span class="c1"># update the list of parameters to fit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">main_params_to_fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkedListFromModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="p">)</span></div>
@@ -2698,7 +2797,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">fitted_data</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nameForFittedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nameForFittedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                 <span class="n">fitted_data</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">name</span>
                 <span class="n">fitted_data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
                 <span class="n">fitted_data</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">name</span>
@@ -2747,7 +2846,7 @@
 <span class="sd">        Return name for the dataset. Terribly impure function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">fitted_data</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nameForFittedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nameForFittedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">fitted_data</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">name</span>
             <span class="n">fitted_data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
             <span class="n">fitted_data</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">name</span>
@@ -2883,6 +2982,15 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_index</span> <span class="o">=</span> <span class="n">i</span>
 
         <span class="n">residuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateResiduals</span><span class="p">(</span><span class="n">fitted_data</span><span class="p">)</span>
+
+        <span class="n">fitted_data</span><span class="o">.</span><span class="n">show_q_range_sliders</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># Suppress the GUI update until the move is finished to limit model calculations</span>
+        <span class="n">fitted_data</span><span class="o">.</span><span class="n">slider_update_on_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">fitted_data</span><span class="o">.</span><span class="n">slider_high_q_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">txtMaxRange</span>
+        <span class="n">fitted_data</span><span class="o">.</span><span class="n">slider_high_q_setter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">updateMaxQ</span>
+        <span class="n">fitted_data</span><span class="o">.</span><span class="n">slider_low_q_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">txtMinRange</span>
+        <span class="n">fitted_data</span><span class="o">.</span><span class="n">slider_low_q_setter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">updateMinQ</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">model_data</span> <span class="o">=</span> <span class="n">fitted_data</span>
         <span class="n">new_plots</span> <span class="o">=</span> <span class="p">[</span><span class="n">fitted_data</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">residuals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3581,7 +3689,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">FitPage</span><span class="p">)</span>
         <span class="c1"># Main tab info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">data_is_loaded</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chkPolydispersity</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">is_polydisperse</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chkMagnetism</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">is_magnetic</span><span class="p">)</span>
@@ -3623,7 +3731,7 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">FitPage</span><span class="p">)</span>
 
         <span class="c1"># Main tab info</span>
-        <span class="n">fp</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span>
         <span class="n">fp</span><span class="o">.</span><span class="n">data_is_loaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span>
         <span class="n">fp</span><span class="o">.</span><span class="n">is_polydisperse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chkPolydispersity</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
         <span class="n">fp</span><span class="o">.</span><span class="n">is_magnetic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chkMagnetism</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
@@ -3762,6 +3870,24 @@
         <span class="n">filename</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">filename</span></div>
 
+<div class="viewcode-block" id="FittingWidget.getParameterDict"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.getParameterDict">[docs]</a>    <span class="k">def</span> <span class="nf">getParameterDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gather current fitting parameters as dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFitParameters</span><span class="p">()</span>
+        <span class="n">param_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFitPage</span><span class="p">()</span>
+        <span class="n">param_list</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFitModel</span><span class="p">()</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">FittingUtilities</span><span class="o">.</span><span class="n">formatParameters</span><span class="p">(</span><span class="n">param_list</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="c1"># put the text into dictionary</span>
+        <span class="n">line_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">line_dict</span><span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">line_dict</span></div>
+
 <div class="viewcode-block" id="FittingWidget.onCopyToClipboard"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.onCopyToClipboard">[docs]</a>    <span class="k">def</span> <span class="nf">onCopyToClipboard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copy current fitting parameters into the clipboard</span>
@@ -3841,20 +3967,20 @@
 
         <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;is_data&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">)])</span>
         <span class="n">data_ids</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batch_fitting</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_data</span><span class="p">:</span>
                 <span class="c1"># need item-&gt;data-&gt;data_id</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">dataFromItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
                 <span class="n">data_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-                <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_is_loaded</span><span class="p">:</span>
                 <span class="n">data_ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span>
-                <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filename</span><span class="p">)]</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span>
         <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;tab_index&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tab_id</span><span class="p">)])</span>
         <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;is_batch_fitting&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_batch_fitting</span><span class="p">)])</span>
-        <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;data_name&#39;</span><span class="p">,</span> <span class="n">filenames</span><span class="p">])</span>
+        <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;data_name&#39;</span><span class="p">,</span> <span class="n">names</span><span class="p">])</span>
         <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;data_id&#39;</span><span class="p">,</span> <span class="n">data_ids</span><span class="p">])</span>
         <span class="n">param_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;tab_name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelName</span><span class="p">()])</span>
         <span class="c1"># option tab</span>
@@ -4007,13 +4133,19 @@
 
         <span class="n">lines</span> <span class="o">=</span> <span class="n">cb_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;sasview_parameter_values&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Clipboard content is incompatible with the Fit Page.&quot;</span>
+            <span class="n">msgbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">msgbox</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Warning</span><span class="p">)</span>
+            <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">msgbox</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Clipboard&quot;</span><span class="p">)</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+            <span class="k">return</span>
 
         <span class="c1"># put the text into dictionary</span>
         <span class="n">line_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;tab_name&quot;</span><span class="p">:</span>
                 <span class="n">line_dict</span><span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">updatePageWithParameters</span><span class="p">(</span><span class="n">line_dict</span><span class="p">)</span></div>
@@ -4033,7 +4165,7 @@
         <span class="c1"># Now that the page is ready for parameters, fill it up</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updatePageWithParameters</span><span class="p">(</span><span class="n">line_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FittingWidget.updatePageWithParameters"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.updatePageWithParameters">[docs]</a>    <span class="k">def</span> <span class="nf">updatePageWithParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="FittingWidget.updatePageWithParameters"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.updatePageWithParameters">[docs]</a>    <span class="k">def</span> <span class="nf">updatePageWithParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_dict</span><span class="p">,</span> <span class="n">warn_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update FitPage with parameters in line_dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -4066,7 +4198,7 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">context</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbModel</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;model_name&#39;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">warn_user</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbModel</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;model_name&#39;</span><span class="p">]):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Information</span><span class="p">)</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;The model in the clipboard is not the same as the currently loaded model. </span><span class="se">\</span>
@@ -4103,11 +4235,12 @@
                 <span class="k">pass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">updateQRange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_range_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_range_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npts</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">button_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_dict</span><span class="p">[</span><span class="s1">&#39;weighting&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">weightingGroup</span><span class="o">.</span><span class="n">buttons</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">weightingGroup</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="n">button</span><span class="p">))</span> <span class="o">==</span> <span class="n">button_id</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span>
-                    <span class="n">button</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-                    <span class="k">break</span>
+            <span class="k">if</span> <span class="s1">&#39;weighting&#39;</span> <span class="ow">in</span> <span class="n">line_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">button_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line_dict</span><span class="p">[</span><span class="s1">&#39;weighting&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">weightingGroup</span><span class="o">.</span><span class="n">buttons</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options_widget</span><span class="o">.</span><span class="n">weightingGroup</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="n">button</span><span class="p">))</span> <span class="o">==</span> <span class="n">button_id</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span>
+                        <span class="n">button</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="k">break</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">pass</span>
 
@@ -4184,22 +4317,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">3</span><span class="o">+</span><span class="n">joffset</span><span class="p">)</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">param_dict</span><span class="p">[</span><span class="n">param_name</span><span class="p">][</span><span class="mi">3</span><span class="o">+</span><span class="n">ioffset</span><span class="p">])</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">pass</span>
-
-            <span class="c1"># constraints</span>
-            <span class="n">cons</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="n">param_name</span><span class="p">][</span><span class="mi">4</span><span class="o">+</span><span class="n">ioffset</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">cons</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cons</span><span class="p">)</span><span class="o">==</span><span class="mi">5</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">value_ex</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="n">validate</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-                <span class="n">function</span> <span class="o">=</span> <span class="n">cons</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-                <span class="n">constraint</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">()</span>
-                <span class="n">constraint</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="n">constraint</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">function</span>
-                <span class="n">constraint</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">param</span>
-                <span class="n">constraint</span><span class="o">.</span><span class="n">value_ex</span> <span class="o">=</span> <span class="n">value_ex</span>
-                <span class="n">constraint</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="n">validate</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">addConstraintToRow</span><span class="p">(</span><span class="n">constraint</span><span class="o">=</span><span class="n">constraint</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
 
@@ -4325,7 +4442,22 @@
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span>
         <span class="c1"># save checkbutton state and txtcrtl values</span>
         <span class="n">state</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">FittingUtilities</span><span class="o">.</span><span class="n">getStandardParam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="p">)</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">orientation_params_disp</span> <span class="o">=</span> <span class="n">FittingUtilities</span><span class="o">.</span><span class="n">getOrientationParam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="p">)</span></div></div>
+        <span class="n">state</span><span class="o">.</span><span class="n">orientation_params_disp</span> <span class="o">=</span> <span class="n">FittingUtilities</span><span class="o">.</span><span class="n">getOrientationParam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FittingWidget.getSymbolDict"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.FittingWidget.FittingWidget.getSymbolDict">[docs]</a>    <span class="k">def</span> <span class="nf">getSymbolDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a dict containing a list of all the symbols used for fitting</span>
+<span class="sd">        and their values, e.g. {&#39;M1.scale&#39;:1, &#39;M1.background&#39;: 0.001}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sym_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># return an empty dict if no model has been selected</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sym_dict</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_module</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParamNames</span><span class="p">():</span>
+            <span class="n">sym_dict</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{model_name}</span><span class="s2">.</span><span class="si">{param}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">toDouble</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_model_model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span><span class="n">param</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">sym_dict</span></div></div>
 </pre></div>
 
           </div>
@@ -4358,14 +4490,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Utilities.IPythonWidget &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Utilities.IPythonWidget &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -41,31 +41,15 @@
           <div class="body" role="main">
             
   <h1>Source code for sas.qtgui.Utilities.IPythonWidget</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span></span><span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtSvg</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtSvg</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities</span> <span class="kn">import</span> <span class="n">GuiUtils</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities</span> <span class="k">import</span> <span class="n">GuiUtils</span>
 
-<div class="viewcode-block" id="new_load_qt"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.IPythonWidget.new_load_qt">[docs]</a><span class="k">def</span> <span class="nf">new_load_qt</span><span class="p">(</span><span class="n">api_options</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtSvg</span><span class="p">,</span> <span class="s1">&#39;pyqt&#39;</span></div>
-
-<div class="viewcode-block" id="qtconsole_new_load_qt"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.IPythonWidget.qtconsole_new_load_qt">[docs]</a><span class="k">def</span> <span class="nf">qtconsole_new_load_qt</span><span class="p">(</span><span class="n">api_options</span><span class="p">):</span>
-    <span class="c1"># Alias PyQt-specific functions for PySide compatibility.</span>
-    <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span>
-    <span class="n">QtCore</span><span class="o">.</span><span class="n">Slot</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSlot</span>
-    <span class="k">return</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtSvg</span><span class="p">,</span> <span class="s1">&#39;pyqt&#39;</span></div>
-
-<span class="kn">from</span> <span class="nn">IPython.external</span> <span class="kn">import</span>  <span class="n">qt_loaders</span>
-<span class="kn">from</span> <span class="nn">qtconsole</span> <span class="kn">import</span> <span class="n">qt_loaders</span> <span class="k">as</span> <span class="n">qtconsole_qt_loaders</span>
-<span class="c1"># Do some monkey patching to satisfy pyinstaller complaining</span>
-<span class="c1"># about pyside/pyqt confusion</span>
-<span class="c1">#qt_loaders.load_qt = new_load_qt</span>
-<span class="c1">#qtconsole_qt_loaders.load_qt = qtconsole_new_load_qt</span>
-
-<span class="kn">from</span> <span class="nn">qtconsole.rich_jupyter_widget</span> <span class="kn">import</span> <span class="n">RichJupyterWidget</span>
+<span class="kn">from</span> <span class="nn">qtconsole.rich_jupyter_widget</span> <span class="k">import</span> <span class="n">RichJupyterWidget</span>
 
 <span class="n">MODULES_TO_IMPORT</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s1">&#39;sas&#39;</span><span class="p">,</span> <span class="s1">&#39;sas&#39;</span><span class="p">),</span>
@@ -73,10 +57,10 @@
     <span class="p">(</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="IPythonWidget"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.IPythonWidget.IPythonWidget">[docs]</a><span class="k">class</span> <span class="nc">IPythonWidget</span><span class="p">(</span><span class="n">RichJupyterWidget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">qtconsole.inprocess</span> <span class="kn">import</span> <span class="n">QtInProcessKernelManager</span>
-        <span class="kn">from</span> <span class="nn">IPython.lib</span> <span class="kn">import</span> <span class="n">guisupport</span>
+        <span class="kn">from</span> <span class="nn">qtconsole.inprocess</span> <span class="k">import</span> <span class="n">QtInProcessKernelManager</span>
+        <span class="kn">from</span> <span class="nn">IPython.lib</span> <span class="k">import</span> <span class="n">guisupport</span>
         <span class="n">app</span> <span class="o">=</span> <span class="n">guisupport</span><span class="o">.</span><span class="n">get_app_qt4</span><span class="p">()</span>
 
         <span class="n">font</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">getMonospaceFont</span><span class="p">()</span>
@@ -128,14 +112,14 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

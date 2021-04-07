@@ -6,14 +6,17 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>bcc_paracrystal &#8212; SasView 5.0.3 documentation</title>
+    <title>bcc_paracrystal &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="fcc_paracrystal" href="fcc_paracrystal.html" />
@@ -34,7 +37,7 @@
         <li class="right" >
           <a href="../qtgui/Perspectives/Fitting/models/shape-paracrystal.html" title="Paracrystal Functions"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-paracrystal.html" accesskey="U">Paracrystal Functions</a> &#187;</li> 
@@ -136,9 +139,9 @@ is assumed to be isotropic and characterized by a Gaussian distribution.</p>
 primary particle, <span class="math notranslate nohighlight">\(V_\text{lattice}\)</span> is a volume correction for the crystal
 structure, <span class="math notranslate nohighlight">\(P(q)\)</span> is the form factor of the sphere (normalized), and <span class="math notranslate nohighlight">\(Z(q)\)</span>
 is the paracrystalline structure factor for a body-centered cubic structure.</p>
-<p>Equation (1) of the 1990 reference<a class="footnote-reference" href="#matsuoka1990" id="id2">[2]</a> is used to calculate <span class="math notranslate nohighlight">\(Z(q)\)</span>,
-using equations (29)-(31) from the 1987 paper<a class="footnote-reference" href="#matsuoka1987" id="id3">[1]</a> for <span class="math notranslate nohighlight">\(Z1\)</span>, <span class="math notranslate nohighlight">\(Z2\)</span>, and
-<span class="math notranslate nohighlight">\(Z3\)</span>.</p>
+<p>Equation (1) of the 1990 reference<a class="footnote-reference" href="#matsuoka1990" id="id2">[2]</a> is used to calculate
+<span class="math notranslate nohighlight">\(Z(q)\)</span>, using equations (29)-(31) from the 1987 paper<a class="footnote-reference" href="#matsuoka1987" id="id3">[1]</a> for
+<span class="math notranslate nohighlight">\(Z1\)</span>, <span class="math notranslate nohighlight">\(Z2\)</span>, and <span class="math notranslate nohighlight">\(Z3\)</span>.</p>
 <p>The lattice correction (the occupied volume of the lattice) for a
 body-centered cubic structure of particles of radius <span class="math notranslate nohighlight">\(R\)</span> and nearest neighbor
 separation <span class="math notranslate nohighlight">\(D\)</span> is</p>
@@ -167,20 +170,19 @@ q/q_o          &amp;   1   &amp; \sqrt{2} &amp; \sqrt{3} &amp; \sqrt{4} &amp; \s
 \end{array}\end{split}\]</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The calculation of <span class="math notranslate nohighlight">\(Z(q)\)</span> is a double numerical integral that
-must be carried out with a high density of points to properly capture
-the sharp peaks of the paracrystalline scattering.
-So be warned that the calculation is slow. Fitting of any experimental data
-must be resolution smeared for any meaningful fit. This makes a triple integral
-which may be very slow.</p>
+<p class="last">The calculation of <span class="math notranslate nohighlight">\(Z(q)\)</span> is a double numerical integral that must be
+carried out with a high density of points to properly capture the sharp
+peaks of the paracrystalline scattering. So be warned that the calculation
+is slow. Fitting of any experimental data must be resolution smeared for
+any meaningful fit. This makes a triple integral which may be very slow.</p>
 </div>
 <p>This example dataset is produced using 200 data points,
 <em>qmin</em> = 0.001 Å<sup>-1</sup>, <em>qmax</em> = 0.1 Å<sup>-1</sup> and the above default values.</p>
 <p>The 2D (Anisotropic model) is based on the reference below where <span class="math notranslate nohighlight">\(I(q)\)</span> is
-approximated for 1d scattering. Thus the scattering pattern for 2D may not
-be accurate, particularly at low <span class="math notranslate nohighlight">\(q\)</span>. For general details of the calculation and angular
-dispersions for oriented particles see <a class="reference internal" href="../qtgui/Perspectives/Fitting/orientation/orientation.html#orientation"><span class="std std-ref">Oriented particles</span></a> .
-Note that we are not responsible for any incorrectness of the 2D model computation.</p>
+approximated for 1d scattering. Thus the scattering pattern for 2D may not be
+accurate, particularly at low <span class="math notranslate nohighlight">\(q\)</span>. For general details of the calculation and
+angular dispersions for oriented particles see <a class="reference internal" href="../qtgui/Perspectives/Fitting/orientation/orientation.html#orientation"><span class="std std-ref">Oriented particles</span></a>. Note that
+we are not responsible for any incorrectness of the 2D model computation.</p>
 <div class="figure" id="id5">
 <img alt="../../_images/parallelepiped_angle_definition.png" src="../../_images/parallelepiped_angle_definition.png" />
 <p class="caption"><span class="caption-number">Fig. 52 </span><span class="caption-text">Orientation of the crystal with respect to the scattering plane, when
@@ -191,24 +193,24 @@ Note that we are not responsible for any incorrectness of the 2D model computati
 <p class="caption"><span class="caption-number">Fig. 53 </span><span class="caption-text">1D and 2D plots corresponding to the default parameters of the model.</span></p>
 </div>
 <p><strong>Source</strong></p>
-<p><a class="reference download internal" href="../../_downloads/bcc_paracrystal.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">bcc_paracrystal.py</span></code></a>
-<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/bcc_paracrystal.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">bcc_paracrystal.c</span></code></a>
-<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/sphere_form.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">sphere_form.c</span></code></a>
-<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/gauss150.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">gauss150.c</span></code></a>
-<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" href="../../_downloads/sas_3j1x_x.c" download=""><code class="xref download docutils literal notranslate"><span class="pre">sas_3j1x_x.c</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/c9e409492d829bbeb2d4e27a9b9a5a29/bcc_paracrystal.py"><code class="xref download docutils literal notranslate"><span class="pre">bcc_paracrystal.py</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/37e209e41850804f52b6f21d77bbe8d3/bcc_paracrystal.c"><code class="xref download docutils literal notranslate"><span class="pre">bcc_paracrystal.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/3c92b7a44b999ce4da490b2286749be5/sphere_form.c"><code class="xref download docutils literal notranslate"><span class="pre">sphere_form.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/808a5ffaec533ed535907110264979b6/gauss150.c"><code class="xref download docutils literal notranslate"><span class="pre">gauss150.c</span></code></a>
+<span class="math notranslate nohighlight">\(\ \star\ \)</span> <a class="reference download internal" download="" href="../../_downloads/7db26179b1f5e2ddb9f306a21336903e/sas_3j1x_x.c"><code class="xref download docutils literal notranslate"><span class="pre">sas_3j1x_x.c</span></code></a></p>
 <p><strong>References</strong></p>
 <table class="docutils footnote" frame="void" id="matsuoka1987" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>Hideki Matsuoka et. al. <em>Physical Review B</em>, 36 (1987) 1754-1765
-(Original Paper)</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[1]</a></td><td>Hideki Matsuoka et. al. <em>Physical Review B</em>, 36 (1987)
+1754-1765 (Original Paper)</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="matsuoka1990" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Hideki Matsuoka et. al. <em>Physical Review B</em>, 41 (1990) 3854 -3856
-(Corrections to FCC and BCC lattice structure calculation)</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Hideki Matsuoka et. al. <em>Physical Review B</em>, 41 (1990)
+3854-3856 (Corrections to FCC and BCC lattice structure calculation)</td></tr>
 </tbody>
 </table>
 <p><strong>Authorship and Verification</strong></p>
@@ -269,15 +271,15 @@ Note that we are not responsible for any incorrectness of the 2D model computati
         <li class="right" >
           <a href="../qtgui/Perspectives/Fitting/models/shape-paracrystal.html" title="Paracrystal Functions"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../qtgui/Perspectives/Fitting/models/index.html" >Model Functions</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../qtgui/Perspectives/Fitting/models/shape-paracrystal.html" >Paracrystal Functions</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

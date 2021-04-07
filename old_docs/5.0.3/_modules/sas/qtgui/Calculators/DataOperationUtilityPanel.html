@@ -1,0 +1,545 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>sas.qtgui.Calculators.DataOperationUtilityPanel &#8212; SasView 5.0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Calculators.DataOperationUtilityPanel</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter</span> <span class="kn">import</span> <span class="n">PlotterWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Plotter2D</span> <span class="kn">import</span> <span class="n">Plotter2DWidget</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="kn">from</span> <span class="nn">.UI.DataOperationUtilityUI</span> <span class="kn">import</span> <span class="n">Ui_DataOperationUtility</span>
+
+<span class="n">BG_WHITE</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(255, 255, 255);&quot;</span>
+<span class="n">BG_RED</span> <span class="o">=</span> <span class="s2">&quot;background-color: rgb(244, 170, 164);&quot;</span>
+
+
+<div class="viewcode-block" id="DataOperationUtilityPanel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel">[docs]</a><span class="k">class</span> <span class="nc">DataOperationUtilityPanel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">,</span> <span class="n">Ui_DataOperationUtility</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DataOperationUtilityPanel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">communicator</span><span class="p">()</span>
+        <span class="c1"># disable the context help icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowFlags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowFlags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowContextHelpButtonHint</span><span class="p">)</span>
+
+        <span class="c1"># To store input datafiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_data_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># To store the result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># To update content of comboboxes with files loaded in DataExplorer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span><span class="n">sendDataToPanelSignal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateCombobox</span><span class="p">)</span>
+
+        <span class="c1"># change index of comboboxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSelectData1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSelectData2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onSelectOperator</span><span class="p">)</span>
+
+        <span class="c1"># edit Coefficient text edit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onInputCoefficient</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCheckOutputName</span><span class="p">)</span>
+
+        <span class="c1"># push buttons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdClose</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onClose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdHelp</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onHelp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCompute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdReset</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onReset</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># validator for coefficient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutData1</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        <span class="c1"># Create default layout for initial graphs (when they are still empty)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span><span class="p">)</span>
+
+        <span class="c1"># Flag to enable Compute pushbutton</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data2OK</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data1OK</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.updateCombobox"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.updateCombobox">[docs]</a>    <span class="k">def</span> <span class="nf">updateCombobox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function to fill comboboxes with names of datafiles loaded in</span>
+<span class="sd">         DataExplorer. For Data2, there is the additional option of choosing</span>
+<span class="sd">         a number to apply to data1 &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span> <span class="o">=</span> <span class="n">filenames</span>
+
+        <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">filenames</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="c1"># clear contents of comboboxes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">addItems</span><span class="p">([</span><span class="s1">&#39;Select Data&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">addItems</span><span class="p">([</span><span class="s1">&#39;Select Data&#39;</span><span class="p">,</span> <span class="s1">&#39;Number&#39;</span><span class="p">])</span>
+
+            <span class="n">list_datafiles</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">key_id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">filenames</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+                    <span class="c1"># filenames with titles</span>
+                    <span class="n">new_title</span> <span class="o">=</span> <span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span>
+                    <span class="n">list_datafiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">list_data_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># filenames without titles by removing time.time()</span>
+                    <span class="n">new_title</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\d</span><span class="si">{10}</span><span class="s1">\.\d</span><span class="si">{2}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_id</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">list_data_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span>
+                    <span class="n">list_datafiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span>
+
+            <span class="c1"># update contents of comboboxes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">list_datafiles</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">list_datafiles</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onHelp"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onHelp">[docs]</a>    <span class="k">def</span> <span class="nf">onHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bring up the Data Operation Utility Documentation whenever</span>
+<span class="sd">        the HELP button is clicked.</span>
+<span class="sd">        Calls Documentation Window with the path of the location within the</span>
+<span class="sd">        documentation tree (after /doc/ ....&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;/user/qtgui/Calculators/data_operator_help.html&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">showHelp</span><span class="p">(</span><span class="n">location</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onClose"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onClose">[docs]</a>    <span class="k">def</span> <span class="nf">onClose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close dialog &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">onReset</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">addItems</span><span class="p">([</span><span class="s1">&#39;No Data Available&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">addItems</span><span class="p">([</span><span class="s1">&#39;No Data Available&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onCompute"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onCompute">[docs]</a>    <span class="k">def</span> <span class="nf">onCompute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; perform calculation &quot;&quot;&quot;</span>
+        <span class="c1"># set operator to be applied</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="c1"># calculate and send data to DataExplorer</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data1</span>
+            <span class="n">data2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;data1 </span><span class="si">%s</span><span class="s2"> data2&quot;</span> <span class="o">%</span> <span class="n">operator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+
+        <span class="c1"># if outputname was unused, write output result to it</span>
+        <span class="c1"># and display plot</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">onCheckOutputName</span><span class="p">():</span>
+            <span class="c1"># add outputname to self.filenames</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">list_data_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">text</span><span class="p">()))</span>
+            <span class="c1"># send result to DataExplorer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onPrepareOutputData</span><span class="p">()</span>
+            <span class="c1"># plot result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="c1"># Add the new plot to the comboboxes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onPrepareOutputData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onPrepareOutputData">[docs]</a>    <span class="k">def</span> <span class="nf">onPrepareOutputData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Prepare datasets to be added to DataExplorer and DataManager &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">new_item</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">createModelItemWithPlot</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">new_datalist_item</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()):</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communicator</span><span class="o">.</span> \
+            <span class="n">updateModelFromDataOperationPanelSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">new_item</span><span class="p">,</span> <span class="n">new_datalist_item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onSelectOperator"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onSelectOperator">[docs]</a>    <span class="k">def</span> <span class="nf">onSelectOperator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change GUI when operator changed &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblOperatorApplied</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onReset"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onReset">[docs]</a>    <span class="k">def</span> <span class="nf">onReset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset Panel to its initial state (default values) keeping</span>
+<span class="sd">        the names of loaded data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;1.0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;MyNewDataName&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbOperator</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data1OK</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data2OK</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Empty graphs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onSelectData1"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onSelectData1">[docs]</a>    <span class="k">def</span> <span class="nf">onSelectData1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Plot for selection of Data1 &quot;&quot;&quot;</span>
+        <span class="n">choice_data1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+
+        <span class="n">wrong_choices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;No Data Available&#39;</span><span class="p">,</span> <span class="s1">&#39;Select Data&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">choice_data1</span> <span class="ow">in</span> <span class="n">wrong_choices</span><span class="p">:</span>
+            <span class="c1"># check validity of choice: input = filename</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data1</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data1OK</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># self.onCheckChosenData())</span>
+            <span class="k">return</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data1OK</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># get Data1</span>
+            <span class="n">key_id1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findId</span><span class="p">(</span><span class="n">choice_data1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractData</span><span class="p">(</span><span class="n">key_id1</span><span class="p">)</span>
+            <span class="c1"># plot Data1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="p">)</span>
+            <span class="c1"># plot default for output graph</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">)</span>
+            <span class="c1"># Enable Compute button only if Data2 is defined and data compatible</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCheckChosenData</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onSelectData2"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onSelectData2">[docs]</a>    <span class="k">def</span> <span class="nf">onSelectData2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Plot for selection of Data2 &quot;&quot;&quot;</span>
+        <span class="n">choice_data2</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">currentText</span><span class="p">())</span>
+        <span class="n">wrong_choices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;No Data Available&#39;</span><span class="p">,</span> <span class="s1">&#39;Select Data&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">choice_data2</span> <span class="ow">in</span> <span class="n">wrong_choices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data2OK</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onCheckChosenData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">elif</span> <span class="n">choice_data2</span> <span class="o">==</span> <span class="s1">&#39;Number&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data2OK</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+            <span class="c1"># Enable Compute button only if Data1 defined and compatible data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCheckChosenData</span><span class="p">())</span>
+            <span class="c1"># Display value of coefficient in graphData2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="p">)</span>
+            <span class="c1"># plot default for output graph</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onCheckChosenData</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data2OK</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">key_id2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findId</span><span class="p">(</span><span class="n">choice_data2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractData</span><span class="p">(</span><span class="n">key_id2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdCompute</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onCheckChosenData</span><span class="p">())</span>
+
+            <span class="c1"># plot Data2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="p">)</span>
+            <span class="c1"># plot default for output graph</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphOutput</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutOutput</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onInputCoefficient"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onInputCoefficient">[docs]</a>    <span class="k">def</span> <span class="nf">onInputCoefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check input of number when a coefficient is required</span>
+<span class="sd">        for operation &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">isModified</span><span class="p">():</span>
+            <span class="n">input_to_check</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="n">input_to_check</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">input_to_check</span> <span class="ow">is</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;DataOperation: Number requires a float number&#39;</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="c1"># should be check that 0 is not chosen</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;DataOperation: Number requires a non zero number&#39;</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtNumber</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graphData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layoutData2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onCheckChosenData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onCheckChosenData">[docs]</a>    <span class="k">def</span> <span class="nf">onCheckChosenData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; check that data1 and data2 are compatible &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data1OK</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2OK</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Number&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Cannot compute data of different dimensions&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;Data1D&#39;</span>\
+                    <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span>
+                             <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="n">x</span><span class="p">))):</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Cannot compute 1D data of different lengths&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;Data2D&#39;</span> \
+                    <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="n">qx_data</span><span class="p">)</span> \
+                    <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span>
+                                     <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="n">qx_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="n">qx_data</span><span class="p">))</span>
+                    <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span>
+                                <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data1</span><span class="o">.</span><span class="n">qy_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data2</span><span class="o">.</span><span class="n">qy_data</span><span class="p">))</span>
+                         <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Cannot compute 2D data of different lengths&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData1</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.onCheckOutputName"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.onCheckOutputName">[docs]</a>    <span class="k">def</span> <span class="nf">onCheckOutputName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check that name of output does not already exist &quot;&quot;&quot;</span>
+        <span class="n">name_to_check</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">name_to_check</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name_to_check</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No output name&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">elif</span> <span class="n">name_to_check</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_data_items</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_RED</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;The Output data name already exists&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtOutputData</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="n">BG_WHITE</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="c1"># ########</span>
+    <span class="c1"># Modification of inputs</span>
+    <span class="c1"># ########</span>
+    <span class="k">def</span> <span class="nf">_findId</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; find id of name in list of filenames &quot;&quot;&quot;</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key_id</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="c1"># data with title</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span><span class="o">.</span><span class="n">title</span>
+            <span class="c1"># data without title</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">key_id</span>
+
+    <span class="k">def</span> <span class="nf">_extractData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Extract data from file with id contained in list of filenames &quot;&quot;&quot;</span>
+        <span class="n">data_complete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">[</span><span class="n">key_id</span><span class="p">]</span>
+        <span class="n">dimension</span> <span class="o">=</span> <span class="n">data_complete</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">if</span> <span class="n">dimension</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;Data1D&#39;</span><span class="p">,</span> <span class="s1">&#39;Data2D&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data_complete</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Error with data format&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="c1"># ########</span>
+    <span class="c1"># PLOTS</span>
+    <span class="c1"># ########</span>
+<div class="viewcode-block" id="DataOperationUtilityPanel.newPlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.newPlot">[docs]</a>    <span class="k">def</span> <span class="nf">newPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create template for graphs with default &#39;?&#39; layout&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGraphicsView</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">)</span>
+
+        <span class="c1"># clear layout</span>
+        <span class="k">if</span> <span class="n">layout</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">takeAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prepareSubgraphWithData</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">))</span>
+
+        <span class="n">graph</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.updatePlot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.updatePlot">[docs]</a>    <span class="k">def</span> <span class="nf">updatePlot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; plot data in graph after clearing its layout &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGraphicsView</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">)</span>
+
+        <span class="c1"># clear layout</span>
+        <span class="k">if</span> <span class="n">layout</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">layout</span><span class="o">.</span><span class="n">takeAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">removeItem</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="n">layout</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+            <span class="c1"># plot 2D data</span>
+            <span class="n">plotter2D</span> <span class="o">=</span> <span class="n">Plotter2DWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+            <span class="c1"># Draw zero axis lines.</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">graph</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">plotter2D</span><span class="p">)</span>
+            <span class="c1"># remove x- and ylabels</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">y_label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">x_label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">show_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">plotter2D</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+            <span class="c1"># plot 1D data</span>
+            <span class="n">plotter</span> <span class="o">=</span> <span class="n">PlotterWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quickplot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">showLegend</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">plotter</span><span class="p">)</span>
+
+            <span class="n">plotter</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+            <span class="n">plotter</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+            <span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">hide_error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+            <span class="n">plotter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbData2</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Number&#39;</span><span class="p">:</span>
+            <span class="c1"># display value of coefficient (to be applied to Data1)</span>
+            <span class="c1"># in graphData2</span>
+            <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prepareSubgraphWithData</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+            <span class="n">graph</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOperationUtilityPanel.prepareSubgraphWithData"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Calculators.html#sas.qtgui.Calculators.DataOperationUtilityPanel.DataOperationUtilityPanel.prepareSubgraphWithData">[docs]</a>    <span class="k">def</span> <span class="nf">prepareSubgraphWithData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create graphics view containing scene with string &quot;&quot;&quot;</span>
+        <span class="n">scene</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGraphicsScene</span><span class="p">()</span>
+        <span class="n">scene</span><span class="o">.</span><span class="n">addText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="n">subgraph</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGraphicsView</span><span class="p">()</span>
+        <span class="n">subgraph</span><span class="o">.</span><span class="n">setScene</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">subgraph</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>

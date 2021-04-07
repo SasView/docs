@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Perspectives.Fitting.OptionsWidget &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Perspectives.Fitting.OptionsWidget &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -45,15 +45,15 @@
 <span class="sd">Widget/logic for smearing data.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="k">import</span> <span class="n">Data2D</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 
 <span class="c1"># Local UI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.OptionsWidgetUI</span> <span class="kn">import</span> <span class="n">Ui_tabOptions</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.OptionsWidgetUI</span> <span class="k">import</span> <span class="n">Ui_tabOptions</span>
 
 <div class="viewcode-block" id="DataWidgetMapper"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.OptionsWidget.DataWidgetMapper">[docs]</a><span class="k">class</span> <span class="nc">DataWidgetMapper</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -86,7 +86,7 @@
         <span class="s1">&#39;NPTS_FIT&#39;</span><span class="p">,</span>
         <span class="s1">&#39;LOG_SPACED&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logic</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logic</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OptionsWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -256,6 +256,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">rbWeighting1</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">onWeightingChoice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rbWeighting1</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="OptionsWidget.updateMinQ"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.OptionsWidget.OptionsWidget.updateMinQ">[docs]</a>    <span class="k">def</span> <span class="nf">updateMinQ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_min</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">q_min</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">q_min</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtMinRange</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{float(q_min):.3}&quot;</span><span class="p">)</span>
+        <span class="n">qmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMinRange</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;MAX_RANGE&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">npts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;NPTS&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateQRange</span><span class="p">(</span><span class="n">qmin</span><span class="p">,</span> <span class="n">qmax</span><span class="p">,</span> <span class="n">npts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OptionsWidget.updateMaxQ"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.OptionsWidget.OptionsWidget.updateMaxQ">[docs]</a>    <span class="k">def</span> <span class="nf">updateMaxQ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_max</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">q_max</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">q_max</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">))):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">txtMaxRange</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{float(q_max):.3}&quot;</span><span class="p">)</span>
+        <span class="n">qmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;MIN_RANGE&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">txtMaxRange</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">npts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;NPTS&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateQRange</span><span class="p">(</span><span class="n">qmin</span><span class="p">,</span> <span class="n">qmax</span><span class="p">,</span> <span class="n">npts</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="OptionsWidget.updateQRange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.OptionsWidget.OptionsWidget.updateQRange">[docs]</a>    <span class="k">def</span> <span class="nf">updateQRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_range_min</span><span class="p">,</span> <span class="n">q_range_max</span><span class="p">,</span> <span class="n">npts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the local model based on calculated values</span>
@@ -297,6 +313,9 @@
             <span class="n">qmax</span> <span class="o">=</span> <span class="n">qmax_c</span>
         <span class="k">if</span> <span class="n">npts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">npts</span> <span class="o">=</span> <span class="n">npts_c</span>
+        <span class="n">qmax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">qmax</span><span class="p">)</span>
+        <span class="n">qmin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">qmin</span><span class="p">)</span>
+        <span class="n">npts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">npts</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
             <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">qx_data</span> <span class="o">+</span>
                              <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">)</span>
@@ -341,14 +360,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

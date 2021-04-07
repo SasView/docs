@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>sas.qtgui.Perspectives.Fitting.ConstraintWidget &#8212; SasView 5.0.3 documentation</title>
+    <title>sas.qtgui.Perspectives.Fitting.ConstraintWidget &#8212; SasView 5.0.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li> 
       </ul>
@@ -43,26 +43,29 @@
   <h1>Source code for sas.qtgui.Perspectives.Fitting.ConstraintWidget</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
-<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">threads</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="k">import</span> <span class="n">threads</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.LocalConfig</span> <span class="k">as</span> <span class="nn">LocalConfig</span>
 
-<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 
-<span class="kn">from</span> <span class="nn">sas.sascalc.fit.BumpsFitting</span> <span class="kn">import</span> <span class="n">BumpsFit</span> <span class="k">as</span> <span class="n">Fit</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.fit.BumpsFitting</span> <span class="k">import</span> <span class="n">BumpsFit</span> <span class="k">as</span> <span class="n">Fit</span>
 
 <span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.ObjectLibrary</span> <span class="k">as</span> <span class="nn">ObjectLibrary</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.ConstraintWidgetUI</span> <span class="kn">import</span> <span class="n">Ui_ConstraintWidgetUI</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingWidget</span> <span class="kn">import</span> <span class="n">FittingWidget</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FitThread</span> <span class="kn">import</span> <span class="n">FitThread</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ConsoleUpdate</span> <span class="kn">import</span> <span class="n">ConsoleUpdate</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ComplexConstraint</span> <span class="kn">import</span> <span class="n">ComplexConstraint</span>
-<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="kn">import</span> <span class="n">Constraint</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.ConstraintWidgetUI</span> <span class="k">import</span> <span class="n">Ui_ConstraintWidgetUI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FittingWidget</span> <span class="k">import</span> <span class="n">FittingWidget</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.FitThread</span> <span class="k">import</span> <span class="n">FitThread</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ConsoleUpdate</span> <span class="k">import</span> <span class="n">ConsoleUpdate</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.ComplexConstraint</span> <span class="k">import</span> <span class="n">ComplexConstraint</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting</span> <span class="k">import</span> <span class="n">FittingUtilities</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.Constraint</span> <span class="k">import</span> <span class="n">Constraint</span>
+
 
 <div class="viewcode-block" id="DnDTableWidget"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.DnDTableWidget">[docs]</a><span class="k">class</span> <span class="nc">DnDTableWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setDragEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -149,7 +152,7 @@
     <span class="n">batchCompleteSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
     <span class="n">fitFailedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ConstraintWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
@@ -180,6 +183,10 @@
         <span class="c1"># Tabs used in simultaneous fitting</span>
         <span class="c1"># tab_name : True/False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabs_for_fitting</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Flag that warns ComplexConstraint widget if the constraint has been</span>
+        <span class="c1"># accepted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraint_accepted</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># Set up the widgets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initializeWidgets</span><span class="p">()</span>
@@ -471,25 +478,106 @@
 
 <div class="viewcode-block" id="ConstraintWidget.onConstraintChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.onConstraintChange">[docs]</a>    <span class="k">def</span> <span class="nf">onConstraintChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Modify the constraint&#39;s &quot;active&quot; instance variable.</span>
+<span class="sd">        Modify the constraint when the user edits the constraint list. If the</span>
+<span class="sd">        user changes the constrained parameter, the constraint is erased and a</span>
+<span class="sd">        new one is created.</span>
+<span class="sd">        Checking is performed on the constrained entered by the user, showing</span>
+<span class="sd">        message box warning him the constraint is not valid and cancelling</span>
+<span class="sd">        his changes by reloading the view. View is reloaded</span>
+<span class="sd">        when the user is finished for consistency.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Update the tabs for fitting list</span>
-            <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_constraints</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
-            <span class="n">constraint</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
-            <span class="k">return</span>
-        <span class="c1"># Update the constraint formula</span>
+        <span class="c1"># extract information from the constraint object</span>
         <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_constraints</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
-        <span class="n">function</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-        <span class="c1"># remove anything left of &#39;=&#39; to get the constraint</span>
-        <span class="n">function</span> <span class="o">=</span> <span class="n">function</span><span class="p">[</span><span class="n">function</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="c1"># No check on function here - trust the user (R)</span>
-        <span class="k">if</span> <span class="n">function</span> <span class="o">!=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">func</span><span class="p">:</span>
-            <span class="c1"># This becomes rather difficult to validate now.</span>
-            <span class="c1"># Turn off validation for Edit Constraint</span>
-            <span class="n">constraint</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">function</span>
-            <span class="n">constraint</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="kc">False</span></div>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">value_ex</span><span class="p">[:</span><span class="n">constraint</span><span class="o">.</span><span class="n">value_ex</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">param</span>
+        <span class="n">function</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">func</span>
+        <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_tabs</span><span class="p">[</span><span class="n">model</span><span class="p">]</span>
+        <span class="c1"># Extract information from the text in the table</span>
+        <span class="n">constraint_text</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Basic sanity check of the string</span>
+        <span class="c1"># First check if we have an acceptable sign</span>
+        <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constraint_text</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Incorrect operator in constraint definition. Please use = &quot;</span>
+                   <span class="s2">&quot;sign to define constraints.&quot;</span><span class="p">)</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;Inconsistent constraint&quot;</span><span class="p">,</span>
+                <span class="n">msg</span><span class="p">,</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initializeFitList</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="c1"># Then check if the parameter is correctly defined with colons</span>
+        <span class="c1"># separating model and parameter name</span>
+        <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; *= *&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lhs</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Incorrect constrained parameter definition. Please use &quot;</span>
+                   <span class="s2">&quot;colons to separate model and parameter on the rhs of the &quot;</span>
+                   <span class="s2">&quot;definition, e.g. M1:scale&quot;</span><span class="p">)</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;Inconsistent constraint&quot;</span><span class="p">,</span>
+                <span class="n">msg</span><span class="p">,</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initializeFitList</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="c1"># We can parse the string</span>
+        <span class="n">new_param</span> <span class="o">=</span> <span class="n">lhs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">new_model</span> <span class="o">=</span> <span class="n">lhs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># Check that the symbol is known so we dont get an unknown tab</span>
+        <span class="c1"># All the conditional statements could be grouped in one or</span>
+        <span class="c1"># alternatively we could check with expression.py, but we would still</span>
+        <span class="c1"># need to do some checks to parse the string</span>
+        <span class="n">symbol_dict</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">perspective</span><span class="p">()</span><span class="o">.</span>
+                       <span class="n">getSymbolDictForConstraints</span><span class="p">())</span>
+        <span class="n">qualified_par</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{new_model}</span><span class="s2">.</span><span class="si">{new_param}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">qualified_par</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">symbol_dict</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unknown parameter </span><span class="si">{qualified_par}</span><span class="s2"> used in constraint.&quot;</span>
+                   <span class="s2">&quot; Please use a single known parameter in the rhs of the &quot;</span>
+                   <span class="s2">&quot;constraint definition, e.g. M1:scale = M1.radius + 2&quot;</span><span class="p">)</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;Inconsistent constraint&quot;</span><span class="p">,</span>
+                <span class="n">msg</span><span class="p">,</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Ok</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initializeFitList</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="n">new_function</span> <span class="o">=</span> <span class="n">rhs</span>
+        <span class="n">new_tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_tabs</span><span class="p">[</span><span class="n">new_model</span><span class="p">]</span>
+        <span class="c1"># Make sure we are dealing with fit tabs</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">FittingWidget</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_tab</span><span class="p">,</span> <span class="n">FittingWidget</span><span class="p">)</span>
+        <span class="c1"># Now check if the user has redefined the constraint and reapply it</span>
+        <span class="k">if</span> <span class="n">new_function</span> <span class="o">!=</span> <span class="n">function</span> <span class="ow">or</span> <span class="n">new_model</span> <span class="o">!=</span> <span class="n">model</span> <span class="ow">or</span> <span class="n">new_param</span> <span class="o">!=</span> <span class="n">param</span><span class="p">:</span>
+            <span class="c1"># Apply the new constraint</span>
+            <span class="n">constraint</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">param</span><span class="o">=</span><span class="n">new_param</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">new_function</span><span class="p">,</span>
+                                    <span class="n">value_ex</span><span class="o">=</span><span class="n">new_model</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">new_param</span><span class="p">)</span>
+            <span class="n">new_tab</span><span class="o">.</span><span class="n">addConstraintToRow</span><span class="p">(</span><span class="n">constraint</span><span class="o">=</span><span class="n">constraint</span><span class="p">,</span>
+                                       <span class="n">row</span><span class="o">=</span><span class="n">tab</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span><span class="n">new_param</span><span class="p">))</span>
+            <span class="c1"># If the constraint is valid and we are changing model or</span>
+            <span class="c1"># parameter, delete the old constraint</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraint_accepted</span> <span class="ow">and</span> <span class="n">new_model</span> <span class="o">!=</span> <span class="n">model</span> <span class="ow">or</span>
+                    <span class="n">new_param</span> <span class="o">!=</span> <span class="n">param</span><span class="p">):</span>
+                <span class="n">tab</span><span class="o">.</span><span class="n">deleteConstraintOnParameter</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+            <span class="c1"># Reload the view</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initializeFitList</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="c1"># activate/deactivate constraint if the user has changed the checkbox</span>
+        <span class="c1"># state</span>
+        <span class="n">constraint</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+        <span class="c1"># Update the fitting widget whenever a constraint is</span>
+        <span class="c1"># activated/deactivated</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+            <span class="n">font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">()</span>
+            <span class="n">font</span><span class="o">.</span><span class="n">setItalic</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">brush</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">))</span>
+            <span class="n">tab</span><span class="o">.</span><span class="n">modifyViewOnRow</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span><span class="n">new_param</span><span class="p">),</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span>
+                                <span class="n">brush</span><span class="o">=</span><span class="n">brush</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tab</span><span class="o">.</span><span class="n">modifyViewOnRow</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span><span class="n">new_param</span><span class="p">))</span>
+        <span class="c1"># reload the view so the user gets a consistent feedback on the</span>
+        <span class="c1"># constraints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initializeFitList</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ConstraintWidget.onTabCellEntered"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.onTabCellEntered">[docs]</a>    <span class="k">def</span> <span class="nf">onTabCellEntered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -504,6 +592,11 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send the fit complete signal to main thread</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Complete signal only accepts a tuple, so send an empty tuple</span>
+        <span class="c1"># when fit throws an error.</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fitCompleteSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConstraintWidget.fitComplete"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.fitComplete">[docs]</a>    <span class="k">def</span> <span class="nf">fitComplete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
@@ -520,15 +613,29 @@
 
         <span class="c1"># Assure the fitting succeeded</span>
         <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fitting failed. Please ensure correctness of chosen constraints.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fitting failed.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Get the results list</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Fitting failed with the following message: &quot;</span> <span class="o">+</span>
+                   <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mesg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Fitting failed with the following message: &quot;</span> <span class="o">+</span>
+                       <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mesg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Fitting failed. Please ensure correctness of &quot;</span> <span class="o">+</span>
+                       <span class="s2">&quot;chosen constraints.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="c1"># get the elapsed time</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1"># result list</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Find out all tabs to fit</span>
         <span class="n">tabs_to_fit</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs_for_fitting</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs_for_fitting</span><span class="p">[</span><span class="n">tab</span><span class="p">]]</span>
@@ -563,12 +670,24 @@
 
         <span class="c1"># Notify the parent about completed fitting</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">fittingStoppedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getTabsForFit</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fitting failed.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span>
 
         <span class="c1"># get the elapsed time</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fitting failed.&quot;</span>
+        <span class="c1"># Get the results list</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Warn the user if fitting has been unsuccessful</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mesg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Fitting failed with the following message: &quot;</span> <span class="o">+</span>
+                       <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mesg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Fitting failed. Please ensure correctness of &quot;</span> <span class="o">+</span>
+                       <span class="s2">&quot;chosen constraints.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">communicate</span><span class="o">.</span><span class="n">statusBarUpdateSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">return</span>
 
@@ -585,7 +704,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send the fit failed signal to main thread</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitFailedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitFailedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConstraintWidget.fitFailed"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.fitFailed">[docs]</a>    <span class="k">def</span> <span class="nf">fitFailed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -751,6 +870,7 @@
             <span class="n">param</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="n">constraint</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">constraint</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_tabs</span><span class="p">[</span><span class="n">moniker</span><span class="p">]</span>
             <span class="n">tab</span><span class="o">.</span><span class="n">deleteConstraintOnParameter</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
         <span class="c1"># Constraints removed - refresh the table widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initializeFitList</span><span class="p">()</span></div>
 
@@ -800,24 +920,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tblTabList</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Check if any constraints present in tab</span>
-        <span class="n">constraint_names</span> <span class="o">=</span> <span class="n">fit_page</span><span class="o">.</span><span class="n">getComplexConstraintsForModel</span><span class="p">()</span>
+        <span class="n">active_constraint_names</span> <span class="o">=</span> <span class="n">fit_page</span><span class="o">.</span><span class="n">getComplexConstraintsForModel</span><span class="p">()</span>
+        <span class="n">constraint_names</span> <span class="o">=</span> <span class="n">fit_page</span><span class="o">.</span><span class="n">getFullConstraintNameListForModel</span><span class="p">()</span>
         <span class="n">constraints</span> <span class="o">=</span> <span class="n">fit_page</span><span class="o">.</span><span class="n">getConstraintObjectsForModel</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">constraints</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">constraints</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">constraint_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">constraint_names</span><span class="p">):</span>
+            <span class="c1"># Ignore constraints that have no *func* attribute defined</span>
+            <span class="k">if</span> <span class="n">constraint</span><span class="o">.</span><span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="c1"># Create the text for widget item</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">moniker</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span><span class="o">+</span> <span class="n">constraint_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; = &quot;</span> <span class="o">+</span> <span class="n">constraint_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">available_constraints</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span>
 
             <span class="c1"># Show the text in the constraint table</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uneditableItem</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
             <span class="n">item</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableWidgetItem</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">setFlags</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
+                          <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span>
+                          <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsUserCheckable</span>
+                          <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span><span class="p">)</span>
             <span class="c1"># Why was this set to non-interactive??</span>
-            <span class="c1">#item.setFlags(item.flags() ^ QtCore.Qt.ItemIsUserCheckable)</span>
-            <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">constraint_name</span> <span class="ow">in</span> <span class="n">active_constraint_names</span><span class="p">:</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Unchecked</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">insertRow</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
@@ -848,7 +977,7 @@
             <span class="k">return</span>
 
         <span class="n">tabs</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span> <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="n">ObjectLibrary</span><span class="o">.</span><span class="n">listObjects</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isTabImportable</span><span class="p">(</span><span class="n">tab</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdAdd</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmdAdd</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -915,7 +1044,10 @@
 
 <div class="viewcode-block" id="ConstraintWidget.onAcceptConstraint"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.onAcceptConstraint">[docs]</a>    <span class="k">def</span> <span class="nf">onAcceptConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">con_tuple</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Receive constraint tuple from the ComplexConstraint dialog and adds contraint</span>
+<span class="sd">        Receive constraint tuple from the ComplexConstraint dialog and adds</span>
+<span class="sd">        constraint.</span>
+<span class="sd">        Checks the constraints for errors and displays a warning message</span>
+<span class="sd">        interrupting flow if any are found</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#&quot;M1, M2, M3&quot; etc</span>
         <span class="n">model_name</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">con_tuple</span>
@@ -928,10 +1060,11 @@
 
         <span class="c1"># Update the tab</span>
         <span class="n">constrained_tab</span><span class="o">.</span><span class="n">addConstraintToRow</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">constrained_row</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraint_accepted</span><span class="p">:</span>
+            <span class="k">return</span>
 
         <span class="c1"># Select this parameter for adjusting/fitting</span>
-        <span class="n">constrained_tab</span><span class="o">.</span><span class="n">selectCheckbox</span><span class="p">(</span><span class="n">constrained_row</span><span class="p">)</span></div>
-
+        <span class="n">constrained_tab</span><span class="o">.</span><span class="n">changeCheckboxStatus</span><span class="p">(</span><span class="n">constrained_row</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConstraintWidget.showMultiConstraint"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.showMultiConstraint">[docs]</a>    <span class="k">def</span> <span class="nf">showMultiConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1034,7 +1167,24 @@
         <span class="n">msgbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">msgbox</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Fit Report&quot;</span><span class="p">)</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">msgbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
-        <span class="k">return</span></div></div>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="ConstraintWidget.uncheckConstraint"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.ConstraintWidget.ConstraintWidget.uncheckConstraint">[docs]</a>    <span class="k">def</span> <span class="nf">uncheckConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unchecks the constraint in tblConstraint with *name* slave</span>
+<span class="sd">        parameter and deactivates the constraint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+            <span class="n">constraint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># slave parameter has model name and parameter separated</span>
+            <span class="c1"># by colon e.g `M1:scale` so no need to parse the constraint</span>
+            <span class="c1"># string.</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tblConstraints</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="c1"># deactivate the constraint</span>
+                <span class="n">tab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">getTabByName</span><span class="p">(</span><span class="n">name</span><span class="p">[:</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)])</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">getRowFromName</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="n">name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])</span>
+                <span class="n">tab</span><span class="o">.</span><span class="n">getConstraintForRow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 </pre></div>
 
           </div>
@@ -1067,14 +1217,14 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, The SasView Project.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+        &#169; Copyright 2021, The SasView Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>
