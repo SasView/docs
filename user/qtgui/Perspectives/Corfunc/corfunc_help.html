@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Correlation Function Analysis &#8212; SasView 5.0.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Tools &amp; Utilities" href="../../../tools.html" />
+    <link rel="prev" title="Invariant Calculation" href="../Invariant/invariant_help.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../tools.html" title="Tools &amp; Utilities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../Invariant/invariant_help.html" title="Invariant Calculation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../analysis.html" accesskey="U">Fitting &amp; Other Analyses</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Correlation Function Analysis</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="correlation-function-analysis">
+<span id="id1"></span><h1>Correlation Function Analysis</h1>
+<section id="description">
+<h2>Description</h2>
+<p>This currently performs correlation function analysis on SAXS/SANS data,
+but in the the future is also planned to generate model-independent volume
+fraction profiles from the SANS from adsorbed polymer/surfactant layers.
+The two types of analyses differ in the mathematical transform that is
+applied to the data (Fourier vs Hilbert). However, both functions are
+returned in <em>real space</em>.</p>
+<p>A correlation function may be interpreted in terms of an imaginary rod moving
+through the structure of the material. Γ(x) is the probability that a rod of
+length x has equal electron/neutron scattering length density at either end.
+Hence a frequently occurring spacing within a structure will manifest itself
+as a peak in Γ(x). <em>SasView</em> will return both the one-dimensional ( Γ<sub>1</sub>(x) )
+and three-dimensional ( Γ<sub>3</sub>(x) ) correlation functions, the difference
+being that the former is only averaged in the plane of the scattering vector.</p>
+<p>A volume fraction profile <span class="math notranslate nohighlight">\(\Phi\)</span>(z) describes how the density of polymer
+segments/surfactant molecules varies with distance, z, normal to an (assumed
+locally flat) interface. The form of <span class="math notranslate nohighlight">\(\Phi\)</span>(z) can provide information
+about the arrangement of polymer/surfactant molecules at the interface. The width
+of the profile provides measures of the layer thickness, and the area under
+the profile is related to the amount of material that is adsorbed.</p>
+<p>Both analyses are performed in 3 stages:</p>
+<ul class="simple">
+<li><p>Extrapolation of the scattering curve to <span class="math notranslate nohighlight">\(Q = 0\)</span> and toward
+<span class="math notranslate nohighlight">\(Q = \infty\)</span></p></li>
+<li><p>Smoothed merging of the two extrapolations into the original data</p></li>
+<li><p>Fourier / Hilbert Transform of the smoothed data to give the correlation
+function or volume fraction profile, respectively</p></li>
+<li><p>(Optional) Interpretation of Γ<sub>1</sub>(x) assuming the sample conforms
+to an ideal lamellar morphology</p></li>
+</ul>
+</section>
+<section id="extrapolation">
+<h2>Extrapolation</h2>
+<section id="to-q-0">
+<h3>To <span class="math notranslate nohighlight">\(Q = 0\)</span></h3>
+<p>The data are extrapolated to q = 0 by fitting a Guinier function to the data
+points in the low-q range.</p>
+<p>The equation used is:</p>
+<div class="math notranslate nohighlight">
+\[I(q) = A e^{Bq^2}\]</div>
+<p>Where the parameter <span class="math notranslate nohighlight">\(B\)</span> is related to the effective radius-of-gyration of
+a spherical object having the same small-angle scattering in this region.</p>
+<p>Note that as q tends to zero this function tends to a limiting value and is
+therefore less appropriate for use in systems where the form factor does not
+do likewise. However, because of the transform, the correlation functions are
+most affected by the Guinier back-extrapolation at <em>large</em> values of x where
+the impact on any extrapolated parameters will be least significant.</p>
+</section>
+<section id="to-q-infty">
+<h3>To <span class="math notranslate nohighlight">\(Q = \infty\)</span></h3>
+<p>The data are extrapolated towards q = <span class="math notranslate nohighlight">\(\infty\)</span> by fitting a Porod model to
+the data points in the high-q range and then computing the extrapolation to 100
+times the maximum q value in the experimental dataset. This should be more than
+sufficient to ensure that on transformation any truncation artefacts introduced
+are at such small values of x that they can be safely ignored.</p>
+<p>The equation used is:</p>
+<div class="math notranslate nohighlight">
+\[I(q) = K q^{-4}e^{-q^2\sigma^2} + Bg\]</div>
+<p>Where <span class="math notranslate nohighlight">\(Bg\)</span> is the background, <span class="math notranslate nohighlight">\(K\)</span> is the Porod constant, and <span class="math notranslate nohighlight">\(\sigma\)</span> (which
+must be &gt; 0) describes the width of the electron/neutron scattering length density
+profile at the interface between the crystalline and amorphous regions as shown below.</p>
+<figure class="align-center">
+<img alt="../../../../_images/fig1.png" src="../../../../_images/fig1.png" />
+</figure>
+</section>
+</section>
+<section id="smoothing">
+<h2>Smoothing</h2>
+<p>The extrapolated data set consists of the Guinier back-extrapolation from q ~ 0
+up to the lowest q value in the original data, then the original scattering data,
+and then the Porod tail-fit beyond this. The joins between the original data and
+the Guinier/Porod extrapolations are smoothed using the algorithm below to try
+and avoid the formation of truncation ripples in the transformed data:</p>
+<p>Functions <span class="math notranslate nohighlight">\(f(x_i)\)</span> and <span class="math notranslate nohighlight">\(g(x_i)\)</span> where <span class="math notranslate nohighlight">\(x_i \in \left\{
+{x_1, x_2, ..., x_n} \right\}\)</span>, are smoothed over the range <span class="math notranslate nohighlight">\([a, b]\)</span>
+to produce <span class="math notranslate nohighlight">\(y(x_i)\)</span>, by the following equations:</p>
+<div class="math notranslate nohighlight">
+\[y(x_i) = h_ig(x_i) + (1-h_i)f(x_i)\]</div>
+<p>where:</p>
+<div class="math notranslate nohighlight">
+\[h_i = \frac{1}{1 + \frac{(x_i-b)^2}{(x_i-a)^2}}\]</div>
+</section>
+<section id="transformation">
+<h2>Transformation</h2>
+<section id="fourier">
+<h3>Fourier</h3>
+<p>If “Fourier” is selected for the transform type, <em>SasView</em> will perform a
+discrete cosine transform on the extrapolated data in order to calculate the
+1D correlation function as:</p>
+<div class="math notranslate nohighlight">
+\[\Gamma _{1}(x) = \frac{1}{Q^{*}} \int_{0}^{\infty }I(q) q^{2} cos(qx) dq\]</div>
+<p>where Q<sup>*</sup> is the Scattering (also called Porod) Invariant.</p>
+<p>The following algorithm is applied:</p>
+<div class="math notranslate nohighlight">
+\[\Gamma(x_k) = 2 \sum_{n=0}^{N-1} x_n \cos{\left[ \frac{\pi}{N}
+\left(n + \frac{1}{2} \right) k \right] } \text{ for } k = 0, 1, \ldots,
+N-1, N\]</div>
+<p>The 3D correlation function is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\Gamma _{3}(x) = \frac{1}{Q^{*}} \int_{0}^{\infty}I(q) q^{2}
+\frac{sin(qx)}{qx} dq\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is always advisable to inspect Γ<sub>1</sub>(x) and Γ<sub>3</sub>(x)
+for artefacts arising from the extrapolation and transformation processes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>do they tend to zero as x tends to <span class="math notranslate nohighlight">\(\infty\)</span>?</p></li>
+<li><p>do they smoothly curve onto the ordinate at x = 0? (if not check the value
+of <span class="math notranslate nohighlight">\(\sigma\)</span> is sensible)</p></li>
+<li><p>are there ripples at x values corresponding to (2 <span class="math notranslate nohighlight">\(pi\)</span> over) the two
+q values at which the extrapolated and experimental data are merged?</p></li>
+<li><p>are there any artefacts at x values corresponding to 2 <span class="math notranslate nohighlight">\(pi\)</span> / q<sub>max</sub> in
+the experimental data?</p></li>
+<li><p>and lastly, do the significant features/peaks in the correlation functions
+actually correspond to anticpated spacings in the sample?!!!</p></li>
+</ul>
+</div></blockquote>
+</div>
+<p>Finally, the program calculates the interface distribution function (IDF) g<sub>1</sub>(x) as
+the discrete cosine transform of:</p>
+<div class="math notranslate nohighlight">
+\[-q^{4} I(q)\]</div>
+<p>The IDF is proportional to the second derivative of Γ<sub>1</sub>(x).</p>
+</section>
+<section id="hilbert">
+<h3>Hilbert</h3>
+<p>If “Hilbert” is selected for the transform type, the analysis will perform a
+Hilbert transform on the extrapolated data in order to calculate the Volume
+Fraction Profile.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Hilbert transform functionality is not yet implemented in SasView.</p>
+</div>
+</section>
+</section>
+<section id="interpretation">
+<h2>Interpretation</h2>
+<section id="correlation-function">
+<h3>Correlation Function</h3>
+<p>Once the correlation functions have been calculated <em>SasView</em> can be asked to
+try and interpret Γ<sub>1</sub>(x) in terms of an ideal lamellar morphology
+as shown below.</p>
+<figure class="align-center">
+<img alt="../../../../_images/fig2.png" src="../../../../_images/fig2.png" />
+</figure>
+<p>The structural parameters extracted are:</p>
+<ul class="simple">
+<li><p>Long Period <span class="math notranslate nohighlight">\(= L_p\)</span></p></li>
+<li><p>Average Hard Block Thickness <span class="math notranslate nohighlight">\(= L_c\)</span></p></li>
+<li><p>Average Core Thickness <span class="math notranslate nohighlight">\(= D_0\)</span></p></li>
+<li><p>Average Interface Thickness <span class="math notranslate nohighlight">\(\text{} = D_{tr}\)</span></p></li>
+<li><p>Polydispersity <span class="math notranslate nohighlight">\(= \Gamma_{\text{min}}/\Gamma_{\text{max}}\)</span></p></li>
+<li><p>Local Crystallinity <span class="math notranslate nohighlight">\(= L_c/L_p\)</span></p></li>
+</ul>
+</section>
+<section id="volume-fraction-profile">
+<h3>Volume Fraction Profile</h3>
+<p>SasView does not provide any automatic interpretation of volume fraction profiles
+in the same way that it does for correlation functions. However, a number of
+structural parameters are obtainable by other means:</p>
+<ul class="simple">
+<li><p>Surface Coverage <span class="math notranslate nohighlight">\(=\theta\)</span></p></li>
+<li><p>Anchor Separation <span class="math notranslate nohighlight">\(= D\)</span></p></li>
+<li><p>Bound Fraction <span class="math notranslate nohighlight">\(= &lt;p&gt;\)</span></p></li>
+<li><p>Second Moment <span class="math notranslate nohighlight">\(= \sigma\)</span></p></li>
+<li><p>Maximum Extent <span class="math notranslate nohighlight">\(= \delta_{\text{h}}\)</span></p></li>
+<li><p>Adsorbed Amount <span class="math notranslate nohighlight">\(= \Gamma\)</span></p></li>
+</ul>
+<figure class="align-center">
+<img alt="../../../../_images/profile1.png" src="../../../../_images/profile1.png" />
+</figure>
+<figure class="align-center">
+<img alt="../../../../_images/profile2.png" src="../../../../_images/profile2.png" />
+</figure>
+<p>The reader is directed to the references for information on these parameters.</p>
+</section>
+</section>
+<section id="references">
+<h2>References</h2>
+<section id="id2">
+<h3>Correlation Function</h3>
+<p>Ruland, W. <em>Coll. Polym. Sci.</em> (1977), 255, 417-427</p>
+<p>Strobl, G. R.; Schneider, M. <em>J. Polym. Sci.</em> (1980), 18, 1343-1359</p>
+<p>Koberstein, J.; Stein R. <em>J. Polym. Sci. Phys. Ed.</em> (1983), 21, 2181-2200</p>
+<p>Baltá Calleja, F. J.; Vonk, C. G. <em>X-ray Scattering of Synthetic Poylmers</em>, Elsevier. Amsterdam (1989), 247-251</p>
+<p>Baltá Calleja, F. J.; Vonk, C. G. <em>X-ray Scattering of Synthetic Poylmers</em>, Elsevier. Amsterdam (1989), 257-261</p>
+<p>Baltá Calleja, F. J.; Vonk, C. G. <em>X-ray Scattering of Synthetic Poylmers</em>, Elsevier. Amsterdam (1989), 260-270</p>
+<p>Göschel, U.; Urban, G. <em>Polymer</em> (1995), 36, 3633-3639</p>
+<p>Stribeck, N. <em>X-Ray Scattering of Soft Matter</em>, Springer. Berlin (2007), 138-161</p>
+<p><a class="reference internal" href="fdr-pdfs.html#fdr"><span class="std std-ref">Fibre Diffraction Review References</span></a> (PDF format)</p>
+</section>
+<section id="id3">
+<h3>Volume Fraction Profile</h3>
+<p>Washington, C.; King, S. M. <em>J. Phys. Chem.</em>, (1996), 100, 7603-7609</p>
+<p>Cosgrove, T.; King, S. M.; Griffiths, P. C. <em>Colloid-Polymer Interactions: From Fundamentals to Practice</em>, Wiley. New York (1999), 193-204</p>
+<p>King, S. M.; Griffiths, P. C.; Cosgrove, T. <em>Applications of Neutron Scattering to Soft Condensed Matter</em>, Gordon &amp; Breach. Amsterdam (2000), 77-105</p>
+<p>King, S.; Griffiths, P.; Hone, J.; Cosgrove, T. <em>Macromol. Symp.</em> (2002), 190, 33-42</p>
+</section>
+</section>
+<section id="usage">
+<h2>Usage</h2>
+<p>Upon sending data for correlation function analysis, it will be plotted (minus
+the background value), along with a bar indicating the <em>upper end of the
+low-Q range</em> (used for Guinier back-extrapolation), and 2 bars indicating
+the range to be used for Porod forward-extrapolation. These bars may be moved by
+entering appropriate values in the Q range input boxes or by clicking on them and
+dragging them to the desired location..</p>
+<figure class="align-center">
+<img alt="../../../../_images/tutorial1.png" src="../../../../_images/tutorial1.png" />
+</figure>
+<p>Once the Q ranges have been set, click the “Calculate” button in the <em>Background</em> section
+of the dialog to determine the background level.
+Alternatively, enter your own value into the box. If the box turns
+yellow this indicates that background subtraction has created some negative intensities.</p>
+<p>Now click the “Extrapolate” button to extrapolate the data. The graph window will update
+to show the extrapolated data, and the values of the parameters used for the Guinier and
+Porod extrapolations will appear in the “Extrapolation Parameters” section of the Corfunc
+GUI.</p>
+<figure class="align-center">
+<img alt="../../../../_images/tutorial2.png" src="../../../../_images/tutorial2.png" />
+</figure>
+<p>Now click the “Transform” button to perform the Fourier transform and plot
+the results. The lower graph will display the 1D and 3D-averaged correlation functions.
+The Interface Distribution Function (or IDF) is also computed, but is not displayed
+for clarity. How to access the IDF, and the correlation functions themselves, is
+explained shortly.</p>
+<blockquote>
+<div><figure class="align-center">
+<img alt="../../../../_images/tutorial3.png" src="../../../../_images/tutorial3.png" />
+</figure>
+</div></blockquote>
+<p><em>If</em> the sample morphology can be adequately described as an ideal lamellar morphology
+the Corfunc GUI can attempt to derive morphological characterization parameters from the
+1D correlation function. To do this, click the “Extract Parameters” button.</p>
+<blockquote>
+<div><figure class="align-center">
+<img alt="../../../../_images/tutorial4.png" src="../../../../_images/tutorial4.png" />
+</figure>
+</div></blockquote>
+<p>Finally, it is possible to save the values of the real-space distance axis, the 1D and 3D
+correlation functions, and the IDF to a simple ASCII text file by clicking on the “Save”
+button. The file is given the unique file descriptor <em>.crf</em>.</p>
+<blockquote>
+<div><figure class="align-center">
+<img alt="../../../../_images/tutorial5.png" src="../../../../_images/tutorial5.png" />
+</figure>
+</div></blockquote>
+<p>The structure of the file is shown below.</p>
+<blockquote>
+<div><figure class="align-center">
+<img alt="../../../../_images/tutorial6.png" src="../../../../_images/tutorial6.png" />
+</figure>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the time of writing SasView will not load these <em>.crf</em> files, but they can
+be easily loaded and displayed in most spreadsheet applications.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This help document was last changed by Steve King, 21May2020</p>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Correlation Function Analysis</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#extrapolation">Extrapolation</a><ul>
+<li><a class="reference internal" href="#to-q-0">To <span class="math notranslate nohighlight">\(Q = 0\)</span></a></li>
+<li><a class="reference internal" href="#to-q-infty">To <span class="math notranslate nohighlight">\(Q = \infty\)</span></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smoothing">Smoothing</a></li>
+<li><a class="reference internal" href="#transformation">Transformation</a><ul>
+<li><a class="reference internal" href="#fourier">Fourier</a></li>
+<li><a class="reference internal" href="#hilbert">Hilbert</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interpretation">Interpretation</a><ul>
+<li><a class="reference internal" href="#correlation-function">Correlation Function</a></li>
+<li><a class="reference internal" href="#volume-fraction-profile">Volume Fraction Profile</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a><ul>
+<li><a class="reference internal" href="#id2">Correlation Function</a></li>
+<li><a class="reference internal" href="#id3">Volume Fraction Profile</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../Invariant/invariant_help.html"
+                          title="previous chapter">Invariant Calculation</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../../../tools.html"
+                          title="next chapter">Tools &amp; Utilities</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/user/qtgui/Perspectives/Corfunc/corfunc_help.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../tools.html" title="Tools &amp; Utilities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../Invariant/invariant_help.html" title="Invariant Calculation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Correlation Function Analysis</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+    </div>
+  </body>
+</html>

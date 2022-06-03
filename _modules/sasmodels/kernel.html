@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sasmodels.kernel &#8212; SasView 5.0.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" accesskey="U">sasmodels</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sasmodels.kernel</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sasmodels.kernel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Execution kernel interface</span>
+<span class="sd">==========================</span>
+
+<span class="sd">:class:`KernelModel` defines the interface to all kernel models.</span>
+<span class="sd">In particular, each model should provide a :meth:`KernelModel.make_kernel`</span>
+<span class="sd">call which returns an executable kernel, :class:`Kernel`, that operates</span>
+<span class="sd">on the given set of *q_vector* inputs.  On completion of the computation,</span>
+<span class="sd">the kernel should be released, which also releases the inputs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="c1"># pylint: disable=unused-import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">.details</span> <span class="kn">import</span> <span class="n">CallDetails</span>
+    <span class="kn">from</span> <span class="nn">.modelinfo</span> <span class="kn">import</span> <span class="n">ModelInfo</span>
+<span class="c1"># pylint: enable=unused-import</span>
+
+
+<div class="viewcode-block" id="KernelModel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.KernelModel">[docs]</a><span class="k">class</span> <span class="nc">KernelModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model definition for the compute engine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ModelInfo</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: np.dtype</span>
+<div class="viewcode-block" id="KernelModel.make_kernel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.KernelModel.make_kernel">[docs]</a>    <span class="k">def</span> <span class="nf">make_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_vectors</span><span class="p">):</span>
+        <span class="c1"># type: (List[np.ndarray]) -&gt; &quot;Kernel&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate a kernel for evaluating the model at *q_vectors*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;need to implement make_kernel&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KernelModel.release"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.KernelModel.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># type: () -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Free resources associated with the kernel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#print(&quot;null release model&quot;)</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="Kernel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Kernel">[docs]</a><span class="k">class</span> <span class="nc">Kernel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiated model for the compute engine, applied to a particular *q*.</span>
+
+<span class="sd">    Subclasses should define *__init__()* to set up the kernel inputs, and</span>
+<span class="sd">    *_call_kernel()* to evaluate the kernel::</span>
+
+<span class="sd">        def __init__(self, ...):</span>
+<span class="sd">            ...</span>
+<span class="sd">            self.q_input = &lt;q-value class with nq attribute&gt;</span>
+<span class="sd">            self.info = &lt;ModelInfo object&gt;</span>
+<span class="sd">            self.dim = &lt;&#39;1d&#39; or &#39;2d&#39;&gt;</span>
+<span class="sd">            self.dtype = &lt;kernel.dtype&gt;</span>
+<span class="sd">            size = 2*self.q_input.nq+4 if self.info.have_Fq else self.q_input.nq+4</span>
+<span class="sd">            size = size + &lt;extra padding if needed for kernel&gt;</span>
+<span class="sd">            self.result = np.empty(size, dtype=self.dtype)</span>
+
+<span class="sd">        def _call_kernel(self, call_details, values, cutoff, magnetic,</span>
+<span class="sd">                        radius_effective_mode):</span>
+<span class="sd">            # type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; None</span>
+<span class="sd">            ... # call &lt;kernel&gt;</span>
+<span class="sd">            nq = self.q_input.nq</span>
+<span class="sd">            if self.info.have_Fq:  # models that compute both F and F^2</span>
+<span class="sd">                end = 2*nq if have_Fq else nq</span>
+<span class="sd">                self.result[0:end:2] = F**2</span>
+<span class="sd">                self.result[1:end:2] = F</span>
+<span class="sd">            else:</span>
+<span class="sd">                end = nq</span>
+<span class="sd">                self.result[0:end] = Fsq</span>
+<span class="sd">            self.result[end + 0] = total_weight</span>
+<span class="sd">            self.result[end + 1] = form_volume</span>
+<span class="sd">            self.result[end + 2] = shell_volume</span>
+<span class="sd">            self.result[end + 3] = radius_effective</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: Kernel dimension, either &quot;1d&quot; or &quot;2d&quot;.</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: str</span>
+    <span class="c1">#: Model info.</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ModelInfo</span>
+    <span class="c1">#: Numerical precision for the computation.</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: np.dtype</span>
+    <span class="c1">#: Q values at which the kernel is to be evaluated.</span>
+    <span class="n">q_input</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Any</span>
+    <span class="c1">#: Place to hold result of *_call_kernel()* for subclass.</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># type: np.ndarray</span>
+
+<div class="viewcode-block" id="Kernel.Iq"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Kernel.Iq">[docs]</a>    <span class="k">def</span> <span class="nf">Iq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">):</span>
+        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool) -&gt; np.ndarray</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns I(q) from the polydisperse average scattering.</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            I(q) = \text{scale} \cdot P(q) + \text{background}</span>
+
+<span class="sd">        With the correct choice of model and contrast, setting *scale* to</span>
+<span class="sd">        the volume fraction $V_f$ of particles should match the measured</span>
+<span class="sd">        absolute scattering.  Some models (e.g., vesicle) have volume fraction</span>
+<span class="sd">        built into the model, and do not need an additional scale.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">F2</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">shell_volume</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Fq</span><span class="p">(</span><span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span>
+                                            <span class="n">magnetic</span><span class="p">,</span> <span class="n">radius_effective_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">combined_scale</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">shell_volume</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">combined_scale</span><span class="o">*</span><span class="n">F2</span> <span class="o">+</span> <span class="n">background</span></div>
+    <span class="fm">__call__</span> <span class="o">=</span> <span class="n">Iq</span>
+
+<div class="viewcode-block" id="Kernel.Fq"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Kernel.Fq">[docs]</a>    <span class="k">def</span> <span class="nf">Fq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span>
+           <span class="n">radius_effective_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; np.ndarray</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns &lt;F(q)&gt;, &lt;F(q)^2&gt;, effective radius, shell volume and</span>
+<span class="sd">        form:shell volume ratio.  The &lt;F(q)&gt; term may be None if the</span>
+<span class="sd">        form factor does not support direct computation of $F(q)$</span>
+
+<span class="sd">        $P(q) = &lt;F^2(q)&gt;/&lt;V&gt;$ is used for structure factor calculations,</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            I(q) = \text{scale} \cdot P(q) \cdot S(q) + \text{background}</span>
+
+<span class="sd">        For the beta approximation, this becomes</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            I(q) = \text{scale} P (1 + &lt;F&gt;^2/&lt;F^2&gt; (S - 1)) + \text{background}</span>
+<span class="sd">                 = \text{scale}/&lt;V&gt; (&lt;F^2&gt; + &lt;F&gt;^2 (S - 1)) + \text{background}</span>
+
+<span class="sd">        $&lt;F(q)&gt;$ and $&lt;F^2(q)&gt;$ are averaged by polydispersity in shape</span>
+<span class="sd">        and orientation, with each configuration $x_k$ having form factor</span>
+<span class="sd">        $F(q, x_k)$, weight $w_k$ and volume $V_k$.  The result is:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            P(q)=\frac{\sum w_k F^2(q, x_k) / \sum w_k}{\sum w_k V_k / \sum w_k}</span>
+
+<span class="sd">        The form factor itself is scaled by volume and contrast to compute the</span>
+<span class="sd">        total scattering.  This is then squared, and the volume weighted</span>
+<span class="sd">        F^2 is then normalized by volume F.  For a given density, the number</span>
+<span class="sd">        of scattering centers is assumed to scale linearly with volume.  Later</span>
+<span class="sd">        scaling the resulting $P(q)$ by the volume fraction of particles</span>
+<span class="sd">        gives the total scattering on an absolute scale. Most models</span>
+<span class="sd">        incorporate the volume fraction into the overall scale parameter.  An</span>
+<span class="sd">        exception is vesicle, which includes the volume fraction parameter in</span>
+<span class="sd">        the model itself, scaling $F$ by $\surd V_f$ so that the math for</span>
+<span class="sd">        the beta approximation works out.</span>
+
+<span class="sd">        By scaling $P(q)$ by total weight $\sum w_k$, there is no need to make</span>
+<span class="sd">        sure that the polydisperisity distributions normalize to one.  In</span>
+<span class="sd">        particular, any distibution values $x_k$ outside the valid domain</span>
+<span class="sd">        of $F$ will not be included, and the distribution will be implicitly</span>
+<span class="sd">        truncated.  This is controlled by the parameter limits defined in the</span>
+<span class="sd">        model (which truncate the distribution before calling the kernel) as</span>
+<span class="sd">        well as any region excluded using the *INVALID* macro defined within</span>
+<span class="sd">        the model itself.</span>
+
+<span class="sd">        The volume used in the polydispersity calculation is the form volume</span>
+<span class="sd">        for solid objects or the shell volume for hollow objects.  Shell</span>
+<span class="sd">        volume should be used within $F$ so that the normalizing scale</span>
+<span class="sd">        represents the volume fraction of the shell rather than the entire</span>
+<span class="sd">        form.  This corresponds to the volume fraction of shell-forming</span>
+<span class="sd">        material added to the solvent.</span>
+
+<span class="sd">        The calculation of $S$ requires the effective radius and the</span>
+<span class="sd">        volume fraction of the particles.  The model can have several</span>
+<span class="sd">        different ways to compute effective radius, with the</span>
+<span class="sd">        *radius_effective_mode* parameter used to select amongst them.  The</span>
+<span class="sd">        volume fraction of particles should be determined from the total</span>
+<span class="sd">        volume fraction of the form, not just the shell volume fraction.</span>
+<span class="sd">        This makes a difference for hollow shapes, which need to scale</span>
+<span class="sd">        the volume fraction by the returned volume ratio when computing $S$.</span>
+<span class="sd">        For solid objects, the shell volume is set to the form volume so</span>
+<span class="sd">        this scale factor evaluates to one and so can be used for both</span>
+<span class="sd">        hollow and solid shapes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_call_kernel</span><span class="p">(</span><span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span>
+                          <span class="n">radius_effective_mode</span><span class="p">)</span>
+        <span class="c1">#print(&quot;returned&quot;,self.q_input.q, self.result)</span>
+        <span class="n">nout</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">have_Fq</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="s1">&#39;1d&#39;</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">total_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">nout</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Note: total_weight = sum(weight &gt; cutoff), with cutoff &gt;= 0, so it</span>
+        <span class="c1"># is okay to test directly against zero.  If weight is zero then I(q),</span>
+        <span class="c1"># etc. must also be zero.</span>
+        <span class="k">if</span> <span class="n">total_weight</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="n">total_weight</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="c1"># Note: shell_volume == form_volume for solid objects</span>
+        <span class="n">form_volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">nout</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">total_weight</span>
+        <span class="n">shell_volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">nout</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">total_weight</span>
+        <span class="n">radius_effective</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="n">nout</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span><span class="o">/</span><span class="n">total_weight</span>
+        <span class="k">if</span> <span class="n">shell_volume</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="n">shell_volume</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">F1</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">nout</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span><span class="p">:</span><span class="n">nout</span><span class="p">]</span><span class="o">/</span><span class="n">total_weight</span>
+              <span class="k">if</span> <span class="n">nout</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">F2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nout</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">q_input</span><span class="o">.</span><span class="n">nq</span><span class="p">:</span><span class="n">nout</span><span class="p">]</span><span class="o">/</span><span class="n">total_weight</span>
+        <span class="k">return</span> <span class="n">F1</span><span class="p">,</span> <span class="n">F2</span><span class="p">,</span> <span class="n">radius_effective</span><span class="p">,</span> <span class="n">shell_volume</span><span class="p">,</span> <span class="n">form_volume</span><span class="o">/</span><span class="n">shell_volume</span></div>
+
+<div class="viewcode-block" id="Kernel.release"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Kernel.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># type: () -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Free resources associated with the kernel instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#print(&quot;null release kernel&quot;)</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Kernel._call_kernel"><a class="viewcode-back" href="../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Kernel._call_kernel">[docs]</a>    <span class="k">def</span> <span class="nf">_call_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_details</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">magnetic</span><span class="p">,</span>
+                     <span class="n">radius_effective_mode</span><span class="p">):</span>
+        <span class="c1"># type: (CallDetails, np.ndarray, np.ndarray, float, bool, int) -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call the kernel.  Subclasses defining kernels for particular execution</span>
+<span class="sd">        engines need to provide an implementation for this.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sasmodels.html" >sasmodels</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sasmodels.kernel</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+    </div>
+  </body>
+</html>
