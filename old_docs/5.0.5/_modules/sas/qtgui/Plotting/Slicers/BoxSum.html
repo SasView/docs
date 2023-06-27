@@ -1,0 +1,816 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sas.qtgui.Plotting.Slicers.BoxSum &#8212; SasView 5.0.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Plotting.Slicers.BoxSum</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Plotting.Slicers.BoxSum</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Boxsum Class: determine 2 rectangular area to compute</span>
+<span class="sd">the sum of pixel of a Data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="kn">import</span> <span class="n">formatNumber</span><span class="p">,</span> <span class="n">toDouble</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Boxavg</span>
+<span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">Boxsum</span>
+
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.SlicerModel</span> <span class="kn">import</span> <span class="n">SlicerModel</span>
+
+
+<div class="viewcode-block" id="BoxSumCalculator"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator">[docs]</a><span class="k">class</span> <span class="nc">BoxSumCalculator</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Boxsum Class: determine 2 rectangular area to compute</span>
+<span class="sd">    the sum of pixel of a Data.</span>
+<span class="sd">    Uses PointerInteractor , VerticalDoubleLine,HorizontalDoubleLine.</span>
+<span class="sd">    @param zorder:  Artists with lower zorder values are drawn first.</span>
+<span class="sd">    @param x_min: the minimum value of the x coordinate</span>
+<span class="sd">    @param x_max: the maximum value of the x coordinate</span>
+<span class="sd">    @param y_min: the minimum value of the y coordinate</span>
+<span class="sd">    @param y_max: the maximum value of the y coordinate</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BoxSumCalculator.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="c1"># list of Boxsmun markers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># connect the artist for the motion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">connect</span>
+
+        <span class="c1"># when qmax is reached the selected line is reset the its previous value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span>
+
+        <span class="c1"># Define the boxsum limits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+                                   <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+                                   <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+                              <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span><span class="p">),</span>
+                              <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+        <span class="c1"># center of the boxSum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">=</span> <span class="mf">0.0002</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="mf">0.0003</span>
+        <span class="c1"># Number of points on the plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="c1"># Define initial result the summation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">totalerror</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Flag to determine if the current figure has moved</span>
+        <span class="c1"># set to False == no motion , set to True== motion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Create Boxsum edges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span> <span class="o">=</span> <span class="n">HorizontalDoubleLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span>
+                                                     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                                                     <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                                     <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">,</span>
+                                                     <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span>
+                                                     <span class="n">center_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_x</span><span class="p">,</span>
+                                                     <span class="n">center_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span> <span class="o">=</span> <span class="n">VerticalDoubleLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span>
+                                                 <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
+                                                 <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                                 <span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">,</span>
+                                                 <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span>
+                                                 <span class="n">center_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_x</span><span class="p">,</span>
+                                                 <span class="n">center_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">PointInteractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span>
+                                      <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                      <span class="n">center_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_x</span><span class="p">,</span>
+                                      <span class="n">center_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_y</span><span class="p">)</span>
+        <span class="c1"># Save the name of the slicer panel associate with this slicer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># Update and post slicer parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postData</span><span class="p">()</span>
+
+        <span class="c1"># set up the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setModelFromParams</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">itemChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setParamsFromModel</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.validate"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate input from user</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.setModelFromParams"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.setModelFromParams">[docs]</a>    <span class="k">def</span> <span class="nf">setModelFromParams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the Qt model for data handling between controls</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParams</span><span class="p">()</span>
+        <span class="c1"># Crete/overwrite model items</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;Height&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;Width&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;center_x&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;center_y&#39;</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setReadOnlyParametersFromModel</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.model"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.model">[docs]</a>    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; model accessor &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.setReadOnlyParametersFromModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.setReadOnlyParametersFromModel">[docs]</a>    <span class="k">def</span> <span class="nf">setReadOnlyParametersFromModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cast model content onto &quot;read-only&quot; subset of parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getParams</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;avg_error&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;sum_error&#39;</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">formatNumber</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;num_points&#39;</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.setParamsFromModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.setParamsFromModel">[docs]</a>    <span class="k">def</span> <span class="nf">setParamsFromModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cast model content onto params dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toDouble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toDouble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;center_x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toDouble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;center_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">toDouble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setParams</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setReadOnlyParametersFromModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.setPanelName"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.setPanelName">[docs]</a>    <span class="k">def</span> <span class="nf">setPanelName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the name of the panel associated to this slicer</span>
+<span class="sd">        @param name: the name of this panel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">panel_name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.setLayer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.setLayer">[docs]</a>    <span class="k">def</span> <span class="nf">setLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+<span class="sd">        :param n: the number of layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear the slicer and all connected events related to this slicer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">connect</span><span class="o">.</span><span class="n">clearall</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Respond to changes in the model by recalculating the profiles and</span>
+<span class="sd">        resetting the widgets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check if the center point has moved and update the figure accordingly</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">)</span>
+        <span class="c1"># check if the horizontal lines have moved and</span>
+        <span class="c1"># update the figure accordingly</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span>
+                                       <span class="n">y2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">y2</span><span class="p">,</span>
+                                       <span class="n">height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">half_height</span><span class="p">)</span>
+        <span class="c1"># check if the vertical lines have moved and</span>
+        <span class="c1"># update the figure accordingly</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span>
+                                         <span class="n">x2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span>
+                                         <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">half_width</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.postData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.postData">[docs]</a>    <span class="k">def</span> <span class="nf">postData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the limits of the boxsum and compute the sum of the pixel</span>
+<span class="sd">        contained in that region and the error on that sum</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the region of the summation</span>
+        <span class="n">x_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">x2</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">x1</span>
+        <span class="n">y_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">y2</span>
+        <span class="n">y_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">y1</span>
+        <span class="c1">#computation of the sum and its error</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="n">Boxavg</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># Dig out number of points summed, SMK &amp; PDB, 04/03/2013</span>
+        <span class="n">boxtotal</span> <span class="o">=</span> <span class="n">Boxsum</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="n">y_max</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalerror</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">boxtotal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setModelFromParams</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        After a dragging motion this function is called to compute</span>
+<span class="sd">        the error and the sum of pixel of a given data 2D</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># compute error an d sum of data&#39;s pixel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postData</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.getParams"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.getParams">[docs]</a>    <span class="k">def</span> <span class="nf">getParams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store a copy of values of parameters of the slicer into a dictionary.</span>
+<span class="sd">        :return params: the dictionary created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">half_width</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">half_height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;center_x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;center_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;num_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sum_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalerror</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.getResult"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.getResult">[docs]</a>    <span class="k">def</span> <span class="nf">getResult</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the result of box summation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;num_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;avg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;avg_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sum_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalerror</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.setParams"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.setParams">[docs]</a>    <span class="k">def</span> <span class="nf">setParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receive a dictionary and reset the slicer with values contained</span>
+<span class="sd">        in the values of the dictionary.</span>
+<span class="sd">        :param params: a dictionary containing name of slicer parameters</span>
+<span class="sd">        and values the user assigned to the slicer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;Width&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">y_max</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;Height&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;center_x&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;center_y&quot;</span><span class="p">]</span>
+        <span class="c1"># update the slicer given values of params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">center_x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center_y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">,</span>
+                                     <span class="n">width</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">y_max</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_lines</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">,</span>
+                                   <span class="n">width</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">y_max</span><span class="p">)</span>
+        <span class="c1"># compute the new error and sum given values of params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postData</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoxSumCalculator.draw"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.BoxSumCalculator.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Redraw canvas&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div></div>
+
+
+
+<div class="viewcode-block" id="PointInteractor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor">[docs]</a><span class="k">class</span> <span class="nc">PointInteractor</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw a point that can be dragged with the marker.</span>
+<span class="sd">    this class controls the motion the center of the BoxSum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PointInteractor.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">center_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">center_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="c1"># Initialization the class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="c1"># center coordinates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">center_y</span>
+        <span class="c1"># saved value of the center coordinates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span> <span class="o">=</span> <span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span> <span class="o">=</span> <span class="n">center_y</span>
+        <span class="c1"># Create a marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_marker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                            <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                            <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                                            <span class="n">pickradius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pick&quot;</span><span class="p">,</span>
+                                            <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                            <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Draw a point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">],</span>
+                                     <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                     <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+                                     <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Flag to determine the motion this point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># connecting the marker to allow them to move</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_markers</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">center_marker</span><span class="p">])</span>
+        <span class="c1"># Update the figure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PointInteractor.setLayer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.setLayer">[docs]</a>    <span class="k">def</span> <span class="nf">setLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+<span class="sd">        @param n: the number of layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PointInteractor.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear this figure and its markers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_marker</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PointInteractor.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw the new roughness on the graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">center_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">center_x</span>
+        <span class="k">if</span> <span class="n">center_y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="PointInteractor.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span></div>
+
+<div class="viewcode-block" id="PointInteractor.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">moveend</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PointInteractor.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x</span></div>
+
+<div class="viewcode-block" id="PointInteractor.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PointInteractor.setCursor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.PointInteractor.setCursor">[docs]</a>    <span class="k">def</span> <span class="nf">setCursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine">[docs]</a><span class="k">class</span> <span class="nc">VerticalDoubleLine</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw 2 vertical lines moving in opposite direction and centered on</span>
+<span class="sd">    a point (PointInteractor)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="VerticalDoubleLine.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">center_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="c1"># Initialization the class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="c1"># Center coordinates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">=</span> <span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="n">center_y</span>
+        <span class="c1"># defined end points vertical lignes and their saved values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span>
+        <span class="c1"># # save the color of the line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="c1"># the height of the rectangle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_height</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="c1"># the with of the rectangle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_width</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="c1"># Create marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_marker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                           <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                           <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                                           <span class="n">pickradius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pick&quot;</span><span class="p">,</span>
+                                           <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Define the left and right lines of the rectangle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">],</span>
+                                         <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                         <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">],</span>
+                                        <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                        <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Flag to determine if the lines have moved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Connection the marker and draw the pictures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_markers</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">right_marker</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.setLayer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.setLayer">[docs]</a>    <span class="k">def</span> <span class="nf">setLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+<span class="sd">        :param n: the number of layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear this slicer  and its markers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_marker</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw the new roughness on the graph.</span>
+<span class="sd">        :param x1: new maximum value of x coordinates</span>
+<span class="sd">        :param x2: new minimum value of x coordinates</span>
+<span class="sd">        :param y1: new maximum value of y coordinates</span>
+<span class="sd">        :param y2: new minimum value of y coordinates</span>
+<span class="sd">        :param width: is the width of the new rectangle</span>
+<span class="sd">        :param height: is the height of the new rectangle</span>
+<span class="sd">        :param center: provided x, y  coordinates of the center point</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save the new height, witdh of the rectangle if given as a param</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="c1"># If new  center coordinates are given draw the rectangle</span>
+        <span class="c1"># given these value</span>
+        <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">=</span> <span class="n">center</span><span class="o">.</span><span class="n">x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="n">center</span><span class="o">.</span><span class="n">y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">right_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">center_y</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span>
+                                <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span>
+                               <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">])</span>
+            <span class="k">return</span>
+        <span class="c1"># if x1, y1, y2, y3 are given draw the rectangle with this value</span>
+        <span class="k">if</span> <span class="n">x1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="k">if</span> <span class="n">x2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="n">x2</span>
+        <span class="k">if</span> <span class="n">y1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="k">if</span> <span class="n">y2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="n">y2</span>
+        <span class="c1"># Draw 2 vertical lines and a marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">center_y</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        After a dragging motion reset the flag self.has_move to False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">moveend</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_half_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_half_width</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="VerticalDoubleLine.setCursor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.VerticalDoubleLine.setCursor">[docs]</a>    <span class="k">def</span> <span class="nf">setCursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the figure given x and y</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine">[docs]</a><span class="k">class</span> <span class="nc">HorizontalDoubleLine</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select an annulus through a 2D plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="HorizontalDoubleLine.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">center_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">center_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="c1"># Initialization the class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="c1"># Center coordinates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">=</span> <span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_height</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_width</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_marker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                         <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                         <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                                         <span class="n">pickradius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;pick&quot;</span><span class="p">,</span>
+                                         <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Define 2 horizotnal lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">],</span>
+                                       <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                       <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">],</span>
+                                          <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">],</span>
+                                          <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                          <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Flag to determine if the lines have moved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># connection the marker and draw the pictures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_markers</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">top_marker</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.setLayer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.setLayer">[docs]</a>    <span class="k">def</span> <span class="nf">setLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow adding plot to the same panel</span>
+<span class="sd">        @param n: the number of layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear this figure and its markers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_marker</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Draw the new roughness on the graph.</span>
+<span class="sd">        :param x1: new maximum value of x coordinates</span>
+<span class="sd">        :param x2: new minimum value of x coordinates</span>
+<span class="sd">        :param y1: new maximum value of y coordinates</span>
+<span class="sd">        :param y2: new minimum value of y coordinates</span>
+<span class="sd">        :param width: is the width of the new rectangle</span>
+<span class="sd">        :param height: is the height of the new rectangle</span>
+<span class="sd">        :param center: provided x, y  coordinates of the center point</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save the new height, witdh of the rectangle if given as a param</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="c1"># If new  center coordinates are given draw the rectangle</span>
+        <span class="c1"># given these value</span>
+        <span class="k">if</span> <span class="n">center</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span> <span class="o">=</span> <span class="n">center</span><span class="o">.</span><span class="n">x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">=</span> <span class="n">center</span><span class="o">.</span><span class="n">y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_x</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">center_x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span>
+                              <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span>
+                                 <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">])</span>
+            <span class="k">return</span>
+        <span class="c1"># if x1, y1, y2, y3 are given draw the rectangle with this value</span>
+        <span class="k">if</span> <span class="n">x1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="k">if</span> <span class="n">x2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="n">x2</span>
+        <span class="k">if</span> <span class="n">y1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="k">if</span> <span class="n">y2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="n">y2</span>
+        <span class="c1"># Draw 2 vertical lines and a marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_marker</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">center_x</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_line</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xdata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="p">],</span> <span class="n">ydata</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_half_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        After a dragging motion reset the flag self.has_move to False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">moveend</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_y1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_x1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_half_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_half_width</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span> <span class="o">-</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">half_height</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">center_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_move</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HorizontalDoubleLine.setCursor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.BoxSum.HorizontalDoubleLine.setCursor">[docs]</a>    <span class="k">def</span> <span class="nf">setCursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the figure given x and y</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Plotting.Slicers.BoxSum</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+    </div>
+  </body>
+</html>

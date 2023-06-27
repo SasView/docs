@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sas.qtgui.Utilities.PlotView &#8212; SasView 5.0.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Utilities.PlotView</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Utilities.PlotView</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">with_statement</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="c1"># The Figure object is used to create backend-independent plot representations.</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
+<span class="n">GUI_TOOLKIT</span> <span class="o">=</span> <span class="s2">&quot;qt5&quot;</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.qt_compat</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<div class="viewcode-block" id="EmbeddedPylab"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.EmbeddedPylab">[docs]</a><span class="k">class</span> <span class="nc">EmbeddedPylab</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Define a &#39;with&#39; context manager that lets you use pylab commands to</span>
+<span class="sd">    plot on an embedded canvas.  This is useful for wrapping existing</span>
+<span class="sd">    scripts in a GUI, and benefits from being more familiar than the</span>
+<span class="sd">    underlying object oriented interface.</span>
+
+<span class="sd">    As a convenience, the pylab module is returned on entry.</span>
+
+<span class="sd">    *Example*</span>
+
+<span class="sd">    The following example shows how to use the WxAgg backend in a wx panel::</span>
+
+<span class="sd">        from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas</span>
+<span class="sd">        from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as Toolbar</span>
+<span class="sd">        from matplotlib.figure import Figure</span>
+
+<span class="sd">        class PlotPanel(wx.Panel):</span>
+<span class="sd">            def __init__(self, *args, **kw):</span>
+<span class="sd">                wx.Panel.__init__(self, *args, **kw)</span>
+
+<span class="sd">                figure = Figure(figsize=(1,1), dpi=72)</span>
+<span class="sd">                canvas = FigureCanvas(self, wx.ID_ANY, figure)</span>
+<span class="sd">                self.pylab_interface = EmbeddedPylab(canvas)</span>
+
+<span class="sd">                # Instantiate the matplotlib navigation toolbar and explicitly show it.</span>
+<span class="sd">                mpl_toolbar = Toolbar(canvas)</span>
+<span class="sd">                mpl_toolbar.Realize()</span>
+
+<span class="sd">                # Create a vertical box sizer to manage the widgets in the main panel.</span>
+<span class="sd">                sizer = wx.BoxSizer(wx.VERTICAL)</span>
+<span class="sd">                sizer.Add(canvas, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, border=0)</span>
+<span class="sd">                sizer.Add(mpl_toolbar, 0, wx.EXPAND|wx.ALL, border=0)</span>
+
+<span class="sd">                # Associate the sizer with its container.</span>
+<span class="sd">                self.SetSizer(sizer)</span>
+<span class="sd">                sizer.Fit(self)</span>
+
+<span class="sd">            def plot(self, *args, **kw):</span>
+<span class="sd">                with self.pylab_interface as pylab:</span>
+<span class="sd">                    pylab.clf()</span>
+<span class="sd">                    pylab.plot(*args, **kw)</span>
+
+<span class="sd">    Similar patterns should work for the other backends.  Check the source code</span>
+<span class="sd">    in matplotlib.backend_bases.* for examples showing how to use matplotlib</span>
+<span class="sd">    with other GUI toolkits.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EmbeddedPylab.__init__"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.EmbeddedPylab.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">canvas</span><span class="p">):</span>
+        <span class="c1"># delay loading pylab until matplotlib.use() is called</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.backend_bases</span> <span class="kn">import</span> <span class="n">FigureManagerBase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fm</span> <span class="o">=</span> <span class="n">FigureManagerBase</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+<div class="viewcode-block" id="EmbeddedPylab.__enter__"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.EmbeddedPylab.__enter__">[docs]</a>    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># delay loading pylab until matplotlib.use() is called</span>
+        <span class="kn">import</span> <span class="nn">pylab</span>
+        <span class="kn">from</span> <span class="nn">matplotlib._pylab_helpers</span> <span class="kn">import</span> <span class="n">Gcf</span>
+        <span class="n">Gcf</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pylab</span></div>
+<div class="viewcode-block" id="EmbeddedPylab.__exit__"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.EmbeddedPylab.__exit__">[docs]</a>    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="c1"># delay loading pylab until matplotlib.use() is called</span>
+        <span class="kn">from</span> <span class="nn">matplotlib._pylab_helpers</span> <span class="kn">import</span> <span class="n">Gcf</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Gcf</span><span class="p">,</span> <span class="s1">&#39;_activeQue&#39;</span><span class="p">):</span>  <span class="c1"># CRUFT: MPL &lt; 3.3.1</span>
+            <span class="n">Gcf</span><span class="o">.</span><span class="n">_activeQue</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">Gcf</span><span class="o">.</span><span class="n">_activeQue</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">Gcf</span><span class="o">.</span><span class="n">figs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Gcf</span><span class="o">.</span><span class="n">figs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fm</span><span class="o">.</span><span class="n">num</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="_PlotViewShared"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared">[docs]</a><span class="k">class</span> <span class="nc">_PlotViewShared</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Plot&#39;</span>
+    <span class="n">default_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+    <span class="n">pylab_interface</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: EmbeddedPylab</span>
+    <span class="n">plot_state</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_calculating</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_need_plot</span> <span class="o">=</span>  <span class="kc">False</span>
+    <span class="n">_need_newmodel</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="_PlotViewShared.set_model"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_shown</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_redraw</span><span class="p">(</span><span class="n">newmodel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.update_model"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.update_model">[docs]</a>    <span class="k">def</span> <span class="nf">update_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1">#print &quot;profile update model&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">!=</span> <span class="n">model</span><span class="p">:</span>  <span class="c1"># ignore updates to different models</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_shown</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_redraw</span><span class="p">(</span><span class="n">newmodel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.update_parameters"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1">#print &quot;profile update parameters&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">!=</span> <span class="n">model</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_shown</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_need_plot</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_redraw</span><span class="p">(</span><span class="n">newmodel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared._show"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared._show">[docs]</a>    <span class="k">def</span> <span class="nf">_show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#print &quot;showing theory&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_redraw</span><span class="p">(</span><span class="n">newmodel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_plot</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_redraw</span><span class="p">(</span><span class="n">newmodel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared._redraw"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared._redraw">[docs]</a>    <span class="k">def</span> <span class="nf">_redraw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newmodel</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span> <span class="o">=</span> <span class="n">newmodel</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculating</span><span class="p">:</span>
+            <span class="c1"># That means that I&#39;ve entered the thread through a</span>
+            <span class="c1"># wx.Yield for the currently executing redraw.  I need</span>
+            <span class="c1"># to cancel the running thread and force it to start</span>
+            <span class="c1"># the calculation over.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cancel_calculation</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1">#print &quot;canceling calculation&quot;</span>
+            <span class="k">return</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">pylab_interface</span> <span class="k">as</span> <span class="n">pylab</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculating</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1">#print &quot;calling again&quot;</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1">#print &quot;restarting&quot;</span>
+                <span class="c1"># We are restarting the calculation, so clear the reset flag</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cancel_calculation</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">newmodel</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancel_calculation</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_need_newmodel</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancel_calculation</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">pylab</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+                <span class="k">break</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_need_plot</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculating</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.get_state"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#print &quot;returning state&quot;,self.model,self.plot_state</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_state</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.set_state"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.set_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_state</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="c1">#print &quot;setting state&quot;,self.model,self.plot_state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.menu"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.menu">[docs]</a>    <span class="k">def</span> <span class="nf">menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a model specific menu</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.newmodel"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.newmodel">[docs]</a>    <span class="k">def</span> <span class="nf">newmodel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        New or updated model structure.  Do any sort or precalculation you</span>
+<span class="sd">        need.  plot will be called separately when you are done.</span>
+
+<span class="sd">        For long calculations, periodically perform wx.YieldIfNeeded()</span>
+<span class="sd">        and then if self.cancel_calculation is True, return from the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="_PlotViewShared.plot"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView._PlotViewShared.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot to the current figure.  If model has a plot method,</span>
+<span class="sd">        just use that.</span>
+
+<span class="sd">        For long calculations, periodically perform wx.YieldIfNeeded()</span>
+<span class="sd">        and then if self.cancel_calculation is True, return from the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;plot&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;PlotPanel needs a plot method&quot;</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="PlotView"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.PlotView">[docs]</a><span class="k">class</span> <span class="nc">PlotView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">_PlotViewShared</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotView.__init__"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.PlotView.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="c1">#import matplotlib.backends.backend_qt4agg</span>
+        <span class="c1">#matplotlib.backends.backend_qt4agg.DEBUG = True</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvasQTAgg</span> <span class="k">as</span> <span class="n">FigureCanvas</span>
+        <span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">NavigationToolbar2QT</span> <span class="k">as</span> <span class="n">Toolbar</span>
+
+        <span class="c1">#QtWidgets.QWidget.__init__(self, *args, **kw)</span>
+
+        <span class="c1"># Can specify name on</span>
+        <span class="k">if</span> <span class="s1">&#39;title&#39;</span> <span class="ow">in</span> <span class="n">kw</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Instantiate a figure object that will contain our plots.</span>
+        <span class="n">figure</span> <span class="o">=</span> <span class="n">Figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">72</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the figure canvas, mapping the figure object to the plot</span>
+        <span class="c1"># engine backend.</span>
+        <span class="n">canvas</span> <span class="o">=</span> <span class="n">FigureCanvas</span><span class="p">(</span><span class="n">figure</span><span class="p">)</span>
+
+        <span class="c1"># Wx-Pylab magic ...</span>
+        <span class="c1"># Make our canvas an active figure manager for pylab so that when</span>
+        <span class="c1"># pylab plotting statements are executed they will operate on our</span>
+        <span class="c1"># canvas and not create a new frame and canvas for display purposes.</span>
+        <span class="c1"># This technique allows this application to execute code that uses</span>
+        <span class="c1"># pylab stataments to generate plots and embed these plots in our</span>
+        <span class="c1"># application window(s).  Use _activate_figure() to set.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pylab_interface</span> <span class="o">=</span> <span class="n">EmbeddedPylab</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+
+        <span class="c1"># Instantiate the matplotlib navigation toolbar and explicitly show it.</span>
+        <span class="n">mpl_toolbar</span> <span class="o">=</span> <span class="n">Toolbar</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">mpl_toolbar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotView._is_shown"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.PlotView.PlotView._is_shown">[docs]</a>    <span class="k">def</span> <span class="nf">_is_shown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">IS_MAC</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">IsShown</span><span class="p">()</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Utilities.PlotView</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+    </div>
+  </body>
+</html>

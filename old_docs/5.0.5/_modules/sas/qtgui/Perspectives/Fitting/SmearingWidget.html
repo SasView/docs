@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sas.qtgui.Perspectives.Fitting.SmearingWidget &#8212; SasView 5.0.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Perspectives.Fitting.SmearingWidget</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Perspectives.Fitting.SmearingWidget</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Widget/logic for smearing data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">sas.sascalc.fit.qsmearing</span> <span class="kn">import</span> <span class="n">smear_selection</span><span class="p">,</span> <span class="n">PySmear</span><span class="p">,</span> <span class="n">PySmear2D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data2D</span>
+<span class="kn">import</span> <span class="nn">sas.qtgui.Utilities.GuiUtils</span> <span class="k">as</span> <span class="nn">GuiUtils</span>
+
+<span class="kn">from</span> <span class="nn">sasmodels.resolution</span> <span class="kn">import</span> <span class="n">Slit1D</span><span class="p">,</span> <span class="n">Pinhole1D</span>
+<span class="kn">from</span> <span class="nn">sasmodels.sesans</span> <span class="kn">import</span> <span class="n">SesansTransform</span>
+
+<span class="c1"># Local UI</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Perspectives.Fitting.UI.SmearingWidgetUI</span> <span class="kn">import</span> <span class="n">Ui_SmearingWidgetUI</span>
+
+<div class="viewcode-block" id="DataWidgetMapper"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.DataWidgetMapper">[docs]</a><span class="k">class</span> <span class="nc">DataWidgetMapper</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDataWidgetMapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom version of the standard QDataWidgetMapper allowing for proper</span>
+<span class="sd">    response to index change in comboboxes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DataWidgetMapper.addMapping"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.DataWidgetMapper.addMapping">[docs]</a>    <span class="k">def</span> <span class="nf">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">propertyName</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">propertyName</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DataWidgetMapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DataWidgetMapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">propertyName</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">):</span>
+            <span class="n">delegate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">delegate</span><span class="o">.</span><span class="n">commitData</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span></div></div>
+
+<span class="n">SMEARING_1D</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Custom Pinhole Smear&quot;</span><span class="p">,</span> <span class="s2">&quot;Custom Slit Smear&quot;</span><span class="p">]</span>
+<span class="n">SMEARING_2D</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Custom Pinhole Smear&quot;</span><span class="p">]</span>
+<span class="n">SMEARING_QD</span> <span class="o">=</span> <span class="s2">&quot;Use dQ Data&quot;</span>
+
+<span class="n">MODEL</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;SMEARING&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PINHOLE_MIN&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PINHOLE_MAX&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ACCURACY&#39;</span><span class="p">]</span>
+<span class="n">ACCURACY_DICT</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Low&#39;</span><span class="p">:</span> <span class="s1">&#39;low&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;Medium&#39;</span><span class="p">:</span> <span class="s1">&#39;med&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;High&#39;</span><span class="p">:</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;Extra high&#39;</span><span class="p">:</span> <span class="s1">&#39;xhigh&#39;</span><span class="p">}</span>
+
+<span class="n">DEFAULT_PINHOLE_UP</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="n">DEFAULT_PINHOLE_DOWN</span><span class="o">=</span><span class="mf">0.0</span>
+
+<div class="viewcode-block" id="SmearingWidget"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget">[docs]</a><span class="k">class</span> <span class="nc">SmearingWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">,</span> <span class="n">Ui_SmearingWidgetUI</span><span class="p">):</span>
+    <span class="n">smearingChangedSignal</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">pyqtSignal</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SmearingWidget.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SmearingWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Local model for holding data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Mapper for model update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Data from the widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># dQ data variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dq_l</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dq_r</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># current pinhole/slot values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pinhole</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># current accuracy option</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Let only floats in the line edits</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">GuiUtils</span><span class="o">.</span><span class="n">DoubleValidator</span><span class="p">())</span>
+
+        <span class="c1"># Attach slots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentIndexChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onIndexChange</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">DEFAULT_PINHOLE_UP</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">DEFAULT_PINHOLE_DOWN</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initModel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initMapper</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.initModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.initModel">[docs]</a>    <span class="k">def</span> <span class="nf">initModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">model_item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">MODEL</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">model_item</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">())</span>
+        <span class="c1"># Attach slot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onModelChange</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.initMapper"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.initMapper">[docs]</a>    <span class="k">def</span> <span class="nf">initMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize model item &lt;-&gt; UI element mapping</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span> <span class="o">=</span> <span class="n">DataWidgetMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="p">,</span>   <span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;PINHOLE_MIN&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="p">,</span> <span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;PINHOLE_MAX&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">addMapping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cbAccuracy</span><span class="p">,</span>   <span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;ACCURACY&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">toFirst</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.updateData"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.updateData">[docs]</a>    <span class="k">def</span> <span class="nf">updateData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update control elements based on data and model passed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># retain the combobox index</span>
+        <span class="n">old_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gAccuracy</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setElementsVisibility</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateKernelModel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">keep_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">old_index</span><span class="o">=</span><span class="n">old_index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.updateKernelModel"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.updateKernelModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateKernelModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">old_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span> <span class="o">=</span> <span class="n">kernel_model</span>
+        <span class="c1"># keep the original cbSmearing value, if already set</span>
+        <span class="n">index_to_show</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">old_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">index_to_show</span> <span class="o">=</span> <span class="n">old_index</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setElementsVisibility</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="c1"># Find out if data has dQ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="n">smear_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSmearInfo</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">SMEARING_QD</span><span class="p">)</span>
+            <span class="n">index_to_show</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">keep_order</span> <span class="k">else</span> <span class="n">index_to_show</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># No model definend yet - just use data file smearing, if any</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index_to_show</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data1D</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">SMEARING_1D</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">SMEARING_2D</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index_to_show</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.smearer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.smearer">[docs]</a>    <span class="k">def</span> <span class="nf">smearer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the current smearer &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.onIndexChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.onIndexChange">[docs]</a>    <span class="k">def</span> <span class="nf">onIndexChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback for smearing combobox index change</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setElementsVisibility</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Use dQ Data&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setElementsVisibility</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setDQLabels</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onDQSmear</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Custom Pinhole Smear&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setElementsVisibility</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setPinholeLabels</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onPinholeSmear</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Custom Slit Smear&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setElementsVisibility</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setSlitLabels</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">onSlitSmear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smearingChangedSignal</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.onModelChange"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.onModelChange">[docs]</a>    <span class="k">def</span> <span class="nf">onModelChange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Respond to model change by notifying any listeners</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Recalculate the smearing</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="c1"># update the backup values based on model choice</span>
+        <span class="n">smearing</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">d_down</span><span class="p">,</span> <span class="n">d_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span>
+        <span class="c1"># don&#39;t save the state if dQ Data</span>
+        <span class="k">if</span> <span class="n">smearing</span> <span class="o">==</span> <span class="s2">&quot;Custom Pinhole Smear&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pinhole</span> <span class="o">=</span> <span class="n">d_up</span>
+        <span class="k">elif</span> <span class="n">smearing</span> <span class="o">==</span> <span class="s1">&#39;Custom Slit Smear&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span> <span class="o">=</span> <span class="n">d_up</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span> <span class="o">=</span> <span class="n">d_down</span>
+        <span class="c1"># check changes in accuracy</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span> <span class="o">!=</span> <span class="n">accuracy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span>
+            <span class="k">if</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;High&#39;</span> <span class="ow">or</span> <span class="n">accuracy</span> <span class="o">==</span> <span class="s1">&#39;Extra high&#39;</span><span class="p">:</span>
+                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Accuracy Warning&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;Higher accuracy is very expensive, </span><span class="se">\n</span><span class="s2">so fitting can be very slow!&quot;</span><span class="p">)</span>      
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">onIndexChange</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setElementsVisibility"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setElementsVisibility">[docs]</a>    <span class="k">def</span> <span class="nf">setElementsVisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Labels and linedits visibility control</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearDown</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearUp</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitUp</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitDown</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAccuracyVisibility</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setAccuracyVisibility"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setAccuracyVisibility">[docs]</a>    <span class="k">def</span> <span class="nf">setAccuracyVisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accuracy combobox visibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gAccuracy</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gAccuracy</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setPinholeLabels"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setPinholeLabels">[docs]</a>    <span class="k">def</span> <span class="nf">setPinholeLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use pinhole labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;dQ/Q&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pinhole</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setSlitLabels"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setSlitLabels">[docs]</a>    <span class="k">def</span> <span class="nf">setSlitLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use pinhole labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Slit height&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;Slit width&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Å&lt;span style=&quot; vertical-align:super;&quot;&gt;-1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Å&lt;span style=&quot; vertical-align:super;&quot;&gt;-1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setDQLabels"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setDQLabels">[docs]</a>    <span class="k">def</span> <span class="nf">setDQLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use appropriate labels</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">==</span> <span class="s2">&quot;Pinhole&quot;</span><span class="p">:</span>
+            <span class="n">text_down</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[dQ/Q]&lt;span style=&quot; vertical-align:sub;&quot;&gt;max&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+            <span class="n">text_up</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;[dQ/Q]&lt;span style=&quot; vertical-align:sub;&quot;&gt;min&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+            <span class="n">text_unit</span> <span class="o">=</span> <span class="s1">&#39;%&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">==</span> <span class="s2">&quot;Slit&quot;</span><span class="p">:</span>
+            <span class="n">text_down</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Slit width&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+            <span class="n">text_up</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Slit height&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+            <span class="n">text_unit</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Å&lt;span style=&quot; vertical-align:super;&quot;&gt;-1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">text_unit</span> <span class="o">=</span> <span class="s1">&#39;%&#39;</span>
+            <span class="n">text_up</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&amp;lsaquo;dQ/Q&amp;rsaquo;&lt;span style=&quot; vertical-align:sub;&quot;&gt;r&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+            <span class="n">text_down</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&amp;lsaquo;dQ/Q&amp;rsaquo;&lt;span style=&quot; vertical-align:sub;&quot;&gt;&amp;phi;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text_down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text_up</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text_unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lblUnitDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text_unit</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dq_r</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dq_l</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.state"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.state">[docs]</a>    <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns current state of controls</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">smearing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">d_down</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">d_up</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">smearing</span> <span class="o">!=</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
+            <span class="n">accuracy</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;ACCURACY&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">d_down</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSmearDown</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">d_down</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">d_up</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">txtSmearUp</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">d_up</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">smearing</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">d_down</span><span class="p">,</span> <span class="n">d_up</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setState"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setState">[docs]</a>    <span class="k">def</span> <span class="nf">setState</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smearing</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">d_down</span><span class="p">,</span> <span class="n">d_up</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets new values for the controls</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update the model -&gt; controls update automatically</span>
+        <span class="k">if</span> <span class="n">accuracy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;ACCURACY&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">d_down</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;PINHOLE_MIN&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">d_down</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">d_up</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="n">MODEL</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;PINHOLE_MAX&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">d_up</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.onDQSmear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.onDQSmear">[docs]</a>    <span class="k">def</span> <span class="nf">onDQSmear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a custom dQ smear object that will change the way residuals</span>
+<span class="sd">        are compute when fitting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># resolution information already in data.dx (if 1D) or </span>
+        <span class="c1"># data.dqx_data &amp; data.dqy_data (if 2D),</span>
+        <span class="c1"># so only need to set accuracy for 2D</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="n">smear_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+            <span class="n">backend_accuracy</span> <span class="o">=</span> <span class="n">ACCURACY_DICT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">backend_accuracy</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span><span class="o">.</span><span class="n">set_accuracy</span><span class="p">(</span><span class="n">accuracy</span><span class="o">=</span><span class="n">backend_accuracy</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span><span class="o">.</span><span class="n">set_accuracy</span><span class="p">(</span><span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.onPinholeSmear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.onPinholeSmear">[docs]</a>    <span class="k">def</span> <span class="nf">onPinholeSmear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a custom pinhole smear object that will change the way residuals</span>
+<span class="sd">        are compute when fitting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">d_percent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pinhole</span> <span class="o">=</span> <span class="n">d_percent</span>
+        <span class="k">if</span> <span class="n">d_percent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">d_percent</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">percent</span> <span class="o">=</span> <span class="n">d_percent</span><span class="o">/</span><span class="mf">100.0</span>
+        <span class="c1"># copy data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+            <span class="n">len_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">len_data</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">len_data</span><span class="p">)</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span> <span class="o">=</span> <span class="n">percent</span><span class="o">*</span><span class="n">q</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">len_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">len_data</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="n">percent</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="n">smear_selection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span><span class="p">)</span>
+        <span class="c1"># need to set accuracy for 2D</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+            <span class="n">backend_accuracy</span> <span class="o">=</span> <span class="n">ACCURACY_DICT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">backend_accuracy</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span><span class="o">.</span><span class="n">set_accuracy</span><span class="p">(</span><span class="n">accuracy</span><span class="o">=</span><span class="n">backend_accuracy</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span><span class="o">.</span><span class="n">set_accuracy</span><span class="p">(</span><span class="n">accuracy</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="SmearingWidget.onSlitSmear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.onSlitSmear">[docs]</a>    <span class="k">def</span> <span class="nf">onSlitSmear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a custom slit smear object that will change the way residuals</span>
+<span class="sd">        are compute when fitting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">d_width</span><span class="p">,</span> <span class="n">d_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span>
+
+        <span class="c1"># Check changes in slit width</span>
+        <span class="k">if</span> <span class="n">d_width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">d_width</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">d_height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">d_height</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">slit_width</span> <span class="o">=</span> <span class="n">d_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slit_height</span> <span class="o">=</span> <span class="n">d_height</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="n">smear_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="c1"># make sure once more if it is smearer</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="n">d_height</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="n">d_width</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dxw</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="n">smear_selection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_model</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.setSmearInfo"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.setSmearInfo">[docs]</a>    <span class="k">def</span> <span class="nf">setSmearInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set default smear_type, dq_l, and dq_r based on the q-resolution information found in the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dq_l</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dq_r</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># First check if data is 2D - If so check that data set has smearing info.</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Data2D</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smearer</span><span class="p">(),</span> <span class="n">PySmear2D</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">=</span> <span class="s2">&quot;Pinhole2d&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dq_l</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dqx_data</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qx_data</span><span class="p">))</span><span class="o">*</span><span class="mf">100.</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dq_r</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dqy_data</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">qy_data</span><span class="p">))</span><span class="o">*</span><span class="mf">100.</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Check for pinhole smearing and get min max if it is.</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smearer</span><span class="p">(),</span> <span class="n">PySmear</span><span class="p">)</span>
+              <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smearer</span><span class="p">()</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span> <span class="p">(</span><span class="n">Pinhole1D</span><span class="p">,</span> <span class="n">SesansTransform</span><span class="p">))):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">=</span> <span class="s2">&quot;Pinhole&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dq_r</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span><span class="mf">100.</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dq_l</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span><span class="mf">100.</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Check for slit smearing and get min max if it is.</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smearer</span><span class="p">(),</span> <span class="n">PySmear</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smearer</span><span class="p">()</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span> <span class="n">Slit1D</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smear_type</span> <span class="o">=</span> <span class="s2">&quot;Slit&quot;</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dxl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dxl</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dq_l</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dxl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dxw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dxw</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dq_r</span> <span class="o">=</span> <span class="n">GuiUtils</span><span class="o">.</span><span class="n">formatNumber</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dxw</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SmearingWidget.resetSmearer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Perspectives.Fitting.html#sas.qtgui.Perspectives.Fitting.SmearingWidget.SmearingWidget.resetSmearer">[docs]</a>    <span class="k">def</span> <span class="nf">resetSmearer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_smearer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cbSmearing</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Perspectives.Fitting.SmearingWidget</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+    </div>
+  </body>
+</html>

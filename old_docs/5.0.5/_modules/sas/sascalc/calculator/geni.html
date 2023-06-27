@@ -1,0 +1,602 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sas.sascalc.calculator.geni &#8212; SasView 5.0.5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.sascalc.calculator.geni</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.sascalc.calculator.geni</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Compute scattering from a set of points.</span>
+<span class="sd">For 1-D scattering use *Iq(q, x, y, z, sld, vol, is_avg)*</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SAS_NUMBA&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">njit</span><span class="p">,</span> <span class="n">prange</span>
+        <span class="c1"># Suppress numba debug info</span>
+        <span class="kn">import</span> <span class="nn">logging</span>
+        <span class="n">numba_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;numba&#39;</span><span class="p">)</span>
+        <span class="n">numba_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+        <span class="n">USE_NUMBA</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;fail&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">USE_NUMBA</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># if no numba then njit does nothing</span>
+    <span class="k">def</span> <span class="nf">njit</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="c1"># Check for bare @njit, in which case we just return the function.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">callable</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">kw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Otherwise we have @njit(...), so return the identity decorator.</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="n">fn</span>
+
+<div class="viewcode-block" id="Iq"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni.Iq">[docs]</a><span class="k">def</span> <span class="nf">Iq</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">is_avg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes 1D isotropic.</span>
+<span class="sd">    Isotropic: Assumes all slds are real (no magnetic)</span>
+<span class="sd">    Also assumes there is no polarization: No dependency on spin.</span>
+<span class="sd">    All values must be numpy vectors of the correct size.</span>
+<span class="sd">    Returns *I(q)*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">sld</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">coords</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">sld</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">vol</span><span class="p">))</span>
+    <span class="n">q</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">)]</span>
+    <span class="n">I_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_avg</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1">#print(&#39;avg&#39;, I_out.shape, q.shape, r.shape, sld.shape, vol.shape)</span>
+        <span class="n">_calc_Iq_avg</span><span class="p">(</span><span class="n">I_out</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#print(&#39;not avg&#39;, I_out.shape, q.shape, coords.shape, sld.shape, vol.shape)</span>
+        <span class="n">_calc_Iq</span><span class="p">(</span><span class="n">I_out</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">I_out</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0E+8</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Iqxy"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni.Iqxy">[docs]</a><span class="k">def</span> <span class="nf">Iqxy</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">in_spin</span><span class="p">,</span> <span class="n">out_spin</span><span class="p">,</span> <span class="n">s_theta</span><span class="p">,</span> <span class="n">s_phi</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_elements</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes 2D anisotropic.</span>
+<span class="sd">    *in_spin* and *out_spin* indicate portion of polarizer and analyzer</span>
+<span class="sd">    transmission that are spin up.  *s_theta* and *s_phi* are the polarization direction angles.</span>
+<span class="sd">    All other values must be numpy vectors of the correct size.</span>
+<span class="sd">    Returns *I(qx, qy)*</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">)</span>
+    <span class="c1"># if the mx provided to SasGen is None then _vec(mx) will be [nan]</span>
+    <span class="k">if</span> <span class="n">mx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">my</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">magnetic_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">mx</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">my</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">mz</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="n">is_magnetic</span> <span class="o">=</span> <span class="n">magnetic_index</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">is_magnetic</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">is_magnetic</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">sld</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">|</span> <span class="n">magnetic_index</span>
+        <span class="k">if</span> <span class="n">is_elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span><span class="p">))</span>
+            <span class="n">I_out</span> <span class="o">=</span> <span class="n">_calc_Iqxy_magnetic_elements</span><span class="p">(</span>
+                <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span>
+                <span class="n">in_spin</span><span class="p">,</span> <span class="n">out_spin</span><span class="p">,</span> <span class="n">s_theta</span><span class="p">,</span> <span class="n">s_phi</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span> \
+                    <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">))</span>
+            <span class="n">I_out</span> <span class="o">=</span> <span class="n">_calc_Iqxy_magnetic</span><span class="p">(</span>
+                <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">),</span>
+                <span class="n">in_spin</span><span class="p">,</span> <span class="n">out_spin</span><span class="p">,</span> <span class="n">s_theta</span><span class="p">,</span> <span class="n">s_phi</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">sld</span> <span class="o">!=</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_elements</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">sld</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">sld</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span><span class="p">))</span>
+            <span class="n">I_out</span> <span class="o">=</span> <span class="n">_calc_Iqxy_elements</span><span class="p">(</span><span class="n">sld</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">qx</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">qy</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="n">I_out</span> <span class="o">=</span> <span class="n">I_out</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">qx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">))</span>
+            <span class="n">I_out</span> <span class="o">=</span> <span class="n">_calc_Iqxy</span><span class="p">(</span><span class="n">sld</span><span class="o">*</span><span class="n">vol</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">qx</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">qy</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="n">I_out</span> <span class="o">=</span> <span class="n">I_out</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">qx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">I_out</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0E+8</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="_calc_Iq_avg"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iq_avg">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;(f8[:], f8[:], f8[:], f8[:], f8[:])&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_calc_Iq_avg</span><span class="p">(</span><span class="n">Iq</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">sld</span> <span class="o">*</span> <span class="n">vol</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+        <span class="c1"># use q/pi since np.sinc = sin(pi x)/(pi x)</span>
+        <span class="n">bes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">((</span><span class="n">qi</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">Fq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weight</span> <span class="o">*</span> <span class="n">bes</span><span class="p">)</span>
+        <span class="n">Iq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Fq</span><span class="o">**</span><span class="mi">2</span></div>
+
+<div class="viewcode-block" id="_calc_Iq"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iq">[docs]</a><span class="k">def</span> <span class="nf">_calc_Iq</span><span class="p">(</span><span class="n">Iq</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">worksize</span><span class="o">=</span><span class="mi">1000000</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute Iq as sum rho_j rho_k j0(q ||x_j - x_k||)</span>
+<span class="sd">    Chunk the calculation so that the q x r intermediate matrix has fewer</span>
+<span class="sd">    than worksize elements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Iq</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">q_pi</span> <span class="o">=</span> <span class="n">q</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># Precompute q/pi since np.sinc = sin(pi x)/(pi x).</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">sld</span> <span class="o">*</span> <span class="n">vol</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">worksize</span> <span class="o">//</span> <span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">_calc_Iq_batch</span><span class="p">(</span><span class="n">Iq</span><span class="p">[</span><span class="n">batch</span><span class="p">:</span><span class="n">batch</span><span class="o">+</span><span class="n">batch_size</span><span class="p">],</span> <span class="n">q_pi</span><span class="p">[</span><span class="n">batch</span><span class="p">:</span><span class="n">batch</span><span class="o">+</span><span class="n">batch_size</span><span class="p">],</span>
+                       <span class="n">coords</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_calc_Iq_batch"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iq_batch">[docs]</a><span class="k">def</span> <span class="nf">_calc_Iq_batch</span><span class="p">(</span><span class="n">Iq</span><span class="p">,</span> <span class="n">q_pi</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function for _calc_Iq which operates on a batch of q values.</span>
+<span class="sd">    *Iq* is accumulated within each batch, and should be initialized to zero.</span>
+<span class="sd">    *q_pi* is q/pi, needed because np.sinc computes sin(pi x)/(pi x).</span>
+<span class="sd">    *coords* are the sample points.</span>
+<span class="sd">    *weights* is volume*rho for each point.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weight</span><span class="p">)):</span>
+        <span class="c1"># Compute dx for one row of the upper triangle matrix.</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="n">j</span><span class="p">:]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Find the length of each dx vector.</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dx</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="c1"># Compute I_jk = rho_j rho_k j0(q ||x_j - x_k||) over all q in batch.</span>
+        <span class="n">bes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="n">q_pi</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">r</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">I_jk</span> <span class="o">=</span> <span class="p">(</span><span class="n">weight</span><span class="p">[</span><span class="n">j</span><span class="p">:]</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">j</span><span class="p">])[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">bes</span>
+        <span class="c1"># Accumulate terms I(j,j), I(j, k+1..n) and by symmetry I(k+1..n, j).</span>
+        <span class="c1"># Don&#39;t double-count the diagonal.</span>
+        <span class="n">Iq</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">I_jk</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">I_jk</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="_calc_Iq_numba"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iq_numba">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s1">&#39;(f8[:], f8[:], f8[:, :], f8[:], f8[:])&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_calc_Iq_numba</span><span class="p">(</span><span class="n">Iq</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">vol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    **DEPRECATED**</span>
+<span class="sd">    Numba version of the _calc_Iq since the pure numpy version is too</span>
+<span class="sd">    difficult for numpy to handle.</span>
+<span class="sd">    Even with with numba this code is slower than the pure numpy version.</span>
+<span class="sd">    Without numba it is much much slower. Test for a few examples with</span>
+<span class="sd">    smallish numbers of points.  The algorithm is O(n^2) which makes it</span>
+<span class="sd">    unusable for a larger number of points.  A GPU implementation would</span>
+<span class="sd">    help, maybe allowing 10x the number of points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Iq</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">sld</span> <span class="o">*</span> <span class="n">vol</span>
+    <span class="n">npoints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npoints</span><span class="p">):</span>
+        <span class="c1"># Compute dx for one row of the upper triangle matrix</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="n">j</span><span class="p">:]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Find the length of each dx vector</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dx</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="c1"># Compute I_jk = rho_j rho_k j0(q ||x_j - x_k||)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+            <span class="n">qi_pi</span> <span class="o">=</span> <span class="n">qi</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># precompute q/pi since np.sinc = sin(pi x)/(pi x)</span>
+            <span class="n">bes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="n">qi_pi</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">I_jk</span> <span class="o">=</span> <span class="n">weight</span><span class="p">[</span><span class="n">j</span><span class="p">:]</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">bes</span>
+            <span class="c1"># Accumulate terms I(j,j), I(j, k+1..n) and by symmetry I(k+1..n, j)</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">I_jk</span><span class="p">)</span> <span class="o">-</span> <span class="n">I_jk</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># don&#39;t double-count the diagonal</span></div>
+
+<span class="k">if</span> <span class="n">USE_NUMBA</span><span class="p">:</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="s2">&quot;f8[:](f8[:],f8[:],f8[:],f8[:],f8[:])&quot;</span>
+    <span class="nd">@njit</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fastmath</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_calc_Iqxy</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">):</span>
+        <span class="c1">#print(&quot;calling numba for geni&quot;)</span>
+        <span class="n">Iq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">prange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Iq</span><span class="p">)):</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">qx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">qy</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">)))</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">Iq</span>
+<span class="k">else</span><span class="p">:</span>
+<div class="viewcode-block" id="_calc_Iqxy"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iqxy">[docs]</a>    <span class="k">def</span> <span class="nf">_calc_Iqxy</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">):</span>
+        <span class="n">Iq</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">scale</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">qx_k</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">qy_k</span><span class="o">*</span><span class="n">y</span><span class="p">))))</span><span class="o">**</span><span class="mi">2</span>
+              <span class="k">for</span> <span class="n">qx_k</span><span class="p">,</span> <span class="n">qy_k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">qx</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">qy</span><span class="o">.</span><span class="n">flat</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Iq</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">qx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+<span class="n">_calc_Iqxy</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Compute I(q) for a set of points (x, y).</span>
+<span class="s2">    </span>
+<span class="s2">    Uses: I(q) = \|sum V(r) rho(r) e^(1j q.r)\|^2 / sum V(r)</span>
+<span class="s2">    Since qz is zero for SAS, only need 2D vectors q = (qx, qy) and r = (x, y).</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="_calc_Iqxy_elements"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iqxy_elements">[docs]</a><span class="k">def</span> <span class="nf">_calc_Iqxy_elements</span><span class="p">(</span><span class="n">sld</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute I(q) for a set of elements, without magnetism.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create the geometry as an array (elements x faces x vertices x coordinates)</span>
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))[</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">elements</span><span class="p">,</span> <span class="n">elements</span><span class="p">[:,:,:</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="c1"># create normal vectors (elements x faces x normal_vector_coords)</span>
+    <span class="n">normals</span><span class="p">,</span> <span class="n">geometry</span> <span class="o">=</span> <span class="n">_get_normal_vec</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="c1"># extract the normal component of the displacement of the plane using the first point (elements x faces)</span>
+    <span class="n">rn_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">geometry</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">normals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">element_transform</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">rn_norm</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1">#temp = element_transform(geometry, normals, rn_norm, vol, 6.29259, -6.29259)</span>
+    <span class="c1">#temp2 = np.sum(sld*temp)</span>
+    <span class="c1">#temp3 = abs(temp2)**2*1e8/8</span>
+    <span class="n">Iq</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sld</span><span class="o">*</span><span class="n">element_transform</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">rn_norm</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">qx_k</span><span class="p">,</span> <span class="n">qy_k</span><span class="p">)))</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">for</span> <span class="n">qx_k</span><span class="p">,</span> <span class="n">qy_k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">qx</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">qy</span><span class="o">.</span><span class="n">flat</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Iq</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">qx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_calc_Iqxy_magnetic"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iqxy_magnetic">[docs]</a><span class="k">def</span> <span class="nf">_calc_Iqxy_magnetic</span><span class="p">(</span>
+        <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">rho_m</span><span class="p">,</span>
+        <span class="n">up_frac_i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">up_frac_f</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">up_angle</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">up_phi</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute I(q) for a set of points (x, y), with magnetism on each point.</span>
+
+<span class="sd">    Uses: I(q) = sum_xs w_xs \|sum V(r) rho(q, r, xs) e^(1j q.r)\|^2 / sum V(r)</span>
+<span class="sd">    where rho is adjusted for the particular q and polarization cross section.</span>
+<span class="sd">    The cross section weights depends on the polarizer and analyzer</span>
+<span class="sd">    efficiency of the measurement.  For example, with polarization up at 100%</span>
+<span class="sd">    efficiency and no analyzer, (up_frac_i=1, up_frac_f=0.5), then uu and ud</span>
+<span class="sd">    will both be 0.5.</span>
+<span class="sd">    Since qz is zero for SAS, only need 2D vectors q = (qx, qy) and r = (x, y).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Determine contribution from each cross section</span>
+    <span class="n">dd</span><span class="p">,</span> <span class="n">du</span><span class="p">,</span> <span class="n">ud</span><span class="p">,</span> <span class="n">uu</span> <span class="o">=</span> <span class="n">_spin_weights</span><span class="p">(</span><span class="n">up_frac_i</span><span class="p">,</span> <span class="n">up_frac_f</span><span class="p">)</span>
+
+    <span class="c1"># Precompute helper values</span>
+    <span class="n">up_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">up_angle</span><span class="p">)</span>
+    <span class="n">cos_spin</span><span class="p">,</span> <span class="n">sin_spin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">up_angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">up_angle</span><span class="p">)</span>
+
+    <span class="n">up_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">up_phi</span><span class="p">)</span>
+    <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">up_phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">up_phi</span><span class="p">)</span>
+    <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span> <span class="o">=</span> <span class="n">rho_m</span>
+    <span class="c1">## NOTE: sasview calculator uses the opposite sign for mx, my, mz.</span>
+    <span class="c1">## Uncomment the following to match its output.</span>
+    <span class="c1">#mx, my, mz = -mx, -my, -mz</span>
+
+    <span class="c1"># Flatten arrays so everything is 1D</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">qx</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">))</span>
+    <span class="n">Iq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">qx</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">])</span>
+    <span class="c1">#print(&quot;mag&quot;, [v.shape for v in (x, y, rho, vol, mx, my, mz)])</span>
+    <span class="n">_calc_Iqxy_magnetic_helper</span><span class="p">(</span>
+        <span class="n">Iq</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span>
+        <span class="n">cos_spin</span><span class="p">,</span> <span class="n">sin_spin</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_phi</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">du</span><span class="p">,</span> <span class="n">ud</span><span class="p">,</span> <span class="n">uu</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Iq</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="orth"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni.orth">[docs]</a><span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">orth</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span> <span class="c1"># A = 3 x n, and b_hat unit vector</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="nd">@A</span></div>
+ 
+
+<div class="viewcode-block" id="_calc_Iqxy_magnetic_helper"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iqxy_magnetic_helper">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot;f8[:], &quot;</span><span class="o">*</span><span class="mi">7</span> <span class="o">+</span> <span class="s2">&quot;f8[:,::1], &quot;</span><span class="o">+</span> <span class="s2">&quot;f8, &quot;</span><span class="o">*</span><span class="mi">8</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_calc_Iqxy_magnetic_helper</span><span class="p">(</span>
+        <span class="n">Iq</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">cos_spin</span><span class="p">,</span> <span class="n">sin_spin</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_phi</span><span class="p">,</span>
+        <span class="n">dd</span><span class="p">,</span> <span class="n">du</span><span class="p">,</span> <span class="n">ud</span><span class="p">,</span> <span class="n">uu</span><span class="p">):</span>
+    <span class="c1"># Process each qx, qy</span>
+    <span class="c1"># Note: enumerating a pair is slower than direct indexing in numba</span>
+
+    <span class="n">p_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sin_spin</span> <span class="o">*</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_spin</span> <span class="o">*</span> <span class="n">sin_phi</span><span class="p">,</span> <span class="n">cos_spin</span> <span class="p">])</span>
+    <span class="c1">#two unit vectors spanning up the plane perpendicular to polarisation for SF scattering</span>
+    <span class="n">perpy_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">sin_phi</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="mi">0</span> <span class="p">])</span>
+    <span class="n">perpz_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">cos_spin</span> <span class="o">*</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="o">-</span><span class="n">cos_spin</span> <span class="o">*</span> <span class="n">sin_phi</span><span class="p">,</span> <span class="n">sin_spin</span> <span class="p">])</span>    
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qx</span><span class="p">)):</span>
+        <span class="n">qxk</span><span class="p">,</span> <span class="n">qyk</span> <span class="o">=</span> <span class="n">qx</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">qy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qxk</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.e-16</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qyk</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.e-16</span><span class="p">:</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qxk</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">qyk</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">q_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">qxk</span><span class="p">,</span> <span class="n">qyk</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">norm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># For homogeneously magnetised disc Mperp can be associated to the</span>
+            <span class="c1"># magnetsation corrected for demag factorfield q-&gt;0, i.e. M-Nij M</span>
+            <span class="c1"># with Nij the demagnetisation tensor (Belleggia JMMM 263, L1, 2003).</span>
+            <span class="n">q_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">M_perp</span> <span class="o">=</span> <span class="n">orth</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">q_hat</span><span class="p">)</span>
+
+        <span class="n">perpx</span> <span class="o">=</span> <span class="n">p_hat</span> <span class="o">@</span> <span class="n">M_perp</span>
+        <span class="c1"># einsum is faster than sumsq in numpy but not supported in numba</span>
+        <span class="c1">#perpy = np.sqrt(np.einsum(&#39;ji,ji-&gt;i&#39;, M_perpP_perpQ, M_perpP_perpQ))</span>
+        <span class="n">perpy</span> <span class="o">=</span> <span class="n">perpy_hat</span> <span class="o">@</span> <span class="n">M_perp</span>
+        <span class="n">perpz</span> <span class="o">=</span> <span class="n">perpz_hat</span> <span class="o">@</span> <span class="n">M_perp</span>
+
+        <span class="n">ephase</span> <span class="o">=</span> <span class="n">vol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">qxk</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">qyk</span> <span class="o">*</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dd</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dd</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">rho</span> <span class="o">-</span> <span class="n">perpx</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">uu</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">uu</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">rho</span> <span class="o">+</span> <span class="n">perpx</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">du</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">du</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">perpy</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">perpz</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ud</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ud</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">perpy</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">perpz</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span></div>
+
+<div class="viewcode-block" id="_get_normal_vec"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._get_normal_vec">[docs]</a><span class="k">def</span> <span class="nf">_get_normal_vec</span><span class="p">(</span><span class="n">geometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return array of normal vectors of elements</span>
+
+<span class="sd">    This function returns an array of unit normal vectors to faces, pointing out</span>
+<span class="sd">    of the elements, as well as altering the geometry to ensure the vertices are ordered</span>
+<span class="sd">    the correct way around</span>
+
+<span class="sd">    .. warning:: This function alters geometry in place as well as returning it - so when this</span>
+<span class="sd">                    function is called the geometry array will always be re-ordered.</span>
+<span class="sd">    </span>
+<span class="sd">    :param geometry: an array of the position data for the mesh which goes as</span>
+<span class="sd">                        (elements x faces x vertices x coordinates)</span>
+<span class="sd">    :type geometry: numpy.ndarray</span>
+<span class="sd">    :return: normals, geometry - where geometry has been adjusted to ensure all vertices</span>
+<span class="sd">            go anticlockwise around the unit normal vector, and the unit normal vectors</span>
+<span class="sd">            are pointed out of the element.</span>
+<span class="sd">    :rtype: tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">geometry</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">geometry</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">geometry</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">geometry</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># (elements x faces x coords)</span>
+    <span class="n">normals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+    <span class="n">normals</span> <span class="o">=</span> <span class="n">normals</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">normals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">disps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">geometry</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">signs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">disps</span><span class="o">*</span><span class="n">normals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">normals</span> <span class="o">=</span> <span class="n">normals</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">signs</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="c1"># arrange normals outwards</span>
+    <span class="n">flips</span> <span class="o">=</span> <span class="n">signs</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">geometry</span><span class="p">[</span><span class="n">flips</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">geometry</span><span class="p">[</span><span class="n">flips</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">return</span> <span class="n">normals</span><span class="p">,</span> <span class="n">geometry</span></div>
+
+<div class="viewcode-block" id="_calc_Iqxy_magnetic_elements"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iqxy_magnetic_elements">[docs]</a><span class="k">def</span> <span class="nf">_calc_Iqxy_magnetic_elements</span><span class="p">(</span>
+                <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span>
+                <span class="n">up_frac_i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">up_frac_f</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">up_angle</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">up_phi</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute I(q) for a set of elements, with magnetism.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Determine contribution from each cross section</span>
+    <span class="n">dd</span><span class="p">,</span> <span class="n">du</span><span class="p">,</span> <span class="n">ud</span><span class="p">,</span> <span class="n">uu</span> <span class="o">=</span> <span class="n">_spin_weights</span><span class="p">(</span><span class="n">up_frac_i</span><span class="p">,</span> <span class="n">up_frac_f</span><span class="p">)</span>
+
+    <span class="c1"># Precompute helper values</span>
+    <span class="n">up_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">up_angle</span><span class="p">)</span>
+    <span class="n">cos_spin</span><span class="p">,</span> <span class="n">sin_spin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">up_angle</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">up_angle</span><span class="p">)</span>
+
+    <span class="n">up_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">up_phi</span><span class="p">)</span>
+    <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">up_phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">up_phi</span><span class="p">)</span>
+    <span class="c1">## NOTE: sasview calculator uses the opposite sign for mx, my, mz.</span>
+    <span class="c1">## Uncomment the following to match its output.</span>
+    <span class="c1">#mx, my, mz = -mx, -my, -mz</span>
+    <span class="c1"># create the geometry as an array (elements x faces x vertices x coordinates)</span>
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))[</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">elements</span><span class="p">,</span> <span class="n">elements</span><span class="p">[:,:,:</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="c1"># create normal vectors (elements x faces x normal_vector_coords)</span>
+    <span class="n">normals</span><span class="p">,</span> <span class="n">geometry</span> <span class="o">=</span> <span class="n">_get_normal_vec</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+    <span class="c1"># extract the normal component of the displacement of the plane using the first point (elements x faces)</span>
+    <span class="n">rn_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">geometry</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">normals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Flatten arrays so everything is 1D</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">qx</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">))</span>
+    <span class="n">Iq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">qx</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mx</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">mz</span><span class="p">])</span>
+    <span class="c1">#print(&quot;mag&quot;, [v.shape for v in (x, y, rho, vol, mx, my, mz)])</span>
+    <span class="n">_calc_Iqxy_magnetic_elements_helper</span><span class="p">(</span>
+        <span class="n">Iq</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">rn_norm</span><span class="p">,</span> <span class="n">sld</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span>
+        <span class="n">cos_spin</span><span class="p">,</span> <span class="n">sin_spin</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_phi</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">du</span><span class="p">,</span> <span class="n">ud</span><span class="p">,</span> <span class="n">uu</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Iq</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span></div>
+
+<span class="c1"># TODO: currently doesn&#39;t use numba</span>
+<div class="viewcode-block" id="_calc_Iqxy_magnetic_elements_helper"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._calc_Iqxy_magnetic_elements_helper">[docs]</a><span class="k">def</span> <span class="nf">_calc_Iqxy_magnetic_elements_helper</span><span class="p">(</span>
+        <span class="n">Iq</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">rn_norm</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span>
+        <span class="n">cos_spin</span><span class="p">,</span> <span class="n">sin_spin</span><span class="p">,</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_phi</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">du</span><span class="p">,</span> <span class="n">ud</span><span class="p">,</span> <span class="n">uu</span><span class="p">):</span>
+    <span class="c1"># Process each qx, qy</span>
+    <span class="c1"># Note: enumerating a pair is slower than direct indexing in numba</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qx</span><span class="p">)):</span>
+        <span class="n">qxk</span><span class="p">,</span> <span class="n">qyk</span> <span class="o">=</span> <span class="n">qx</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">qy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qxk</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.e-16</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qyk</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.e-16</span><span class="p">:</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">qxk</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">qyk</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">q_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">qxk</span><span class="p">,</span> <span class="n">qyk</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">norm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># For homogeneously magnetised disc Mperp can be associated to the</span>
+            <span class="c1"># magnetsation corrected for demag factorfield q-&gt;0, i.e. M-Nij M</span>
+            <span class="c1"># with Nij the demagnetisation tensor (Belleggia JMMM 263, L1, 2003).</span>
+            <span class="n">q_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">p_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sin_spin</span> <span class="o">*</span> <span class="n">cos_phi</span><span class="p">,</span> <span class="n">sin_spin</span> <span class="o">*</span> <span class="n">sin_phi</span><span class="p">,</span> <span class="n">cos_spin</span> <span class="p">])</span>
+
+        <span class="n">M_perp</span> <span class="o">=</span> <span class="n">orth</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">q_hat</span><span class="p">)</span>
+        <span class="n">M_perpP</span> <span class="o">=</span> <span class="n">orth</span><span class="p">(</span><span class="n">M_perp</span><span class="p">,</span> <span class="n">p_hat</span><span class="p">)</span>
+        <span class="n">M_perpP_perpQ</span> <span class="o">=</span> <span class="n">orth</span><span class="p">(</span><span class="n">M_perpP</span><span class="p">,</span> <span class="n">q_hat</span><span class="p">)</span>
+
+        <span class="n">perpx</span> <span class="o">=</span> <span class="n">p_hat</span> <span class="o">@</span> <span class="n">M_perp</span>
+        <span class="c1"># einsum is faster than sumsq in numpy but not supported in numba</span>
+        <span class="c1">#perpy = np.sqrt(np.einsum(&#39;ji,ji-&gt;i&#39;, M_perpP_perpQ, M_perpP_perpQ))</span>
+        <span class="n">perpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">M_perpP_perpQ</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">perpz</span> <span class="o">=</span> <span class="n">q_hat</span> <span class="o">@</span> <span class="n">M_perpP</span>
+
+        <span class="n">ephase</span> <span class="o">=</span> <span class="n">element_transform</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">rn_norm</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">qxk</span><span class="p">,</span> <span class="n">qyk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dd</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dd</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">rho</span> <span class="o">-</span> <span class="n">perpx</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">uu</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">uu</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">rho</span> <span class="o">+</span> <span class="n">perpx</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">du</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">du</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">perpy</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">perpz</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">ud</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">Iq</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">ud</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">perpy</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">perpz</span><span class="p">)</span> <span class="o">*</span> <span class="n">ephase</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span></div>
+
+<div class="viewcode-block" id="element_transform"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni.element_transform">[docs]</a><span class="k">def</span> <span class="nf">element_transform</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">normals</span><span class="p">,</span> <span class="n">rn_norm</span><span class="p">,</span> <span class="n">volumes</span><span class="p">,</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;carries out fourier transform on elements</span>
+<span class="sd">    </span>
+<span class="sd">    This function carries out the polyhedral transformation on the elements that make up the mesh.</span>
+<span class="sd">    This algorithm only works on meshes where all the elements have the same number of faces, and</span>
+<span class="sd">    each face has the same number of vertices. It is heavily based on the algorithm in:</span>
+
+<span class="sd">    An implementation of an efficient direct Fourier transform of polygonal areas and volumes.</span>
+<span class="sd">    Brian B. Maranville.</span>
+<span class="sd">    https://arxiv.org/abs/2104.08309</span>
+
+<span class="sd">    :param geometry: A 4D numpy array of the form elements x faces x vertices x vertex_coordinates.</span>
+<span class="sd">    :type geometry: numpy.ndarray</span>
+<span class="sd">    :param normals: A 3D numpy array of the form elements x faces x normal_coordinates. The normals</span>
+<span class="sd">                    provided should be normalised.</span>
+<span class="sd">    :type normals: numpy.ndarray</span>
+<span class="sd">    :param rn_normals: A 2D numpy array of the form elements x faces containing the perpendicular</span>
+<span class="sd">                        distances from each face to the origin of the co-ordinate system.</span>
+<span class="sd">    :type rn_norm: numpy.ndarray</span>
+<span class="sd">    :param volumes: A 1D numpy array containing the volumes of the elements</span>
+<span class="sd">    :type volumes: nump.ndarray</span>
+<span class="sd">    :param qx: The x component of the Q vector which represents the position in fourier space.</span>
+<span class="sd">    :type qx: float</span>
+<span class="sd">    :param qy: The y component of the Q vector which represents the position in fourier space.</span>
+<span class="sd">    :type qy: float</span>
+<span class="sd">    :return: A 1D numpy array of the fourier transforms of each element at the given Q value</span>
+<span class="sd">    :rtype: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># small value used in case where a fraction should limit to a finite answer with 0 on top and bottom</span>
+    <span class="c1"># used in 2nd/3rd terms in sum over vertices</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-5</span>
+    <span class="c1"># If Q is the zero vector then the fourier transform is just the volume of the subelements</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qy</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">volumes</span>
+
+    <span class="c1"># create the Q vector (elements x Q)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="c1"># create the Q normal vector as the dot product of Q with the normal vector * the normal vector:</span>
+    <span class="c1"># separately store the component of the Qn vector for later use</span>
+    <span class="c1"># np.dot: (elements x faces x normal_vector_coords) * (elements x 1 x Q_coords) -&gt; (elements x faces)</span>
+    <span class="n">Qn_comp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">normals</span> <span class="o">*</span> <span class="n">Q</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Qn is the vector PARALLEL to the surface normal Q// in the referenced paper eq. (14)</span>
+    <span class="c1"># np (*) (elements x faces x 1) * (elements x faces x normal_vector_coords) -&gt; (elements x faces x Qn_coords)</span>
+    <span class="n">Qn</span> <span class="o">=</span> <span class="n">Qn_comp</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">normals</span>
+    <span class="c1"># extract the parallel component of the Q vector to the face i.e. PERPENDICULAR to the surface normal</span>
+    <span class="c1"># (elements x 1 x Q_coords) - (elements x faces x Qn_coords) -&gt; (elements x faces x Qp_coords)</span>
+    <span class="n">Qp</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">Qn</span>
+    <span class="c1"># find any elements for which Qp is the 0 vector on one face and add an epsilon value</span>
+    <span class="c1"># apply change to whole element becuase if Qp=0 on one face the other faces</span>
+    <span class="c1"># will have one v vector which dots to 0 with it</span>
+    <span class="c1"># seems to be very little difference to just using eps on the problematic face and letting</span>
+    <span class="c1"># the Qp.v method sort out the other faces</span>
+    <span class="c1"># ensure that epsilon lies within the plane of the face</span>
+    <span class="n">problem_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Qp</span><span class="p">)</span><span class="o">&lt;</span><span class="n">eps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">problem_faces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Qp</span><span class="p">)</span><span class="o">&lt;</span><span class="n">eps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="n">geometry</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="p">)),</span> <span class="n">problem_faces</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">geometry</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">geometry</span><span class="p">)),</span> <span class="n">problem_faces</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="n">vs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vs</span><span class="o">*</span><span class="n">vs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="n">Qp</span><span class="p">[</span><span class="n">problem_elements</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">+=</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">vs</span><span class="p">[</span><span class="n">problem_elements</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">Q</span><span class="p">[</span><span class="n">problem_elements</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">+=</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">vs</span><span class="p">[</span><span class="n">problem_elements</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="c1"># calculate the face-dependent prefactor for the sum over vertices (elements x faces) </span>
+    <span class="n">prefactor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Qn_comp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Qn_comp</span> <span class="o">*</span> <span class="n">rn_norm</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Q</span> <span class="o">*</span> <span class="n">Q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="c1"># calculate the sum over vertices term</span>
+    <span class="c1"># the sub sum over the vertices in eq (14) (elements x faces)</span>
+    <span class="n">sub_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">prefactor</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;complex&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># calculate the separation vector and sum vector of the two vertices on each edge (elements x faces x vector_coords)</span>
+        <span class="n">v_diff</span> <span class="o">=</span> <span class="n">geometry</span><span class="p">[:,:,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">geometry</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">v_sum</span> <span class="o">=</span> <span class="n">geometry</span><span class="p">[:,:,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">geometry</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># the terms in the expr (elements x faces)</span>
+        <span class="c1"># WARNING: this uses the opposite sign convention as the article&#39;s code but agrees with the sign convention of the</span>
+        <span class="c1"># main text - it takes line segment normals as pointing OUTWARDS from the surface - giving the &#39;standard&#39; fourier transform</span>
+        <span class="c1"># e.g. fourier transform of a box gives a *positive* sinc function</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Qp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v_diff</span><span class="p">,</span> <span class="n">normals</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Qp</span> <span class="o">*</span> <span class="n">Qp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="n">dot_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Qp</span> <span class="o">*</span> <span class="n">v_diff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+        <span class="n">dot_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Qp</span> <span class="o">*</span> <span class="n">v_sum</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="n">term</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sinc</span><span class="p">(</span><span class="n">dot_diff</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">dot_sum</span><span class="p">)</span>
+        <span class="n">sub_sum</span> <span class="o">+=</span> <span class="n">term</span>
+    <span class="c1"># sum over all the faces in each subvolume to return an array of transforms of sub_volumes</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">prefactor</span><span class="o">*</span><span class="n">sub_sum</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="_spin_weights"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.sascalc.calculator.html#sas.sascalc.calculator.geni._spin_weights">[docs]</a><span class="k">def</span> <span class="nf">_spin_weights</span><span class="p">(</span><span class="n">in_spin</span><span class="p">,</span> <span class="n">out_spin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute spin cross weights given in_spin and out_spin</span>
+<span class="sd">    Returns weights (dd, du, ud, uu)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">in_spin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">in_spin</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">out_spin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">out_spin</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="c1"># Previous version of this function took the square root of the weights,</span>
+    <span class="c1"># under the assumption that</span>
+    <span class="c1">#</span>
+    <span class="c1">#     w*I(q, rho1, rho2, ...) = I(q, sqrt(w)*rho1, sqrt(w)*rho2, ...)</span>
+    <span class="c1">#</span>
+    <span class="c1"># However, since the weights are applied to the final intensity and</span>
+    <span class="c1"># are not interned inside the I(q) function, we want the full</span>
+    <span class="c1"># weight and not the square root.  Anyway no function will ever use</span>
+    <span class="c1"># set_spin_weights as part of calculating an amplitude, as the weights are</span>
+    <span class="c1"># related to polarisation efficiency of the instrument. The weights serve to</span>
+    <span class="c1"># construct various magnet scattering cross sections, which are linear combinations</span>
+    <span class="c1"># of the spin-resolved cross sections. The polarisation efficiency e_in and e_out</span>
+    <span class="c1"># are parameters ranging from 0.5 (unpolarised) beam to 1 (perfect optics).</span>
+    <span class="c1"># For in_spin or out_spin &lt;0.5 one assumes a CS, where the spin is reversed/flipped</span>
+    <span class="c1"># with respect to the initial supermirror polariser. The actual polarisation efficiency</span>
+    <span class="c1"># in this case is however e_in/out = 1-in/out_spin.</span>
+
+    <span class="n">norm</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">out_spin</span> <span class="k">if</span> <span class="n">out_spin</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="n">out_spin</span>
+
+    <span class="c1"># The norm is needed to make sure that the scattering cross sections are</span>
+    <span class="c1"># correctly weighted, such that the sum of spin-resolved measurements adds up to</span>
+    <span class="c1"># the unpolarised or half-polarised scattering cross section. No intensity weighting</span>
+    <span class="c1"># needed on the incoming polariser side (assuming that a user), has normalised</span>
+    <span class="c1"># to the incoming flux with polariser in for SANSPOl and unpolarised beam, respectively.</span>
+
+    <span class="n">weight</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">in_spin</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">out_spin</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span><span class="p">,</span> <span class="c1"># dd</span>
+        <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">in_spin</span><span class="p">)</span> <span class="o">*</span> <span class="n">out_spin</span> <span class="o">/</span> <span class="n">norm</span><span class="p">,</span>       <span class="c1"># du</span>
+        <span class="n">in_spin</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">out_spin</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span><span class="p">,</span>       <span class="c1"># ud</span>
+        <span class="n">in_spin</span> <span class="o">*</span> <span class="n">out_spin</span> <span class="o">/</span> <span class="n">norm</span><span class="p">,</span>             <span class="c1"># uu</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">weight</span></div>
+
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.sascalc.calculator.geni</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+    </div>
+  </body>
+</html>
