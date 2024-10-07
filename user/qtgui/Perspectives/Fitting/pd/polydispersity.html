@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Polydispersity &amp; Orientational Distributions &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css" />
+    <title>Polydispersity &amp; Orientational Distributions &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
-    <script src="../../../../../_static/doctools.js"></script>
-    <script src="../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -19,7 +19,7 @@
     <link rel="next" title="Oriented Particles" href="../orientation/orientation.html" />
     <link rel="prev" title="Fitting Models with Structure Factors" href="../fitting_sq.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="../fitting_sq.html" title="Fitting Models with Structure Factors"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li>
@@ -48,7 +48,7 @@
           <div class="body" role="main">
             
   <section id="polydispersity-orientational-distributions">
-<span id="polydispersityhelp"></span><h1>Polydispersity &amp; Orientational Distributions<a class="headerlink" href="#polydispersity-orientational-distributions" title="Permalink to this heading">¶</a></h1>
+<span id="polydispersityhelp"></span><h1>Polydispersity &amp; Orientational Distributions<a class="headerlink" href="#polydispersity-orientational-distributions" title="Link to this heading">¶</a></h1>
 <p>For some models we can calculate the average intensity for a population of
 particles that possess size and/or orientational (ie, angular) distributions
 (see <a class="reference internal" href="../theory.html#pstheory"><span class="std std-ref">Theory</span></a> for more details). In SasView we call the former
@@ -115,46 +115,46 @@ proportional size distributions and orientational distributions used in
 SasView models.</p>
 </div>
 <section id="calculation-of-i-q">
-<h2>Calculation of I(q)<a class="headerlink" href="#calculation-of-i-q" title="Permalink to this heading">¶</a></h2>
+<h2>Calculation of I(q)<a class="headerlink" href="#calculation-of-i-q" title="Link to this heading">¶</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(w(r)\)</span> be the <em>relative number</em> of particles of size <span class="math notranslate nohighlight">\(r\)</span>, <strong>not the volume
 fraction of particles</strong>. <span class="math notranslate nohighlight">\(w(r)\)</span> scales with the number density, <span class="math notranslate nohighlight">\(n(r)\)</span>.</p>
 <p>The <em>volume fraction</em>, <span class="math notranslate nohighlight">\(\phi\)</span>, is the integrated volume of all particles, <span class="math notranslate nohighlight">\(V_p\)</span>,
 divided by total volume, <span class="math notranslate nohighlight">\(V_t\)</span></p>
 <div class="math notranslate nohighlight" id="equation-eq1">
-<span class="eqno">(1)<a class="headerlink" href="#equation-eq1" title="Permalink to this equation">¶</a></span>\[\phi = \frac{V_p}{V_t}\]</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq1" title="Link to this equation">¶</a></span>\[\phi = \frac{V_p}{V_t}\]</div>
 <p>where <span class="math notranslate nohighlight">\(V_p\)</span> is the number of particles, <span class="math notranslate nohighlight">\(N\)</span>, multiplied by the average particle volume
 <span class="math notranslate nohighlight">\(\langle V(r) \rangle\)</span></p>
 <div class="math notranslate nohighlight" id="equation-eq2">
-<span class="eqno">(2)<a class="headerlink" href="#equation-eq2" title="Permalink to this equation">¶</a></span>\[Vp = N \langle V(r) \rangle\]</div>
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq2" title="Link to this equation">¶</a></span>\[Vp = N \langle V(r) \rangle\]</div>
 <p>The <em>number density</em> of particles, <span class="math notranslate nohighlight">\(n\)</span>, is the total number of particles divided by
 the total volume</p>
 <div class="math notranslate nohighlight" id="equation-eq3">
-<span class="eqno">(3)<a class="headerlink" href="#equation-eq3" title="Permalink to this equation">¶</a></span>\[n = \frac{N}{V_t}\]</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq3" title="Link to this equation">¶</a></span>\[n = \frac{N}{V_t}\]</div>
 <p>Since <span class="math notranslate nohighlight">\(w(r)\)</span> is a distribution on the number of particles that (ideally) sums to one,
 the number of particles of size <span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(n(r)\)</span>, scales with <span class="math notranslate nohighlight">\(w(r)\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-eq4">
-<span class="eqno">(4)<a class="headerlink" href="#equation-eq4" title="Permalink to this equation">¶</a></span>\[n(r) = \frac{w(r)}{\int w(r)dr} \cdot \frac{N}{V_t}\]</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq4" title="Link to this equation">¶</a></span>\[n(r) = \frac{w(r)}{\int w(r)dr} \cdot \frac{N}{V_t}\]</div>
 <p>Rewriting <a class="reference internal" href="#equation-eq1">(1)</a> as <span class="math notranslate nohighlight">\(V_p =  \phi V_t\)</span> and substituting into <a class="reference internal" href="#equation-eq2">(2)</a> gives
 <span class="math notranslate nohighlight">\(\phi V_t = N \langle V(r) \rangle\)</span> which can then be solved for <span class="math notranslate nohighlight">\(N / V_t\)</span></p>
 <div class="math notranslate nohighlight" id="equation-eq5">
-<span class="eqno">(5)<a class="headerlink" href="#equation-eq5" title="Permalink to this equation">¶</a></span>\[\frac{N}{V_t} = \frac{\phi}{\langle V(r) \rangle}\]</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq5" title="Link to this equation">¶</a></span>\[\frac{N}{V_t} = \frac{\phi}{\langle V(r) \rangle}\]</div>
 <p>Substituting <a class="reference internal" href="#equation-eq5">(5)</a> into <a class="reference internal" href="#equation-eq4">(4)</a>, we get</p>
 <div class="math notranslate nohighlight" id="equation-eq6">
-<span class="eqno">(6)<a class="headerlink" href="#equation-eq6" title="Permalink to this equation">¶</a></span>\[n(r) = \frac{w(r)}{\int w(r)dr} \cdot \frac{\phi}{\langle V(r) \rangle}\]</div>
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq6" title="Link to this equation">¶</a></span>\[n(r) = \frac{w(r)}{\int w(r)dr} \cdot \frac{\phi}{\langle V(r) \rangle}\]</div>
 <p>Since <span class="math notranslate nohighlight">\(w(r)\)</span> is the relative number of particles of size <span class="math notranslate nohighlight">\(r\)</span>, the average volume is</p>
 <div class="math notranslate nohighlight" id="equation-eq7">
-<span class="eqno">(7)<a class="headerlink" href="#equation-eq7" title="Permalink to this equation">¶</a></span>\[\langle V(r) \rangle = \frac{\int w(r)V(r)dr}{\int w(r)dr}\]</div>
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq7" title="Link to this equation">¶</a></span>\[\langle V(r) \rangle = \frac{\int w(r)V(r)dr}{\int w(r)dr}\]</div>
 <p>Substituting <a class="reference internal" href="#equation-eq7">(7)</a> into <a class="reference internal" href="#equation-eq6">(6)</a> then yields</p>
 <div class="math notranslate nohighlight" id="equation-eq8">
-<span class="eqno">(8)<a class="headerlink" href="#equation-eq8" title="Permalink to this equation">¶</a></span>\[n(r) = w(r) \cdot  \frac{\phi}{\int w(r)V(r)dr}\]</div>
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq8" title="Link to this equation">¶</a></span>\[n(r) = w(r) \cdot  \frac{\phi}{\int w(r)V(r)dr}\]</div>
 <p>Note that the second half of <a class="reference internal" href="#equation-eq8">(8)</a> is independent of <span class="math notranslate nohighlight">\(r\)</span> and can slip out of the
 integral, such that</p>
 <div class="math notranslate nohighlight" id="equation-eq9">
-<span class="eqno">(9)<a class="headerlink" href="#equation-eq9" title="Permalink to this equation">¶</a></span>\[I(q) = \int n(r) \langle F F^* \rangle dr
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq9" title="Link to this equation">¶</a></span>\[I(q) = \int n(r) \langle F F^* \rangle dr
      = \frac{\phi \int w(r) \langle F F^* \rangle dr}{\int w(r)V(r) dr}\]</div>
 </section>
 <section id="suggested-applications">
-<h2>Suggested Applications<a class="headerlink" href="#suggested-applications" title="Permalink to this heading">¶</a></h2>
+<h2>Suggested Applications<a class="headerlink" href="#suggested-applications" title="Link to this heading">¶</a></h2>
 <p>If applying polydispersion to parameters describing particle sizes, consider
 using the <a class="reference internal" href="#lognormal-distribution">Lognormal Distribution</a> or <a class="reference internal" href="#schulz-distribution">Schulz Distribution</a>.</p>
 <p>If applying polydispersion to parameters describing interfacial thicknesses
@@ -168,7 +168,7 @@ user-defined distribution, but without any fittable parameters. Greater
 flexibility is conferred by using <a class="reference internal" href="#user-defined-distributions">User-defined Distributions</a>.</p>
 </section>
 <section id="usage-notes">
-<h2>Usage Notes<a class="headerlink" href="#usage-notes" title="Permalink to this heading">¶</a></h2>
+<h2>Usage Notes<a class="headerlink" href="#usage-notes" title="Link to this heading">¶</a></h2>
 <p>Beware of using distributions that are always positive (eg, the <em>Lognormal</em>) for
 angles because angles can be negative! If in doubt, plot the polydispersity data
 for the model and check!</p>
@@ -191,7 +191,7 @@ and the parameter to which the distribution is being applied, cannot be fitted.<
 <a class="reference external" href="http://marketplace.sasview.org/">Sasview Model Marketplace</a>.</p>
 </section>
 <section id="uniform-distribution">
-<h2>Uniform Distribution<a class="headerlink" href="#uniform-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Uniform Distribution<a class="headerlink" href="#uniform-distribution" title="Link to this heading">¶</a></h2>
 <p>The Uniform Distribution is defined as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}f(x) = \frac{1}{\text{Norm}}
@@ -208,13 +208,13 @@ factor which is determined during the numerical calculation.</p>
 <figure class="align-default" id="id1">
 <img alt="../../../../../_images/pd_uniform.jpg" src="../../../../../_images/pd_uniform.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 131 </span><span class="caption-text">Uniform distribution.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 133 </span><span class="caption-text">Uniform distribution.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>The value <span class="math notranslate nohighlight">\(N_\sigma\)</span> is ignored for this distribution.</p>
 </section>
 <section id="rectangular-distribution">
-<h2>Rectangular Distribution<a class="headerlink" href="#rectangular-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Rectangular Distribution<a class="headerlink" href="#rectangular-distribution" title="Link to this heading">¶</a></h2>
 <p>The Rectangular Distribution is defined as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}f(x) = \frac{1}{\text{Norm}}
@@ -235,7 +235,7 @@ factor which is determined during the numerical calculation.</p>
 <figure class="align-default" id="id2">
 <img alt="../../../../../_images/pd_rectangular.jpg" src="../../../../../_images/pd_rectangular.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 132 </span><span class="caption-text">Rectangular distribution.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 134 </span><span class="caption-text">Rectangular distribution.</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <div class="admonition note">
@@ -246,7 +246,7 @@ compatibility with earlier versions of SasView only.</p>
 </div>
 </section>
 <section id="gaussian-distribution">
-<h2>Gaussian Distribution<a class="headerlink" href="#gaussian-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Gaussian Distribution<a class="headerlink" href="#gaussian-distribution" title="Link to this heading">¶</a></h2>
 <p>The Gaussian Distribution is defined as</p>
 <div class="math notranslate nohighlight">
 \[f(x) = \frac{1}{\text{Norm}}
@@ -260,12 +260,12 @@ during the numerical calculation.</p>
 <figure class="align-default" id="id3">
 <img alt="../../../../../_images/pd_gaussian.jpg" src="../../../../../_images/pd_gaussian.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 133 </span><span class="caption-text">Normal distribution.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 135 </span><span class="caption-text">Normal distribution.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
 <section id="boltzmann-distribution">
-<h2>Boltzmann Distribution<a class="headerlink" href="#boltzmann-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Boltzmann Distribution<a class="headerlink" href="#boltzmann-distribution" title="Link to this heading">¶</a></h2>
 <p>The Boltzmann Distribution is defined here as</p>
 <div class="math notranslate nohighlight">
 \[f(x) = \frac{1}{\text{Norm}}
@@ -283,12 +283,12 @@ is but a limiting case.</p>
 <figure class="align-default" id="id4">
 <img alt="../../../../../_images/pd_boltzmann.jpg" src="../../../../../_images/pd_boltzmann.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 134 </span><span class="caption-text">Boltzmann distribution.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 136 </span><span class="caption-text">Boltzmann distribution.</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
 <section id="lognormal-distribution">
-<h2>Lognormal Distribution<a class="headerlink" href="#lognormal-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Lognormal Distribution<a class="headerlink" href="#lognormal-distribution" title="Link to this heading">¶</a></h2>
 <p>The Lognormal Distribution describes a function of <span class="math notranslate nohighlight">\(x\)</span> where <span class="math notranslate nohighlight">\(\ln (x)\)</span> has
 a normal distribution. The result is a distribution that is skewed towards
 larger values of <span class="math notranslate nohighlight">\(x\)</span>.</p>
@@ -317,7 +317,7 @@ and <span class="math notranslate nohighlight">\(N_\sigma\)</span>.</p>
 <figure class="align-default" id="id5">
 <img alt="../../../../../_images/pd_lognormal.jpg" src="../../../../../_images/pd_lognormal.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 135 </span><span class="caption-text">Lognormal distribution for PD=0.1.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 137 </span><span class="caption-text">Lognormal distribution for PD=0.1.</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>For further information on the Lognormal distribution see:</p>
@@ -325,7 +325,7 @@ and <span class="math notranslate nohighlight">\(N_\sigma\)</span>.</p>
 <p><a class="reference external" href="http://mathworld.wolfram.com/LogNormalDistribution.html">http://mathworld.wolfram.com/LogNormalDistribution.html</a></p>
 </section>
 <section id="schulz-distribution">
-<h2>Schulz Distribution<a class="headerlink" href="#schulz-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Schulz Distribution<a class="headerlink" href="#schulz-distribution" title="Link to this heading">¶</a></h2>
 <p>The Schulz (sometimes written Schultz) distribution is similar to the
 Lognormal distribution, in that it is also skewed towards larger values of
 <span class="math notranslate nohighlight">\(x\)</span>, but which has computational advantages over the Lognormal distribution.</p>
@@ -349,7 +349,7 @@ Npts&gt;=160 and Nsigmas&gt;=15 are required.</p>
 <figure class="align-default" id="id6">
 <img alt="../../../../../_images/pd_schulz.jpg" src="../../../../../_images/pd_schulz.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 136 </span><span class="caption-text">Schulz distribution.</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 138 </span><span class="caption-text">Schulz distribution.</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>For further information on the Schulz distribution see:</p>
@@ -357,7 +357,7 @@ Npts&gt;=160 and Nsigmas&gt;=15 are required.</p>
 <p><a class="reference external" href="https://doi.org/10.1021/j100317a032">M Kotlarchyk, RB Stephens, and JS Huang, J Phys Chem, (1988), 92, 1533</a>.</p>
 </section>
 <section id="array-distribution">
-<h2>Array Distribution<a class="headerlink" href="#array-distribution" title="Permalink to this heading">¶</a></h2>
+<h2>Array Distribution<a class="headerlink" href="#array-distribution" title="Link to this heading">¶</a></h2>
 <p>This user-definable distribution should be given as a simple ASCII text
 file where the array is defined by two columns of numbers: <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(f(x)\)</span>.
 The <span class="math notranslate nohighlight">\(f(x)\)</span> will be normalized to 1 during the computation.</p>
@@ -399,7 +399,7 @@ rule integration with equally spaced <span class="math notranslate nohighlight">
 the center of each interval.</p>
 </section>
 <section id="user-defined-distributions">
-<h2>User-defined Distributions<a class="headerlink" href="#user-defined-distributions" title="Permalink to this heading">¶</a></h2>
+<h2>User-defined Distributions<a class="headerlink" href="#user-defined-distributions" title="Link to this heading">¶</a></h2>
 <p>You can also define your own distribution by creating a python file defining a
 <em>Distribution</em> object with a <em>_weights</em> method.  The <em>_weights</em> method takes
 <em>center</em>, <em>sigma</em>, <em>lb</em> and <em>ub</em> as arguments, and can access <em>self.npts</em>
@@ -484,7 +484,7 @@ in a running application you will need to enter the following python commands:</
 </div>
 </section>
 <section id="note-about-dls-polydispersity">
-<h2>Note about DLS polydispersity<a class="headerlink" href="#note-about-dls-polydispersity" title="Permalink to this heading">¶</a></h2>
+<h2>Note about DLS polydispersity<a class="headerlink" href="#note-about-dls-polydispersity" title="Link to this heading">¶</a></h2>
 <p>Several measures of polydispersity abound in Dynamic Light Scattering (DLS) and
 it should not be assumed that any of the following can be simply equated with
 the polydispersity <em>PD</em> parameter used in SasView.</p>
@@ -521,7 +521,7 @@ deviation of the Lognormal distribution.</p>
 <p>T Allen, in <em>Particle Size Measurement</em>, 4th Edition, Chapman &amp; Hall, London (1990).</p>
 </section>
 <section id="related-sections">
-<h2>Related sections<a class="headerlink" href="#related-sections" title="Permalink to this heading">¶</a></h2>
+<h2>Related sections<a class="headerlink" href="#related-sections" title="Link to this heading">¶</a></h2>
 <p>See also:</p>
 <p><a class="reference internal" href="../theory.html#pstheory"><span class="std std-ref">Theory</span></a></p>
 <p><a class="reference internal" href="../resolution.html#resolution-smearing"><span class="std std-ref">Resolution (Smearing) Functions</span></a></p>
@@ -545,7 +545,7 @@ deviation of the Lognormal distribution.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../../../index.html">Table of Contents</a></h3>
@@ -586,7 +586,7 @@ deviation of the Lognormal distribution.</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../../search.html" method="get">
@@ -594,13 +594,13 @@ deviation of the Lognormal distribution.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -615,7 +615,7 @@ deviation of the Lognormal distribution.</p>
         <li class="right" >
           <a href="../fitting_sq.html" title="Fitting Models with Structure Factors"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="../fitting.html" >Fitting Documentation</a> &#187;</li>
@@ -623,8 +623,8 @@ deviation of the Lognormal distribution.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>

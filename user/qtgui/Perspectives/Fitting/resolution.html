@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Resolution (Smearing) Functions &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    <title>Resolution (Smearing) Functions &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -19,7 +19,7 @@
     <link rel="next" title="Polarisation/Magnetic Scattering" href="magnetism/magnetism.html" />
     <link rel="prev" title="Oriented Particles" href="orientation/orientation.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="orientation/orientation.html" title="Oriented Particles"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li>
@@ -48,7 +48,7 @@
           <div class="body" role="main">
             
   <section id="resolution-smearing-functions">
-<span id="resolution-smearing"></span><h1>Resolution (Smearing) Functions<a class="headerlink" href="#resolution-smearing-functions" title="Permalink to this heading">¶</a></h1>
+<span id="resolution-smearing"></span><h1>Resolution (Smearing) Functions<a class="headerlink" href="#resolution-smearing-functions" title="Link to this heading">¶</a></h1>
 <p>Sometimes the instrumental geometry used to acquire the experimental data has
 an impact on the clarity of features in the reduced scattering curve. For
 example, peaks or fringes might be slightly broadened. This is known as
@@ -84,7 +84,7 @@ with poor Q resolution from the shorter detector distances, or to fit
 the data from different detector distances simultaneously.</p>
 </div>
 <section id="slit-smearing">
-<h2>Slit Smearing<a class="headerlink" href="#slit-smearing" title="Permalink to this heading">¶</a></h2>
+<h2>Slit Smearing<a class="headerlink" href="#slit-smearing" title="Link to this heading">¶</a></h2>
 <p><strong>This type of smearing is normally only encountered with data from X-ray Kratky</strong>
 <strong>cameras or X-ray/neutron Bonse-Hart USAXS/USANS instruments.</strong></p>
 <p>The slit-smeared scattering intensity is defined by</p>
@@ -98,7 +98,7 @@ the data from different detector distances simultaneously.</p>
 \[\int_{-\infty}^{\infty} dv\, W_v(v) \int_{-\infty}^{\infty} du\, W_u(u)\]</div>
 <p><strong>[Equation 1]</strong></p>
 <p>The functions <span class="math notranslate nohighlight">\(W_v(v)\)</span> and <span class="math notranslate nohighlight">\(W_u(u)\)</span> refer to the slit width weighting
-function and the slit height weighting determined at the given <span class="math notranslate nohighlight">\(q\)</span> point,
+function and the slit length weighting determined at the given <span class="math notranslate nohighlight">\(q\)</span> point,
 respectively. It is assumed that the weighting function is described by a
 rectangular function, such that</p>
 <div class="math notranslate nohighlight">
@@ -110,7 +110,7 @@ rectangular function, such that</p>
 <p><strong>[Equation 3]</strong></p>
 <p>so that <span class="math notranslate nohighlight">\(\Delta q_\alpha = \int_0^\infty d\alpha\, W_\alpha(\alpha)\)</span>
 for <span class="math notranslate nohighlight">\(\alpha\)</span> as <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(u\)</span>.</p>
-<p>Here <span class="math notranslate nohighlight">\(\Delta q_u\)</span> and <span class="math notranslate nohighlight">\(\Delta q_v\)</span> stand for the the slit height (FWHM/2)
+<p>Here <span class="math notranslate nohighlight">\(\Delta q_u\)</span> and <span class="math notranslate nohighlight">\(\Delta q_v\)</span> stand for the the slit length (FWHM/2)
 and the slit width (FWHM/2) in <span class="math notranslate nohighlight">\(q\)</span> space.</p>
 <p>This simplifies the integral in Equation 1 to</p>
 <div class="math notranslate nohighlight">
@@ -122,7 +122,7 @@ and the slit width (FWHM/2) in <span class="math notranslate nohighlight">\(q\)<
 <p>which may be solved numerically, depending on the nature of
 <span class="math notranslate nohighlight">\(\Delta q_u\)</span> and <span class="math notranslate nohighlight">\(\Delta q_v\)</span>.</p>
 <section id="solution-1">
-<h3>Solution 1<a class="headerlink" href="#solution-1" title="Permalink to this heading">¶</a></h3>
+<h3>Solution 1<a class="headerlink" href="#solution-1" title="Link to this heading">¶</a></h3>
 <p><strong>For</strong> <span class="math notranslate nohighlight">\(\Delta q_v = 0\)</span> <strong>and</strong> <span class="math notranslate nohighlight">\(\Delta q_u = \text{constant}\)</span></p>
 <div class="math notranslate nohighlight">
 \[I_s(q) \approx \int_0^{\Delta q_u} du\, I\left(\sqrt{q^2+u^2}\right)
@@ -138,7 +138,7 @@ intensity can be approximately calculated as</p>
 <p>where <span class="math notranslate nohighlight">\(W_{ij} = 0\)</span> for <span class="math notranslate nohighlight">\(I_s\)</span> when <span class="math notranslate nohighlight">\(j &lt; i\)</span> or <span class="math notranslate nohighlight">\(j &gt; N-1\)</span>.</p>
 </section>
 <section id="solution-2">
-<h3>Solution 2<a class="headerlink" href="#solution-2" title="Permalink to this heading">¶</a></h3>
+<h3>Solution 2<a class="headerlink" href="#solution-2" title="Link to this heading">¶</a></h3>
 <p><strong>For</strong> <span class="math notranslate nohighlight">\(\Delta q_v = \text{constant}\)</span> <strong>and</strong> <span class="math notranslate nohighlight">\(\Delta q_u = 0\)</span></p>
 <p>Similar to Case 1</p>
 <div class="math notranslate nohighlight">
@@ -150,15 +150,15 @@ intensity can be approximately calculated as</p>
 <p>where <span class="math notranslate nohighlight">\(W_{ij} = 0\)</span> for <span class="math notranslate nohighlight">\(I_s\)</span> when <span class="math notranslate nohighlight">\(j &lt; p\)</span> or <span class="math notranslate nohighlight">\(j &gt; N-1\)</span>.</p>
 </section>
 <section id="solution-3">
-<h3>Solution 3<a class="headerlink" href="#solution-3" title="Permalink to this heading">¶</a></h3>
+<h3>Solution 3<a class="headerlink" href="#solution-3" title="Link to this heading">¶</a></h3>
 <p><strong>For</strong> <span class="math notranslate nohighlight">\(\Delta q_v = \text{constant}\)</span> <strong>and</strong> <span class="math notranslate nohighlight">\(\Delta q_u = \text{constant}\)</span></p>
 <p>In this case, the best way is to perform the integration of Equation 1
-numerically for both slit height and slit width. However, the numerical
+numerically for both slit length and slit width. However, the numerical
 integration is imperfect unless a large number of iterations, say, at
 least 10000 by 10000 for each element of the matrix <span class="math notranslate nohighlight">\(W\)</span>, is performed.
 This is usually too slow for routine use.</p>
 <p>An alternative approach is used in sasmodels which assumes
-slit width &lt;&lt; slit height. This method combines Solution 1 with the
+slit width &lt;&lt; slit length. This method combines Solution 1 with the
 numerical integration for the slit width. Then</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}I_s(q_i)
@@ -173,7 +173,7 @@ numerical integration for the slit width. Then</p>
 </section>
 </section>
 <section id="pinhole-smearing">
-<h2>Pinhole Smearing<a class="headerlink" href="#pinhole-smearing" title="Permalink to this heading">¶</a></h2>
+<h2>Pinhole Smearing<a class="headerlink" href="#pinhole-smearing" title="Link to this heading">¶</a></h2>
 <p><strong>This is the type of smearing normally encountered with data from synchrotron</strong>
 <strong>SAXS cameras and SANS instruments.</strong></p>
 <p>The pinhole smearing computation is performed in a similar fashion to the
@@ -187,7 +187,7 @@ Equation 6 becomes</p>
 <p><strong>[Equation 8]</strong></p>
 </section>
 <section id="d-smearing">
-<h2>2D Smearing<a class="headerlink" href="#d-smearing" title="Permalink to this heading">¶</a></h2>
+<h2>2D Smearing<a class="headerlink" href="#d-smearing" title="Link to this heading">¶</a></h2>
 <p>The 2D smearing computation is performed in a similar fashion to the 1D pinhole
 smearing above except that the weight function used is a 2D elliptical Gaussian.
 Thus</p>
@@ -211,7 +211,7 @@ elliptical Gaussian distribution. The <span class="math notranslate nohighlight"
 <figure class="align-default" id="id1">
 <img alt="../../../../_images/resolution_2d_rotation.png" src="../../../../_images/resolution_2d_rotation.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 139 </span><span class="caption-text">Coordinate axis rotation for 2D resolution calculation.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 141 </span><span class="caption-text">Coordinate axis rotation for 2D resolution calculation.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>Now we consider a numerical integration where each of the bins in <span class="math notranslate nohighlight">\(\theta\)</span>
@@ -254,7 +254,7 @@ y'_0 &amp;= y_0 = q_y\end{split}\]</div>
 that all the Gaussian weighting functions are aligned in the polar coordinate.</p>
 </section>
 <section id="weighting-normalization">
-<h2>Weighting &amp; Normalization<a class="headerlink" href="#weighting-normalization" title="Permalink to this heading">¶</a></h2>
+<h2>Weighting &amp; Normalization<a class="headerlink" href="#weighting-normalization" title="Link to this heading">¶</a></h2>
 <p>In all the cases above, the weighting matrix <span class="math notranslate nohighlight">\(W\)</span> is calculated on the first
 call to a smearing function, and includes ~60 <span class="math notranslate nohighlight">\(q\)</span> values (finely and evenly
 binned) below (&gt;0) and above the <span class="math notranslate nohighlight">\(q\)</span> range of data in order to smear all
@@ -263,7 +263,7 @@ found numerically with the weighting matrix and applied on the computation
 of <span class="math notranslate nohighlight">\(I_s\)</span>.</p>
 </section>
 <section id="related-sections">
-<h2>Related sections<a class="headerlink" href="#related-sections" title="Permalink to this heading">¶</a></h2>
+<h2>Related sections<a class="headerlink" href="#related-sections" title="Link to this heading">¶</a></h2>
 <p>See also:</p>
 <p><a class="reference internal" href="theory.html#pstheory"><span class="std std-ref">Theory</span></a></p>
 <p><a class="reference internal" href="pd/polydispersity.html#polydispersityhelp"><span class="std std-ref">Polydispersity &amp; Orientational Distributions</span></a></p>
@@ -283,7 +283,7 @@ of <span class="math notranslate nohighlight">\(I_s\)</span>.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../../index.html">Table of Contents</a></h3>
@@ -321,7 +321,7 @@ of <span class="math notranslate nohighlight">\(I_s\)</span>.</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
@@ -329,13 +329,13 @@ of <span class="math notranslate nohighlight">\(I_s\)</span>.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -350,7 +350,7 @@ of <span class="math notranslate nohighlight">\(I_s\)</span>.</p>
         <li class="right" >
           <a href="orientation/orientation.html" title="Oriented Particles"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &#187;</li>
@@ -358,8 +358,8 @@ of <span class="math notranslate nohighlight">\(I_s\)</span>.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>

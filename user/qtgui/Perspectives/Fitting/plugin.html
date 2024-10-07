@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Writing a Plugin Model &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    <title>Writing a Plugin Model &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="GPU Setup" href="gpu_setup.html" />
-    <link rel="prev" title="SANS to SESANS conversion" href="sesans/sans_to_sesans.html" /> 
+    <link rel="next" title="Scripting Interface" href="scripting.html" />
+    <link rel="prev" title="Fitting SESANS Data from the Command Line" href="sesans/sesans_fitting.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -29,12 +29,12 @@
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="gpu_setup.html" title="GPU Setup"
+          <a href="scripting.html" title="Scripting Interface"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="sesans/sans_to_sesans.html" title="SANS to SESANS conversion"
+          <a href="sesans/sesans_fitting.html" title="Fitting SESANS Data from the Command Line"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li>
@@ -48,9 +48,9 @@
           <div class="body" role="main">
             
   <section id="writing-a-plugin-model">
-<span id="writing-a-plugin"></span><h1>Writing a Plugin Model<a class="headerlink" href="#writing-a-plugin-model" title="Permalink to this heading">¶</a></h1>
+<span id="writing-a-plugin"></span><h1>Writing a Plugin Model<a class="headerlink" href="#writing-a-plugin-model" title="Link to this heading">¶</a></h1>
 <section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>In addition to the models provided with the sasmodels package, you are free to
 create your own models. This document describes how to create plugin models
 from first principles.</p>
@@ -82,7 +82,7 @@ On Mac OSX, these will be within the application bundle as
 own models to the Marketplace as well.</p>
 </section>
 <section id="create-new-model-files">
-<h2>Create New Model Files<a class="headerlink" href="#create-new-model-files" title="Permalink to this heading">¶</a></h2>
+<h2>Create New Model Files<a class="headerlink" href="#create-new-model-files" title="Link to this heading">¶</a></h2>
 <p>Copy the appropriate files to your plugin models directory (we recommend
 using the examples above as templates) as mymodel.py (and mymodel.c, etc)
 as required, where “mymodel” is the name for the model you are creating.</p>
@@ -95,9 +95,9 @@ broad_peak not BroadPeak)</p></li>
 </ul>
 </section>
 <section id="edit-new-model-files">
-<h2>Edit New Model Files<a class="headerlink" href="#edit-new-model-files" title="Permalink to this heading">¶</a></h2>
+<h2>Edit New Model Files<a class="headerlink" href="#edit-new-model-files" title="Link to this heading">¶</a></h2>
 <section id="model-contents">
-<h3>Model Contents<a class="headerlink" href="#model-contents" title="Permalink to this heading">¶</a></h3>
+<h3>Model Contents<a class="headerlink" href="#model-contents" title="Link to this heading">¶</a></h3>
 <p>The model interface definition is in the .py file.  This file contains:</p>
 <ul>
 <li><dl>
@@ -205,7 +205,7 @@ converted/created the model file</p></li>
 into the built-in library.</p>
 </section>
 <section id="composite-models">
-<h3>Composite Models<a class="headerlink" href="#composite-models" title="Permalink to this heading">¶</a></h3>
+<h3>Composite Models<a class="headerlink" href="#composite-models" title="Link to this heading">¶</a></h3>
 <p>The simplest way to define a new model is to combine existing models.  For
 example, <em>cyl_sphere.py</em> could contain:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os.path</span>
@@ -221,7 +221,7 @@ with the <a class="reference internal" href="../../../models/hardsphere.html#har
 model file path and assigns it to the model name.</p>
 </section>
 <section id="reparameterized-models">
-<span id="id1"></span><h3>Reparameterized Models<a class="headerlink" href="#reparameterized-models" title="Permalink to this heading">¶</a></h3>
+<span id="id1"></span><h3>Reparameterized Models<a class="headerlink" href="#reparameterized-models" title="Link to this heading">¶</a></h3>
 <p>You can modify an existing model to use new parameters.  For example,
 to create an ellipsoid constrained by volume:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">inf</span>
@@ -259,7 +259,7 @@ place them after <em>radius_polar</em> and <em>radius_equatorial</em> in the fin
 parameter table, before deleting <em>radius_polar</em> and <em>radius_equatorial</em>.</p>
 </section>
 <section id="model-documentation">
-<h3>Model Documentation<a class="headerlink" href="#model-documentation" title="Permalink to this heading">¶</a></h3>
+<h3>Model Documentation<a class="headerlink" href="#model-documentation" title="Link to this heading">¶</a></h3>
 <p>The <em>.py</em> file starts with an r (for raw) and three sets of quotes
 to start the doc string and ends with a second set of three quotes.
 For example:</p>
@@ -338,7 +338,7 @@ y &amp;= x - 1\end{split}\]</div>
 </div>
 </section>
 <section id="model-definition">
-<h3>Model Definition<a class="headerlink" href="#model-definition" title="Permalink to this heading">¶</a></h3>
+<h3>Model Definition<a class="headerlink" href="#model-definition" title="Link to this heading">¶</a></h3>
 <p>Following the documentation string, there are a series of definitions:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sphere&quot;</span>  <span class="c1"># optional: defaults to the filename without .py</span>
 
@@ -408,7 +408,7 @@ from a pair of existing models.  For example:</p>
 attributes that are defined.</p>
 </section>
 <section id="model-parameters">
-<h3>Model Parameters<a class="headerlink" href="#model-parameters" title="Permalink to this heading">¶</a></h3>
+<h3>Model Parameters<a class="headerlink" href="#model-parameters" title="Link to this heading">¶</a></h3>
 <p>Next comes the parameter table.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># pylint: disable=bad-whitespace, line-too-long</span>
 <span class="c1">#   [&quot;name&quot;,        &quot;units&quot;, default, [min, max], &quot;type&quot;,    &quot;description&quot;],</span>
@@ -529,7 +529,7 @@ the remaining optimizers (DREAM, differential evolution, Nelder-Mead simplex)
 will still function.</p>
 </section>
 <section id="model-computation">
-<h3>Model Computation<a class="headerlink" href="#model-computation" title="Permalink to this heading">¶</a></h3>
+<h3>Model Computation<a class="headerlink" href="#model-computation" title="Link to this heading">¶</a></h3>
 <p>Models can be defined as pure python models, or they can be a mixture of
 python and C models.  C models are run on the GPU if it is available,
 otherwise they are compiled and run on the CPU.</p>
@@ -566,7 +566,7 @@ Any model parameters not included in the dictionary will default according to
 the code in the <cite>_randomize_one()</cite> function from sasmodels/compare.py.</p>
 </section>
 <section id="python-models">
-<h3>Python Models<a class="headerlink" href="#python-models" title="Permalink to this heading">¶</a></h3>
+<h3>Python Models<a class="headerlink" href="#python-models" title="Link to this heading">¶</a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Pure python models do not yet support direct computation of <span class="math notranslate nohighlight">\(&lt;F(Q)^2&gt;\)</span> or
@@ -628,7 +628,7 @@ is automatically scaled by <em>form_volume/shell_volume</em> prior to calling th
 structure factor.</p>
 </section>
 <section id="embedded-c-models">
-<h3>Embedded C Models<a class="headerlink" href="#embedded-c-models" title="Permalink to this heading">¶</a></h3>
+<h3>Embedded C Models<a class="headerlink" href="#embedded-c-models" title="Link to this heading">¶</a></h3>
 <p>Like pure python models, inline C models need to define an <em>Iq</em> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Iq</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    return I(q, par1, par2, ...);</span>
@@ -678,7 +678,7 @@ where <em>expr</em> is a C expression.  For example:</p>
 </div>
 </section>
 <section id="structure-factors">
-<h3>Structure Factors<a class="headerlink" href="#structure-factors" title="Permalink to this heading">¶</a></h3>
+<h3>Structure Factors<a class="headerlink" href="#structure-factors" title="Link to this heading">¶</a></h3>
 <p>Structure factor calculations may need the underlying <span class="math notranslate nohighlight">\(&lt;F(q)&gt;\)</span> and <span class="math notranslate nohighlight">\(&lt;F^2(q)&gt;\)</span>
 rather than <span class="math notranslate nohighlight">\(I(q)\)</span>.  This is used to compute <span class="math notranslate nohighlight">\(\beta = &lt;F(q)&gt;^2/&lt;F^2(q)&gt;\)</span> in
 the decoupling approximation to the structure factor.</p>
@@ -703,7 +703,7 @@ the vesicle model, for example), then scale <em>F1</em> by <span class="math not
 a <em>c_code</em> block within the python model definition file.</p>
 </section>
 <section id="oriented-shapes">
-<h3>Oriented Shapes<a class="headerlink" href="#oriented-shapes" title="Permalink to this heading">¶</a></h3>
+<h3>Oriented Shapes<a class="headerlink" href="#oriented-shapes" title="Link to this heading">¶</a></h3>
 <p>If the scattering is dependent on the orientation of the shape, then you
 will need to include <em>orientation</em> parameters <em>theta</em>, <em>phi</em> and <em>psi</em>
 at the end of the parameter table.  As described in the section
@@ -785,7 +785,7 @@ q_c &amp;= q \cos(\alpha) = q u\end{split}\]</div>
 </div>
 </section>
 <section id="magnetism">
-<h3>Magnetism<a class="headerlink" href="#magnetism" title="Permalink to this heading">¶</a></h3>
+<h3>Magnetism<a class="headerlink" href="#magnetism" title="Link to this heading">¶</a></h3>
 <p>Magnetism is supported automatically for all shapes by modifying the
 effective SLD of particle according to the Halpern-Johnson vector
 describing the interaction between neutron spin and magnetic field.  All
@@ -803,7 +803,7 @@ using <em>Iqxy(qx, qy, par1, par2, …)</em>.</p>
 <p><strong>Note: Magnetism is not supported in pure Python models.</strong></p>
 </section>
 <section id="special-functions">
-<h3>Special Functions<a class="headerlink" href="#special-functions" title="Permalink to this heading">¶</a></h3>
+<h3>Special Functions<a class="headerlink" href="#special-functions" title="Link to this heading">¶</a></h3>
 <p>The C code follows the C99 standard, with the usual math functions,
 as defined in
 <a class="reference external" href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/mathFunctions.html">OpenCL</a>.
@@ -853,6 +853,8 @@ must be declared first.</p>
 <dt>square(x):</dt><dd><p><span class="math notranslate nohighlight">\(x^2\)</span></p>
 </dd>
 <dt>cube(x):</dt><dd><p><span class="math notranslate nohighlight">\(x^3\)</span></p>
+</dd>
+<dt>clip(a, a_min, a_max):</dt><dd><p><span class="math notranslate nohighlight">\(\min(\max(a, a_\text{min}), a_\text{max})\)</span>, or NaN if <span class="math notranslate nohighlight">\(a\)</span> is NaN.</p>
 </dd>
 <dt>sas_sinx_x(x):</dt><dd><p><span class="math notranslate nohighlight">\(\sin(x)/x\)</span>, with limit <span class="math notranslate nohighlight">\(\sin(0)/0 = 1\)</span>.</p>
 </dd>
@@ -995,7 +997,7 @@ selecting an different source without touching the C code.</p>
 </div></blockquote>
 </section>
 <section id="problems-with-c-models">
-<h3>Problems with C models<a class="headerlink" href="#problems-with-c-models" title="Permalink to this heading">¶</a></h3>
+<h3>Problems with C models<a class="headerlink" href="#problems-with-c-models" title="Link to this heading">¶</a></h3>
 <p>The graphics processor (GPU) in your computer is a specialized computer tuned
 for certain kinds of problems.  This leads to strange restrictions that you
 need to be aware of.  Your code may work fine on some platforms or for some
@@ -1044,7 +1046,7 @@ can be a model that runs 1000x faster on a good card.  Even your laptop may
 show a 50x improvement or more over the equivalent pure python model.</p>
 </section>
 <section id="form-factors">
-<span id="id4"></span><h3>Form Factors<a class="headerlink" href="#form-factors" title="Permalink to this heading">¶</a></h3>
+<span id="id4"></span><h3>Form Factors<a class="headerlink" href="#form-factors" title="Link to this heading">¶</a></h3>
 <p>Away from the dilute limit you can estimate scattering including
 particle-particle interactions using <span class="math notranslate nohighlight">\(I(q) = P(q)*S(q)\)</span> where <span class="math notranslate nohighlight">\(P(q)\)</span>
 is the form factor and <span class="math notranslate nohighlight">\(S(q)\)</span> is the structure factor.  The simplest
@@ -1115,7 +1117,7 @@ In the case of a hollow sphere, this would be:</p>
 assumed to be equal, and the shape is considered solid.</p>
 </section>
 <section id="unit-tests">
-<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading">¶</a></h3>
+<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Link to this heading">¶</a></h3>
 <p>THESE ARE VERY IMPORTANT. Include at least one test for each model and
 PLEASE make sure that the answer value is correct (i.e. not a random number).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tests</span> <span class="o">=</span> <span class="p">[</span>
@@ -1159,9 +1161,9 @@ complete list of computed intermediates.</p></li>
 </section>
 </section>
 <section id="test-your-new-model">
-<span id="id5"></span><h2>Test Your New Model<a class="headerlink" href="#test-your-new-model" title="Permalink to this heading">¶</a></h2>
+<span id="id5"></span><h2>Test Your New Model<a class="headerlink" href="#test-your-new-model" title="Link to this heading">¶</a></h2>
 <section id="minimal-testing">
-<h3>Minimal Testing<a class="headerlink" href="#minimal-testing" title="Permalink to this heading">¶</a></h3>
+<h3>Minimal Testing<a class="headerlink" href="#minimal-testing" title="Link to this heading">¶</a></h3>
 <p>In SasView 5.x, plugin models are loaded ‘on-the-fly’. So to test a plugin
 go to a FitPage (or create a new one with <em>Fitting</em> &gt; <em>New Fit Page</em>),
 select <em>Category</em> &gt; <em>Plugin Models</em>, and then select your model from the
@@ -1184,7 +1186,7 @@ A very common reason is simply that a variable name has been misspelt. Look for
 a line that begins <em>NameError</em>.</p>
 </section>
 <section id="recommended-testing">
-<h3>Recommended Testing<a class="headerlink" href="#recommended-testing" title="Permalink to this heading">¶</a></h3>
+<h3>Recommended Testing<a class="headerlink" href="#recommended-testing" title="Link to this heading">¶</a></h3>
 <p><strong>NB: For now, this more detailed testing is only possible if you have a
 SasView build environment available!</strong></p>
 <p>If the model compiles and runs, you can next run the unit tests that
@@ -1240,7 +1242,7 @@ test with:</p>
 </section>
 </section>
 <section id="check-the-docs">
-<h2>Check The Docs<a class="headerlink" href="#check-the-docs" title="Permalink to this heading">¶</a></h2>
+<h2>Check The Docs<a class="headerlink" href="#check-the-docs" title="Link to this heading">¶</a></h2>
 <p>You can get a rough idea of how the documentation will look using the
 following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-help&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
@@ -1259,7 +1261,7 @@ Here are some tools to help with the inevitable syntax errors:</p>
 <a class="reference external" href="http://rst.ninjs.org">http://rst.ninjs.org</a>.</p>
 </section>
 <section id="clean-lint-developer-version-only">
-<h2>Clean Lint - (Developer Version Only)<a class="headerlink" href="#clean-lint-developer-version-only" title="Permalink to this heading">¶</a></h2>
+<h2>Clean Lint - (Developer Version Only)<a class="headerlink" href="#clean-lint-developer-version-only" title="Link to this heading">¶</a></h2>
 <p><strong>NB: For now we are not providing pylint with the installer version
 of SasView; so unless you have a SasView build environment available,
 you can ignore this section!</strong></p>
@@ -1293,7 +1295,7 @@ parameters in blocks:</p>
 <p>Don’t put in too many pylint statements, though, since they make the code ugly.</p>
 </section>
 <section id="share-your-model">
-<h2>Share Your Model!<a class="headerlink" href="#share-your-model" title="Permalink to this heading">¶</a></h2>
+<h2>Share Your Model!<a class="headerlink" href="#share-your-model" title="Link to this heading">¶</a></h2>
 <p>Once compare and the unit test(s) pass properly and everything is done,
 consider adding your model to the
 <a class="reference external" href="http://marketplace.sasview.org/">Model Marketplace</a> so that others may use it!</p>
@@ -1311,7 +1313,7 @@ consider adding your model to the
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../../index.html">Table of Contents</a></h3>
@@ -1353,13 +1355,13 @@ consider adding your model to the
   </div>
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="sesans/sans_to_sesans.html"
-                          title="previous chapter">SANS to SESANS conversion</a></p>
+    <p class="topless"><a href="sesans/sesans_fitting.html"
+                          title="previous chapter">Fitting SESANS Data from the Command Line</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="gpu_setup.html"
-                          title="next chapter">GPU Setup</a></p>
+    <p class="topless"><a href="scripting.html"
+                          title="next chapter">Scripting Interface</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -1368,7 +1370,7 @@ consider adding your model to the
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
@@ -1376,13 +1378,13 @@ consider adding your model to the
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1392,12 +1394,12 @@ consider adding your model to the
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="gpu_setup.html" title="GPU Setup"
+          <a href="scripting.html" title="Scripting Interface"
              >next</a> |</li>
         <li class="right" >
-          <a href="sesans/sans_to_sesans.html" title="SANS to SESANS conversion"
+          <a href="sesans/sesans_fitting.html" title="Fitting SESANS Data from the Command Line"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &#187;</li>
@@ -1405,8 +1407,8 @@ consider adding your model to the
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>

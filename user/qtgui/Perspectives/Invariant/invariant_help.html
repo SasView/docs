@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Invariant Calculation &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    <title>Invariant Calculation &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -19,7 +19,7 @@
     <link rel="next" title="Correlation Function Analysis" href="../Corfunc/corfunc_help.html" />
     <link rel="prev" title="P(r) Calculation" href="../Inversion/pr_help.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="../Inversion/pr_help.html" title="P(r) Calculation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" accesskey="U">Fitting &amp; Other Analyses</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Invariant Calculation</a></li> 
@@ -47,9 +47,9 @@
           <div class="body" role="main">
             
   <section id="invariant-calculation">
-<h1>Invariant Calculation<a class="headerlink" href="#invariant-calculation" title="Permalink to this heading">¶</a></h1>
+<h1>Invariant Calculation<a class="headerlink" href="#invariant-calculation" title="Link to this heading">¶</a></h1>
 <section id="principle">
-<h2>Principle<a class="headerlink" href="#principle" title="Permalink to this heading">¶</a></h2>
+<h2>Principle<a class="headerlink" href="#principle" title="Link to this heading">¶</a></h2>
 <p>For any multi-phase system, i.e. any system that contains regions with
 different scattering length densities (SLD), the integral over all <span class="math notranslate nohighlight">\(\vec{q}\)</span>
 of the appropriately dimensionally-weighted scattering cross-section (ie,
@@ -80,9 +80,9 @@ instruments, and, as explained below, can yield an independent estimate of
 volume fractions or contrast terms.</p>
 </section>
 <section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h2>
+<h2>Implementation<a class="headerlink" href="#implementation" title="Link to this heading">¶</a></h2>
 <section id="calculation">
-<h3>Calculation<a class="headerlink" href="#calculation" title="Permalink to this heading">¶</a></h3>
+<h3>Calculation<a class="headerlink" href="#calculation" title="Link to this heading">¶</a></h3>
 <p>Assuming isotropic scattering, acquired on a typical ‘pinhole geometry’
 instrument, the invariant integral can be computed from the 1D reduced data
 (assuming the reduced data has removed all background from sample
@@ -151,7 +151,7 @@ with: “The 6 columns”. For an example, see the example data set
 </div>
 </section>
 <section id="data-extrapolation">
-<h3>Data Extrapolation<a class="headerlink" href="#data-extrapolation" title="Permalink to this heading">¶</a></h3>
+<h3>Data Extrapolation<a class="headerlink" href="#data-extrapolation" title="Link to this heading">¶</a></h3>
 <p>The difficulty with using <span class="math notranslate nohighlight">\(Q^*\)</span>  arises from the fact that experimental data is
 never measured over the range <span class="math notranslate nohighlight">\(0 \le q \le \infty\)</span> and it is thus usually
 necessary to extrapolate the experimental data to both low and high <span class="math notranslate nohighlight">\(q\)</span>.
@@ -190,7 +190,7 @@ smearing that power law should be 3 for the same sharp interfaces.</p>
 </div>
 </section>
 <section id="invariant">
-<h3>Invariant<a class="headerlink" href="#invariant" title="Permalink to this heading">¶</a></h3>
+<h3>Invariant<a class="headerlink" href="#invariant" title="Link to this heading">¶</a></h3>
 <p>SasView implements the invariant calculation for a two-phase (or pseudo
 two-phase) system, which represents the most commonly encountered situation.
 The invariant for this is</p>
@@ -204,7 +204,7 @@ fraction. However, the current implementation in SasView only allows for the
 former: extracting the volume fraction given a known contrast factor.</p>
 </section>
 <section id="volume-fraction">
-<h3>Volume Fraction<a class="headerlink" href="#volume-fraction" title="Permalink to this heading">¶</a></h3>
+<h3>Volume Fraction<a class="headerlink" href="#volume-fraction" title="Link to this heading">¶</a></h3>
 <p>In some cases, especially in non-particulate systems for which no good
 analytical model description exists (as then the scale factor of such a model
 would return the volume fraction information), if the contrast term can be
@@ -231,7 +231,7 @@ invariant analysis.</p>
 </div>
 </section>
 <section id="specific-surface-area">
-<h3>Specific Surface Area<a class="headerlink" href="#specific-surface-area" title="Permalink to this heading">¶</a></h3>
+<h3>Specific Surface Area<a class="headerlink" href="#specific-surface-area" title="Link to this heading">¶</a></h3>
 <p>The total surface area per unit volume is an important quantity for a variety of
 applications, for example, to understand the absorption capacity, reactivity, or
 catalytic activity of a material. This value, known as the specific surface area
@@ -253,7 +253,7 @@ contrast term if it is not known (and the volume fraction is known), and depends
 only on two values - the contrast and Porod Constant - <em>which must be provided</em>.</p>
 </section>
 <section id="extension-to-three-or-more-phases">
-<h3>Extension to Three or More Phases<a class="headerlink" href="#extension-to-three-or-more-phases" title="Permalink to this heading">¶</a></h3>
+<h3>Extension to Three or More Phases<a class="headerlink" href="#extension-to-three-or-more-phases" title="Link to this heading">¶</a></h3>
 <p>In principle, as suggested in the Introduction, the invariant is a completely
 general concept and not limited to two phases.  Extending the formalism to more
 phases, so that useful information can be extracted from the invariant
@@ -295,7 +295,7 @@ Section 6.9, and the Shioya reference<a class="footnote-reference brackets" href
 </section>
 </section>
 <section id="using-invariant-analysis">
-<h2>Using invariant analysis<a class="headerlink" href="#using-invariant-analysis" title="Permalink to this heading">¶</a></h2>
+<h2>Using invariant analysis<a class="headerlink" href="#using-invariant-analysis" title="Link to this heading">¶</a></h2>
 <p>Load some data with the <em>Data Explorer</em>.</p>
 <p>Select a dataset and use the <em>Send To</em> button on the <em>Data Explorer</em> to load
 the dataset into the <em>Invariant</em> panel. Or select <em>Invariant</em> from the
@@ -338,7 +338,7 @@ button at the bottom right of the panel.</p>
 the extrapolated curves, proceed with caution.</p>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="glatter-kratky" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
@@ -384,7 +384,7 @@ Butler and Steve King, March-July 2020</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../../index.html">Table of Contents</a></h3>
@@ -424,7 +424,7 @@ Butler and Steve King, March-July 2020</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
@@ -432,13 +432,13 @@ Butler and Steve King, March-July 2020</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -453,15 +453,15 @@ Butler and Steve King, March-July 2020</p>
         <li class="right" >
           <a href="../Inversion/pr_help.html" title="P(r) Calculation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Invariant Calculation</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>

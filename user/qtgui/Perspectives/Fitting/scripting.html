@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Scripting Interface &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    <title>Scripting Interface &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="References" href="refs.html" />
-    <link rel="prev" title="GPU Setup" href="gpu_setup.html" /> 
+    <link rel="next" title="GPU Setup" href="gpu_setup.html" />
+    <link rel="prev" title="Writing a Plugin Model" href="plugin.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -29,12 +29,12 @@
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="refs.html" title="References"
+          <a href="gpu_setup.html" title="GPU Setup"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="gpu_setup.html" title="GPU Setup"
+          <a href="plugin.html" title="Writing a Plugin Model"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li>
@@ -48,14 +48,47 @@
           <div class="body" role="main">
             
   <section id="scripting-interface">
-<span id="id1"></span><h1>Scripting Interface<a class="headerlink" href="#scripting-interface" title="Permalink to this heading">¶</a></h1>
-<p>Need some basic details here of how to load models and data via script, evaluate
-them at given parameter values and run bumps fits.</p>
-<p>The key functions are <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.load_model" title="sasmodels.core.load_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model()</span></code></a> for loading the
+<span id="id1"></span><h1>Scripting Interface<a class="headerlink" href="#scripting-interface" title="Link to this heading">¶</a></h1>
+<section id="preparing-your-environment">
+<h2>Preparing your environment<a class="headerlink" href="#preparing-your-environment" title="Link to this heading">¶</a></h2>
+<p>You can use python scripts to load and plot your data, create SAS models and fit parameters. You can save a script to a file such as <cite>example/model.py</cite> and run
+it later. However, this requires a scripting environment with the correct packages installed.</p>
+<p>You can <em>either</em> use the SasView application itself (versions after 5.0.5), as
+both bumps and sasmodels are included as part of the distribution, so for
+example on Windows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">sasview</span> <span class="n">model</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>(Note that it may be necessary to first add the folder path to sasmodels/sasview
+to your <em>Path</em> environment variable for this to work; set PATH=%PATH%;C:\your\path\here\ . The folder path can be found in the
+Help &gt; About box if you are running the SasView GUI.)</p>
+<p><em>or</em> create a Python environment with pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">sasmodels</span> <span class="n">sasdata</span> <span class="n">matplotlib</span> <span class="n">bumps</span> <span class="n">periodictable</span>
+<span class="o">&gt;</span> <span class="n">python</span> <span class="n">model</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>(You can also create a Python environment using conda, see:
+<a class="reference external" href="https://github.com/SasView/sasview/wiki/DevNotes_CondaDevEnviroment">https://github.com/SasView/sasview/wiki/DevNotes_CondaDevEnviroment</a>)</p>
+<p>The pip command also works within a <a class="reference external" href="https://docs.jupyter.org/en/latest/install.html">Jupyter notebook</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">sasmodels</span> <span class="n">sasdata</span> <span class="n">matplotlib</span> <span class="n">bumps</span> <span class="n">periodictable</span>
+</pre></div>
+</div>
+<p>On a Mac the command for invoking SasView will be something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">Sasview5</span><span class="o">.</span><span class="n">dmg</span><span class="o">/</span><span class="n">Contents</span><span class="o">/</span><span class="n">MacOS</span><span class="o">/</span><span class="n">sasview</span>
+</pre></div>
+</div>
+<p>depending on where it is actually installed. This can either be used directly
+or can be symlinked into your path, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">~/</span><span class="nb">bin</span>
+<span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">SasView5</span><span class="o">.</span><span class="n">dmg</span><span class="o">/</span><span class="n">Contents</span><span class="o">/</span><span class="n">MacOS</span><span class="o">/</span><span class="n">sasview</span> <span class="o">~/</span><span class="nb">bin</span>
+</pre></div>
+</div>
+</section>
+<section id="preparing-your-data">
+<h2>Preparing your data<a class="headerlink" href="#preparing-your-data" title="Link to this heading">¶</a></h2>
+<p>The key functions are then <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.core.load_model" title="sasmodels.core.load_model"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model()</span></code></a> for loading the
 model definition and compiling the kernel and
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.data.load_data" title="sasmodels.data.load_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.load_data()</span></code></a> for calling sasview to load the data.</p>
-<section id="preparing-data">
-<h2>Preparing data<a class="headerlink" href="#preparing-data" title="Permalink to this heading">¶</a></h2>
 <p>Usually you will load data via the sasview loader, with the
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.data.load_data" title="sasmodels.data.load_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.load_data()</span></code></a> function.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.data</span> <span class="kn">import</span> <span class="n">load_data</span>
@@ -125,7 +158,7 @@ example:</p>
 <p>The <em>data</em> module defines various data plotters as well.</p>
 </section>
 <section id="using-sasmodels-directly">
-<h2>Using sasmodels directly<a class="headerlink" href="#using-sasmodels-directly" title="Permalink to this heading">¶</a></h2>
+<h2>Using sasmodels directly<a class="headerlink" href="#using-sasmodels-directly" title="Link to this heading">¶</a></h2>
 <p>Once you have a computational kernel and a data object, you can evaluate
 the model for various parameters using
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.direct_model.DirectModel" title="sasmodels.direct_model.DirectModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">direct_model.DirectModel</span></code></a>.  The resulting object <em>f</em>
@@ -155,9 +188,9 @@ values in the data.  For example:</p>
 </div></blockquote>
 </section>
 <section id="using-sasmodels-through-the-bumps-optimizer">
-<h2>Using sasmodels through the bumps optimizer<a class="headerlink" href="#using-sasmodels-through-the-bumps-optimizer" title="Permalink to this heading">¶</a></h2>
+<h2>Using sasmodels through the bumps optimizer<a class="headerlink" href="#using-sasmodels-through-the-bumps-optimizer" title="Link to this heading">¶</a></h2>
 <p>Like DirectModel, you can wrap data and a kernel in a <em>bumps</em> model with
-<a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Model" title="sasmodels.bumps_model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Model</span></code></a> and create an
+<a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Model" title="sasmodels.bumps_model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Model</span></code></a> and create a
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Experiment" title="sasmodels.bumps_model.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Experiment</span></code></a> that you can fit with the <em>bumps</em>
 interface. Here is an example from the <em>example</em> directory such as
 <em>example/model.py</em>:</p>
@@ -200,22 +233,18 @@ interface. Here is an example from the <em>example</em> directory such as
 <span class="n">problem</span> <span class="o">=</span> <span class="n">FitProblem</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Assume that bumps has been installed and the bumps command is available.
-Maybe need to set the path to sasmodels/sasview
-using <em>PYTHONPATH=path/to/sasmodels:path/to/sasview/src</em>.
-To run the model use the <em>bumps</em> program:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ bumps example/model.py --preview
+<p>To run the model from your python environment use the installed <em>bumps</em> program:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bumps</span> <span class="n">example</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">preview</span>
 </pre></div>
 </div>
-<p>Note that bumps and sasmodels are included as part of the SasView
-distribution.  On windows, bumps can be called from the cmd prompt
+<p>Alternatively, on Windows, bumps can be called from the cmd prompt
 as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SasViewCom</span> <span class="n">bumps</span><span class="o">.</span><span class="n">cli</span> <span class="n">example</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">preview</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">sasview</span> <span class="o">-</span><span class="n">m</span> <span class="n">bumps</span><span class="o">.</span><span class="n">cli</span> <span class="n">example</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">preview</span>
 </pre></div>
 </div>
 </section>
 <section id="calling-the-computation-kernel">
-<h2>Calling the computation kernel<a class="headerlink" href="#calling-the-computation-kernel" title="Permalink to this heading">¶</a></h2>
+<h2>Calling the computation kernel<a class="headerlink" href="#calling-the-computation-kernel" title="Link to this heading">¶</a></h2>
 <p>Getting a simple function that you can call on a set of q values and return
 a result is not so simple.  Since the time critical use case (fitting) involves
 calling the function over and over with identical <span class="math notranslate nohighlight">\(q\)</span> values, we chose to
@@ -254,10 +283,10 @@ help, <em>example/cylinder_eval.py</em>:</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="id3">
 <img alt="../../../../_images/direct_call.png" src="../../../../_images/direct_call.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 142 </span><span class="caption-text">Comparison between <span class="math notranslate nohighlight">\(I(q)\)</span>, <span class="math notranslate nohighlight">\(&lt;F(q)&gt;\)</span> and <span class="math notranslate nohighlight">\(&lt;F^2(q)&gt;\)</span> for cylinder model.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 144 </span><span class="caption-text">Comparison between <span class="math notranslate nohighlight">\(I(q)\)</span>, <span class="math notranslate nohighlight">\(&lt;F(q)&gt;\)</span> and <span class="math notranslate nohighlight">\(&lt;F^2(q)&gt;\)</span> for cylinder model.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>This compares <span class="math notranslate nohighlight">\(I(q)\)</span> with <span class="math notranslate nohighlight">\(&lt;F(q)&gt;\)</span> and <span class="math notranslate nohighlight">\(&lt;F^2(q)&gt;\)</span> for a cylinder
@@ -268,11 +297,19 @@ volume, compared to the canonical cylinder <span class="math notranslate nohighl
 Integrating over polydispersity and orientation, the returned values are
 <span class="math notranslate nohighlight">\(\sum_{r,w\in N(r_o, r_o/10)} \sum_\theta w F(q,r_o,\theta)\sin\theta\)</span> and
 <span class="math notranslate nohighlight">\(\sum_{r,w\in N(r_o, r_o/10)} \sum_\theta w F^2(q,r_o,\theta)\sin\theta\)</span>.</p>
-<p>On windows, this example can be called from the cmd prompt using sasview as
+<p>On Windows, this example can be called from the cmd prompt using sasview as
 as the python interpreter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SasViewCom</span> <span class="n">example</span><span class="o">/</span><span class="n">cylinder_eval</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">sasview</span> <span class="n">example</span><span class="o">/</span><span class="n">cylinder_eval</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
+</section>
+<section id="using-sasmodels-and-bumps-from-a-jupyter-notebook">
+<h2>Using sasmodels and bumps from a Jupyter notebook<a class="headerlink" href="#using-sasmodels-and-bumps-from-a-jupyter-notebook" title="Link to this heading">¶</a></h2>
+<p>You can also use sasmodels/bumps to fit experimental data from a
+<a class="reference external" href="https://docs.jupyter.org/en/latest/install.html">Jupyter notebook</a> by
+constructing and computing the model in an analogous manner to that shown above.
+For an example notebook see:</p>
+<p><a class="reference external" href="https://github.com/SasView/documents/blob/master/Notebooks/sasmodels_fitting.ipynb">https://github.com/SasView/documents/blob/master/Notebooks/sasmodels_fitting.ipynb</a></p>
 </section>
 </section>
 
@@ -281,16 +318,18 @@ as the python interpreter:</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../../index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Scripting Interface</a><ul>
-<li><a class="reference internal" href="#preparing-data">Preparing data</a></li>
+<li><a class="reference internal" href="#preparing-your-environment">Preparing your environment</a></li>
+<li><a class="reference internal" href="#preparing-your-data">Preparing your data</a></li>
 <li><a class="reference internal" href="#using-sasmodels-directly">Using sasmodels directly</a></li>
 <li><a class="reference internal" href="#using-sasmodels-through-the-bumps-optimizer">Using sasmodels through the bumps optimizer</a></li>
 <li><a class="reference internal" href="#calling-the-computation-kernel">Calling the computation kernel</a></li>
+<li><a class="reference internal" href="#using-sasmodels-and-bumps-from-a-jupyter-notebook">Using sasmodels and bumps from a Jupyter notebook</a></li>
 </ul>
 </li>
 </ul>
@@ -298,13 +337,13 @@ as the python interpreter:</p>
   </div>
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="gpu_setup.html"
-                          title="previous chapter">GPU Setup</a></p>
+    <p class="topless"><a href="plugin.html"
+                          title="previous chapter">Writing a Plugin Model</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="refs.html"
-                          title="next chapter">References</a></p>
+    <p class="topless"><a href="gpu_setup.html"
+                          title="next chapter">GPU Setup</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -313,7 +352,7 @@ as the python interpreter:</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
@@ -321,13 +360,13 @@ as the python interpreter:</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -337,12 +376,12 @@ as the python interpreter:</p>
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="refs.html" title="References"
+          <a href="gpu_setup.html" title="GPU Setup"
              >next</a> |</li>
         <li class="right" >
-          <a href="gpu_setup.html" title="GPU Setup"
+          <a href="plugin.html" title="Writing a Plugin Model"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &#187;</li>
@@ -350,8 +389,8 @@ as the python interpreter:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>

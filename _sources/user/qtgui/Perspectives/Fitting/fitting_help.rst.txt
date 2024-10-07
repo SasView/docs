@@ -288,30 +288,41 @@ displays the *Easy Add/Multiply Editor* dialog.
 
 .. image:: sum_model.png
 
-This option creates a custom Plugin Model of the form::
+This editor allows the creation of combined custom Plugin Models.
+Give the new model a name (which will appear in the list of plugin models on the *FitPage*)
+and brief description (to appear under the *Details* button on the *FitPage*). The model name must not contain
+spaces (use underscores to separate words if necessary) and if it is longer
+than ~25 characters the name will not display in full in the list of models.
+Now select two models, as model_1 (or p1) and model_2 (or p2), and the
+required operator, '+', '*', or '@'  between them. Finally, click the *Apply* button
+to generate and test the model.
+
+The `+` operator sums the individual I(Q) calculations and introduces a third scale factor::
 
      Plugin Model = scale_factor * {(scale_1 * model_1) +/- (scale_2 * model_2)} + background
 
-or::
+the `*` operator multiplies the individual I(Q) calculations::
 
      Plugin Model = scale_factor * (model1 * model2) + background
 
-In the *Easy Add/Multiply Editor* give the new model a name (which will appear
-in the list of plugin models on the *FitPage*) and brief description (to appear
-under the *Details* button on the *FitPage*). The model name must not contain
-spaces (use underscores to separate words if necessary) and if it is longer
-than ~25 characters the name will not display in full in the list of models.
-Now select two built-in models, as model_1 (or p1) and model_2 (or p2), and the
-required operator, '+' or '*' between them. Finally, click the *Apply* button
-to generate and test the model, and then click *Close*.
+and the `@` operator treats the combination as a form factor [F(Q)] for model_1 and a structure factor [S(Q)] for
+model_2. The scale and background for F(Q) and S(Q) are set to 1 and 0 respectively and the combined model should
+support the beta approximation::
 
-Any changes to a plugin model generated in this way only become effective
-*after* it is re-selected from the plugin models drop-down menu on the FitPage.
+    Plugin Model = scale_factor * vol_fraction * <FF> * S(Q) + background :: No beta
+    Plugin Model = scale_factor * (vol_fraction / form_volume) * (<FF> + <F>^2 * (S(Q) - 1)) + background :: beta
 
-**In SasView 4.x**, if the model is not listed you can try and force a
+**All Versions** Changes made to a plugin model are not applied to models actively in use on fit pages.
+To apply plugin model changes, re-select the model from the drop-down menu on the FitPage.
+
+**In SasView 6.x**, multiplicity models cannot be combined. If a model with any layer or conditional parameter is
+selected, similar models are removed from the other combo box.
+
+**In SasView 4.x**, if the model is not listed on a fit page you can try and force a
 recompilation of the plugins by selecting *Fitting* > *Plugin Model Operations*
-> *Load Plugin Models*. **In SasView 5.x**, you may need to restart the
-program.
+> *Load Plugin Models*. **In SasView 5.0.2 and earlier**, you may need to restart the
+program. **In SasView 5.0.3 and later**, the new model should appear in the list as soon as
+the model is saved.
 
 .. warning::
 
@@ -434,7 +445,7 @@ section, change it to::
      from sasmodels.core import load_model_info
      from sasmodels.sasview_model import make_model_from_info
 
-     model_info = load_model_info('power_law + fractal + gaussian_peak + gaussian_peak')
+     model_info = load_model_info('power_law+fractal+gaussian_peak+gaussian_peak')
      model_info.name = 'MyBigPluginModel'
      model_info.description = 'For fitting pores in crystalline framework'
      Model = make_model_from_info(model_info)
@@ -833,6 +844,59 @@ Many constraints can be entered for a single fit.
 The results of the model-fitting will be returned to each of the individual
 *FitPage*'s. Also see :ref:`Assessing_Fit_Quality`.
 
+Simultaneous Fits with a Modified Weighting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When simultaneously fitting different data sets, the degree of influence that each
+of them has on the final fit is defined by their statistical weight, i.e. mainly
+the number of points and their uncertainty in each data set.
+The SasView fitting engine tries to minimize the total $\chi^2$, where the difference
+between the data and the model for each data point is added quadratically using a
+weight that by default is inversely proportional to the y axis error. As a consequence,
+datasets with more points and smaller errors will exert a greater influence on
+the fit. While the weighting scheme can be modified in the *Fit Options* tab,
+even setting the weighting to None (i.e. all data points from all data sets have
+the same weight, equal to 1) will not solve the potential issue of having disparate
+number of data points in different sets. In this case, if one data set has much
+more (less) points than the remaining data sets, it will have a much larger (smaller)
+influence in the global fit.
+
+This is especially true for data gathered using different methods with different
+associated errors. For example attempting to fit SANS and SAXS data often leads to the
+SAXS data dominating the fit. The *Modify Weighting* option provides a way of getting
+around this issue by allowing the user to multiply the individual weights by a global
+factor that can be adjusted for each data set.
+
+Checking the *Modify Weighting* box reveals a fifth column in the source choice
+dialog called Weighting. This is depicted in the screenshot below.
+
+.. image:: weighting_scheme_default.png
+
+The pre-filled option in the weighting column is 1.0, and only numerical inputs
+(integer or floating point numbers) are allowed. It is important to understand
+that when the *Modify Weighting* box is checked, **the weights of each data set
+will be modified, even when all the weights in the weighting column are equal
+to 1.** Actually, when all the user weights are equal to 1, SasView will try to
+calculate appropriate weights in order to ensure that all the data sets have
+approximately a similar influence in the total fit. This is done by estimating the
+statistical weight of each data set *j* as $W_j = \sum_i^{N_j} (1/e_i)^2$, where at present
+$e_i$ is the relative error of point *i*, i.e. $e_i = \sigma_i / |I_i|$, and then
+the weight to apply to each data set is computed as $Min(W_j)/W_j$. Thus, the weight of the
+initially "lighter" set remains equal to 1, while the remaining sets will be scaled down by
+a factor < 1. Then the user weighting factors multiply this scaling factor, giving the
+final weight for each data set that will be sent to the fitting engine. The final weights
+used in the simultaneous fit are given in the *Log Explorer* window and can provide a useful
+indication of how much each data set has been "modified" with respect to the original data.
+
+**Warning:** This option gives the user the flexibility to play with the data sets, in order
+to drive the global fit in a desired direction. It can be useful when a particular set contains
+important information to determine one or several model parameters, but it is ignored in the
+global fit because of statistical issues. However, ideally this option should never be needed,
+as difficulties when trying to fit simultaneously several sets are often an indication of
+other problems such as systematic errors, inadequate error/resolution estimation, etc.
+Therefore, users are advised to be extremely careful when using this option and to
+carefully check any result obtained using modified weights.
+
 .. ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
 .. _Batch_Fit_Mode:
@@ -1080,7 +1144,7 @@ using an on-the-fly :ref:`SESANS` from *Q*-space to real-space.
 To use this functionality it is important that the SESANS data file has
 the extension .ses to distinguish it from *Q*-space data. The SESANS user
 community is gradually refining the structure and content of its data files.
-Some current examples can be found in the \\test\\sesans_data folder within
+Some current examples can be found in the \\example_data\\sesans_data folder within
 the SasView installation folder. For more information about the contents
 of .ses files, see :ref:`Formats`.
 
@@ -1090,16 +1154,16 @@ Load the .ses file and Send to Fitting as normal.
 
 The first true indication that the data are not SANS data comes when the
 data are plotted. Instead of *Intensity* vs *Q*, the data are displayed
-as a normalised depolarisation (*P*) vs spin-echo length (*z*).
+as a normalised depolarisation (*P*) vs spin-echo length (:math:`{\delta}`).
 
 .. image:: fitting_sesans_2.png
 
 Since SESANS data normally represent much longer length scales than SANS
 data, it will likely be necessary to significantly increase key size
 parameters in a model before attempting any fitting. In the screenshot
-above, the radius of the sphere has been increased from its default
+above for example, the radius of the sphere could be increased from its default
 value of 50 |Ang| to 5000 |Ang| in order to get the transform to show
-something sensible.
+something more sensible.
 
 The model parameters can then be optimised by checking them as required
 and clicking the Fit button as is normal.
@@ -1115,4 +1179,4 @@ command line interpreter, see :ref:`sesans_fitting`.
 
 .. ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
 
-.. note::  This help document was last changed by Steve King, 26Oct2022
+.. note::  This help document was last changed by Caitlyn Wolf, 20March2024

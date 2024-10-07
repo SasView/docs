@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Generic SANS Calculator Tool &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css" />
+    <title>Generic SAS Calculator Tool &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -19,7 +19,7 @@
     <link rel="next" title="Example 1: Default Calculator Data" href="gsc_ex_default_data.html" />
     <link rel="prev" title="Q Resolution Estimator Tool" href="resolution_calculator_help.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -34,10 +34,10 @@
         <li class="right" >
           <a href="resolution_calculator_help.html" title="Q Resolution Estimator Tool"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../tools.html" accesskey="U">Tools &amp; Utilities</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Generic SANS Calculator Tool</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Generic SAS Calculator Tool</a></li> 
       </ul>
     </div>  
 
@@ -46,10 +46,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="generic-sans-calculator-tool">
-<span id="sans-calculator-tool"></span><h1>Generic SANS Calculator Tool<a class="headerlink" href="#generic-sans-calculator-tool" title="Permalink to this heading">¶</a></h1>
+  <section id="generic-sas-calculator-tool">
+<span id="sans-calculator-tool"></span><h1>Generic SAS Calculator Tool<a class="headerlink" href="#generic-sas-calculator-tool" title="Link to this heading">¶</a></h1>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">¶</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This tool calculates the small angle scattering
 cross-section expected from a given real-space 3D shape/structure.
 The tool can handle both nuclear and magnetic contributions to the scattering.
@@ -69,34 +69,34 @@ of the <a class="reference internal" href="#scripting">scripting interface</a> f
 with links to some <a class="reference internal" href="#examples">examples</a> and the <a class="reference internal" href="#references">references</a>.</p>
 </section>
 <section id="data-structure">
-<h2>Data Structure<a class="headerlink" href="#data-structure" title="Permalink to this heading">¶</a></h2>
+<h2>Data Structure<a class="headerlink" href="#data-structure" title="Link to this heading">¶</a></h2>
 <p>The calculator processes data with the following structure:
 either rectangular pixels (grid type data), or finite elements (element type
 data), in a variety of shapes, such as tetrahedra, cubes or hexahedra.</p>
 <p>The scattering length density (SLD) is assumed uniform for each pixel or
 element. Depending on the data format the property is either nuclear (in units
-of 10<sup>-6</sup>Å<sup>-2</sup>) (<a class="reference internal" href="#pdb-files">PDB</a> file) or
+of Å<sup>-2</sup>) (<a class="reference internal" href="#pdb-files">PDB</a> file) or
 magnetic SLDs (<a class="reference internal" href="#omf-files">OMF</a> file) or a combination of both
 (<a class="reference internal" href="#sld-files">SLD</a> and <a class="reference internal" href="#vtk-files">VTK</a> files). For magnetic neutron
 scattering, the <a class="reference internal" href="../Perspectives/Fitting/magnetism/magnetism.html#magnetism"><span class="std std-ref">Polarisation/Magnetic Scattering</span></a> documentation gives further details and
 describes how to construct the various neutron spin resolved scattering cross
 section.</p>
 <section id="grid-type-data">
-<h3>Grid Type Data<a class="headerlink" href="#grid-type-data" title="Permalink to this heading">¶</a></h3>
+<h3>Grid Type Data<a class="headerlink" href="#grid-type-data" title="Link to this heading">¶</a></h3>
 <p>In the simplest case, a space (simulation box) with volume <span class="math notranslate nohighlight">\(V\)</span> can be
 discretized with <span class="math notranslate nohighlight">\(N\)</span> 3-dimensional rectangular pixels.</p>
 <p>The elastic scattering intensity is defined as</p>
 <div class="math notranslate nohighlight">
-\[I(\mathbf{Q}) = \frac{1}{V}\left\lvert\sum_j^Nv_j\beta_j\exp(i\mathbf{Q}\cdot\mathbf{r_j})\right\rvert^2\]</div>
-<p>where <span class="math notranslate nohighlight">\(\beta_j\)</span> and <span class="math notranslate nohighlight">\(\mathbf{r}_j\)</span> are the scattering length density and
+\[I(\mathbf{Q}) = \frac{1}{V}\left\lvert\sum_j^Nv_j\rho_j\exp(i\mathbf{Q}\cdot\mathbf{r_j})\right\rvert^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho_j\)</span> and <span class="math notranslate nohighlight">\(\mathbf{r}_j\)</span> are the scattering length density and
 the position of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span> pixel respectively.</p>
 <p>The total volume <span class="math notranslate nohighlight">\(V_s\)</span> of structures different than the homogenous media is
 equal to</p>
 <div class="math notranslate nohighlight">
 \[V_s = \sum_j^N v_j\]</div>
-<p>for <span class="math notranslate nohighlight">\(\beta_j \ne 0\)</span> where <span class="math notranslate nohighlight">\(v_j\)</span> is the volume of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span>
+<p>for <span class="math notranslate nohighlight">\(\rho_j \ne 0\)</span> where <span class="math notranslate nohighlight">\(v_j\)</span> is the volume of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span>
 pixel or natural atomic volume (for .pdb). For atomic structures
-<span class="math notranslate nohighlight">\(v_j \beta_j \equiv b_j\)</span> is the scattering length of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span> atom and
+<span class="math notranslate nohighlight">\(v_j \rho_j \equiv b_j\)</span> is the scattering length of the <span class="math notranslate nohighlight">\(j^\text{th}\)</span> atom and
 the natural atomic volume is given by:</p>
 <blockquote>
 <div><p><span class="math notranslate nohighlight">\(\frac{\text{atomic mass}}{\text{natural molar density}\times\text{Avogadro number}}\)</span></p>
@@ -107,27 +107,27 @@ PDB file) to get the right normalization.</p>
 <p>For non-magnetic, grid-type data the 1D orientationally averaged scatting intensity profile
 can also be calculated using the <em>Debye full average</em> option which uses the Debye formula:</p>
 <div class="math notranslate nohighlight">
-\[I(\left\lvert\mathbf{Q}\right\rvert) = \frac{1}{V}\sum_j^N v_j\beta_j \sum_k^N v_k\beta_k
+\[I(\left\lvert\mathbf{Q}\right\rvert) = \frac{1}{V}\sum_j^N v_j\rho_j \sum_k^N v_k\rho_k
 \frac{\sin\left(\left\lvert\mathbf{Q}\right\rvert\left\lvert\mathbf{r_j}-\mathbf{r_k}\right\rvert\right)}
 {\left\lvert\mathbf{Q}\right\rvert\left\lvert\mathbf{r_j}-\mathbf{r_k}\right\rvert}\]</div>
-<p><em>NOTE:</em> <span class="math notranslate nohighlight">\(\beta_j\)</span> <em>displayed in the GUI may be incorrect (input
+<p><em>NOTE:</em> <span class="math notranslate nohighlight">\(\rho_j\)</span> <em>displayed in the GUI may be incorrect (input
 parameter</em> solvent_SLD <em>) but this will not affect the scattering computation if
 the correction of the total volume V is made.</em></p>
 </section>
 <section id="element-type-data">
-<h3>Element Type Data<a class="headerlink" href="#element-type-data" title="Permalink to this heading">¶</a></h3>
+<h3>Element Type Data<a class="headerlink" href="#element-type-data" title="Link to this heading">¶</a></h3>
 <p>The simulation box can be described as collection of finite elements forming a mesh.
 For example this cube is formed of five finite elements:</p>
 <figure class="align-center">
 <img alt="../../../_images/vtk_mesh_example.png" src="../../../_images/vtk_mesh_example.png" />
 </figure>
 <p>Each element has an associated scattering length
-density (<span class="math notranslate nohighlight">\(\beta_j\)</span>) for the occupied space <span class="math notranslate nohighlight">\(V_j\)</span> and the elastic scattering
+density (<span class="math notranslate nohighlight">\(\rho_j\)</span>) for the occupied space <span class="math notranslate nohighlight">\(V_j\)</span> and the elastic scattering
 intensity is calculated as</p>
 <div class="math notranslate nohighlight">
-\[I(\mathbf{Q}) = \frac{1}{V}\left\lvert\sum_j^N\beta_j\iiint\limits_{V_j}\exp(i\mathbf{Q}\cdot\mathbf{r_j})\text{d}V\right\rvert^2\]</div>
+\[I(\mathbf{Q}) = \frac{1}{V}\left\lvert\sum_j^N\rho_j\iiint\limits_{V_j}\exp(i\mathbf{Q}\cdot\mathbf{r_j})\text{d}V\right\rvert^2\]</div>
 <p>Note that the Fourier transform is calculated over each element - allowing
-regions of space with little variation in <span class="math notranslate nohighlight">\(\beta\)</span> to have larger finite
+regions of space with little variation in <span class="math notranslate nohighlight">\(\rho\)</span> to have larger finite
 elements, and regions of interest to have much smaller finite elements, and
 hence more detail.</p>
 <p>In Sasview an algorithm is implemented to calculate the Fourier transform over
@@ -135,7 +135,7 @@ polygons utilizing the divergence theorem as described in Maranville
 <a class="footnote-reference brackets" href="#maranville1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 </section>
 <section id="coordinate-systems">
-<h3>Coordinate Systems<a class="headerlink" href="#coordinate-systems" title="Permalink to this heading">¶</a></h3>
+<h3>Coordinate Systems<a class="headerlink" href="#coordinate-systems" title="Link to this heading">¶</a></h3>
 <p>The general scattering calculator offers 3 different coordinate systems to
 enable any orientation of the sample, the magnetic field and polarisation, as
 well as the surrounding sample environment with respect to the instrument
@@ -175,18 +175,18 @@ the environment coordinates relative to the beamline:</p>
 </section>
 </section>
 <section id="magnetic-scattering">
-<h2>Magnetic Scattering<a class="headerlink" href="#magnetic-scattering" title="Permalink to this heading">¶</a></h2>
+<h2>Magnetic Scattering<a class="headerlink" href="#magnetic-scattering" title="Link to this heading">¶</a></h2>
 <p>For more information about polarised and magnetic scattering, see
 the <a class="reference internal" href="../Perspectives/Fitting/magnetism/magnetism.html#magnetism"><span class="std std-ref">Polarisation/Magnetic Scattering</span></a> documentation.</p>
 </section>
 <section id="how-to-use-the-tool">
-<h2>How to use the Tool<a class="headerlink" href="#how-to-use-the-tool" title="Permalink to this heading">¶</a></h2>
+<h2>How to use the Tool<a class="headerlink" href="#how-to-use-the-tool" title="Link to this heading">¶</a></h2>
 <p>Upon loading the calculator we are shown the following interface:</p>
 <figure class="align-center">
-<img alt="../../../_images/gen_gui_help.png" src="../../../_images/gen_gui_help.png" />
+<img alt="../../../_images/GSC_Oct282023_GUI_Index2.jpg" src="../../../_images/GSC_Oct282023_GUI_Index2.jpg" />
 </figure>
 <section id="inputs">
-<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><ol class="arabic">
 <li><p>Load .sld, .pdb, .omf or .vtk datafile. Further description of each file
@@ -241,6 +241,7 @@ on each axis.</p></li>
 In some circumstances these textboxes will be highlighted orange, as a
 warning that with the values chosen numerical artefacts may appear due to
 the Nyquist criterion, or simulation box size.</p></li>
+<li><p>When calculating 1D data, Q values are evenly spaced in the log scale if “Log Spacing” box is checked.</p></li>
 </ul>
 </dd>
 </dl>
@@ -249,7 +250,7 @@ the Nyquist criterion, or simulation box size.</p></li>
 </div></blockquote>
 </section>
 <section id="information-panel">
-<h3>Information Panel<a class="headerlink" href="#information-panel" title="Permalink to this heading">¶</a></h3>
+<h3>Information Panel<a class="headerlink" href="#information-panel" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><ol class="arabic simple" start="10">
 <li><p>The number of pixels/elements loaded.</p></li>
@@ -279,14 +280,16 @@ the environment coordinates. The display can be dragged around with the mouse,
 and the mousewheel used to zoom in and out.</p></li>
 <li><p>This choice appears only for grid type data and without magnetic SLD.
 This tool allows to either compute the fully oriented 2D scattering pattern,
-or calculating the 1D orientational averaged intensity <span class="math notranslate nohighlight">\(I(Q)\)</span> by the Debye
-equation.</p></li>
+or calculating the 1D orientational averaged intensity <span class="math notranslate nohighlight">\(I(Q)\)</span> by the Debye equation. One can also choose a compuation option, Debye full avg. w/ <span class="math notranslate nohighlight">\(\beta(Q)\)</span>, to calculate 1D scattering pattern together with <span class="math notranslate nohighlight">\(\beta(Q)\)</span>. <span class="math notranslate nohighlight">\(\beta(Q)\)</span> is needed when fitting scattering patterns of concentrated solutions using the inter-particle structure factor, <span class="math notranslate nohighlight">\(S(Q)\)</span>, with the static decoupling approximation.</p></li>
 <li><p>Starts the computation of the scattering pattern.</p></li>
 <li><p>Reset GUI to the initial state.</p></li>
+<li><p>If a PDB file is loaded, the radius of gyration is calculated and displayed. “Rg-MASS” is the radius of gyration based on the mass of all atoms in a molecule. “RG-SLD” is the radius of gyration based on the scattering length of all atoms.</p></li>
+<li><p>If the option, Debye full avg. w/ <span class="math notranslate nohighlight">\(\beta(Q)\)</span>, is chosen, one has the option to check the box “Export Model”. Once checked, one can input a file name in the box below. During the computation, the program then exports the calculated normalized form factor, <span class="math notranslate nohighlight">\(P(Q)\)</span>, and <span class="math notranslate nohighlight">\(\beta(Q)\)</span> into this file that automatically become a model in the “Plugin Models”. The model name is the same as the file name given in the blox below “Export Model”.</p></li>
 </ol>
 </div></blockquote>
-<p>As an example <a class="reference internal" href="gsc_ex_default_data.html#gsc-ex-default-data"><span class="std std-ref">here</span></a> you can find a simple demonstration of
-the functionality of the Generic scattering calculator using the default
+<p>One example is given here ( Click <a class="reference internal" href="gsc_ex_customModel_data.html#gsc-ex-custommodel-data"><span class="std std-ref">here</span></a> ) to illustrate how to calculate <span class="math notranslate nohighlight">\(P(Q)\)</span> and <span class="math notranslate nohighlight">\(\beta(Q)\)</span> using a PDB file of a protein. These are 1D functions after averaging over all orientiations of proteins. The program can generate a custom model function, which can be used to fit the 1D small angle scattering data.</p>
+<p>One other example ( Click <a class="reference internal" href="gsc_ex_default_data.html#gsc-ex-default-data"><span class="std std-ref">here</span></a> ) is a simple demonstration of
+the functionality of the Generic scattering calculator to calculate the 2D scattering pattern using the default
 starting values with no files loaded.</p>
 <p>After computation the result will appear in the
 <em>Data Explorer</em> panel and can be used further just as any data set in Sasview
@@ -300,9 +303,9 @@ scattering background with hydrogenous materials.</em></p>
 </section>
 </section>
 <section id="file-types">
-<h2>File Types<a class="headerlink" href="#file-types" title="Permalink to this heading">¶</a></h2>
+<h2>File Types<a class="headerlink" href="#file-types" title="Link to this heading">¶</a></h2>
 <section id="sld-files">
-<h3>SLD Files<a class="headerlink" href="#sld-files" title="Permalink to this heading">¶</a></h3>
+<h3>SLD Files<a class="headerlink" href="#sld-files" title="Link to this heading">¶</a></h3>
 <p>An SLD file is a text file format capable of storing grid type data with both
 nuclear and magnetic
 SLDs. The file format for an SLD file is as follows:</p>
@@ -332,7 +335,7 @@ grid - however this is required for the output of the scattering calculator to
 be correct. The program does NOT check this.</p>
 </section>
 <section id="pdb-files">
-<h3>PDB Files<a class="headerlink" href="#pdb-files" title="Permalink to this heading">¶</a></h3>
+<h3>PDB Files<a class="headerlink" href="#pdb-files" title="Link to this heading">¶</a></h3>
 <p>A Protein Data Bank (PDB) file is a text file format which can store atomic
 structure data. The specification is given
 <a class="reference external" href="https://www.wwpdb.org/documentation/file-format">here</a>. This format is read
@@ -344,7 +347,7 @@ from the <a class="reference external" href="https://pypi.org/project/periodicta
 package. CONECT records are only used when drawing the structure.</p>
 </section>
 <section id="omf-files">
-<h3>OMF Files<a class="headerlink" href="#omf-files" title="Permalink to this heading">¶</a></h3>
+<h3>OMF Files<a class="headerlink" href="#omf-files" title="Link to this heading">¶</a></h3>
 <p>The file format OMF is designated to store spatial magnetisation vector fields.
 The specification can be found
 <a class="reference external" href="https://math.nist.gov/oommf/doc/userguide20a2/userguide/Vector_Field_File_Format_OV.html">here</a>.
@@ -361,7 +364,7 @@ the data must be stored as ‘Text’ (ASCII format), Sasview cannot read in bin
 data.</p>
 </section>
 <section id="vtk-files">
-<h3>VTK Files<a class="headerlink" href="#vtk-files" title="Permalink to this heading">¶</a></h3>
+<h3>VTK Files<a class="headerlink" href="#vtk-files" title="Link to this heading">¶</a></h3>
 <p>The VTK file format is a very broad set of file formats, specifically Sasview
 currently reads in “legacy” .vtk files, up to version 3.0.
 The file specification is available <a class="reference external" href="https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf">here</a>. Currently
@@ -378,8 +381,8 @@ components or as a set of VECTOR data. If the data is provided to the points of
 the mesh and not the cells, a weighted average is taken to find an estimate for
 the SLD at the centre of each element. This weighted average is given by:</p>
 <div class="math notranslate nohighlight">
-\[\bar{\beta} = \frac{\sum\limits_j^n \beta_j r_j^{\prime -2}}{\sum\limits_j^nr_j^{\prime -2}}\]</div>
-<p>Where <span class="math notranslate nohighlight">\(\bar{\beta}\)</span> is the estimated SLD for an element and <span class="math notranslate nohighlight">\(\beta_j\)</span>, <span class="math notranslate nohighlight">\(r'_j\)</span>
+\[\bar{\rho} = \frac{\sum\limits_j^n \rho_j r_j^{\prime -2}}{\sum\limits_j^nr_j^{\prime -2}}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\bar{\rho}\)</span> is the estimated SLD for an element and <span class="math notranslate nohighlight">\(\rho_j\)</span>, <span class="math notranslate nohighlight">\(r'_j\)</span>
 are the SLDs and distances from the centre of the element of each of the <span class="math notranslate nohighlight">\(n\)</span>
 vertices of the element respectively. <span class="math notranslate nohighlight">\(r'_j\)</span> is taken as:</p>
 <div class="math notranslate nohighlight">
@@ -388,7 +391,7 @@ vertices of the element respectively. <span class="math notranslate nohighlight"
 </section>
 </section>
 <section id="scripting">
-<h2>Scripting<a class="headerlink" href="#scripting" title="Permalink to this heading">¶</a></h2>
+<h2>Scripting<a class="headerlink" href="#scripting" title="Link to this heading">¶</a></h2>
 <p>For more advanced uses the GUI version of the scattering calculator may not
 suffice or can be very cumbersome without scripting, for example the
 orientational average of a magnetic structure, or rocking scans around specific
@@ -444,7 +447,7 @@ display/process/save it.</p></li>
 </ol>
 </div></blockquote>
 <section id="data-creation">
-<h3>1) Data creation<a class="headerlink" href="#data-creation" title="Permalink to this heading">¶</a></h3>
+<h3>1) Data creation<a class="headerlink" href="#data-creation" title="Link to this heading">¶</a></h3>
 <p>Loading data from VTK, PDB or SLD files is easily done with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vtkloader</span> <span class="o">=</span> <span class="n">sas_gen</span><span class="o">.</span><span class="n">VTKReader</span><span class="p">()</span>
 <span class="n">vtkData</span> <span class="o">=</span> <span class="n">vtkloader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;filepath to vtk file&quot;</span><span class="p">)</span> <span class="c1"># a MagSLD object</span>
@@ -505,7 +508,7 @@ magnetic SLD:</p>
 </div>
 </section>
 <section id="model-creation">
-<h3>2) Model creation<a class="headerlink" href="#model-creation" title="Permalink to this heading">¶</a></h3>
+<h3>2) Model creation<a class="headerlink" href="#model-creation" title="Link to this heading">¶</a></h3>
 <p>Once we have created our data, we create a <cite>GenSAS</cite> model to carry out the
 computation.
 We can simply create an instance of the <cite>GenSAS</cite> class and load in our <cite>MagSLD</cite>
@@ -568,7 +571,7 @@ euler angles:</p>
 </div>
 </section>
 <section id="intensity-calculation">
-<h3>3) Intensity calculation<a class="headerlink" href="#intensity-calculation" title="Permalink to this heading">¶</a></h3>
+<h3>3) Intensity calculation<a class="headerlink" href="#intensity-calculation" title="Link to this heading">¶</a></h3>
 <p>As in the GUI two different types of calculation can be carried out. A full 2D
 scattering pattern can be calculated in the <span class="math notranslate nohighlight">\(UV\)</span> plane with <span class="math notranslate nohighlight">\(Q_x\)</span> along the <span class="math notranslate nohighlight">\(U\)</span>
 axis and <span class="math notranslate nohighlight">\(Q_y\)</span> along the <span class="math notranslate nohighlight">\(V\)</span> axis, or a 1D Debye average can be calculated.
@@ -613,7 +616,7 @@ various magnitudes of <span class="math notranslate nohighlight">\(Q\)</span>.</
 </section>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="gsc_ex_default_data.html">Example 1: The Default Data</a></li>
@@ -627,7 +630,7 @@ various magnitudes of <span class="math notranslate nohighlight">\(Q\)</span>.</
 </div>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><aside class="footnote-list brackets">
 <aside class="footnote brackets" id="maranville1" role="doc-footnote">
@@ -648,6 +651,7 @@ transform of polygonal areas and volumes
 <div class="line-block">
 <div class="line">2015-05-01 Steve King</div>
 <div class="line">2021-09-14 Robert Bourne</div>
+<div class="line">2023-10-30 Yun Liu</div>
 </div>
 </section>
 </section>
@@ -657,12 +661,12 @@ transform of polygonal areas and volumes
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Generic SANS Calculator Tool</a><ul>
+<li><a class="reference internal" href="#">Generic SAS Calculator Tool</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#data-structure">Data Structure</a><ul>
 <li><a class="reference internal" href="#grid-type-data">Grid Type Data</a></li>
@@ -713,7 +717,7 @@ transform of polygonal areas and volumes
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
@@ -721,13 +725,13 @@ transform of polygonal areas and volumes
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -742,15 +746,15 @@ transform of polygonal areas and volumes
         <li class="right" >
           <a href="resolution_calculator_help.html" title="Q Resolution Estimator Tool"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../tools.html" >Tools &amp; Utilities</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Generic SANS Calculator Tool</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Generic SAS Calculator Tool</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>

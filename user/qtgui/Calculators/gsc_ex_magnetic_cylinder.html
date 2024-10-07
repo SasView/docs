@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example 2: A Magnetic Cylinder &#8212; SasView 5.0.6 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css" />
+    <title>Example 2: A Magnetic Cylinder &#8212; SasView 6.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=def86cc0" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -19,7 +19,7 @@
     <link rel="next" title="Example 3: Magnetic Spheres" href="gsc_ex_magnetic_spheres.html" />
     <link rel="prev" title="Example 1: Default Calculator Data" href="gsc_ex_default_data.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -34,10 +34,10 @@
         <li class="right" >
           <a href="gsc_ex_default_data.html" title="Example 1: Default Calculator Data"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../tools.html" >Tools &amp; Utilities</a> &#187;</li>
-          <li class="nav-item nav-item-3"><a href="sas_calculator_help.html" accesskey="U">Generic SANS Calculator Tool</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="sas_calculator_help.html" accesskey="U">Generic SAS Calculator Tool</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Example 2: A Magnetic Cylinder</a></li> 
       </ul>
     </div>  
@@ -48,9 +48,10 @@
           <div class="body" role="main">
             
   <section id="example-2-a-magnetic-cylinder">
-<span id="gsc-ex-magnetic-cylinder"></span><h1>Example 2: A Magnetic Cylinder<a class="headerlink" href="#example-2-a-magnetic-cylinder" title="Permalink to this heading">¶</a></h1>
-<p>In this example we will generate an SLD file describing a single solid
+<span id="gsc-ex-magnetic-cylinder"></span><h1>Example 2: A Magnetic Cylinder<a class="headerlink" href="#example-2-a-magnetic-cylinder" title="Link to this heading">¶</a></h1>
+<p>In this example we will use an SLD file describing a single solid
 cylinder, with both nuclear and magnetic scattering length densities (SLDs).
+The mag. cylinder SLD file can be found in the test folder for coordinate data.
 We will then use the calculator to create scattering intensity patterns for
 both a non-magnetised and magnetised cylinder.</p>
 <p>Our cylinder will have a radius of 20Å and a
@@ -67,8 +68,7 @@ a constant magnetic scattering length density of
 <figure class="align-default">
 <img alt="../../../_images/cylinder_graphic.png" src="../../../_images/cylinder_graphic.png" />
 </figure>
-<p>The following code generates a SLD file describing such a sample, using the SLD
-file format as given in the documentation for the generic scattering
+<p>For completeness, the following code generates the SLD file
 calculator:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -96,7 +96,7 @@ calculator:</p>
 around the cylinder slows down the computation, as such pixels are
 stripped before the calculation begins.</p>
 <section id="structural-scattering">
-<h2>Structural Scattering<a class="headerlink" href="#structural-scattering" title="Permalink to this heading">¶</a></h2>
+<h2>Structural Scattering<a class="headerlink" href="#structural-scattering" title="Link to this heading">¶</a></h2>
 <p>First we consider the scattering pattern of a non-magnetic cylinder. We open
 the scattering calculator and use the nuclear datafile <cite>load</cite> button to load
 the nuclear SLD for this sample into the calculator.</p>
@@ -164,7 +164,7 @@ adjust the range of the color map as before - in this case to the range from
 </figure>
 </section>
 <section id="magnetic-scattering">
-<h2>Magnetic Scattering<a class="headerlink" href="#magnetic-scattering" title="Permalink to this heading">¶</a></h2>
+<h2>Magnetic Scattering<a class="headerlink" href="#magnetic-scattering" title="Link to this heading">¶</a></h2>
 <p>We will now add the magnetic SLD to the cylinder. We load our magnetic cylinder
 SLD file into the magnetic datafile slot, and alter the magnetic beamline
 settings
@@ -209,7 +209,7 @@ match):</p>
 </figure>
 <p>Again the value of <span class="math notranslate nohighlight">\(\chi^2 = 1.92\times 10^{-7}\)</span> shows an excellent fit.</p>
 <section id="references">
-<h3>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h3>
+<h3>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h3>
 <blockquote>
 <div><aside class="footnote-list brackets">
 <aside class="footnote brackets" id="mrk1969" role="doc-footnote">
@@ -233,7 +233,7 @@ match):</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
@@ -266,7 +266,7 @@ match):</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
@@ -274,13 +274,13 @@ match):</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -295,16 +295,16 @@ match):</p>
         <li class="right" >
           <a href="gsc_ex_default_data.html" title="Example 1: Default Calculator Data"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../tools.html" >Tools &amp; Utilities</a> &#187;</li>
-          <li class="nav-item nav-item-3"><a href="sas_calculator_help.html" >Generic SANS Calculator Tool</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="sas_calculator_help.html" >Generic SAS Calculator Tool</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Example 2: A Magnetic Cylinder</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    &#169; Copyright 2024, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.0.2.
     </div>
   </body>
 </html>
