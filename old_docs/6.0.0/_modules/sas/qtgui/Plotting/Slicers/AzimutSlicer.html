@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sas.qtgui.Plotting.Slicers.AzimutSlicer &#8212; SasView 5.0.6 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/sphinx_highlight.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" accesskey="U">sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Plotting.Slicers.AzimutSlicer</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Plotting.Slicers.AzimutSlicer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># TODO: the line slicer should listen to all 2DREFRESH events, get the data and slice it</span>
+<span class="c1">#       before pushing a new 1D data update.</span>
+<span class="c1">#</span>
+<span class="c1"># TODO: NEED MAJOR REFACTOR</span>
+<span class="c1">#</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.Arc</span> <span class="kn">import</span> <span class="n">ArcInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.RadiusInteractor</span> <span class="kn">import</span> <span class="n">RadiusInteractor</span>
+<span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.Slicers.BaseInteractor</span> <span class="kn">import</span> <span class="n">BaseInteractor</span>
+
+<div class="viewcode-block" id="SectorInteractor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor">[docs]</a><span class="k">class</span> <span class="nc">SectorInteractor</span><span class="p">(</span><span class="n">BaseInteractor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select an annulus through a 2D plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SectorInteractor.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">connect</span>
+
+        <span class="c1"># # Number of points on the plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">theta1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="n">theta2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span>
+
+        <span class="c1"># Inner circle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span> <span class="o">=</span> <span class="n">ArcInteractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">subplot</span><span class="p">,</span>
+                                          <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span><span class="p">,</span>
+                                          <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span>
+                                          <span class="n">theta1</span><span class="o">=</span><span class="n">theta1</span><span class="p">,</span>
+                                          <span class="n">theta2</span><span class="o">=</span><span class="n">theta2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span> <span class="o">=</span> <span class="n">ArcInteractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">subplot</span><span class="p">,</span>
+                                          <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                          <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">/</span> <span class="mf">1.8</span><span class="p">,</span>
+                                          <span class="n">theta1</span><span class="o">=</span><span class="n">theta1</span><span class="p">,</span>
+                                          <span class="n">theta2</span><span class="o">=</span><span class="n">theta2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">qmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmax</span> <span class="o">*</span> <span class="mf">1.2</span>
+        <span class="c1"># self.outer_circle.set_cursor(self.base.qmax/1.8, 0)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span> <span class="o">=</span> <span class="n">RadiusInteractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">subplot</span><span class="p">,</span>
+                                           <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                           <span class="n">arc1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="p">,</span>
+                                           <span class="n">arc2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="p">,</span>
+                                           <span class="n">theta</span><span class="o">=</span><span class="n">theta1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span> <span class="o">=</span> <span class="n">RadiusInteractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">subplot</span><span class="p">,</span>
+                                          <span class="n">zorder</span><span class="o">=</span><span class="n">zorder</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                          <span class="n">arc1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="p">,</span>
+                                          <span class="n">arc2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="p">,</span>
+                                          <span class="n">theta</span><span class="o">=</span><span class="n">theta2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.set_layer"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.set_layer">[docs]</a>    <span class="k">def</span> <span class="nf">set_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernum</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.clear"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_markers</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.update"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Respond to changes in the model by recalculating the profiles and</span>
+<span class="sd">        resetting the widgets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update locations</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="c1"># print &quot;inner circle has moved&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="c1"># print &quot;outer circle has moved&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+            <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="c1"># print &quot;right edge has moved&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">theta1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">(),</span>
+                                     <span class="n">theta2</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">theta1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">(),</span>
+                                     <span class="n">theta2</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span>  <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">has_move</span><span class="p">:</span>
+            <span class="c1"># print &quot;left Edge has moved&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">theta1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">theta2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">theta1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">theta2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.save"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remember the roughness for this layer and the next so that we</span>
+<span class="sd">        can restore on Esc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">freeze_axes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SectorInteractor._post_data"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor._post_data">[docs]</a>    <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.post_data"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.post_data">[docs]</a>    <span class="k">def</span> <span class="nf">post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_sector</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; post data averaging in Q&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">():</span>
+            <span class="n">rmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+            <span class="n">rmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+            <span class="n">rmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">():</span>
+            <span class="n">phimin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span>
+            <span class="n">phimax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">phimin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span>
+            <span class="n">phimax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span>
+
+        <span class="n">sect</span> <span class="o">=</span> <span class="n">new_sector</span><span class="p">(</span><span class="n">r_min</span><span class="o">=</span><span class="n">rmin</span><span class="p">,</span> <span class="n">r_max</span><span class="o">=</span><span class="n">rmax</span><span class="p">,</span>
+                          <span class="n">phi_min</span><span class="o">=</span><span class="n">phimin</span><span class="p">,</span> <span class="n">phi_max</span><span class="o">=</span><span class="n">phimax</span><span class="p">)</span>
+        <span class="n">sector</span> <span class="o">=</span> <span class="n">sect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">sas.qtgui.Plotting.PlotterData</span> <span class="kn">import</span> <span class="n">Data1D</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="s2">&quot;dxl&quot;</span><span class="p">):</span>
+            <span class="n">dxl</span> <span class="o">=</span> <span class="n">sector</span><span class="o">.</span><span class="n">dxl</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dxl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="s2">&quot;dxw&quot;</span><span class="p">):</span>
+            <span class="n">dxw</span> <span class="o">=</span> <span class="n">sector</span><span class="o">.</span><span class="n">dxw</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dxw</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">new_plot</span> <span class="o">=</span> <span class="n">Data1D</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sector</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">sector</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="n">sector</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span>
+                          <span class="n">dxl</span><span class="o">=</span><span class="n">dxl</span><span class="p">,</span> <span class="n">dxw</span><span class="o">=</span><span class="n">dxw</span><span class="p">)</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_sector</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> \
+                        <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">source</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># print &quot;loader output.detector&quot;,output.source</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">detector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">detector</span>
+        <span class="c1"># If the data file does not tell us what the axes are, just assume...</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">xaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm</span><span class="si">{Q}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">yaxis</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">rm</span><span class="si">{Intensity}</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="s2">&quot;cm^{-1}&quot;</span><span class="p">)</span>
+        <span class="n">new_plot</span><span class="o">.</span><span class="n">group_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_sector</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.validate"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test the proposed new value &quot;value&quot; for row &quot;row&quot; of parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Here, always return true</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.moveend"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.moveend">[docs]</a>    <span class="k">def</span> <span class="nf">moveend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+        <span class="c1">#TODO: why is this empty?</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.restore"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the roughness for this layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.move"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ev</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process move to a new position, making sure that the move is allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.set_cursor"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.set_cursor">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.get_params"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;r_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;r_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">get_radius</span><span class="p">()</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;phi_min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;phi_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">get_angle</span><span class="p">()</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;nbins&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.set_params"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.set_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># print &quot;setparams on main slicer &quot;,params</span>
+        <span class="n">inner</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;r_min&quot;</span><span class="p">]</span>
+        <span class="n">outer</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;r_max&quot;</span><span class="p">]</span>
+        <span class="n">phi_min</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;phi_min&quot;</span><span class="p">]</span>
+        <span class="n">phi_max</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;phi_max&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;nbins&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_circle</span><span class="o">.</span><span class="n">set_cursor</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">phi_min</span><span class="p">,</span> <span class="n">phi_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_circle</span><span class="o">.</span><span class="n">set_cursor</span><span class="p">(</span><span class="n">outer</span><span class="p">,</span> <span class="n">phi_min</span><span class="p">,</span> <span class="n">phi_max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbins</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_edge</span><span class="o">.</span><span class="n">set_cursor</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">outer</span><span class="p">,</span> <span class="n">phi_min</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_edge</span><span class="o">.</span><span class="n">set_cursor</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">outer</span><span class="p">,</span> <span class="n">phi_max</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.freeze_axes"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.freeze_axes">[docs]</a>    <span class="k">def</span> <span class="nf">freeze_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">freeze_axes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.thaw_axes"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.thaw_axes">[docs]</a>    <span class="k">def</span> <span class="nf">thaw_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">thaw_axes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractor.draw"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractor.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="SectorInteractorQ"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorQ">[docs]</a><span class="k">class</span> <span class="nc">SectorInteractorQ</span><span class="p">(</span><span class="n">SectorInteractor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SectorInteractorQ.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorQ.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SectorInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractorQ._post_data"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorQ._post_data">[docs]</a>    <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">SectorQ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">SectorQ</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SectorInteractorPhi"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorPhi">[docs]</a><span class="k">class</span> <span class="nc">SectorInteractorPhi</span><span class="p">(</span><span class="n">SectorInteractor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SectorInteractorPhi.__init__"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorPhi.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SectorInteractor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_post_data</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SectorInteractorPhi._post_data"><a class="viewcode-back" href="../../../../../dev/sasview-api/sas.qtgui.Plotting.Slicers.html#sas.qtgui.Plotting.Slicers.AzimutSlicer.SectorInteractorPhi._post_data">[docs]</a>    <span class="k">def</span> <span class="nf">_post_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">sas.sascalc.dataloader.manipulations</span> <span class="kn">import</span> <span class="n">SectorPhi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_data</span><span class="p">(</span><span class="n">SectorPhi</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../../sas.html" >sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Plotting.Slicers.AzimutSlicer</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    </div>
+  </body>
+</html>

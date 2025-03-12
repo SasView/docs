@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sas.qtgui.Utilities.CodeEditor &#8212; SasView 5.0.6 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/sphinx_highlight.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" accesskey="U">sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Utilities.CodeEditor</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for sas.qtgui.Utilities.CodeEditor</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QRect</span><span class="p">,</span> <span class="n">QSize</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QPlainTextEdit</span><span class="p">,</span> <span class="n">QTextEdit</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QPainter</span><span class="p">,</span> <span class="n">QTextFormat</span>
+
+
+<div class="viewcode-block" id="QLineNumberArea"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QLineNumberArea">[docs]</a><span class="k">class</span> <span class="nc">QLineNumberArea</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="QLineNumberArea.__init__"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QLineNumberArea.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">editor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">codeEditor</span> <span class="o">=</span> <span class="n">editor</span></div>
+
+<div class="viewcode-block" id="QLineNumberArea.sizeHint"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QLineNumberArea.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QLineNumberArea.paintEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QLineNumberArea.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">codeEditor</span><span class="o">.</span><span class="n">lineNumberAreaPaintEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="QCodeEditor"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor">[docs]</a><span class="k">class</span> <span class="nc">QCodeEditor</span><span class="p">(</span><span class="n">QPlainTextEdit</span><span class="p">):</span>
+<div class="viewcode-block" id="QCodeEditor.__init__"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span> <span class="o">=</span> <span class="n">QLineNumberArea</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLineWrapMode</span><span class="p">(</span><span class="n">QPlainTextEdit</span><span class="o">.</span><span class="n">NoWrap</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blockCountChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberAreaWidth</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateRequest</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberArea</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursorPositionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">highlightCurrentLine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberAreaWidth</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.lineNumberAreaWidth"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.lineNumberAreaWidth">[docs]</a>    <span class="k">def</span> <span class="nf">lineNumberAreaWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">digits</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">max_value</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockCount</span><span class="p">())</span>
+        <span class="k">while</span> <span class="n">max_value</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">max_value</span> <span class="o">/=</span> <span class="mi">10</span>
+            <span class="n">digits</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># line number display width padded with extra pixels.</span>
+        <span class="c1"># Chosen to &quot;look nice&quot;, hence magic numbers</span>
+        <span class="n">space</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="s1">&#39;9&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="n">digits</span>
+        <span class="k">return</span> <span class="n">space</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.updateLineNumberAreaWidth"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.updateLineNumberAreaWidth">[docs]</a>    <span class="k">def</span> <span class="nf">updateLineNumberAreaWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setViewportMargins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.updateLineNumberArea"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.updateLineNumberArea">[docs]</a>    <span class="k">def</span> <span class="nf">updateLineNumberArea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">dy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateLineNumberAreaWidth</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.resizeEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">cr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contentsRect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">left</span><span class="p">(),</span> <span class="n">cr</span><span class="o">.</span><span class="n">top</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberAreaWidth</span><span class="p">(),</span> <span class="n">cr</span><span class="o">.</span><span class="n">height</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.highlightCurrentLine"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.highlightCurrentLine">[docs]</a>    <span class="k">def</span> <span class="nf">highlightCurrentLine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">extraSelections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isReadOnly</span><span class="p">():</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">QTextEdit</span><span class="o">.</span><span class="n">ExtraSelection</span><span class="p">()</span>
+            <span class="n">lineColor</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">yellow</span><span class="p">)</span><span class="o">.</span><span class="n">lighter</span><span class="p">(</span><span class="mi">160</span><span class="p">)</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">setBackground</span><span class="p">(</span><span class="n">lineColor</span><span class="p">)</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">setProperty</span><span class="p">(</span><span class="n">QTextFormat</span><span class="o">.</span><span class="n">FullWidthSelection</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">textCursor</span><span class="p">()</span>
+            <span class="n">selection</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">clearSelection</span><span class="p">()</span>
+            <span class="n">extraSelections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setExtraSelections</span><span class="p">(</span><span class="n">extraSelections</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QCodeEditor.lineNumberAreaPaintEvent"><a class="viewcode-back" href="../../../../dev/sasview-api/sas.qtgui.Utilities.html#sas.qtgui.Utilities.CodeEditor.QCodeEditor.lineNumberAreaPaintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">lineNumberAreaPaintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">painter</span> <span class="o">=</span> <span class="n">QPainter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="p">)</span>
+
+        <span class="n">painter</span><span class="o">.</span><span class="n">fillRect</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">(),</span> <span class="n">Qt</span><span class="o">.</span><span class="n">lightGray</span><span class="p">)</span>
+
+        <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstVisibleBlock</span><span class="p">()</span>
+        <span class="n">blockNumber</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">blockNumber</span><span class="p">()</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingGeometry</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">translated</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contentOffset</span><span class="p">())</span><span class="o">.</span><span class="n">top</span><span class="p">()</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingRect</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+
+        <span class="c1"># Just to make sure I use the right font</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fontMetrics</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">block</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">top</span> <span class="o">&lt;=</span> <span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">bottom</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bottom</span> <span class="o">&gt;=</span> <span class="n">event</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">top</span><span class="p">()):</span>
+                <span class="n">number</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">blockNumber</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">black</span><span class="p">)</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineNumberArea</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">height</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+
+            <span class="n">block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">bottom</span>
+            <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockBoundingRect</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+            <span class="n">blockNumber</span> <span class="o">+=</span> <span class="mi">1</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QApplication</span>
+
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">codeEditor</span> <span class="o">=</span> <span class="n">QCodeEditor</span><span class="p">()</span>
+    <span class="n">codeEditor</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 5.0.6 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../../sas.html" >sas</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sas.qtgui.Utilities.CodeEditor</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    </div>
+  </body>
+</html>
