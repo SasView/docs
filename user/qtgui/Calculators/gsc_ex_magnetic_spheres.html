@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example 3: Magnetic Spheres &#8212; SasView 6.0.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <title>Example 3: Magnetic Spheres &#8212; SasView 6.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/classic.css?v=2bf1fcf8" />
     
-    <script src="../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../_static/documentation_options.js?v=b6ed0530"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="gsc_ex_magnetic_cylinder.html" title="Example 2: A Magnetic Cylinder"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../tools.html" >Tools &amp; Utilities</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas_calculator_help.html" accesskey="U">Generic SAS Calculator Tool</a> &#187;</li>
@@ -78,16 +78,16 @@ b_H\left( \widetilde{N}\widetilde{M}_x^* + \widetilde{N}^*\widetilde{M}_x \right
 </ul>
 </div></blockquote>
 <p>The code is as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">jv</span><span class="p">,</span> <span class="n">gamma</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">jv</span><span class="p">,</span> <span class="n">gamma</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
 
-<span class="k">def</span> <span class="nf">fourier</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span> <span class="c1"># F.T. of sphere radius 0.5</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fourier</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span> <span class="c1"># F.T. of sphere radius 0.5</span>
     <span class="k">return</span> <span class="n">mag</span><span class="o">*</span><span class="p">((</span><span class="mi">4</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="n">gamma</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">jv</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float_power</span><span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="mf">4.0</span><span class="p">,</span> <span class="mi">3</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">/</span><span class="mf">8.0</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">cross_section</span><span class="p">(</span><span class="n">Qx</span><span class="p">,</span> <span class="n">Qy</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span> <span class="c1"># the result for the ++ cross-section</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cross_section</span><span class="p">(</span><span class="n">Qx</span><span class="p">,</span> <span class="n">Qy</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span> <span class="c1"># the result for the ++ cross-section</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">Qy</span><span class="p">,</span> <span class="n">Qx</span><span class="p">)</span>
     <span class="n">Q</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">Qx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">Qy</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Q</span><span class="p">)))</span>
@@ -127,13 +127,13 @@ b_H\left( \widetilde{N}\widetilde{M}_x^* + \widetilde{N}^*\widetilde{M}_x \right
 strength and nuclear SLD can be found in the test data folder for coordinate data.
 For completeness, we provide the script to generate the .vtk files describing the magnetised
 spheres. For this we will use netgen, and the following python script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ngsolve</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">ngsolve.comp</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">ngsolve.solve</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">ngsolve.utils</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">netgen.csg</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">import</span> <span class="nn">netgen.gui</span>
-<span class="kn">from</span> <span class="nn">netgen.meshing</span> <span class="kn">import</span> <span class="n">MeshingParameters</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ngsolve</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ngsolve.comp</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ngsolve.solve</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ngsolve.utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netgen.csg</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">netgen.gui</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">netgen.meshing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeshingParameters</span>
 
 <span class="n">box</span> <span class="o">=</span> <span class="n">OrthoBrick</span><span class="p">(</span><span class="n">Pnt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="n">Pnt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">bc</span><span class="p">(</span><span class="s2">&quot;outer&quot;</span><span class="p">)</span>
 <span class="n">magnet</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span><span class="n">Pnt</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),</span><span class="mf">0.5</span><span class="p">)</span>
@@ -224,16 +224,16 @@ generic scattering calculator. If we wished to make a quantitative analysis we c
 code used to generate the analytical plots to compare the results pixel by pixel. We can save the
 output from the scattering calculator by right clicking the plot and selecting <cite>Save Points as a File</cite>,
 and then read this data into a python script:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">jv</span><span class="p">,</span> <span class="n">gamma</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">jv</span><span class="p">,</span> <span class="n">gamma</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
 
-<span class="k">def</span> <span class="nf">fourier</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span> <span class="c1"># F.T. of sphere radius 0.5</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fourier</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">Q</span><span class="p">):</span> <span class="c1"># F.T. of sphere radius 0.5</span>
     <span class="k">return</span> <span class="n">mag</span><span class="o">*</span><span class="p">((</span><span class="mi">4</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="n">gamma</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">jv</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float_power</span><span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="mf">4.0</span><span class="p">,</span> <span class="mi">3</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">/</span><span class="mf">8.0</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">cross_section</span><span class="p">(</span><span class="n">Qx</span><span class="p">,</span> <span class="n">Qy</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span> <span class="c1"># the result for the ++ cross-section</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cross_section</span><span class="p">(</span><span class="n">Qx</span><span class="p">,</span> <span class="n">Qy</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span> <span class="c1"># the result for the ++ cross-section</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">Qy</span><span class="p">,</span> <span class="n">Qx</span><span class="p">)</span>
     <span class="n">Q</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">Qx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">Qy</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Q</span><span class="p">)))</span>
@@ -367,7 +367,7 @@ Phys. Rev. B 85, 184417
         <li class="right" >
           <a href="gsc_ex_magnetic_cylinder.html" title="Example 2: A Magnetic Cylinder"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../tools.html" >Tools &amp; Utilities</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas_calculator_help.html" >Generic SAS Calculator Tool</a> &#187;</li>
@@ -375,8 +375,8 @@ Phys. Rev. B 85, 184417
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    &#169; Copyright 2025, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>

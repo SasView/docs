@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Scripting Interface &#8212; SasView 6.0.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <title>Scripting Interface &#8212; SasView 6.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=2bf1fcf8" />
     
-    <script src="../../../../_static/documentation_options.js?v=12958129"></script>
+    <script src="../../../../_static/documentation_options.js?v=b6ed0530"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="plugin.html" title="Writing a Plugin Model"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" accesskey="U">Fitting Documentation</a> &#187;</li>
@@ -91,12 +91,12 @@ model definition and compiling the kernel and
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.data.load_data" title="sasmodels.data.load_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.load_data()</span></code></a> for calling sasview to load the data.</p>
 <p>Usually you will load data via the sasview loader, with the
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.data.load_data" title="sasmodels.data.load_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.load_data()</span></code></a> function.  For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.data</span> <span class="kn">import</span> <span class="n">load_data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_data</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="s2">&quot;sasmodels/example/093191_201.dat&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You may want to apply a data mask, such a beam stop, and trim high <span class="math notranslate nohighlight">\(q\)</span>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sasmodels.data</span> <span class="kn">import</span> <span class="n">set_beam_stop</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_beam_stop</span>
 <span class="n">set_beam_stop</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">qmin</span><span class="p">,</span> <span class="n">qmax</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -107,8 +107,8 @@ even if you simulating experiments prior to making measurements, you still
 need a data object for reference. Use <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data1D" title="sasmodels.data.empty_data1D"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.empty_data1D()</span></code></a>
 or <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.data.empty_data2D" title="sasmodels.data.empty_data2D"><code class="xref py py-func docutils literal notranslate"><span class="pre">data.empty_data2D()</span></code></a> to create a container with a
 given <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(\Delta q/q\)</span>.  For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sasmodels.data</span> <span class="kn">import</span> <span class="n">empty_data1D</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">empty_data1D</span>
 
 <span class="c1"># 120 points logarithmically spaced from 0.005 to 0.2, with dq/q = 5%</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">5e-3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">2e-1</span><span class="p">),</span> <span class="mi">120</span><span class="p">)</span>
@@ -135,14 +135,14 @@ example:</p>
 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">SElength</span><span class="p">)</span>
 <span class="n">err_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">SElength</span><span class="p">)</span><span class="o">*</span><span class="mf">0.03</span>
 
-<span class="k">class</span> <span class="nc">Source</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Source</span><span class="p">:</span>
     <span class="n">wavelength</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># [A]</span>
     <span class="n">wavelength_unit</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span>
-<span class="k">class</span> <span class="nc">Sample</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Sample</span><span class="p">:</span>
     <span class="n">zacceptance</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># [A^-1]</span>
     <span class="n">thickness</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># [cm]</span>
 
-<span class="k">class</span> <span class="nc">SESANSData1D</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SESANSData1D</span><span class="p">:</span>
     <span class="c1">#q_zmax = 0.23 # [A^-1]</span>
     <span class="n">lam</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># [nm]</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">SElength</span>
@@ -164,10 +164,10 @@ the model for various parameters using
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.direct_model.DirectModel" title="sasmodels.direct_model.DirectModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">direct_model.DirectModel</span></code></a>.  The resulting object <em>f</em>
 will be callable as <em>f(par=value, …)</em>, returning the <span class="math notranslate nohighlight">\(I(q)\)</span> for the <span class="math notranslate nohighlight">\(q\)</span>
 values in the data.  For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sasmodels.data</span> <span class="kn">import</span> <span class="n">empty_data1D</span>
-<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">load_model</span>
-<span class="kn">from</span> <span class="nn">sasmodels.direct_model</span> <span class="kn">import</span> <span class="n">DirectModel</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">empty_data1D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.direct_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">DirectModel</span>
 
 <span class="c1"># 120 points logarithmically spaced from 0.005 to 0.2, with dq/q = 5%</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">5e-3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">2e-1</span><span class="p">),</span> <span class="mi">120</span><span class="p">)</span>
@@ -194,11 +194,11 @@ values in the data.  For example:</p>
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.bumps_model.Experiment" title="sasmodels.bumps_model.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">bumps_model.Experiment</span></code></a> that you can fit with the <em>bumps</em>
 interface. Here is an example from the <em>example</em> directory such as
 <em>example/model.py</em>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">bumps.names</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">load_model</span>
-<span class="kn">from</span> <span class="nn">sasmodels.bumps_model</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Experiment</span>
-<span class="kn">from</span> <span class="nn">sasmodels.data</span> <span class="kn">import</span> <span class="n">load_data</span><span class="p">,</span> <span class="n">set_beam_stop</span><span class="p">,</span> <span class="n">set_top</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bumps.names</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.bumps_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Experiment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_data</span><span class="p">,</span> <span class="n">set_beam_stop</span><span class="p">,</span> <span class="n">set_top</span>
 
 <span class="sd">&quot;&quot;&quot; IMPORT THE DATA USED &quot;&quot;&quot;</span>
 <span class="n">radial_data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;DEC07267.DAT&#39;</span><span class="p">)</span>
@@ -234,7 +234,7 @@ interface. Here is an example from the <em>example</em> directory such as
 </pre></div>
 </div>
 <p>To run the model from your python environment use the installed <em>bumps</em> program:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bumps</span> <span class="n">example</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">preview</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">bumps</span> <span class="n">example</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">preview</span>
 </pre></div>
 </div>
 <p>Alternatively, on Windows, bumps can be called from the cmd prompt
@@ -261,10 +261,10 @@ accesses the underlying <span class="math notranslate nohighlight">\(&lt;F(q)&gt
 <a class="reference internal" href="../../../../dev/sasmodels-api/sasmodels.html#sasmodels.direct_model.call_Fq" title="sasmodels.direct_model.call_Fq"><code class="xref py py-func docutils literal notranslate"><span class="pre">direct_model.call_Fq()</span></code></a> instead.</p>
 <p>The following example should
 help, <em>example/cylinder_eval.py</em>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">logspace</span><span class="p">,</span> <span class="n">sqrt</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">sasmodels.core</span> <span class="kn">import</span> <span class="n">load_model</span>
-<span class="kn">from</span> <span class="nn">sasmodels.direct_model</span> <span class="kn">import</span> <span class="n">call_kernel</span><span class="p">,</span> <span class="n">call_Fq</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">logspace</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.direct_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">call_kernel</span><span class="p">,</span> <span class="n">call_Fq</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="s1">&#39;cylinder&#39;</span><span class="p">)</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
@@ -381,7 +381,7 @@ For an example notebook see:</p>
         <li class="right" >
           <a href="plugin.html" title="Writing a Plugin Model"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="fitting.html" >Fitting Documentation</a> &#187;</li>
@@ -389,8 +389,8 @@ For an example notebook see:</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-    &#169; Copyright 2024, The SasView Project.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    &#169; Copyright 2025, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>
