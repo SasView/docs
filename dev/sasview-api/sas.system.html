@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>sas.system package &#8212; SasView 6.0.1 documentation</title>
+    <title>sas.system package &#8212; SasView 6.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
     
-    <script src="../../_static/documentation_options.js?v=b6ed0530"></script>
+    <script src="../../_static/documentation_options.js?v=6340cb70"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="sas.sasview.html" title="sas.sasview package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" accesskey="U">sas package</a> &#187;</li>
@@ -504,10 +504,65 @@ package and add <em>log.print_config()</em> at choice points in the code.</p>
 <section id="module-sas.system.user">
 <span id="sas-system-user-module"></span><h2>sas.system.user module<a class="headerlink" href="#module-sas.system.user" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="sas.system.user.get_user_dir">
-<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_user_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sas.system.user.get_user_dir" title="Link to this definition">¶</a></dt>
-<dd><p>The directory where the per-user configuration is stored.</p>
-<p>Returns ~/.sasview, creating it if it does not already exist.</p>
+<dt class="sig sig-object py" id="sas.system.user._get_user_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">_get_user_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user._get_user_dir" title="Link to this definition">¶</a></dt>
+<dd><p><strong>DEPRECATED</strong> Do not use this function to create new files.</p>
+<p>v6.1.0: This is only used to move files from previous version locations to new locations</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.copy_old_files_to_new_location">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">copy_old_files_to_new_location</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sas.system.user.copy_old_files_to_new_location" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Only run at app startup</strong>
+A check to see if files in the old user locations exist and move them if they haven’t already been moved.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_app_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_app_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_app_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where the os-specific app data is stored.</p>
+<p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_app_dir_versioned">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_app_dir_versioned</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_app_dir_versioned" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where the version-dependent, os-specific app data is stored.</p>
+<p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_cache_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_cache_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_cache_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where the os-specific cache is stored.</p>
+<p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_config_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_config_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_config_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where os-specific configurations are stored.</p>
+<p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_dir_and_create_if_needed">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_dir_and_create_if_needed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">path:</span> <span class="pre">[&lt;class</span> <span class="pre">'pathlib.Path'&gt;,</span> <span class="pre">&lt;module</span> <span class="pre">'posixpath'</span> <span class="pre">(frozen)&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;],</span> <span class="pre">create_if_nonexistent:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_dir_and_create_if_needed" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the requested directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_log_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_log_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_log_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where the os-specific logs are stored.</p>
+<p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.get_plugin_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_plugin_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_plugin_dir" title="Link to this definition">¶</a></dt>
+<dd><p>The directory where the os-specific cache for plugin models is stored.</p>
+<p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
 </dd></dl>
 
 </section>
@@ -631,7 +686,15 @@ package and add <em>log.print_config()</em> at choice points in the code.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-sas.system.user">sas.system.user module</a><ul>
-<li><a class="reference internal" href="#sas.system.user.get_user_dir"><code class="docutils literal notranslate"><span class="pre">get_user_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user._get_user_dir"><code class="docutils literal notranslate"><span class="pre">_get_user_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.copy_old_files_to_new_location"><code class="docutils literal notranslate"><span class="pre">copy_old_files_to_new_location()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_app_dir"><code class="docutils literal notranslate"><span class="pre">get_app_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_app_dir_versioned"><code class="docutils literal notranslate"><span class="pre">get_app_dir_versioned()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_cache_dir"><code class="docutils literal notranslate"><span class="pre">get_cache_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_config_dir"><code class="docutils literal notranslate"><span class="pre">get_config_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_dir_and_create_if_needed"><code class="docutils literal notranslate"><span class="pre">get_dir_and_create_if_needed()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_log_dir"><code class="docutils literal notranslate"><span class="pre">get_log_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.get_plugin_dir"><code class="docutils literal notranslate"><span class="pre">get_plugin_dir()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-sas.system.version">sas.system.version module</a></li>
@@ -699,7 +762,7 @@ package and add <em>log.print_config()</em> at choice points in the code.</p>
         <li class="right" >
           <a href="sas.sasview.html" title="sas.sasview package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>

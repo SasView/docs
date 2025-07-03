@@ -5,17 +5,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>2. Calculator Interface &#8212; SasView 6.0.1 documentation</title>
+    <title>2. Calculator Interface &#8212; SasView 6.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
     
-    <script src="../../_static/documentation_options.js?v=b6ed0530"></script>
+    <script src="../../_static/documentation_options.js?v=6340cb70"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="sasmodels" href="../sasmodels-api/modules.html" />
+    <link rel="next" title="Developer Documentation" href="../sasdata-dev/dev.html" />
     <link rel="prev" title="1. Code Overview" href="overview.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
@@ -28,12 +28,12 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../sasmodels-api/modules.html" title="sasmodels"
+          <a href="../sasdata-dev/dev.html" title="Developer Documentation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Code Overview"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Sasmodels Developers Guide</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>Calculator Interface</a></li> 
@@ -50,9 +50,9 @@
 <p>This document describes the layer between the form factor kernels and the
 model calculator which implements the dispersity and magnetic SLD
 calculations.  There are three separate implementations of this layer,
-<a class="reference internal" href="../sasmodels-api/sasmodels.html#module-sasmodels.kernelcl" title="sasmodels.kernelcl"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kernelcl</span></code></a> for OpenCL, which operates on a single Q value at a time,
-<a class="reference internal" href="../sasmodels-api/sasmodels.html#module-sasmodels.kerneldll" title="sasmodels.kerneldll"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kerneldll</span></code></a> for the DLL, which loops over a vector of Q values, and
-<a class="reference internal" href="../sasmodels-api/sasmodels.html#module-sasmodels.kernelpy" title="sasmodels.kernelpy"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kernelpy</span></code></a> for python models which operates on vector Q values.</p>
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">kernelcl</span></code> for OpenCL, which operates on a single Q value at a time,
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">kerneldll</span></code> for the DLL, which loops over a vector of Q values, and
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">kernelpy</span></code> for python models which operates on vector Q values.</p>
 <p>Each implementation provides three different calls <em>Iq</em>, <em>Iqxy</em> and <em>Imagnetic</em>
 for 1-D, 2-D and 2-D magnetic kernels respectively. The C code is defined
 in <em>kernel_iq.c</em>, with the minor differences between OpenCL and DLL handled
@@ -86,7 +86,7 @@ kernel in a reasonable time; because the GPU is used by the operating
 system to show its windows, if a GPU kernel runs too long then it will be
 automatically killed and no results will be returned to the caller.</p>
 <p>The <em>ProblemDetails</em> structure is a direct map of the
-<a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.details.CallDetails" title="sasmodels.details.CallDetails"><code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code></a> buffer.  This indicates which parameters have
+<code class="xref py py-class docutils literal notranslate"><span class="pre">details.CallDetails</span></code> buffer.  This indicates which parameters have
 dispersity, and where in the values vector the values and weights can be
 found.  For each parameter with dispersity there is a parameter id, the length
 of the dispersity loop for that parameter, the offset of the parameter
@@ -113,7 +113,7 @@ for each parameter is stored in the <em>pd_offset</em> field of the <em>ProblemD
 structure, but the values do need to be contiguous.  After <em>num_weights</em>
 values, the pd weight vector is stored, with the same configuration as the
 pd value vector.  Note that the pd vectors can contain values that are not
-in the dispersity loop; this is used by <a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.mixture.MixtureKernel" title="sasmodels.mixture.MixtureKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">mixture.MixtureKernel</span></code></a>
+in the dispersity loop; this is used by <code class="xref py py-class docutils literal notranslate"><span class="pre">mixture.MixtureKernel</span></code>
 to make it easier to call the various component kernels.</p>
 <p>The <em>q</em> vector contains one value for each q for <em>Iq</em> kernels, or a pair
 of <em>(qx,qy)</em> values for each q for <em>Iqxy</em> and <em>Imagnetic</em> kernels.  OpenCL
@@ -125,7 +125,7 @@ all points in the dispersity mesh.  This is required when the dispersity
 loop is broken across several kernel calls.</p>
 <p><em>cutoff</em> is a importance cutoff so that points which contribute negligibly
 to the total scattering can be skipped without calculating them.</p>
-<p><a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.generate.make_source" title="sasmodels.generate.make_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code></a> defines the following C macros:</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">generate.make_source()</span></code> defines the following C macros:</p>
 <ul>
 <li><p>USE_OPENCL is defined if running in opencl</p></li>
 <li><p>MAX_PD is the maximum depth of the dispersity loop [model specific]</p></li>
@@ -300,7 +300,7 @@ along with the weights vector, since features such as the number of
 disperity points per pd parameter won’t change between function evaluations.
 A new parameter vector must be sent for each I(q) evaluation.  This is
 not currently implemented, and would require some resturcturing of
-the <a class="reference internal" href="../sasmodels-api/sasmodels.html#sasmodels.sasview_model.SasviewModel" title="sasmodels.sasview_model.SasviewModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code></a> interface.</p>
+the <code class="xref py py-class docutils literal notranslate"><span class="pre">sasview_model.SasviewModel</span></code> interface.</p>
 <p>The results array will be initialized to zero for dispersity loop
 entry zero, and preserved between calls to [start, stop] so that the
 results accumulate by the time the loop has completed.  Background and
@@ -340,8 +340,8 @@ the accumulation vector.</p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="../sasmodels-api/modules.html"
-                          title="next chapter">sasmodels</a></p>
+    <p class="topless"><a href="../sasdata-dev/dev.html"
+                          title="next chapter">Developer Documentation</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -374,12 +374,12 @@ the accumulation vector.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../sasmodels-api/modules.html" title="sasmodels"
+          <a href="../sasdata-dev/dev.html" title="Developer Documentation"
              >next</a> |</li>
         <li class="right" >
           <a href="overview.html" title="1. Code Overview"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" >Sasmodels Developers Guide</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><span class="section-number">2. </span>Calculator Interface</a></li> 
