@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Correlation Function Theory &#8212; SasView 6.1.0 documentation</title>
+    <title>Correlation Function Theory &#8212; SasView 6.1.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/classic.css?v=2bf1fcf8" />
     
-    <script src="../../../../_static/documentation_options.js?v=6340cb70"></script>
+    <script src="../../../../_static/documentation_options.js?v=c7384f69"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="corfunc_help.html" title="Correlation Function Analysis"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="corfunc_help.html" accesskey="U">Correlation Function Analysis</a> &#187;</li>
@@ -230,18 +230,18 @@ system relative to <span class="math notranslate nohighlight">\(\vec{r}\)</span>
 as in such a coordinate system, the dot product <span class="math notranslate nohighlight">\(\vec{r}\cdot\vec{q}\)</span> becomes <span class="math notranslate nohighlight">\(qr \cos\theta\)</span>.</p>
 <p>For our averaging there is a total of <span class="math notranslate nohighlight">\(4\pi\)</span> steradians in a sphere, giving a leading factor of <span class="math notranslate nohighlight">\(1/4\pi\)</span>.</p>
 <div class="math notranslate nohighlight">
-\[I(\vec{q}) = \frac{1}{4\pi}\int_{\phi=0}{\phi=2\pi}\int_{\theta=0}^{\theta=\pi}\int_{\vec{r}\in\mathbb{R}} \gamma(\vec{r}) e^{i qr \cos\theta} d\vec{r}^3 \sin(\theta) d\theta d\phi\]</div>
+\[I(\vec{q}) = \frac{1}{4\pi}\int_{\phi=0}^{\phi=2\pi}\int_{\theta=0}^{\theta=\pi}\int_{\vec{r}\in\mathbb{R}} \gamma(\vec{r}) e^{i qr \cos\theta} d r \sin(\theta) d\theta d\phi\]</div>
 <p>The integral is constant with with respect to <span class="math notranslate nohighlight">\(\phi\)</span>, so drops out as a factor of <span class="math notranslate nohighlight">\(2\pi\)</span>.</p>
 <div class="math notranslate nohighlight">
-\[= \frac{1}{2}\int_{\theta=0}^{\theta=\pi}\int_{\vec{r}\in\mathbb{R}^3} \gamma(\vec{r}) e^{i \vec{r} \cdot \vec{q}} d\vec{r}^3 \sin(\theta) d\theta\]</div>
+\[= \frac{1}{2}\int_{\theta=0}^{\theta=\pi}\int_{\vec{r}\in\mathbb{R}^3} \gamma(\vec{r}) e^{i qr \cos\theta} d r \sin(\theta) d\theta\]</div>
 <p>and we can adjust the order of integration, noting that because of our choice of coordinate system, <span class="math notranslate nohighlight">\(\gamma(\vec{r})\)</span> is
 independent of <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
 <div class="math notranslate nohighlight">
-\[= \frac{1}{2}\int_{\vec{r}\in\mathbb{R}^3} \gamma(\vec{r}) \int_{\theta=0}^{\theta=\pi} e^{i \vec{r} \cdot \vec{q}} \sin(\theta) d\theta d\vec{r}^3\]</div>
+\[= \frac{1}{2}\int_{\vec{r}\in\mathbb{R}^3} \gamma(\vec{r}) \int_{\theta=0}^{\theta=\pi} e^{i qr \cos\theta} \sin(\theta) d\theta d r\]</div>
 <p>Now, we can consider the inner integral specifically, firstly by doing a substitution of <span class="math notranslate nohighlight">\(u = -\cos\theta\)</span>. This
-means that <span class="math notranslate nohighlight">\(du = \sin\theta d\theta\)</span>, the interval <span class="math notranslate nohighlight">\(\theta\in[0,\pi]\)</span> becomes <span class="math notranslate nohighlight">\(u\in[1, -1]\)</span>.</p>
+means that <span class="math notranslate nohighlight">\(du = \sin\theta d\theta\)</span>, the interval <span class="math notranslate nohighlight">\(\theta\in[0,\pi]\)</span> becomes <span class="math notranslate nohighlight">\(u\in[-1, 1]\)</span>.</p>
 <div class="math notranslate nohighlight">
-\[\int_{\theta=0}^{\theta=\pi} e^{i \vec{r} \cdot \vec{q}} \sin(\theta) d\theta = \int_{u=-1}^{u=1} e^{i q r u} du\]</div>
+\[\int_{\theta=0}^{\theta=\pi} e^{i qr \cos\theta} \sin(\theta) d\theta = \int_{u=-1}^{u=1} e^{i q r u} du\]</div>
 <p>which is just an exponential and easily integrated</p>
 <div class="math notranslate nohighlight">
 \[= \left[ \frac{-i e^{i q r u}}{qr} \right]_{-1}^{1} = \frac{i \left(e^{-i q r} - e^{i q r} \right) }{qr} = 2 \frac{i \sinh(-iqr)}{qr}\]</div>
@@ -250,7 +250,7 @@ means that <span class="math notranslate nohighlight">\(du = \sin\theta d\theta\
 \[= 2 \frac{\sin qr}{qr}\]</div>
 <p>The leading <span class="math notranslate nohighlight">\(2\)</span> will cancel the leading <span class="math notranslate nohighlight">\(1/2\)</span> and the value of <span class="math notranslate nohighlight">\(I(q)\)</span> can be seen to be</p>
 <div class="math notranslate nohighlight">
-\[I(q) = \int_{\vec{r}\in\mathbb{R}^3} \gamma(\vec{r}) \frac{\sin qr}{qr} d\vec{r}^3\]</div>
+\[I(q) = \int_{r\in\mathbb{R}^3} \gamma(\vec{r}) \frac{\sin qr}{qr} d \vec{r}\]</div>
 <p>Note that this object is not dependent on the angular components of <span class="math notranslate nohighlight">\(\vec{r}\)</span>, so the integral
 over <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span> can be written as</p>
 <div class="math notranslate nohighlight">
@@ -393,7 +393,7 @@ calculating <span class="math notranslate nohighlight">\(\Gamma_3\)</span></p>
         <li class="right" >
           <a href="corfunc_help.html" title="Correlation Function Analysis"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">SasView 6.1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../user.html" >SasView User Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../../analysis.html" >Fitting &amp; Other Analyses</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="corfunc_help.html" >Correlation Function Analysis</a> &#187;</li>

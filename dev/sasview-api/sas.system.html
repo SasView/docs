@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>sas.system package &#8212; SasView 6.1.0 documentation</title>
+    <title>sas.system package &#8212; SasView 6.1.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
     
-    <script src="../../_static/documentation_options.js?v=6340cb70"></script>
+    <script src="../../_static/documentation_options.js?v=c7384f69"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="sas.sasview.html" title="sas.sasview package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" accesskey="U">sas package</a> &#187;</li>
@@ -518,6 +518,31 @@ A check to see if files in the old user locations exist and move them if they ha
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.copy_resources">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">copy_resources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sas.system.user.copy_resources" title="Link to this definition">¶</a></dt>
+<dd><p>Find the original documentation location (source and built)</p>
+<p>The source and built docs for SasView could be in a number of locations.
+Search for them in the following locations:
+1. installed within the module
+2. unpacked next to the source
+3. in legacy paths from older installation approaches</p>
+<p>Installed versions are prioritised over uninstalled versions to make sure
+that inconveniently named local directories don’t cause issues.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.create_user_files_if_needed">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">create_user_files_if_needed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sas.system.user.create_user_files_if_needed" title="Link to this definition">¶</a></dt>
+<dd><p>Create user documentation directories if necessary and copy built docs there.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.find_plugins_dir">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">find_plugins_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#sas.system.user.find_plugins_dir" title="Link to this definition">¶</a></dt>
+<dd><p>A helper function that returns a string representation of the plugins directory as defined by sas.system.user.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="sas.system.user.get_app_dir">
 <span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_app_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_app_dir" title="Link to this definition">¶</a></dt>
 <dd><p>The directory where the os-specific app data is stored.</p>
@@ -547,7 +572,7 @@ A check to see if files in the old user locations exist and move them if they ha
 
 <dl class="py function">
 <dt class="sig sig-object py" id="sas.system.user.get_dir_and_create_if_needed">
-<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_dir_and_create_if_needed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">path:</span> <span class="pre">[&lt;class</span> <span class="pre">'pathlib.Path'&gt;,</span> <span class="pre">&lt;module</span> <span class="pre">'posixpath'</span> <span class="pre">(frozen)&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;],</span> <span class="pre">create_if_nonexistent:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_dir_and_create_if_needed" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_dir_and_create_if_needed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_dir_and_create_if_needed" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the requested directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
 </dd></dl>
 
@@ -563,6 +588,30 @@ A check to see if files in the old user locations exist and move them if they ha
 <span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">get_plugin_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">create_if_nonexistent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="headerlink" href="#sas.system.user.get_plugin_dir" title="Link to this definition">¶</a></dt>
 <dd><p>The directory where the os-specific cache for plugin models is stored.</p>
 <p>Returns the directory as a pathlib.Path object, creating the directory if it does not already exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.is_copy_successful">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">is_copy_successful</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#sas.system.user.is_copy_successful" title="Link to this definition">¶</a></dt>
+<dd><p>Obtain the source and build output from within the installed sas module</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.locate_unpacked_resources">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">locate_unpacked_resources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#sas.system.user.locate_unpacked_resources" title="Link to this definition">¶</a></dt>
+<dd><p>Locate the resources unpacked on disk</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sas.system.user.module_copytree">
+<span class="sig-prename descclassname"><span class="pre">sas.system.user.</span></span><span class="sig-name descname"><span class="pre">module_copytree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sas.system.user.module_copytree" title="Link to this definition">¶</a></dt>
+<dd><p>Copy the tree from a module to the specified directory</p>
+<p>module: name of the Python module (the “anchor” for importlib.resources)
+src: source name of the resource inside the module
+dest: destination directory for the resources to be copied into; will be</p>
+<blockquote>
+<div><p>created if it doesn’t exist</p>
+</div></blockquote>
 </dd></dl>
 
 </section>
@@ -688,6 +737,9 @@ A check to see if files in the old user locations exist and move them if they ha
 <li><a class="reference internal" href="#module-sas.system.user">sas.system.user module</a><ul>
 <li><a class="reference internal" href="#sas.system.user._get_user_dir"><code class="docutils literal notranslate"><span class="pre">_get_user_dir()</span></code></a></li>
 <li><a class="reference internal" href="#sas.system.user.copy_old_files_to_new_location"><code class="docutils literal notranslate"><span class="pre">copy_old_files_to_new_location()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.copy_resources"><code class="docutils literal notranslate"><span class="pre">copy_resources()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.create_user_files_if_needed"><code class="docutils literal notranslate"><span class="pre">create_user_files_if_needed()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.find_plugins_dir"><code class="docutils literal notranslate"><span class="pre">find_plugins_dir()</span></code></a></li>
 <li><a class="reference internal" href="#sas.system.user.get_app_dir"><code class="docutils literal notranslate"><span class="pre">get_app_dir()</span></code></a></li>
 <li><a class="reference internal" href="#sas.system.user.get_app_dir_versioned"><code class="docutils literal notranslate"><span class="pre">get_app_dir_versioned()</span></code></a></li>
 <li><a class="reference internal" href="#sas.system.user.get_cache_dir"><code class="docutils literal notranslate"><span class="pre">get_cache_dir()</span></code></a></li>
@@ -695,6 +747,9 @@ A check to see if files in the old user locations exist and move them if they ha
 <li><a class="reference internal" href="#sas.system.user.get_dir_and_create_if_needed"><code class="docutils literal notranslate"><span class="pre">get_dir_and_create_if_needed()</span></code></a></li>
 <li><a class="reference internal" href="#sas.system.user.get_log_dir"><code class="docutils literal notranslate"><span class="pre">get_log_dir()</span></code></a></li>
 <li><a class="reference internal" href="#sas.system.user.get_plugin_dir"><code class="docutils literal notranslate"><span class="pre">get_plugin_dir()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.is_copy_successful"><code class="docutils literal notranslate"><span class="pre">is_copy_successful()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.locate_unpacked_resources"><code class="docutils literal notranslate"><span class="pre">locate_unpacked_resources()</span></code></a></li>
+<li><a class="reference internal" href="#sas.system.user.module_copytree"><code class="docutils literal notranslate"><span class="pre">module_copytree()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-sas.system.version">sas.system.version module</a></li>
@@ -762,7 +817,7 @@ A check to see if files in the old user locations exist and move them if they ha
         <li class="right" >
           <a href="sas.sasview.html" title="sas.sasview package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="modules.html" >SasView</a> &#187;</li>
           <li class="nav-item nav-item-3"><a href="sas.html" >sas package</a> &#187;</li>
