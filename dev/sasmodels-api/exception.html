@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>12. Annotate exceptions &#8212; SasView 6.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="../../_static/documentation_options.js?v=c7384f69"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="13. Model parser" href="generate.html" />
+    <link rel="prev" title="11. Simple interface" href="direct_model.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generate.html" title="13. Model parser"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="direct_model.html" title="11. Simple interface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">12. </span>Annotate exceptions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="annotate-exceptions">
+<h1><span class="section-number">12. </span>Annotate exceptions<a class="headerlink" href="#annotate-exceptions" title="Link to this heading">¶</a></h1>
+<section id="module-sasmodels.exception">
+<span id="sasmodels-exception"></span><h2><a class="reference internal" href="#module-sasmodels.exception" title="sasmodels.exception"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sasmodels.exception</span></code></a><a class="headerlink" href="#module-sasmodels.exception" title="Link to this heading">¶</a></h2>
+<p>Utility to add annotations to python exceptions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sasmodels.exception.annotate_exception">
+<span class="sig-prename descclassname"><span class="pre">sasmodels.exception.</span></span><span class="sig-name descname"><span class="pre">annotate_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sasmodels.exception.annotate_exception" title="Link to this definition">¶</a></dt>
+<dd><p>Add an annotation to the current exception, which can then be forwarded
+to the caller using a bare “raise” statement to raise the annotated
+exception.  If the exception <em>exc</em> is provided, then that exception is the
+one that is annotated, otherwise <em>sys.exc_info</em> is used.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">... </span>   <span class="n">annotate_exception</span><span class="p">(</span><span class="s2">&quot;while accessing &#39;D&#39;&quot;</span><span class="p">)</span>
+<span class="gp">... </span>   <span class="k">raise</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">KeyError</span>: <span class="n">&quot;hello while accessing &#39;D&#39;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">12. Annotate exceptions</a><ul>
+<li><a class="reference internal" href="#module-sasmodels.exception"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sasmodels.exception</span></code></a><ul>
+<li><a class="reference internal" href="#sasmodels.exception.annotate_exception"><code class="docutils literal notranslate"><span class="pre">annotate_exception()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="direct_model.html"
+                          title="previous chapter"><span class="section-number">11. </span>Simple interface</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="generate.html"
+                          title="next chapter"><span class="section-number">13. </span>Model parser</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/dev/sasmodels-api/exception.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generate.html" title="13. Model parser"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="direct_model.html" title="11. Simple interface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SasView 6.1.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../dev.html" >Developer Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >Reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">12. </span>Annotate exceptions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, The SasView Project.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

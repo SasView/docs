@@ -692,20 +692,18 @@ resetting the widgets.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.validate">
 <span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sas.qtgui.Plotting.Slicers.BoxSlicer.BoxInteractor.validate" title="Link to this definition">¶</a></dt>
-<dd><p>Validate input from user.
-Values get checked at apply time.
-* nbins cannot be zero or samller
-* The full ROI should stay within the data. thus center_x and center_y</p>
-<blockquote>
-<div><p>are restricted such that the center +/- width (or height) cannot be
-greate or smaller than data max/min.</p>
-</div></blockquote>
+<dd><p>Validate input from user.</p>
+<p>Values get checked at apply time:</p>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nbins</span></code> cannot be zero or smaller</p></li>
+<li><p>The full ROI should stay within the data. Thus <code class="docutils literal notranslate"><span class="pre">center_x</span></code> and <code class="docutils literal notranslate"><span class="pre">center_y</span></code>
+are restricted such that the center +/- width (or height) cannot be
+greater or smaller than data max/min.</p></li>
 <li><p>The width/height should not be set so small as to leave no data in
 the ROI. Here we only make sure that the width/height is not zero
 as done when dragging the vertical or horizontal lines. We let the
-call to _post_data capture the ValueError of no points in ROI
-raised by manipulations.py, log the message and negate the entry
+call to <code class="docutils literal notranslate"><span class="pre">_post_data</span></code> capture the <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> of no points in ROI
+raised by <code class="docutils literal notranslate"><span class="pre">manipulations.py</span></code>, log the message and negate the entry
 at that point.</p></li>
 </ul>
 </dd></dl>
@@ -1043,7 +1041,7 @@ by BaseInteractor</p>
 :param x2: new minimum value of x coordinates
 :param y1: new maximum value of y coordinates
 :param y2: new minimum value of y coordinates
-:param <a href="#id1"><span class="problematic" id="id2">half_</span></a> width: is the half width of the new rectangle
+:param half_width: is the half width of the new rectangle
 :param half_height: is the half height of the new rectangle
 :param center: provided x, y  coordinates of the center point</p>
 </dd></dl>

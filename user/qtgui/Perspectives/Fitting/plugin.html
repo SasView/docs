@@ -67,7 +67,7 @@ plugin then use the “Add/Multiply Models” menu option instead.</p>
 <a class="reference external" href="https://github.com/SasView/sasmodels/blob/master/sasmodels/models/cylinder.c">cylinder.c</a></p></li>
 </ul>
 <p>When using SasView, plugin models should be saved to the SasView
-<em>plugin_models</em> folder <em>C:\Users\{username}\.sasview\plugin_models</em>
+<em>plugin_models</em> folder <em>C:\Users\{username}\AppData\Local\sasview\SasView\plugin_models</em>
 (on Windows) or <em>/Users/{username}/.sasview\plugin_models</em> (on Mac).
 The next time SasView is started it will compile the plugin and add
 it to the list of <em>Plugin Models</em> in a FitPage.  Scripts can load
@@ -250,7 +250,7 @@ be included in a C file as <em>source=[‘filename.c’, …]</em> in the same d
 as the model file.</p>
 <p>The new parameters replace <em>radius_polar</em> and <em>radius_equatorial</em> in the
 parameter table.  To have more control over parameter placement, use an
-<em>insert_after={…}</em> argmument to <code class="xref py py-func docutils literal notranslate"><span class="pre">core.reparameterize()</span></code>.
+<em>insert_after={…}</em> argmument to <a class="reference internal" href="../../../../dev/sasmodels-api/core.html#sasmodels.core.reparameterize" title="sasmodels.core.reparameterize"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.reparameterize()</span></code></a>.
 For each insert location provide a list of new parameter names to insert
 at that location.  For example, <em>{‘’: ‘eccentricity,volume’}</em> inserts
 them both at the beginning (before any parameter), whereas
@@ -398,13 +398,13 @@ structure factor to account for interactions between particles.  See
 <a class="reference internal" href="#form-factors">Form_Factors</a> for more details.</p>
 <p><strong>model_info = …</strong> lets you define a model directly, for example, by
 loading and modifying existing models.  This is done implicitly by
-<code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model_info()</span></code>, which can create a mixture model
+<a class="reference internal" href="../../../../dev/sasmodels-api/core.html#sasmodels.core.load_model_info" title="sasmodels.core.load_model_info"><code class="xref py py-func docutils literal notranslate"><span class="pre">core.load_model_info()</span></code></a>, which can create a mixture model
 from a pair of existing models.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_model_info</span>
 <span class="n">model_info</span> <span class="o">=</span> <span class="n">load_model_info</span><span class="p">(</span><span class="s1">&#39;sphere+cylinder&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>See <code class="xref py py-class docutils literal notranslate"><span class="pre">modelinfo.ModelInfo</span></code> for details about the model
+<p>See <a class="reference internal" href="../../../../dev/sasmodels-api/modelinfo.html#sasmodels.modelinfo.ModelInfo" title="sasmodels.modelinfo.ModelInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">modelinfo.ModelInfo</span></code></a> for details about the model
 attributes that are defined.</p>
 </section>
 <section id="model-parameters">
@@ -1001,7 +1001,7 @@ SasView build environment available!</strong></p>
 you have added using the <strong>test =</strong> values.</p>
 <p>From SasView, switch to the <em>Shell</em> tab and type the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.model_test</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_one</span>
-<span class="n">run_one</span><span class="p">(</span><span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
+<span class="n">run_one</span><span class="p">(</span><span class="s2">&quot;~/AppData/Local/sasview/SasView/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This should print:</p>
@@ -1010,15 +1010,15 @@ you have added using the <strong>test =</strong> values.</p>
 </div>
 <p>To check whether single precision is good enough, type the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sasmodels.compare</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">compare</span>
-<span class="n">compare</span><span class="p">(</span><span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
+<span class="n">compare</span><span class="p">(</span><span class="s2">&quot;~/AppData/Local/sasview/SasView/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This will pop up a plot showing the difference between single precision
 and double precision on a range of <span class="math notranslate nohighlight">\(q\)</span> values.</p>
 <p>These commands can also be run directly in the python interpreter:</p>
 <blockquote>
-<div><p>$ python -m sasmodels.model_test -v ~/.sasview/plugin_models/model.py
-$ python -m sasmodels.compare ~/.sasview/plugin_models/model.py</p>
+<div><p>$ python -m sasmodels.model_test -v ~/AppData/Local/sasview/SasView/plugin_models/model.py
+$ python -m sasmodels.compare ~/AppData/Local/sasview/SasView/plugin_models/model.py</p>
 </div></blockquote>
 <p>The options to compare are quite extensive; type the following for help:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">()</span>
@@ -1026,7 +1026,7 @@ $ python -m sasmodels.compare ~/.sasview/plugin_models/model.py</p>
 </div>
 <p>Options will need to be passed as separate strings.
 For example to run your model with a random set of parameters:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-random&quot;</span><span class="p">,</span> <span class="s2">&quot;-pars&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-random&quot;</span><span class="p">,</span> <span class="s2">&quot;-pars&quot;</span><span class="p">,</span> <span class="s2">&quot;~/AppData/Local/sasview/SasView/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For the random models,</p>
@@ -1044,7 +1044,7 @@ demo so that run times are more predictable (polydispersity calculated
 across multiple parameters can be very slow).</p>
 <p>If your model has 2D orientation calculation, then you should also
 test with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-2d&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-2d&quot;</span><span class="p">,</span> <span class="s2">&quot;~/AppData/Local/sasview/SasView/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1053,7 +1053,7 @@ test with:</p>
 <h2>Check The Docs<a class="headerlink" href="#check-the-docs" title="Link to this heading">¶</a></h2>
 <p>You can get a rough idea of how the documentation will look using the
 following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-help&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.sasview/plugin_models/model.py&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">compare</span><span class="p">(</span><span class="s2">&quot;-help&quot;</span><span class="p">,</span> <span class="s2">&quot;~/AppData/Local/sasview/SasView/plugin_models/model.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This does not use the same styling as the rest of the docs, but it will
@@ -1074,7 +1074,7 @@ Here are some tools to help with the inevitable syntax errors:</p>
 of SasView; so unless you have a SasView build environment available,
 you can ignore this section!</strong></p>
 <p>Run the lint check with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pylint</span> <span class="o">--</span><span class="n">rcfile</span><span class="o">=</span><span class="n">extra</span><span class="o">/</span><span class="n">pylint</span><span class="o">.</span><span class="n">rc</span> <span class="o">~/.</span><span class="n">sasview</span><span class="o">/</span><span class="n">plugin_models</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pylint</span> <span class="o">--</span><span class="n">rcfile</span><span class="o">=</span><span class="n">extra</span><span class="o">/</span><span class="n">pylint</span><span class="o">.</span><span class="n">rc</span> <span class="o">~/</span><span class="n">AppData</span><span class="o">/</span><span class="n">Local</span><span class="o">/</span><span class="n">sasview</span><span class="o">/</span><span class="n">SasView</span><span class="o">/</span><span class="n">plugin_models</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <p>We are not aiming for zero lint just yet, only keeping it to a minimum.
